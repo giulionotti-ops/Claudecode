@@ -1,0 +1,23 @@
+{
+  "version": 1,
+  "skills": {
+    "moneyprinterturbo-video": {
+      "source": "harry0703/MoneyPrinterTurbo",
+      "sourceType": "github",
+      "skillPath": "docs/skill/SKILL.md",
+      "computedHash": "6fa6b305e45276f76942257987cd4354b97ef72a7d00236a74dfcfe706060410"
+    },
+    "task-observer": {
+      "source": "rebelytics/one-skill-to-rule-them-all",
+      "sourceType": "github",
+      "skillPath": "SKILL.md",
+      "computedHash": "2903e23de02231da173ccee7b09db56107b2f365168e9e9043ddba78c048fede"
+    },
+    "voicestudio": {
+      "source": "debpalash/VoiceStudio",
+      "sourceType": "github",
+      "skillPath": "skills/voicestudio/SKILL.md",
+      "computedHash": "24c22dc99b617db1258e5424050ff17590b294b4003f2d57f2d906898fddcedd"
+    }
+  }
+}
