@@ -1,6 +1,12 @@
 {
   "version": 1,
   "skills": {
+    "moneyprinterturbo-video": {
+      "source": "harry0703/MoneyPrinterTurbo",
+      "sourceType": "github",
+      "skillPath": "docs/skill/SKILL.md",
+      "computedHash": "6fa6b305e45276f76942257987cd4354b97ef72a7d00236a74dfcfe706060410"
+    },
     "task-observer": {
       "source": "rebelytics/one-skill-to-rule-them-all",
       "sourceType": "github",
