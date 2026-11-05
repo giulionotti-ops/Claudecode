@@ -95,6 +95,7 @@ add(amb, iron, 51.5, .5, .4)                                                    
 fx = verb(fx, HALL, .38)
 vo[:, 0] = compress(vo[:, 0], .2, 3.0); vo[:, 1] = compress(vo[:, 1], .2, 3.0)
 vo = verb(vo, hall_ir(3.2, 2400, .02), .28)   # voice 1: cathedral reverb
+vo *= 10 ** ((-17.5 - 20 * np.log10(np.sqrt((vo[np.abs(vo).max(1) > 1e-4] ** 2).mean()) * 1.7)) / 20)   # voice at about -17.5 dB RMS
 
 # ---------- score stems, ducked under the narration ----------
 st = {}
@@ -108,7 +109,7 @@ mus = mus * duck[:, None] + st['bell'] * gains['bell']                          
 
 mix = mus + fx * .9 + amb + vo * 1.7
 end = int((DUR - .7) * SR); mix[end:] *= np.linspace(1, 0, N - end)[:, None]
-mix = np.stack([limit(mix[:, 0], .95), limit(mix[:, 1], .95)], 1)
+mix = np.stack([limit(mix[:, 0], .85), limit(mix[:, 1], .85)], 1)
 os.makedirs(os.path.join(D, 'out'), exist_ok=True)
 sf.write(os.path.join(D, 'out', 'mix.wav'), mix.astype(np.float32), SR)
 def rms(x): return 20 * np.log10(np.sqrt((x ** 2).mean()) + 1e-9)
