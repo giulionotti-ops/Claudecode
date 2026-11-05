@@ -1,21 +1,22 @@
 // The timeline: one source of truth for picture, sound and subtitles. Times from the measured voice (voice/dur.json, words.json).
 import { mulberry, clamp, ss, seg } from '/core/lib.js';
-import { POSE, stepPose, lerpPose, SON_TURNED, SON_PAL } from './figures.js';
+import { POSE, stepPose, lerpPose } from './figures.js';
+import { SON2_TURNED as SON_TURNED, SON2_LOYAL as SON_PAL } from './figures2.js';
 import { MED, EYES } from './win.js';
 
 export const DUR = 57.0;
 // line start times; text = subtitle (numbers as digits)
 export const LINES = [
-  ['L1', .6, 4.421, "10,000 years ago, the Emperor's favourite son betrayed him."],
-  ['L2', 7.3, 3.66, 'Horus, first son found, and the brightest.'],
-  ['L3', 11.9, 4.51, 'Warmaster of the Great Crusade, to conquer the stars.'],
-  ['L4', 17.4, 3.731, "On Davin's moon, a blade struck him."],
-  ['L5', 21.6, 4.376, 'As he lay dying, the dark gods whispered. And he listened.'],
-  ['L6', 28.4, 4.234, 'Half the Legions followed him into rebellion.'],
-  ['L7', 33.4, 3.555, 'They burned across the galaxy to Terra.'],
-  ['L8', 38.2, 4.079, "Father and son met aboard Horus's flagship."],
-  ['L9', 43.0, 4.821, 'Horus fell. The broken Emperor was sealed upon the Golden Throne.'],
-  ['L10', 50.0, 4.023, 'The Heresy was over. The long night had only begun.'],
+  ['L1', .6, 4.704, "10,000 years ago, the Emperor's favourite son betrayed him."],
+  ['L2', 7.3, 3.961, 'Horus, first son found, and the brightest.'],
+  ['L3', 11.9, 4.789, 'Warmaster of the Great Crusade, to conquer the stars.'],
+  ['L4', 17.4, 4.005, "On Davin's moon, a blade struck him."],
+  ['L5', 21.6, 4.526, 'As he lay dying, the dark gods whispered. And he listened.'],
+  ['L6', 28.4, 4.262, 'Half the Legions followed him into rebellion.'],
+  ['L7', 33.4, 3.831, 'They burned across the galaxy to Terra.'],
+  ['L8', 38.2, 4.244, "Father and son met aboard Horus's flagship."],
+  ['L9', 43.0, 4.999, 'Horus fell. The broken Emperor was sealed upon the Golden Throne.'],
+  ['L10', 50.0, 4.171, 'The Heresy was over. The long night had only begun.'],
 ];
 const chars = s => s.replace(/\s/g, '').length;   // readcheck counts every non-space character
 export const SUBS = LINES.map(([id, t0, d, text], i) => {
@@ -23,12 +24,12 @@ export const SUBS = LINES.map(([id, t0, d, text], i) => {
   return { id, t0, t1: Math.min(next, Math.max(t0 + d + .4, t0 + 1.8, t0 + .36 + chars(text) / 15 + 1.5)), text };
 });
 // key moments (from the word timings)
-export const T = { crack1: 3.8, rise: 8.9, raise: 12.38, strike: 19.48, down: 19.86, whisper: 23.0, listened: 25.16, crack2: 27.4, clash: 38.98, fell: 43.34, sealed: 45.48, bell: 50.0 };
+export const T = { crack1: 4.12, rise: 9.06, raise: 12.42, strike: 19.78, down: 20.64, whisper: 23.1, listened: 25.46, clash: 39.02, fell: 43.48, sealed: 45.78, crack2: 27.4, bell: 50.0 };
 
 // ---------- camera: [t, x, y, zoom], eased between keys ----------
-const CAM = [[0, 0, -205, 2.55], [4.9, 0, -212, 2.68], [5.2, 0, -212, 2.68], [6.1, 0, 640, 1.7], [7.0, 0, 1452, 3.1], [10.9, 0, 1468, 3.3],
+const CAM = [[0, 0, -205, 2.55], [4.9, 0, -212, 2.68], [5.4, 0, -212, 2.68], [6.25, 0, 640, 1.7], [7.0, 0, 1452, 3.1], [10.9, 0, 1468, 3.3],
   [11.8, 0, 1142, 3.2], [16.3, 0, 1150, 3.36], [17.2, 0, 815, 3.2], [25.9, 0, 826, 3.48], [27.25, 0, 682, 1.72], [32.7, 0, 676, 1.82],
-  [33.5, 0, 152, 3.2], [37.1, 0, 168, 3.36], [38.1, 0, -208, 2.6], [47.0, 0, -224, 2.86], [47.8, 0, -224, 2.86], [50.0, 0, 470, .8], [57, 0, 462, .85]];
+  [33.5, 0, 152, 3.2], [37.1, 0, 168, 3.36], [38.1, 0, -208, 2.6], [47.0, 0, -224, 2.86], [48.1, 0, -224, 2.86], [50.0, 0, 470, .8], [57, 0, 462, .85]];
 function track(keys, t) {
   if (t <= keys[0][0]) return keys[0].slice(1);
   for (let i = 0; i < keys.length - 1; i++) { const a = keys[i], b = keys[i + 1]; if (t <= b[0]) { const k = ss((t - a[0]) / (b[0] - a[0])); return a.slice(1).map((v, j) => Array.isArray(v) ? v.map((x, m) => x + (b[j + 1][m] - x) * k) : v + (b[j + 1] - v) * k); } }
@@ -39,10 +40,10 @@ function camAt(t) { const z = CAM.map(k => [k[0], k[1], k[2], Math.log(k[3])]); 
 
 // ---------- the sun (the clock) ----------
 const DAWN = [.78, .88, 1.0], NOON = [1, .97, .9], GOLD = [1, .84, .55], RED = [1, .58, .38], DUSK = [1, .5, .26], DEEP = [1, .44, .22];
-const SUN = [[0, -230, 20, 0, DUSK], [.3, -230, 20, 2.6, DUSK], [1.3, -230, 440, 2.6, DUSK], [4.9, -230, 440, 2.6, DUSK], [5.5, -230, 440, 0, DUSK],
+const SUN = [[0, -230, 20, 0, DUSK], [.3, -230, 20, 2.6, DUSK], [1.3, -230, 440, 2.6, DUSK], [5.2, -230, 440, 2.6, DUSK], [5.8, -230, 440, 0, DUSK],
   [6.5, 1500, 20, 0, DAWN], [6.7, 1500, 20, 2.3, DAWN], [7.6, 1500, 440, 2.3, DAWN], [10.9, 1500, 440, 2.3, DAWN], [11.8, 1170, 440, 2.7, NOON], [16.3, 1170, 440, 2.7, NOON],
-  [17.2, 840, 440, 2.5, GOLD], [21.4, 840, 440, 2.5, GOLD], [25.9, 840, 440, 2.5, RED], [27.3, 840, 440, 1.4, RED], [27.45, 680, 820, 2.6, RED], [32.7, 680, 820, 2.4, RED],
-  [33.5, 180, 440, 2.6, DUSK], [37.1, 180, 440, 2.6, DUSK], [38.1, -230, 440, 2.8, DEEP], [47.8, -230, 440, 2.6, DEEP], [49.8, -230, 440, 0, DEEP], [57, -230, 440, 0, DEEP]];
+  [17.2, 840, 440, 2.5, GOLD], [21.4, 840, 440, 2.5, GOLD], [26.1, 840, 440, 2.5, RED], [27.3, 840, 440, 1.4, RED], [27.45, 680, 820, 2.6, RED], [32.7, 680, 820, 2.4, RED],
+  [33.5, 180, 440, 2.6, DUSK], [37.1, 180, 440, 2.6, DUSK], [38.1, -230, 440, 2.8, DEEP], [48.1, -230, 440, 2.6, DEEP], [49.8, -230, 440, 0, DEEP], [57, -230, 440, 0, DEEP]];
 
 // ---------- cracks: jagged lines from an impact ----------
 function crackLines(x, y, seed, dirs, len) {
@@ -54,8 +55,8 @@ const CR1 = crackLines(4, -236, 11, [-1.62, -1.2, 1.5, 1.9, -.2, 3.0], [150, 90,
 const CR2 = crackLines(-30, 830, 29, [-1.55, -1.85, -1.3, 1.6, .2, 2.9, -.6], [420, 300, 260, 160, 80, 90, 120]);
 
 // ---------- re-leading: the son's pieces slide out along the leads and come back blood-red ----------
-const GROUPS = [['sword', ['blade', 'grip', 'guard'], [22, -34]], ['legs', ['thighB', 'shinB', 'bootB', 'thighF', 'shinF', 'bootF'], [0, 34]],
-  ['body', ['torso', 'faulds', 'pelvis', 'cloak'], [-34, 0]], ['arms', ['upperB', 'foreB', 'handB', 'upperF', 'foreF', 'handF', 'pauldB', 'pauldF'], [34, -8]], ['head', ['head', 'hair'], [0, -34]]];
+const GROUPS = [['sword', ['blade', 'grip', 'guard'], [22, -34]], ['legs', ['thighB', 'shinB', 'kneeB', 'bootB', 'thighF', 'shinF', 'kneeF', 'bootF', 'tassetB', 'tassetF'], [0, 34]],
+  ['body', ['torso', 'belt', 'pelvis', 'loin', 'cloak', 'pack', 'stackB', 'stackF', 'collar'], [-34, 0]], ['arms', ['upperB', 'foreB', 'handB', 'upperF', 'foreF', 'handF', 'pauldB', 'pauldF', 'rimB', 'rimF'], [34, -8]], ['head', ['head', 'hair', 'pelt'], [0, -34]]];
 const RL0 = 28.0, RLSTEP = .5, RLDUR = .375;
 export const WELDS = GROUPS.map((g, i) => RL0 + i * RLSTEP + RLDUR);
 const HELM_R = [3, 4, 5, 9, 10, 11], HL0 = 29.25, HLSTEP = .32;
@@ -106,7 +107,7 @@ export function state(t) {
   const [sunU, bandW, sunI, sunCol] = track(SUN, t);
   Object.assign(st, { sunU, bandW, sunI, sunCol, skew: .12 });
   // night: moonlight from 48 s
-  const night = ss(seg(t, 47.8, 50.2));
+  const night = ss(seg(t, 48.1, 50.2));
   st.skyI = .12 + night * .2; st.skyCol = [.55 - night * .05, .65, .95 + night * .05]; st.amb = .16 - night * .05;
   // crack shake (2 frames)
   for (const tc of [T.crack1, T.crack2]) if (t >= tc && t < tc + 2 / 24) st.cam = [st.cam[0] + (t - tc < 1 / 24 ? 5 : -4) / st.cam[2], st.cam[1] + 3 / st.cam[2], st.cam[2]];
@@ -136,7 +137,7 @@ export function state(t) {
 
 // ---------- events for the mixer ----------
 export const EV = [
-  { t: .3, type: 'ray' }, { t: T.crack1, type: 'crack' }, { t: 5.2, type: 'whoosh', d: 1.8 }, { t: 6.7, type: 'ray' },
+  { t: .3, type: 'ray' }, { t: T.crack1, type: 'crack' }, { t: 5.4, type: 'whoosh', d: 1.6 }, { t: 6.7, type: 'ray' },
   { t: T.rise, type: 'step' }, { t: 11.15, type: 'glide', d: .7 }, { t: 11.75, type: 'light' }, { t: T.raise, type: 'raise' },
   { t: 16.5, type: 'glide', d: .7 }, { t: 17.15, type: 'light' }, { t: T.strike, type: 'strike' }, { t: T.down, type: 'thump' },
   { t: T.whisper, type: 'whisper', d: 2.6 }, { t: T.listened, type: 'creak' }, { t: T.crack2, type: 'crack' },

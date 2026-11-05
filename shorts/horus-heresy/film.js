@@ -17,7 +17,7 @@ window.TEXTS = () => texts;
 window.render = t => {
   const st = STORY.state(t);
   texts = [];
-  if (t > 1.2 && t < 4.9) texts.push({ id: 'title', text: 'THE HORUS HERESY', x0: 300, y0: 1150, x1: 780, y1: 1220 });
+  if (t > 1.2 && t < 5.2) texts.push({ id: 'title', text: 'THE HORUS HERESY', x0: 300, y0: 1150, x1: 780, y1: 1220 });
   if (!Q.get('nosub')) st.overlay = O => { const r = drawBanderole(O, STORY.SUBS, t); if (r) texts.push(r); };
   if (Q.get('textsonly')) { Lc.O.clearRect(0, 0, W, H); return st.overlay(Lc.O); }   // fast path for readcheck.mjs
   renderScene(Lc, L, comp, st);

@@ -34,34 +34,34 @@ dr += [E(28.4, 'organ_pedal', 'D2', 4.4, .36)] + [E(28.4, 'organ_soft', p, 4.4, 
 dr += [E(44.4, 'organ_soft', p, 3.5, .2, attack=1.2) for p in ('D3', 'A3')]                # grief under 'sealed'
 dr += [E(50.6, 'organ_soft', p, 6.0, .16, attack=2.0) for p in ('A3', 'E4')]               # moonlight
 DRONE = stem(dr)
-cut(DRONE, 25.95, 27.4); cut(DRONE, 47.85, 50.5)
+cut(DRONE, 26.2, 27.4); cut(DRONE, 48.1, 50.5)
 
 # ---------------- harp arpeggios + the light note + the re-leading scale ----------------
 hc = []
 for t0 in [.3, 6.7, 11.75, 17.15, 33.45, 38.05]: hc.append(E(t0, 'hand_chimes', 'A5', 2.5, .5, .15))   # a pane wakes
 for k in range(19): hc.append(E(7.2 + k * .25, 'harp', ['D4', 'F4', 'A4', 'D5', 'A4', 'F4'][k % 6], 1.2, .34, -.2))
 for k in range(18): hc.append(E(11.9 + k * .25, 'harp', ['G3', 'B3', 'D4', 'G4', 'B4', 'D5'][k % 6], 1.2, .36, -.2))
-hc.append(E(12.38, 'harp', 'G5', 2.0, .5, .1))                                             # the sword goes up
+hc.append(E(12.42, 'harp', 'G5', 2.0, .5, .1))                                             # the sword goes up
 WELDS = [28.375, 28.875, 29.375, 29.875, 30.375]
 for t0, p in zip(WELDS, ['D5', 'E5', 'F5', 'G5', 'A5']): hc.append(E(t0, 'hand_chimes', p, 2.0, .45, .2))
-hc.append(E(45.855, 'hand_chimes', 'D5', 3.0, .32))                                        # the throne seals
+hc.append(E(46.155, 'hand_chimes', 'D5', 3.0, .32))                                        # the throne seals
 HC = stem(hc, .85, .34)
-cut(HC, 25.95, 27.4); cut(HC, 47.85, 50.5)
+cut(HC, 26.2, 27.4); cut(HC, 48.1, 50.5)
 
 # ---------------- war: timpani, full organ, the recorder falling ----------------
 wr = []
-wr += [E(19.0 + k * .06, 'timpani', 'D2', .2, .18 + k * .012) for k in range(8)]           # roll under the strike
-wr.append(E(19.48, 'timpani', 'D2', 2.5, .7))
+wr += [E(19.3 + k * .06, 'timpani', 'D2', .2, .18 + k * .012) for k in range(8)]           # roll under the strike
+wr.append(E(19.78, 'timpani', 'D2', 2.5, .7))
 for k, t0 in enumerate([20.6, 20.95, 21.3, 21.65]): wr.append(E(t0, 'recorder', ['A5', 'G5', 'F5', 'D5'][k], .4 if k < 3 else 1.0, .34, .1, attack=.04))
 for k in range(9): wr.append(E(33.0 + k * .5, 'timpani', 'D2' if k % 2 == 0 else 'A2', 1.0, .38 + (k % 2 == 0) * .12))   # the march
 wr += [E(33.4, 'organ_soft', p, 2.0, .3, attack=.3) for p in ('Bb2', 'F3', 'D4')] + [E(35.4, 'organ_soft', p, 1.9, .32, attack=.3) for p in ('C3', 'G3', 'E4')]
-wr += [E(38.2, 'organ', p, 2.4, .42, attack=.15) for p in ('D3', 'A3', 'D4', 'F4')] + [E(38.2, 'organ_pedal', 'D2', 5.14, .45)]
-wr += [E(40.6, 'organ', p, 2.74, .42, attack=.15) for p in ('Bb2', 'F3', 'Bb3', 'D4')]
-wr += [E(38.98, 'timpani', 'D2', 2.0, .75), E(41.0, 'timpani', 'A2', 1.5, .45), E(42.0, 'timpani', 'A2', 1.5, .5), E(43.34, 'timpani', 'D2', 3.5, .85)]
+wr += [E(38.2, 'organ', p, 2.4, .42, attack=.15) for p in ('D3', 'A3', 'D4', 'F4')] + [E(38.2, 'organ_pedal', 'D2', 5.28, .45)]
+wr += [E(40.6, 'organ', p, 2.88, .42, attack=.15) for p in ('Bb2', 'F3', 'Bb3', 'D4')]
+wr += [E(39.02, 'timpani', 'D2', 2.0, .75), E(41.0, 'timpani', 'A2', 1.5, .45), E(42.0, 'timpani', 'A2', 1.5, .5), E(43.48, 'timpani', 'D2', 3.5, .85)]
 WAR = stem(wr, .85, .3)
-cut(WAR, 43.34 + .01)                       # full organ cuts out on 'Horus fell' (the last timpani hit is re-added below)
-tail = stem([E(43.34, 'timpani', 'D2', 3.5, .85)], .9, .4); i0 = int(43.34 * SR) - 40; WAR[i0:] += tail[i0:]
-cut(WAR, 25.95, 27.4)
+cut(WAR, 43.48 + .01)                       # full organ cuts out on 'Horus fell' (the last timpani hit is re-added below)
+tail = stem([E(43.48, 'timpani', 'D2', 3.5, .85)], .9, .4); i0 = int(43.48 * SR) - 40; WAR[i0:] += tail[i0:]
+cut(WAR, 26.2, 27.4)
 
 # ---------------- the bell at nightfall ----------------
 BELL = stem([E(50.0, 'tubular_bells', 'D4', 7.0, .6, release=4.0)], .95, .45)

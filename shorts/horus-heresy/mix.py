@@ -80,7 +80,7 @@ for e in ev:
 # ---------- ambience: a large stone hall; birds in the vault at dawn; wind on the march ----------
 tt = t_(DUR)
 room = lp(brown(DUR), 380) * .06 + bp(noise(DUR), 400, 1600) * .004
-for a, b, g in [(25.95, 27.4, .35), (47.85, 50.0, .5)]: room[int(a * SR):int(b * SR)] *= g     # near-silences
+for a, b, g in [(26.2, 27.4, .35), (48.1, 50.0, .5)]: room[int(a * SR):int(b * SR)] *= g     # near-silences
 amb[:, 0] += room; amb[:, 1] += np.roll(room, 311)
 def flutter(v=1.):
     d = .9; y = np.zeros(int(d * SR))
@@ -94,7 +94,7 @@ add(amb, iron, 51.5, .5, .4)                                                    
 
 fx = verb(fx, HALL, .38)
 vo[:, 0] = compress(vo[:, 0], .2, 3.0); vo[:, 1] = compress(vo[:, 1], .2, 3.0)
-vo = verb(vo, ROOM, .1)
+vo = verb(vo, hall_ir(3.2, 2400, .02), .28)   # voice 1: cathedral reverb
 
 # ---------- score stems, ducked under the narration ----------
 st = {}
@@ -114,5 +114,5 @@ sf.write(os.path.join(D, 'out', 'mix.wav'), mix.astype(np.float32), SR)
 def rms(x): return 20 * np.log10(np.sqrt((x ** 2).mean()) + 1e-9)
 for a, b, n in [(.8, 4.8, 'L1'), (7.5, 10.8, 'L2'), (17.6, 21.0, 'L4'), (28.6, 32.4, 'L6'), (38.4, 42.0, 'L8'), (50.2, 53.8, 'L10')]:
     s0, s1 = int(a * SR), int(b * SR); print(f'{n}: voice {rms(vo[s0:s1] * 1.7):6.1f}  music {rms(mus[s0:s1]):6.1f}  fx {rms(fx[s0:s1] * .9):6.1f}')
-for a, b in [(26.1, 27.3), (48.0, 49.9)]: print(f'silence {a}-{b}: total {rms(mix[int(a * SR):int(b * SR)]):6.1f}')
+for a, b in [(26.3, 27.3), (48.2, 49.9)]: print(f'silence {a}-{b}: total {rms(mix[int(a * SR):int(b * SR)]):6.1f}')
 print('wrote out/mix.wav', mix.shape, 'peak', round(float(np.abs(mix).max()), 3))

@@ -3,7 +3,7 @@ The Horus Heresy in 60 seconds: credits and licences
 Unofficial fan work. Warhammer 40,000, The Horus Heresy, and the names Horus, the Emperor, Terra, Davin and Space Marine are trademarks of Games Workshop Ltd, used here only to retell the lore. All pictures are original glass designs drawn in code. No Games Workshop art, logos or designs are used.
 
 Voice
-- Narration: Kokoro TTS (kokoro-onnx, voice "bm_george"), Apache License 2.0. https://github.com/thewh1teagle/kokoro-onnx
+- Narration: Kokoro TTS (kokoro-onnx, voice "bm_lewis"; pitch, tempo and EQ in voice_fx.py, reverb in mix.py), Apache License 2.0. https://github.com/thewh1teagle/kokoro-onnx
 
 Music (original score, music/score.py); samples, all CC0 1.0:
 - VS Chamber Orchestra: Community Edition (Versilian Studios / Sam Gossner; pipe organ by Ivy Audio / Simon Dalzell): organ, organ_soft, organ_pedal, timpani. https://github.com/sgossner/VSCO-2-CE

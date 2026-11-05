@@ -109,8 +109,9 @@ export const FATHER2 = [
   { n: 'collar', p: 'torso', at: [0, -96], sh: smooth([[-30, 4, 1], [-30, -20], [-20, -38], [0, -42], [20, -38], [30, -20], [30, 4, 1], [16, -4], [0, -8], [-16, -4]]), c: 'arm2', z: 5.6, paint: g => { band(g, -26, 26, -26, false); for (let k = -2; k <= 2; k++) rivet(g, k * 10, -34 + Math.abs(k) * 2.5, 2); } },
   { n: 'head', p: 'torso', at: [2, -100], sh: smooth([[-15, -4], [-17, -26], [-13, -44], [0, -52], [14, -48], [20, -34], [23, -22, 1], [20, -18], [21, -9], [13, -1], [0, 2]]), c: 'flesh', z: 10.5, paint: (g, o) => face(g, o.face || 'stern') },
   { n: 'hair', p: 'head', at: [0, 0], sh: smooth([[-14, -40], [-4, -54], [12, -52], [8, -44], [-6, -40], [-12, -10], [-18, 18], [-26, 30, 1], [-28, 4], [-22, -26]]), c: 'hair', z: 5.9, mw: 3, paint: g => { fold(g, [[-12, -34], [-18, 0], [-22, 24]], 1.1); } },   // long dark hair
-  { n: 'crown', p: 'head', at: [0, -46], sh: smooth([[-18, 6], [-20, -4], [-10, -10], [0, -12], [10, -10], [20, -4], [18, 6], [8, 0], [0, -2], [-8, 0]]), c: 'laurel', z: 10.7, lead: 2.6,
-    paint: g => { for (let k = -4; k <= 4; k++) { g.save(); g.translate(k * 4.2, -4 - (4 - Math.abs(k)) * .8); g.rotate(k * .25); g.fillStyle = 'rgba(20,40,14,.6)'; g.beginPath(); g.ellipse(0, -2, 1.8, 4.5, 0, 0, 7); g.fill(); g.restore(); } } },
+  { n: 'crown', p: 'head', at: [0, -44], sh: smooth([[-19, 8, 1], [-21, -8, 1], [-15, -2, 1], [-11, -22, 1], [-5, -4, 1], [1, -28, 1], [7, -4, 1], [13, -22, 1], [17, -2, 1], [23, -8, 1], [21, 8, 1]]), c: 'crown', z: 10.7, lead: 2.6,
+    paint: g => { brush(g, [[-19, 2], [1, 4], [21, 2]], 1.4, { w0: .5, w1: .5 }); for (let k = -4; k <= 4; k++) { g.save(); g.translate(k * 4.4, 4.5); g.rotate(k * .2 + .5); g.fillStyle = 'rgba(52,30,14,.55)'; g.beginPath(); g.ellipse(0, 0, 1.4, 3.2, 0, 0, 7); g.fill(); g.restore(); }
+      g.fillStyle = 'rgba(150,15,25,.9)'; g.beginPath(); g.arc(1, -6, 3.2, 0, 7); g.fill(); g.fillStyle = 'rgba(255,240,220,.6)'; g.beginPath(); g.arc(0, -7, 1, 0, 7); g.fill(); } },   // a gold crown, laurel painted on its band
   { n: 'upperB', p: 'torso', at: [-46, -82], sh: A.upper, c: 'arm', z: 2, paint: g => band(g, -9, 9, 22) },
   { n: 'foreB', p: 'upperB', at: [0, 40], sh: A.fore, c: 'arm', z: 2, paint: g => band(g, -10, 10, 10) },
   { n: 'handB', p: 'foreB', at: [0, 34], sh: A.fist, c: 'arm2', z: 2 },
@@ -126,7 +127,7 @@ export const FATHER2 = [
   { n: 'pauldF', p: 'upperF', at: [0, 2], sh: A.pauldron, c: 'arm', z: 10, mw: 7, paint: g => { sunburst(g, 0, -10, 9); laurel(g, [[-28, 8], [-10, -16], [10, -18], [28, 2]], .9); } },
   { n: 'rimF', p: 'pauldF', at: [0, 0], sh: A.rim, c: 'arm2', z: 10.1, lead: 2.6 },
 ];
-export const FATHER2_PAL = { arm: COL.gold2, arm2: COL.gold, mantle: COL.ruby, cloth: COL.ruby2, laurel: COL.green, flesh: '#b8846a', hair: '#2a1c14', dark: '#3c3f46', steel: COL.white, fire: COL.amber };
+export const FATHER2_PAL = { arm: COL.gold2, arm2: COL.gold, mantle: COL.ruby, cloth: COL.ruby2, crown: COL.gold2, flesh: '#b8846a', hair: '#2a1c14', dark: '#3c3f46', steel: COL.white, fire: COL.amber };
 
 // ---------- a legionary helm: rounded dome, two round lenses, a breathing grille ----------
 const HELM2 = smooth([[-17, 22, 1], [-20, 4], [-18, -14], [-8, -26], [8, -26], [18, -14], [20, 4], [17, 22, 1], [8, 26], [-8, 26]]);

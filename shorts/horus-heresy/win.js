@@ -1,7 +1,8 @@
 // One tall lancet read bottom to top: five medallions and a larger one under the arch. World units, y down.
 import { mulberry, hash } from '/core/lib.js';
 import { COL, Pass, smooth, circle, ellipse, brush, softPoly, INK } from './glass.js';
-import { drawRig, SON, SON_PAL, FATHER, FATHER_PAL, SHADE, SHADE_PAL, helm, POSE } from './figures.js';
+import { drawRig, SHADE, SHADE_PAL, POSE } from './figures.js';
+import { SON2 as SON, SON2_LOYAL as SON_PAL, SON2_TURNED, FATHER2 as FATHER, FATHER2_PAL as FATHER_PAL, helm2 } from './figures2.js';
 
 export const LW = 360, BOT = 1700, SPR = -480, APEX = SPR - LW * Math.sqrt(3) / 2;
 export const MED = [1500, 1170, 840, 510, 180, -230];       // medallion centres, bottom to top
@@ -151,23 +152,23 @@ function medallion(P, L, i, f, st) {
   if (i === 0) {   // the finding
     ground(P, r, COL.green, 8100);
     starPiece(P, 70, -80, 12, COL.white, 8110);
-    drawRig(P, L.translate(-52, 6).scale(.5), FATHER, f.father || POSE.fstand, FATHER_PAL, { id: 8200, face: 'calm' });
-    drawRig(P, L.translate(48, 10).scale(-.44, .44), SON, f.son || POSE.kneel, SON_PAL, { id: 8400, face: 'calm' });
+    drawRig(P, L.translate(-56, 10).scale(.46), FATHER, f.father || POSE.fstand, FATHER_PAL, { id: 8200, face: 'calm' });
+    drawRig(P, L.translate(54, 14).scale(-.4, .4), SON, f.son || POSE.kneel, SON_PAL, { id: 8400, face: 'calm' });
   } else if (i === 1) {   // the warmaster
     ground(P, r, COL.olive, 8500, 80);
     banner(P, -96, -70, COL.ruby, 8510, 1); banner(P, 96, -70, COL.ruby, 8520, -1);
     starPiece(P, -40, -98, 9, COL.gold2, 8530); starPiece(P, 46, -104, 8, COL.white, 8531); starPiece(P, 0, -118, 7, COL.gold2, 8532);
-    drawRig(P, L.translate(-6, 0).scale(.54), SON, f.son || POSE.stand, SON_PAL, { id: 8600, face: 'stern' });
+    drawRig(P, L.translate(-12, 4).scale(.5), SON, f.son || POSE.stand, SON_PAL, { id: 8600, face: 'stern' });
   } else if (i === 2) {   // the wound
     ground(P, r, COL.green2, 8700, 76);
     P.piece(circle(-70, -72, 26), COL.white, { id: 8710, lead: 4, matW: 8, paint: g => { g.fillStyle = 'rgba(60,40,30,.25)'; g.beginPath(); g.arc(-62, -66, 7, 0, 7); g.fill(); g.beginPath(); g.arc(-78, -80, 4, 0, 7); g.fill(); } });
     drawRig(P, L.translate(58, 2).scale(-.5, .5), SHADE, f.shade || POSE.sReady, SHADE_PAL, { id: 8800 });
-    drawRig(P, L.translate(-38, 4).scale(.5), SON, f.son || POSE.stand, f.turned ? SON_PAL : SON_PAL, { id: 8900, face: f.face || 'stern', off: f.off, pal: f.pal });
+    drawRig(P, L.translate(-42, 8).scale(.46), SON, f.son || POSE.stand, SON_PAL, { id: 8900, face: f.face || 'stern', off: f.off, pal: f.pal });
   } else if (i === 3) {   // the legions split
     ground(P, r, COL.brown, 9000, 96);
     const pos = [[-96, -24], [-64, -30], [-32, -26], [32, -26], [64, -30], [96, -24], [-104, 34], [-70, 28], [-36, 32], [36, 32], [70, 28], [104, 34]];
     pos.forEach(([x, y], k) => { const right = x > 0, off = right && f.helmOff ? f.helmOff[k] || [0, 0] : [0, 0], turned = right && f.helmTurned && f.helmTurned[k];
-      helm(P, L, x + off[0], y + off[1], turned ? COL.ruby : COL.steel, 9100 + k * 5, 1.18); });
+      helm2(P, L, x + off[0], y + off[1], turned ? COL.teal : COL.white, 9100 + k * 5, .98, turned ? '#ff5a2a' : '#7fdc4a'); });
   } else if (i === 4) {   // the march
     for (const s of f.stars || []) { P.piece(smooth([[s.x - 3, s.y - 2], [s.x + 26, s.y - 34], [s.x + 4, s.y + 2]]), COL.amber, { id: s.id + 1, lead: 2.4, mat: false }); starPiece(P, s.x, s.y, 10, COL.gold2, s.id); }
     const wy = 74;
@@ -177,8 +178,8 @@ function medallion(P, L, i, f, st) {
   } else {   // the duel, then the throne
     ground(P, r, COL.olive, 9400, 92);
     P.setTransform(L.translate(0, -6)); throne(P, 9410); P.setTransform(L);
-    drawRig(P, L.translate(f.fx ?? -62, f.fy ?? 6).scale(.54), FATHER, f.father || POSE.fstand, FATHER_PAL, { id: 9500, face: f.fface || 'stern' });
-    if (!f.noSon) drawRig(P, L.translate(f.sx ?? 66, f.sy ?? 6).scale(-.54, .54), SON, f.son || POSE.guard, f.sonPal || SON_PAL, { id: 9700, face: f.sface || 'turned' });
+    drawRig(P, L.translate(f.fx ?? -62, f.fy ?? 8).scale(.5), FATHER, f.father || POSE.fstand, FATHER_PAL, { id: 9500, face: f.fface || 'stern' });
+    if (!f.noSon) drawRig(P, L.translate(f.sx ?? 66, f.sy ?? 8).scale(-.5, .5), SON, f.son || POSE.guard, f.sonPal || SON_PAL, { id: 9700, face: f.sface || 'turned', turned: true });
   }
   P.setTransform(L);
 }

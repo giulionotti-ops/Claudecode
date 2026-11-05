@@ -2,75 +2,77 @@
  {
   "id": "L1",
   "text": "Ten thousand years ago, the Emperor's favourite son betrayed him.",
-  "voice": "bm_george",
-  "speed": 0.9,
+  "voice": "bm_lewis",
+  "speed": 0.84,
   "lang": "en-gb",
   "asr": "10,000 years ago, the emperor's favorite son betrayed him."
  },
  {
   "id": "L2",
   "text": "Horus was the first son he found, and the brightest.",
-  "voice": "bm_george",
-  "speed": 0.9,
+  "voice": "bm_lewis",
+  "speed": 0.84,
   "lang": "en-gb",
   "asr": "Horace was the first son he found and the brightest."
  },
  {
   "id": "L3",
   "text": "He made him Warmaster of the Great Crusade, to conquer the stars.",
-  "voice": "bm_george",
-  "speed": 0.92,
-  "lang": "en-gb"
+  "voice": "bm_lewis",
+  "speed": 0.84,
+  "lang": "en-gb",
+  "asr": "He made him warm master of the great crusade to conquer the stars."
  },
  {
   "id": "L4",
   "text": "On the moon of Davin, a cursed blade struck Horus down.",
-  "voice": "bm_george",
-  "speed": 0.9,
-  "lang": "en-gb"
+  "voice": "bm_lewis",
+  "speed": 0.84,
+  "lang": "en-gb",
+  "asr": "On the moon of Daven, a cursed blade struck Horus down."
  },
  {
   "id": "L5",
   "text": "As he lay dying, the dark gods whispered. And he listened.",
-  "voice": "bm_george",
-  "speed": 0.86,
+  "voice": "bm_lewis",
+  "speed": 0.84,
   "lang": "en-gb"
  },
  {
   "id": "L6",
   "text": "Half the Space Marine legions followed him into rebellion.",
-  "voice": "bm_george",
-  "speed": 0.92,
+  "voice": "bm_lewis",
+  "speed": 0.84,
   "lang": "en-gb"
  },
  {
   "id": "L7",
   "text": "They burned their way across the galaxy to Terra.",
-  "voice": "bm_george",
-  "speed": 0.92,
+  "voice": "bm_lewis",
+  "speed": 0.84,
   "lang": "en-gb",
   "asr": "They burned their way across the galaxy to terror."
  },
  {
   "id": "L8",
   "text": "Father and son met at last, aboard Horus's flagship.",
-  "voice": "bm_george",
-  "speed": 0.9,
+  "voice": "bm_lewis",
+  "speed": 0.84,
   "lang": "en-gb",
   "asr": "father and son met at last aboard Horace's flagship"
  },
  {
   "id": "L9",
   "text": "Horus fell. The broken Emperor was sealed upon the Golden Throne.",
-  "voice": "bm_george",
-  "speed": 0.88,
+  "voice": "bm_lewis",
+  "speed": 0.84,
   "lang": "en-gb",
   "asr": "Horace fell. The broken emperor was sealed upon the golden throne."
  },
  {
   "id": "L10",
   "text": "The Heresy was over. The long night had only begun.",
-  "voice": "bm_george",
+  "voice": "bm_lewis",
   "speed": 0.84,
   "lang": "en-gb"
  }

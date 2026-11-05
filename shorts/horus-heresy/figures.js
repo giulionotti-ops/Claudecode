@@ -154,7 +154,7 @@ export const POSE = {
   strike: { upperF: -1.7, foreF: -.6, handF: -.3, upperB: .5, foreB: -.6, torso: -.1, thighF: -.35, shinF: .2, thighB: .3 },
   lie: { y: 92, r: -1.5, upperF: -.3, foreF: -.3, upperB: .3, head: -.25, thighF: .05, thighB: -.05 },
   // father on the throne (thighs forward, robe folded)
-  seated: { y: 30, skirt: -1.4, hem: 1.4, upperF: -.5, foreF: -.9, upperB: .15, foreB: -.5, head: .18 },
+  seated: { y: 30, skirt: -1.4, hem: 1.4, thighF: -1.4, shinF: 1.4, thighB: -1.35, shinB: 1.35, upperF: -.5, foreF: -.9, upperB: .15, foreB: -.5, head: .18 },
   fstand: { upperF: -.4, foreF: -.5, upperB: .2 },
   reach: { upperF: -1.25, foreF: -.25, handF: .2, upperB: .2 },
   // the assassin

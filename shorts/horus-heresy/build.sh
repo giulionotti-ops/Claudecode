@@ -8,7 +8,7 @@ export LIB
 [ -f "$LIB/core/render/video.mjs" ] || { echo "set LIB to the Lemo-Opuscar library folder"; exit 1; }
 PY="$LIB/.venv/bin/python"
 cd "$LIB"
-[ -f "$HERE/voice/dur.json" ] || "$PY" core/tts/tts.py "$HERE/lines.json" "$HERE/voice"
+[ -f "$HERE/voice/dur.json" ] || { "$PY" core/tts/tts.py "$HERE/lines.json" "$HERE/voice/raw" && "$PY" "$HERE/voice_fx.py"; }
 "$PY" core/tts/asr_check.py "$HERE/lines.json" "$HERE/voice" --lang en
 "$PY" "$HERE/music/score.py"
 node core/render/events.mjs "$HERE" --size 1080x1920
