@@ -7,7 +7,9 @@ the machine (user/global scope) is lost when the session ends.
 
 - **Skills:** install at project scope so they land in `.claude/skills/`
   (e.g. `npx skills add <repo> --skill <name> -a claude-code -y`, without
-  `-g`). Review the skill's files, then commit them together with
+  `-g`). Review the skill's files and scan it with
+  `skillspector scan <skill-dir> --no-llm` (check flagged findings in
+  context; many are false positives), then commit them together with
   `skills-lock.json` and push.
 - **Plugins:** add the plugin's marketplace to `extraKnownMarketplaces` and
   the plugin to `enabledPlugins` in `.claude/settings.json`, then commit and

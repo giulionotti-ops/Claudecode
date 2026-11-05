@@ -38,6 +38,11 @@ if [ ! -f "$HOME/.agent-reach/state.json" ]; then
 fi
 rm -f "$HOME/.claude/skills/agent-reach"
 
+# SkillSpector: security scanner for agent skills (update: uv tool update skillspector)
+if ! command -v skillspector >/dev/null 2>&1; then
+  uv tool install git+https://github.com/NVIDIA/skillspector.git
+fi
+
 # Make sure the claude-mem launcher is on PATH for the session
 if [ -n "${CLAUDE_ENV_FILE:-}" ]; then
   echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$CLAUDE_ENV_FILE"
