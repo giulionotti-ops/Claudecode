@@ -6,6 +6,12 @@
       "sourceType": "github",
       "skillPath": "SKILL.md",
       "computedHash": "2903e23de02231da173ccee7b09db56107b2f365168e9e9043ddba78c048fede"
+    },
+    "voicestudio": {
+      "source": "debpalash/VoiceStudio",
+      "sourceType": "github",
+      "skillPath": "skills/voicestudio/SKILL.md",
+      "computedHash": "24c22dc99b617db1258e5424050ff17590b294b4003f2d57f2d906898fddcedd"
     }
   }
 }
