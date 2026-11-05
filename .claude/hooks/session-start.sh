@@ -27,6 +27,17 @@ if ! npx -y claude-mem status 2>/dev/null | grep -q "Worker is running"; then
   npx -y claude-mem start
 fi
 
+# Agent Reach: CLI (via uv) + default channels. Its skill lives in this repo
+# (.claude/skills/agent-reach), so drop the user-level copy setup links in.
+export PATH="$HOME/.local/bin:$PATH"
+if ! command -v agent-reach >/dev/null 2>&1; then
+  uv tool install https://github.com/Panniantong/Agent-Reach/releases/latest/download/agent-reach.zip
+fi
+if [ ! -f "$HOME/.agent-reach/state.json" ]; then
+  agent-reach setup >/dev/null
+fi
+rm -f "$HOME/.claude/skills/agent-reach"
+
 # Make sure the claude-mem launcher is on PATH for the session
 if [ -n "${CLAUDE_ENV_FILE:-}" ]; then
   echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$CLAUDE_ENV_FILE"
