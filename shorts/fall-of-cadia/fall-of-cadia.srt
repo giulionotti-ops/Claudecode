@@ -1,39 +1,39 @@
 1
-00:00:00,600 --> 00:00:05,516
+00:00:00,600 --> 00:00:05,327
 10,000 years, one world held the gates of hell shut.
 
 2
-00:00:07,200 --> 00:00:12,083
+00:00:06,828 --> 00:00:11,688
 Cadia, a fortress world, ringed with ancient pylons.
 
 3
-00:00:12,600 --> 00:00:17,550
+00:00:12,038 --> 00:00:17,031
 Its children were handed rifles before they could walk.
 
 4
-00:00:17,900 --> 00:00:23,250
+00:00:17,381 --> 00:00:22,568
 Twelve times, Abaddon the Despoiler led a Black Crusade.
 
 5
-00:00:23,600 --> 00:00:26,850
+00:00:22,918 --> 00:00:26,178
 Twelve times Cadia held.
 
 6
-00:00:27,200 --> 00:00:31,250
+00:00:26,528 --> 00:00:30,588
 On the 13th, he brought a star fortress,
 
 7
-00:00:31,600 --> 00:00:34,527
+00:00:30,938 --> 00:00:33,865
 and hurled it down.
 
 8
-00:00:35,200 --> 00:00:39,527
+00:00:34,215 --> 00:00:38,542
 The pylons shattered. The world split open.
 
 9
-00:00:39,900 --> 00:00:45,406
+00:00:38,892 --> 00:00:43,886
 Cadia fell. Its soldiers fought on in the ruins.
 
 10
-00:00:46,000 --> 00:00:49,527
+00:00:44,480 --> 00:00:48,007
 Cadia fell. But Cadia stands.
