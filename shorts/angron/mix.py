@@ -115,7 +115,7 @@ mus = mus * duck[:, None] + st['bell'] * gains['bell']                          
 
 mix = mus + fx * .9 + amb + vo * 1.7
 end = int((DUR - .7) * SR); mix[end:] *= np.linspace(1, 0, N - end)[:, None]
-mix = np.stack([limit(mix[:, 0], .78), limit(mix[:, 1], .78)], 1)
+mix = np.stack([limit(mix[:, 0], .7), limit(mix[:, 1], .7)], 1)
 os.makedirs(os.path.join(D, 'out'), exist_ok=True)
 sf.write(os.path.join(D, 'out', 'mix.wav'), mix.astype(np.float32), SR)
 def rms(x): return 20 * np.log10(np.sqrt((x ** 2).mean()) + 1e-9)
