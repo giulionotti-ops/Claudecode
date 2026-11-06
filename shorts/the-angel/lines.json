@@ -43,7 +43,7 @@
   "voice": "bm_lewis",
   "speed": 0.84,
   "lang": "en-gb",
-  "asr": "Sanguineous, refused."
+  "asr": "Sanguine is refused."
  },
  {
   "id": "L7",
@@ -59,7 +59,7 @@
   "voice": "bm_lewis",
   "speed": 0.84,
   "lang": "en-gb",
-  "asr": "But the angel had struck true, and left a crack in Horace's armour."
+  "asr": "But the angel had struck true and left a crack in Horus's armor."
  },
  {
   "id": "L9",
@@ -73,6 +73,7 @@
   "text": "His sons still carry his death in their blood.",
   "voice": "bm_lewis",
   "speed": 0.84,
-  "lang": "en-gb"
+  "lang": "en-gb",
+  "asr": "His son still carry his death in their blood."
  }
 ]

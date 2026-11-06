@@ -1,12 +1,17 @@
 """Original score for 'The Fall of Cadia': D Aeolian, organ / harp / chimes / timpani / one bell.
 Run with the library venv: LIB=<library> $LIB/.venv/bin/python music/score.py  -> music/stems/{drone,harp_chimes,war,bell}.wav
 Times follow story.js (T, LINES)."""
-import sys, os, numpy as np, soundfile as sf
+import sys, os, json, numpy as np, soundfile as sf
 LIB = os.environ.get('LIB') or os.path.expanduser('~/lemo-opuscar'); sys.path.insert(0, LIB)
 from core.audio import sampler as S
 from core.audio.sfx import SR
 HERE = os.path.dirname(os.path.abspath(__file__))
 DUR = 52.5; N = int(DUR * SR)
+# timemap.json (retime.py): old cue times -> the film's current timeline
+_tmp = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'timemap.json')
+TM = json.load(open(_tmp)) if os.path.exists(_tmp) else None
+F = (lambda t: float(np.interp(t, [a for a, b in TM['anchors']], [b for a, b in TM['anchors']]))) if TM else (lambda t: t)
+if TM: DUR = TM['dur']; N = int(DUR * SR)
 S.seed(13)
 os.makedirs(os.path.join(HERE, 'stems'), exist_ok=True)
 T = dict(ringed=9.4, handed=13.78, led=20.6, held=25.26, fortress=30.14, hurled=31.82, crack=33.24, shatter=35.9, split=37.38, fought=41.94, stands=47.88)
@@ -16,11 +21,11 @@ def stem(events, size=.85, mix=.32, damp=.5):
     x = x[:N] if len(x) >= N else np.vstack([x, np.zeros((N - len(x), 2), np.float32)])
     return S.room(x, size=size, mix=mix, damp=damp).astype(np.float32)
 def cut(x, a, b=DUR, fade=.02):   # hard stop, reverb tail included
-    i, j, f = int(a * SR), int(b * SR), int(fade * SR)
+    i, j, f = int(F(a) * SR), int(F(b) * SR), int(fade * SR)
     if i - f > 0: x[i - f:i] *= np.linspace(1, 0, f)[:, None]
     x[i:j] = 0
-def ramp(x, a, b, g0, g1): i, j = int(a * SR), int(b * SR); x[i:j] *= np.linspace(g0, g1, j - i)[:, None]
-def E(t, inst, p, d, v, pan=0, **k): return dict(t=t, inst=inst, pitch=p, dur=d, vel=v, pan=pan, **k)
+def ramp(x, a, b, g0, g1): i, j = int(F(a) * SR), int(F(b) * SR); x[i:j] *= np.linspace(g0, g1, j - i)[:, None]
+def E(t, inst, p, d, v, pan=0, **k): return dict(t=F(t), inst=inst, pitch=p, dur=d, vel=v, pan=pan, **k)
 SILENT = [(26.0, 27.05), (T['crack'], 34.6), (38.5, 39.5), (44.9, T['stands'])]
 
 # ---------------- drone ----------------

@@ -5,6 +5,8 @@ src = open(os.path.join(HERE, 'story.js'), encoding='utf-8').read()
 lines = re.findall(r"\['(L\d+)', ([\d.]+), ([\d.]+), (['\"])(.*?)\4\]", src)
 dur = float(re.search(r'export const DUR = ([\d.]+)', src).group(1))
 chars = lambda s: len(re.sub(r'\s', '', s))
+tm = os.path.join(HERE, 'timemap.json'); TM = json.load(open(tm)) if os.path.exists(tm) else None
+if TM: dur = TM['dur']; lines = [(lid, str(TM['lines'][lid][0]), str(TM['lines'][lid][1]), q, text) for lid, t0, d, q, text in lines]
 cues = []
 for i, (lid, t0, d, _, text) in enumerate(lines):
     t0, d = float(t0), float(d); nxt = float(lines[i + 1][1]) - .35 if i + 1 < len(lines) else dur - .3

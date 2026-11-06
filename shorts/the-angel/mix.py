@@ -10,6 +10,11 @@ EV = json.load(open(os.path.join(D, 'events.json'))); DUR = EV['dur']; ev = EV['
 N = int(DUR * SR)
 fx = np.zeros((N, 2)); vo = np.zeros((N, 2)); amb = np.zeros((N, 2))
 rng = np.random.default_rng(57)
+# timemap.json (retime.py): old cue times -> the film's current timeline
+_tmp = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'timemap.json')
+TM = json.load(open(_tmp)) if os.path.exists(_tmp) else None
+F = (lambda t: float(np.interp(t, [a for a, b in TM['anchors']], [b for a, b in TM['anchors']]))) if TM else (lambda t: t)
+
 
 def hall_ir(d=2.8, damp=2600, pre=.02):
     n = int(d * SR); e = np.exp(-np.arange(n) / SR / (d / 6.9))
@@ -85,13 +90,13 @@ for e in ev:
 # ---------- ambience: a large stone hall; birds in the vault at dawn; wind on the march ----------
 tt = t_(DUR)
 room = lp(brown(DUR), 380) * .06 + bp(noise(DUR), 400, 1600) * .004
-for a, b, g in [(28.9, 30.25, .35), (39.4, 40.35, .45), (44.7, 48.6, .5)]: room[int(a * SR):int(b * SR)] *= g     # near-silences
+for a, b, g in [(28.9, 30.25, .35), (39.4, 40.35, .45), (44.7, 48.6, .5)]: room[int(F(a) * SR):int(F(b) * SR)] *= g     # near-silences
 amb[:, 0] += room; amb[:, 1] += np.roll(room, 311)
-for at, g in [(8.0, .3), (9.6, .2)]: add(amb, verb(np.stack([flutter(.8)] * 2, 1), HALL, .6)[:, 0], at, g, rng.uniform(-.7, .7))
-wind = bp(noise(5.0), 120, 700) * np.sin(np.pi * np.linspace(0, 1, int(5.0 * SR))) * .05; add(amb, wind, 30.4, .8, .3)
+for at, g in [(8.0, .3), (9.6, .2)]: add(amb, verb(np.stack([flutter(.8)] * 2, 1), HALL, .6)[:, 0], F(at), g, rng.uniform(-.7, .7))
+wind = bp(noise(5.0), 120, 700) * np.sin(np.pi * np.linspace(0, 1, int(5.0 * SR))) * .05; add(amb, wind, F(30.4), .8, .3)
 iron = np.zeros(int(4 * SR))
 for k in range(5): s = glass_tink(.12, rng.uniform(5200, 6800), .2, .2); n0 = int(rng.uniform(0, 3.6) * SR); iron[n0:n0 + len(s)] += s[:len(iron) - n0]
-add(amb, iron, 48.3, .5, .4)                                                                   # iron ticking as it cools
+add(amb, iron, F(48.3), .5, .4)                                                                   # iron ticking as it cools
 
 fx = verb(fx, HALL, .38)
 vo[:, 0] = compress(vo[:, 0], .2, 3.0); vo[:, 1] = compress(vo[:, 1], .2, 3.0)
@@ -115,6 +120,6 @@ os.makedirs(os.path.join(D, 'out'), exist_ok=True)
 sf.write(os.path.join(D, 'out', 'mix.wav'), mix.astype(np.float32), SR)
 def rms(x): return 20 * np.log10(np.sqrt((x ** 2).mean()) + 1e-9)
 for a, b, n in [(.8, 4.8, 'L1'), (7.4, 11.4, 'L2'), (17.6, 20.8, 'L4'), (22.5, 25.0, 'L5'), (34.8, 39.3, 'L8'), (40.7, 43.2, 'L9'), (46.2, 49.1, 'L10')]:
-    s0, s1 = int(a * SR), int(b * SR); print(f'{n}: voice {rms(vo[s0:s1] * 1.7):6.1f}  music {rms(mus[s0:s1]):6.1f}  fx {rms(fx[s0:s1] * .9):6.1f}')
-for a, b in [(29.0, 30.2), (39.5, 40.3)]: print(f'silence {a}-{b}: total {rms(mix[int(a * SR):int(b * SR)]):6.1f}')
+    s0, s1 = int(F(a) * SR), int(F(b) * SR); print(f'{n}: voice {rms(vo[s0:s1] * 1.7):6.1f}  music {rms(mus[s0:s1]):6.1f}  fx {rms(fx[s0:s1] * .9):6.1f}')
+for a, b in [(29.0, 30.2), (39.5, 40.3)]: print(f'silence {a}-{b}: total {rms(mix[int(F(a) * SR):int(F(b) * SR)]):6.1f}')
 print('wrote out/mix.wav', mix.shape, 'peak', round(float(np.abs(mix).max()), 3))

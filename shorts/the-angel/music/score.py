@@ -1,11 +1,16 @@
 """Original score for "The Angel's Last Stand": D major for the Angel, D Aeolian for the fall. Organ / harp / chimes / timpani / recorder / bell.
 Run with the library venv: LIB=<library> $LIB/.venv/bin/python music/score.py  -> music/stems/*.wav. Times follow story.js."""
-import sys, os, numpy as np, soundfile as sf
+import sys, os, json, numpy as np, soundfile as sf
 LIB = os.environ.get('LIB') or os.path.expanduser('~/lemo-opuscar'); sys.path.insert(0, LIB)
 from core.audio import sampler as S
 from core.audio.sfx import SR
 HERE = os.path.dirname(os.path.abspath(__file__))
 DUR = 52.0; N = int(DUR * SR)
+# timemap.json (retime.py): old cue times -> the film's current timeline
+_tmp = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'timemap.json')
+TM = json.load(open(_tmp)) if os.path.exists(_tmp) else None
+F = (lambda t: float(np.interp(t, [a for a, b in TM['anchors']], [b for a, b in TM['anchors']]))) if TM else (lambda t: t)
+if TM: DUR = TM['dur']; N = int(DUR * SR)
 S.seed(21)
 os.makedirs(os.path.join(HERE, 'stems'), exist_ok=True)
 T = dict(angel=8.68, death=13.76, went=14.86, met=20.26, offered=22.76, refused=27.9, broke=30.96, down=32.8, struck=35.5, crack=37.4, end=42.12, blood=48.7)
@@ -14,10 +19,10 @@ def stem(events, size=.85, mix=.32, damp=.5):
     x = x[:N] if len(x) >= N else np.vstack([x, np.zeros((N - len(x), 2), np.float32)])
     return S.room(x, size=size, mix=mix, damp=damp).astype(np.float32)
 def cut(x, a, b=DUR, fade=.02):
-    i, j, f = int(a * SR), int(b * SR), int(fade * SR)
+    i, j, f = int(F(a) * SR), int(F(b) * SR), int(fade * SR)
     if i - f > 0: x[i - f:i] *= np.linspace(1, 0, f)[:, None]
     x[i:j] = 0
-def E(t, inst, p, d, v, pan=0, **k): return dict(t=t, inst=inst, pitch=p, dur=d, vel=v, pan=pan, **k)
+def E(t, inst, p, d, v, pan=0, **k): return dict(t=F(t), inst=inst, pitch=p, dur=d, vel=v, pan=pan, **k)
 SILENT = [(28.9, 30.25), (39.4, 40.35), (44.7, T['blood'])]
 
 dr = [E(.2, 'organ_pedal', 'D2', 5.4, .4), E(.2, 'organ_soft', 'D3', 5.4, .3, attack=1.2), E(.2, 'organ_soft', 'A3', 5.4, .26, attack=1.4), E(1.6, 'organ_soft', 'Eb4', 3.8, .13, attack=2.0)]

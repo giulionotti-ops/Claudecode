@@ -13,7 +13,7 @@
   "voice": "bm_lewis",
   "speed": 0.84,
   "lang": "en-gb",
-  "asr": "Kadia, a fortress world, ringed with ancient pylons."
+  "asr": "Cadia, a fortress world, ringed with ancient pylons."
  },
  {
   "id": "L3",
@@ -28,7 +28,7 @@
   "voice": "bm_lewis",
   "speed": 0.84,
   "lang": "en-gb",
-  "asr": "Twelve times, a bad in the disboiler led a black crusade against it."
+  "asr": "Twelve times, a bad in the disboiler, led a black crusade against it."
  },
  {
   "id": "L5",
@@ -51,7 +51,8 @@
   "text": "and hurled it into the planet.",
   "voice": "bm_lewis",
   "speed": 0.84,
-  "lang": "en-gb"
+  "lang": "en-gb",
+  "asr": "and hold it into the planet."
  },
  {
   "id": "L8",
@@ -66,7 +67,7 @@
   "voice": "bm_lewis",
   "speed": 0.84,
   "lang": "en-gb",
-  "asr": "Kadia fell, but its soldiers fought on in the ruins to the last."
+  "asr": "Katie a fell, but its soldiers fought on in the ruins to the last."
  },
  {
   "id": "L10",
@@ -74,6 +75,6 @@
   "voice": "bm_lewis",
   "speed": 0.84,
   "lang": "en-gb",
-  "asr": "Kadia fell, but Kadia stands."
+  "asr": "Katie a fell, but Katie a stands."
  }
 ]

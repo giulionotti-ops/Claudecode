@@ -28,7 +28,7 @@ function lozenges(box, d, seed) {
     for (let a = Math.floor(box[0] / d) - 1; a <= Math.ceil(box[2] / d) + 1; a++) {
       if ((a + b) & 1) continue;
       const pts = [J(a - 1, b), J(a, b - 1), J(a + 1, b), J(a, b + 1)], h = hash(a * 3.3 + b * 7.9 + seed);
-      out.push({ path: softPoly(pts, .12), c: [a * d, b * d], col: h < .1 ? COL.blue2 : h < .2 ? COL.deepblue : COL.cobalt, id: 20000 + (a + 500) * 97 + b, curl: hash(a * 5.1 + b * 2.3 + seed) });
+      out.push({ path: softPoly(pts, .12), c: [a * d, b * d], col: h < .1 ? '#a0681c' : h < .2 ? '#6e4612' : '#8a5a18', id: 20000 + (a + 500) * 97 + b, curl: hash(a * 5.1 + b * 2.3 + seed) });
     }
   return out;
 }

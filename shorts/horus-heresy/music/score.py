@@ -2,12 +2,17 @@
 Run with the library venv: $LIB/.venv/bin/python music/score.py   (LIB = the Lemo-Opuscar library folder)
 Writes music/stems/{drone,harp_chimes,war,bell}.wav. Times come from the cue map in TREATMENT.md and story.js.
 """
-import sys, os, numpy as np, soundfile as sf
+import sys, os, json, numpy as np, soundfile as sf
 LIB = os.environ.get('LIB') or os.path.expanduser('~/lemo-opuscar'); sys.path.insert(0, LIB)
 from core.audio import sampler as S
 from core.audio.sfx import SR
 HERE = os.path.dirname(os.path.abspath(__file__))
 DUR = 57.0; N = int(DUR * SR)
+# timemap.json (retime.py): old cue times -> the film's current timeline
+_tmp = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'timemap.json')
+TM = json.load(open(_tmp)) if os.path.exists(_tmp) else None
+F = (lambda t: float(np.interp(t, [a for a, b in TM['anchors']], [b for a, b in TM['anchors']]))) if TM else (lambda t: t)
+if TM: DUR = TM['dur']; N = int(DUR * SR)
 S.seed(40)
 os.makedirs(os.path.join(HERE, 'stems'), exist_ok=True)
 
@@ -16,11 +21,11 @@ def stem(events, size=.85, mix=.32, damp=.5):
     x = x[:N] if len(x) >= N else np.vstack([x, np.zeros((N - len(x), 2), np.float32)])
     return S.room(x, size=size, mix=mix, damp=damp).astype(np.float32)
 def cut(x, a, b=DUR, fade=.02):   # hard stop, reverb tail included
-    i, j, f = int(a * SR), int(b * SR), int(fade * SR)
+    i, j, f = int(F(a) * SR), int(F(b) * SR), int(fade * SR)
     if i - f > 0: x[i - f:i] *= np.linspace(1, 0, f)[:, None]
     x[i:j] = 0
-def ramp(x, a, b, g0, g1): i, j = int(a * SR), int(b * SR); x[i:j] *= np.linspace(g0, g1, j - i)[:, None]
-def E(t, inst, p, d, v, pan=0, **k): return dict(t=t, inst=inst, pitch=p, dur=d, vel=v, pan=pan, **k)
+def ramp(x, a, b, g0, g1): i, j = int(F(a) * SR), int(F(b) * SR); x[i:j] *= np.linspace(g0, g1, j - i)[:, None]
+def E(t, inst, p, d, v, pan=0, **k): return dict(t=F(t), inst=inst, pitch=p, dur=d, vel=v, pan=pan, **k)
 
 # ---------------- drone: organ pedal + soft organ ----------------
 dr = []
@@ -60,7 +65,7 @@ wr += [E(40.6, 'organ', p, 2.88, .42, attack=.15) for p in ('Bb2', 'F3', 'Bb3', 
 wr += [E(39.02, 'timpani', 'D2', 2.0, .75), E(41.0, 'timpani', 'A2', 1.5, .45), E(42.0, 'timpani', 'A2', 1.5, .5), E(43.48, 'timpani', 'D2', 3.5, .85)]
 WAR = stem(wr, .85, .3)
 cut(WAR, 43.48 + .01)                       # full organ cuts out on 'Horus fell' (the last timpani hit is re-added below)
-tail = stem([E(43.48, 'timpani', 'D2', 3.5, .85)], .9, .4); i0 = int(43.48 * SR) - 40; WAR[i0:] += tail[i0:]
+tail = stem([E(43.48, 'timpani', 'D2', 3.5, .85)], .9, .4); i0 = int(F(43.48) * SR) - 40; WAR[i0:] += tail[i0:]
 cut(WAR, 26.2, 27.4)
 
 # ---------------- the bell at nightfall ----------------
