@@ -16,3 +16,7 @@ the machine (user/global scope) is lost when the session ends.
   push.
 - **Tools that must be installed or started each session** (e.g. OmniRoute,
   the claude-mem worker) go in `.claude/hooks/session-start.sh`.
+
+## Replies
+
+Keep replies to the user short and simple: plain words, a few lines, no long reports.
