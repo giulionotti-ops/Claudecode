@@ -3,7 +3,7 @@ The Angel's Last Stand: credits and licences
 Unofficial fan work. Warhammer 40,000, The Horus Heresy, and the names Sanguinius, Blood Angels, Horus and the Emperor are trademarks of Games Workshop Ltd, used here only to retell the lore. All pictures are original glass designs drawn in code. No Games Workshop art, logos or designs are used.
 
 Voice
-- Narration: Kokoro TTS (kokoro-onnx, voice "bm_lewis"; pitch, tempo and EQ in voice_fx.py, reverb in mix.py), Apache License 2.0. https://github.com/thewh1teagle/kokoro-onnx
+- Narration: ElevenLabs, voice "James - Deep, Raspy and Grim" (voice library), used under the account's ElevenLabs plan terms.
 
 Music (original score, music/score.py); samples, all CC0 1.0:
 - VS Chamber Orchestra: Community Edition (Versilian Studios / Sam Gossner; pipe organ by Ivy Audio / Simon Dalzell): organ, organ_soft, organ_pedal, timpani. https://github.com/sgossner/VSCO-2-CE
