@@ -16,7 +16,8 @@ Prefer tragic, emotional stories (see `shorts/research-40k-shorts.md`). Mix famo
 
 ## 2. Research (mandatory)
 - **Lore:** WebSearch for the story beats, dates and names, and name the canon source (book, codex or article) for each beat in the commit message. Use only facts most sources agree on, and keep disputed ones out of the script.
-- **Blocked sources:** Lexicanum and the Fandom wiki usually return 403 from the cloud machine; Warhammer Community works. If you can't confirm a story is canon, pick another topic, and tell the owner in your final reply which pages were blocked.
+- **Fandom wiki:** the normal pages are blocked, but its API works: `curl -s "https://warhammer40k.fandom.com/api.php?action=parse&page=<Page_Name>&prop=wikitext&format=json"` (its pages cite the canon books).
+- **Blocked sources:** Lexicanum sits behind a Cloudflare bot check and can't be read from here; don't try to get around it. Warhammer Community works. If you can't confirm a story is canon, pick another topic, and tell the owner in your final reply which pages were blocked.
 - **Reference art for EVERY character (owner's rule):** before drawing anyone, find real pictures (painted miniatures, official art) and LOOK at them. Download a few images with curl into the scratchpad and open them with Read. Write down the colour scheme and signature gear (helmet shape, pauldron heraldry, weapons, horns, claws, cloaks, icons). For example, the Lamenters' shoulder pad is checkered all over with a red heart, not a small shield.
 - Characters must be **instantly recognizable**: give each one its signature details in every panel where it appears.
 
