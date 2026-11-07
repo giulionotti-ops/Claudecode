@@ -1,0 +1,12 @@
+[
+ {"id": "L1",  "depth": 0,     "text": "Let's sink to the bottom of the ocean."},
+ {"id": "L2",  "depth": 200,   "text": "Two hundred metres. Almost all the sunlight is already gone."},
+ {"id": "L3",  "depth": 332,   "text": "Three hundred and thirty-two. The deepest anyone has ever gone on scuba."},
+ {"id": "L4",  "depth": 1000,  "text": "One thousand. Total darkness. From here on, the only light is made by animals."},
+ {"id": "L5",  "depth": 2992,  "text": "Nearly three thousand. A Cuvier's beaked whale was tracked diving this deep. On one breath."},
+ {"id": "L6",  "depth": 3800,  "text": "Three thousand eight hundred. The Titanic."},
+ {"id": "L7",  "depth": 4000,  "text": "Four thousand. The abyss. Near freezing, and four hundred times the pressure at the surface."},
+ {"id": "L8",  "depth": 8336,  "text": "Eight thousand three hundred and thirty-six. The deepest fish ever filmed. A little snailfish, just swimming."},
+ {"id": "L9",  "depth": 10935, "text": "Almost eleven thousand metres. The Challenger Deep. Fewer people have been here than to space."},
+ {"id": "L10", "depth": 10935, "text": "And down here, someone already found... a plastic bag."}
+]

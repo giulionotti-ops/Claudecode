@@ -1,0 +1,8 @@
+[
+ {"t": "L4:animals", "type": "creak", "gain": 0.0},
+ {"t": "L5:whale", "type": "whale", "gain": 0.6, "pan": -0.3},
+ {"t": "L6:Titanic", "type": "boom", "gain": 1.0},
+ {"t": "L7:pressure", "type": "creak", "gain": 0.9, "pan": 0.4},
+ {"t": "L9:Challenger", "type": "creak", "gain": 0.7, "pan": -0.4},
+ {"t": "L10:bag", "type": "boom", "gain": 1.1}
+]
