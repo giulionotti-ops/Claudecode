@@ -1,0 +1,9 @@
+[
+ {"t": "L1:word", "type": "boom", "gain": 0.4},
+ {"t": "L2:Wow", "type": "signal", "gain": 0.35},
+ {"t": "L4:Big", "type": "signal", "gain": 0.3},
+ {"t": "L6:Again", "type": "static", "gain": 0.3},
+ {"t": "L7:never", "type": "rumble", "gain": 0.45},
+ {"t": "L9:blast", "type": "boom", "gain": 0.45},
+ {"t": "L11:Wow", "type": "boom", "gain": 0.5}
+]

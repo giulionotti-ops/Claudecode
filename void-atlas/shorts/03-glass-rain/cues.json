@@ -1,0 +1,8 @@
+[
+ {"t": "L1:kill", "type": "boom", "gain": 0.4},
+ {"t": "L4:oceans", "type": "rumble", "gain": 0.35},
+ {"t": "L7:rip", "type": "whoosh", "gain": 0.6},
+ {"t": "L8:glass", "type": "chime", "gain": 0.3},
+ {"t": "L10:Sideways", "type": "whoosh", "gain": 0.7},
+ {"t": "L11:glass", "type": "boom", "gain": 0.45}
+]

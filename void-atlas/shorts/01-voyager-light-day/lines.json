@@ -1,0 +1,12 @@
+[
+ {"id": "L1",  "text": "This month, a machine we built gets so far away that light needs a whole day to reach it."},
+ {"id": "L2",  "text": "It's Voyager 1. It left Earth in 1977.", "ping": true},
+ {"id": "L3",  "text": "It has been flying for almost fifty years, at about seventeen kilometres every second.", "ping": true},
+ {"id": "L4",  "text": "On November eighteenth, it passes twenty-five point nine billion kilometres. One light-day.", "ping": true},
+ {"id": "L5",  "text": "If we say hello, it hears us a day later. Its answer takes another day to come back.", "ping": true},
+ {"id": "L6",  "text": "Its radio is about as strong as a fridge light bulb, and our giant dishes still catch it.", "ping": true},
+ {"id": "L7",  "text": "Most of its instruments are switched off now, to save its last bit of power.", "ping": true},
+ {"id": "L8",  "text": "On board is a golden record, with music and greetings from Earth, in case anyone ever finds it.", "ping": true},
+ {"id": "L9",  "text": "But here's the thing. The nearest star isn't one light-day away.", "ping": true, "gap": 0.6},
+ {"id": "L10", "text": "It's more than fifteen hundred. At this speed, Voyager would need over seventy thousand years to cross that gap."}
+]

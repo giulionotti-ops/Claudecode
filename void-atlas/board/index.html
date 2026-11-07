@@ -1,0 +1,135 @@
+<title>Void Atlas Shorts</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500&family=IBM+Plex+Sans:wght@400;500&family=JetBrains+Mono:wght@400&display=swap">
+<style>
+/* Layout: a column of short cards (number, video, title, description, upload suggestion), newest first; two or three across on wide screens.
+   A channel-kit section sits above the cards. Single dark look on purpose: it matches the channel's star-atlas brand. */
+:root {
+  --abyss: #05040e; --panel: #0d0b20; --line: #2a2350; --ink: #fff3dc; --mute: #b0a6c8;
+  --glow: #ffc46b; --amber: #ff9f7a;
+  --display: 'Space Grotesk', 'Segoe UI', system-ui, sans-serif;
+  --body: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  color-scheme: dark;
+}
+body { background: var(--abyss); color: var(--ink); font: 15px/1.55 var(--body); }
+.wrap { max-width: 1240px; margin: 0 auto; padding-block: 28px 64px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 24px; margin-bottom: 24px; }
+h1 { font: 400 clamp(22px, 4vw, 30px)/1.1 var(--display); letter-spacing: .28em; text-transform: uppercase; margin: 0; text-shadow: 0 0 18px rgba(255,196,107,.45); }
+.count { font: 13px var(--mono); color: var(--mute); letter-spacing: .08em; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 22px; align-items: start; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.num { font: 13px var(--mono); letter-spacing: .14em; color: var(--glow); text-transform: uppercase; display: flex; justify-content: space-between; }
+.num span:last-child { color: var(--mute); }
+video { width: 100%; max-width: 100%; aspect-ratio: 9 / 16; max-height: 560px; background: #000; border-radius: 10px; display: block; object-fit: contain; }
+.title { font: 500 22px/1.25 var(--display); margin: 0; text-wrap: balance; }
+.desc { white-space: pre-line; color: var(--ink); opacity: .88; margin: 0; overflow-wrap: anywhere; }
+.row { display: flex; align-items: flex-start; gap: 10px; }
+.row > :first-child { flex: 1; min-width: 0; }
+.copy { flex: none; font: 12px var(--mono); color: var(--glow); background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: 5px 11px; cursor: pointer; }
+.copy:hover { border-color: var(--glow); }
+.copy:focus-visible { outline: 2px solid var(--glow); outline-offset: 2px; }
+.lbl { font: 11px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--mute); margin: 0 0 4px; }
+.pin { margin: 0; font-style: italic; color: var(--mute); }
+.upload { border-top: 1px dashed var(--line); padding-top: 14px; display: grid; gap: 6px; }
+.upload h3 { font: 500 15px var(--display); margin: 0; color: var(--amber); letter-spacing: .02em; }
+.when { font: 13px var(--mono); color: var(--ink); }
+.notes { margin: 0; color: var(--mute); font-size: 14px; }
+.empty { color: var(--mute); }
+.dl { display: flex; justify-content: center; align-items: center; gap: 8px; font: 500 15px var(--display); color: var(--abyss); background: var(--glow); border-radius: 10px; padding: 12px 16px; text-decoration: none; }
+.dl:hover { filter: brightness(1.1); }
+.dl:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.dl small { font: 12px var(--mono); opacity: .7; }
+/* channel kit */
+.kit { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 18px; margin-bottom: 28px; display: grid; gap: 16px; }
+.kit h2 { font: 500 18px var(--display); margin: 0; letter-spacing: .04em; }
+.kit .sub { margin: 0; color: var(--mute); font-size: 14px; }
+.pfps { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 14px; }
+.pfps a, .banners a { display: grid; gap: 6px; color: var(--mute); text-decoration: none; font: 12px var(--mono); text-align: center; }
+.pfps img { width: 100%; aspect-ratio: 1; border-radius: 50%; object-fit: cover; border: 1px solid var(--line); }
+.banners { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 14px; }
+.banners img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 8px; border: 1px solid var(--line); }
+.pfps a:hover img, .banners a:hover img { border-color: var(--glow); }
+.kv { display: grid; grid-template-columns: max-content 1fr; gap: 6px 16px; margin: 0; }
+.kv dt { font: 12px var(--mono); color: var(--mute); text-transform: uppercase; letter-spacing: .12em; padding-top: 2px; }
+.kv dd { margin: 0; }
+@media (max-width: 520px) { .kv { grid-template-columns: 1fr; } .kv dd { margin-bottom: 8px; } }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Void Atlas</h1>
+    <div class="count" id="count">Loading shorts…</div>
+  </header>
+  <section class="kit" aria-labelledby="kit-h">
+    <h2 id="kit-h">Channel kit</h2>
+    <dl class="kv">
+      <dt>Name</dt><dd>Void Atlas</dd>
+      <dt>Handle</dt><dd>@VoidAtlas (or @VoidAtlasShorts if taken)</dd>
+      <dt>Voice</dt><dd>ElevenLabs “Brian”, deep American narrator</dd>
+    </dl>
+    <div class="row"><div><p class="lbl">Channel description</p><p class="desc" id="chdesc">Space, mapped one short at a time.
+
+Black holes, alien worlds, signals from deep space, and the true scale of the universe, told in under a minute. Every fact is checked and sourced in the description.
+
+New shorts every day. Follow for the next map.</p></div><button class="copy" id="chcopy" type="button">Copy</button></div>
+    <div><p class="lbl">Profile picture · tap to open full size (recommended: the gold atlas mark)</p>
+      <div class="pfps">
+        <a href="brand/pfp-mark.jpg" target="_blank" rel="noopener"><img src="brand/pfp-mark.jpg" alt="Gold atlas-sphere mark">Atlas mark ★</a>
+        <a href="brand/pfp-planet.jpg" target="_blank" rel="noopener"><img src="brand/pfp-planet.jpg" alt="Gold ringed planet">Ringed planet</a>
+        <a href="brand/pfp-hole.jpg" target="_blank" rel="noopener"><img src="brand/pfp-hole.jpg" alt="Black hole with glowing disc">Black hole</a>
+        <a href="brand/pfp-monogram.jpg" target="_blank" rel="noopener"><img src="brand/pfp-monogram.jpg" alt="VA monogram in a gold ring">Monogram</a>
+      </div></div>
+    <div><p class="lbl">Banner · 2560×1440, text inside the phone-safe area</p>
+      <div class="banners">
+        <a href="brand/banner-orbit.jpg" target="_blank" rel="noopener"><img src="brand/banner-orbit.jpg" alt="Banner: ringed planet, name, black hole">Orbit ★</a>
+        <a href="brand/banner-chart.jpg" target="_blank" rel="noopener"><img src="brand/banner-chart.jpg" alt="Banner: star chart with constellations">Star chart</a>
+        <a href="brand/banner-voyage.jpg" target="_blank" rel="noopener"><img src="brand/banner-voyage.jpg" alt="Banner: probe leaving the Sun">Voyage</a>
+      </div></div>
+  </section>
+  <main class="grid" id="grid"></main>
+</div>
+
+<template id="tpl">
+  <article class="card">
+    <div class="num"><span data-k="num"></span><span data-k="made"></span></div>
+    <video controls playsinline preload="metadata"></video>
+    <a class="dl" data-k="dl" target="_blank" rel="noopener">Download full quality</a>
+    <div class="row"><h2 class="title" data-k="title"></h2><button class="copy" data-copy="title" type="button">Copy</button></div>
+    <div class="row"><div><p class="lbl">Description</p><p class="desc" data-k="description"></p></div><button class="copy" data-copy="description" type="button">Copy</button></div>
+    <div class="row"><div><p class="lbl">Pinned comment</p><p class="pin" data-k="pinned"></p></div><button class="copy" data-copy="pinned" type="button">Copy</button></div>
+    <section class="upload">
+      <h3>Upload suggestion</h3>
+      <div class="when" data-k="when"></div>
+      <p class="notes" data-k="notes"></p>
+    </section>
+  </article>
+</template>
+
+<script>
+const grid = document.getElementById('grid'), tpl = document.getElementById('tpl');
+document.getElementById('chcopy').addEventListener('click', e => copy(e.currentTarget, document.getElementById('chdesc').textContent));
+function copy(btn, text) {
+  const done = () => { btn.textContent = 'Copied'; setTimeout(() => btn.textContent = 'Copy', 1400); };
+  navigator.clipboard?.writeText(text).then(done, () => select(btn)) ?? select(btn);
+}
+function select(btn) { const el = btn.parentElement.querySelector('[data-k], .desc'); const r = document.createRange(); r.selectNodeContents(el); const s = getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent = 'Selected'; }
+function fmt(d) { try { return new Date(d + 'T12:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }); } catch { return d; } }
+fetch('shorts.json').then(r => r.json()).then(list => {
+  list.sort((a, b) => b.n - a.n);
+  document.getElementById('count').textContent = `${list.length} shorts · newest first`;
+  if (!list.length) { grid.innerHTML = '<p class="empty">No shorts yet. New ones appear here every day.</p>'; return; }
+  for (const s of list) {
+    const c = tpl.content.cloneNode(true);
+    c.querySelector('[data-k="num"]').textContent = `Short #${s.n}`;
+    c.querySelector('[data-k="made"]').textContent = `made ${fmt(s.made)}`;
+    for (const k of ['title', 'description', 'pinned', 'when', 'notes']) c.querySelector(`[data-k="${k}"]`).textContent = s[k] || '';
+    const dl = c.querySelector('[data-k="dl"]'); if (s.download) { dl.href = s.download; dl.innerHTML = 'Download full quality <small>1080p · ' + (s.size_mb || '') + ' MB</small>'; } else dl.remove();
+    const v = c.querySelector('video'); v.src = s.video; if (s.poster) v.poster = s.poster;
+    c.querySelectorAll('[data-copy]').forEach(b => b.addEventListener('click', () => copy(b, s[b.dataset.copy])));
+    grid.appendChild(c);
+  }
+}).catch(() => { document.getElementById('count').textContent = 'Could not load the list of shorts. Reload the page to try again.'; });
+</script>

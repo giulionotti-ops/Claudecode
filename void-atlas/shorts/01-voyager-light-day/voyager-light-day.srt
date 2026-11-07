@@ -1,0 +1,59 @@
+1
+00:00:01,220 --> 00:00:04,814
+This month, a machine we built gets so far away that light needs a whole day to reach it.
+
+2
+00:00:04,884 --> 00:00:06,032
+It's Voyager 1.
+
+3
+00:00:06,115 --> 00:00:08,351
+It left Earth in 1977.
+
+4
+00:00:08,421 --> 00:00:13,477
+It has been flying for almost fifty years, at about seventeen kilometres every second.
+
+5
+00:00:13,547 --> 00:00:17,755
+On November eighteenth, it passes twenty-five point nine billion kilometres.
+
+6
+00:00:17,888 --> 00:00:18,934
+One light-day.
+
+7
+00:00:19,004 --> 00:00:21,619
+If we say hello, it hears us a day later.
+
+8
+00:00:21,669 --> 00:00:23,575
+Its answer takes another day to come back.
+
+9
+00:00:23,645 --> 00:00:28,498
+Its radio is about as strong as a fridge light bulb, and our giant dishes still catch it.
+
+10
+00:00:28,575 --> 00:00:32,599
+Most of its instruments are switched off now, to save its last bit of power.
+
+11
+00:00:32,669 --> 00:00:37,658
+On board is a golden record, with music and greetings from Earth, in case anyone ever finds it.
+
+12
+00:00:38,008 --> 00:00:39,076
+But here's the thing.
+
+13
+00:00:39,160 --> 00:00:41,358
+The nearest star isn't one light-day away.
+
+14
+00:00:41,428 --> 00:00:43,031
+It's more than fifteen hundred.
+
+15
+00:00:43,114 --> 00:00:46,802
+At this speed, Voyager would need over seventy thousand years to cross that gap.

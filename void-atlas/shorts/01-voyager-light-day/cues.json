@@ -1,0 +1,8 @@
+[
+ {"t": "L1:whole", "type": "boom", "gain": 0.4},
+ {"t": "L4:light-day", "type": "boom", "gain": 0.4},
+ {"t": "L5:hello", "type": "signal", "gain": 0.3},
+ {"t": "L6:dishes", "type": "static", "gain": 0.3},
+ {"t": "L9:nearest", "type": "rumble", "gain": 0.45},
+ {"t": "L10:seventy", "type": "boom", "gain": 0.5}
+]

@@ -1,0 +1,13 @@
+[
+ {"id": "L1",  "text": "There's a planet out there as blue as Earth, and its weather would kill you in seconds."},
+ {"id": "L2",  "text": "It's a gas giant about sixty-four light-years away, and its name is just a catalogue number.", "ping": true},
+ {"id": "L3",  "text": "From far away, it would look a lot like home. A deep, azure blue.", "ping": true},
+ {"id": "L4",  "text": "But that blue doesn't come from oceans.", "ping": true},
+ {"id": "L5",  "text": "It hugs its star so tightly that a whole year there lasts just over two days.", "ping": true},
+ {"id": "L6",  "text": "The side facing its star is around a thousand degrees Celsius.", "ping": true},
+ {"id": "L7",  "text": "Winds rip around it at about seven thousand kilometres an hour. Nearly six times the speed of sound.", "ping": true},
+ {"id": "L8",  "text": "And scientists think that blue may come from tiny drops of glass, floating in the air.", "ping": true},
+ {"id": "L9",  "text": "Glass that may fall as rain.", "ping": true},
+ {"id": "L10", "text": "Sideways.", "gap": 0.5},
+ {"id": "L11", "text": "So the next time you complain about the weather... at least it's not raining glass.", "gap": 0.6}
+]

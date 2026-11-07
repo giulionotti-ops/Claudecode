@@ -1,0 +1,13 @@
+[
+ {"id": "L1",  "text": "In 1977, a telescope picked up a signal from space so strong, the astronomer could only write one word."},
+ {"id": "L2",  "text": "He circled it on the printout, and wrote: Wow!", "ping": true},
+ {"id": "L3",  "text": "It came from the direction of Sagittarius, and it lasted seventy-two seconds.", "ping": true},
+ {"id": "L4",  "text": "That's exactly how long the Big Ear telescope could watch one spot, as the Earth turned.", "ping": true},
+ {"id": "L5",  "text": "And it sat right by the radio frequency of hydrogen. The one many scientists thought aliens would use.", "ping": true},
+ {"id": "L6",  "text": "So they pointed telescopes back at that spot. Again, and again, for decades.", "ping": true},
+ {"id": "L7",  "text": "It never came back.", "gap": 0.5},
+ {"id": "L8",  "text": "In 2024, a team studying old data from the Arecibo telescope suggested an answer.", "ping": true, "gap": 0.5},
+ {"id": "L9",  "text": "A cold cloud of hydrogen, suddenly lit up by a blast from something like a magnetar, a dead star with a monstrous magnetic field.", "ping": true},
+ {"id": "L10", "text": "It's not proven yet. So for now, the most famous signal ever recorded is still just one word.", "gap": 0.4},
+ {"id": "L11", "text": "Wow."}
+]

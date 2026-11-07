@@ -1,0 +1,47 @@
+[
+ {
+  "n": 1,
+  "folder": "void-atlas/shorts/01-voyager-light-day",
+  "file": "voyager-light-day.mp4",
+  "title": "Voyager 1 is about to reach one light-day 🛰️",
+  "description": "Launched in 1977, Voyager 1 is about to become the first human-made object one full light-day from Earth: 25.9 billion km. A message to it now takes a day to arrive, and a day to come back.\n\nWhat's still working, what's on board, and how far it really still has to go.\n\nFacts: NASA/JPL, Voyager 1 reaches 1 light-day on 18 Nov 2026 (about 25.9 billion km). Speed about 17 km/s. Golden Record: greetings in 55 languages, about 90 minutes of music. Proxima Centauri is 4.24 light-years (about 1,549 light-days) away.\n\n#shorts #space #voyager1 #nasa #astronomy",
+  "pinned": "If you could put one song on the Golden Record today, which would it be? 🎶",
+  "when": "Sun 8 Nov · 16:00 Rome / 10:00 New York",
+  "notes": "Post this first: the milestone is on 18 Nov, so it rides the news, and it explains the channel. Upload the .srt as captions, pin the comment, tick \"Altered or synthetic content: Yes\" (AI voice).",
+  "video": "videos/01.mp4",
+  "poster": "posters/01.jpg",
+  "made": "2026-11-07",
+  "download": "https://github.com/giulionotti-ops/Claudecode/raw/claude/keen-gauss-j25w2h/void-atlas/shorts/01-voyager-light-day/voyager-light-day.mp4",
+  "size_mb": 17
+ },
+ {
+  "n": 2,
+  "folder": "void-atlas/shorts/02-wow-signal",
+  "file": "wow-signal.mp4",
+  "title": "The signal from space that never came back 📡",
+  "description": "In 1977 a radio telescope in Ohio caught a signal so strong the astronomer circled it and wrote \"Wow!\" next to it. 72 seconds, near the hydrogen line, from the direction of Sagittarius. Then it was gone.\n\nDecades of searching, and a possible answer from 2024.\n\nFacts: Big Ear telescope, Ohio State University, 15 Aug 1977, noticed by Jerry Ehman (code 6EQUJ5). 2024 hypothesis: Méndez et al., \"Arecibo Wow! I\" (arXiv 2408.08513), a cold hydrogen cloud brightened by a burst from a source such as a magnetar. Not yet confirmed. The sound in this video is a recreation.\n\n#shorts #space #wowsignal #aliens #mystery",
+  "pinned": "Aliens, hydrogen cloud, or something else? Vote below 👇",
+  "when": "Sun 8 Nov · 21:00 Rome / 15:00 New York",
+  "notes": "Mysteries pull the most comments; the US afternoon slot is when they get answered fastest. Upload the .srt as captions, pin the comment, tick \"Altered or synthetic content: Yes\" (AI voice).",
+  "video": "videos/02.mp4",
+  "poster": "posters/02.jpg",
+  "made": "2026-11-07",
+  "download": "https://github.com/giulionotti-ops/Claudecode/raw/claude/keen-gauss-j25w2h/void-atlas/shorts/02-wow-signal/wow-signal.mp4",
+  "size_mb": 18
+ },
+ {
+  "n": 3,
+  "folder": "void-atlas/shorts/03-glass-rain",
+  "file": "glass-rain.mp4",
+  "title": "The blue planet where it rains glass 🌧️",
+  "description": "HD 189733 b looks as blue as Earth from far away. Up close it's one of the most hostile worlds we know.\n\nA year of about 2.2 days, a day side around 1,000 °C, winds near 7,000 km/h, and a blue that may come from glass.\n\nFacts: NASA / Hubble (2013) measured the planet's deep blue colour; NASA describes winds of about 7,000 km/h and possible silicate (glass) rain. About 64 light-years away, orbit of about 2.2 days.\n\n#shorts #space #exoplanet #nasa #astronomy",
+  "pinned": "Would you rather live with glass rain or 7,000 km/h winds? 😅",
+  "when": "Mon 9 Nov · 02:00 Rome / 20:00 New York (Sun)",
+  "notes": "US evening scroll: strange-world facts do best late. Schedule it so it goes out 5 hours after #2. Upload the .srt as captions, pin the comment, tick \"Altered or synthetic content: Yes\" (AI voice).",
+  "video": "videos/03.mp4",
+  "poster": "posters/03.jpg",
+  "made": "2026-11-07",
+  "download": "https://github.com/giulionotti-ops/Claudecode/raw/claude/keen-gauss-j25w2h/void-atlas/shorts/03-glass-rain/glass-rain.mp4",
+  "size_mb": 18
+ }
+]
