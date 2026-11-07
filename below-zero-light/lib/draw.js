@@ -259,3 +259,40 @@ export function iceberg(g, x, y, s, crack = 0, split = 0, t = 0, a = 1) {
   // waterline
   g.save(); g.strokeStyle = `rgba(111,246,255,${.5 * a})`; g.lineWidth = 2; g.beginPath(); for (let u = -1.6; u <= 1.6; u += .02) g.lineTo(x + u * s, y + Math.sin(u * 9 + t * 2) * s * .01); g.stroke(); g.restore();
 }
+
+// Greenland shark: thick slow body, blunt snout, tiny fins. Faces left. xray = see-through body.
+export function shark(g, x, y, s, t = 0, a = 1, opt = {}) {
+  g.save(); g.translate(x, y); if (opt.flip) g.scale(-1, 1); const w = Math.sin(t * 1.4) * .025;
+  const P = (u, v) => [u * s, (v + (u > .3 ? w * (u - .3) * 2.2 : 0)) * s];
+  const p = new Path2D(); const M = (u, v) => p.moveTo(...P(u, v)), Lt = (u, v) => p.lineTo(...P(u, v)), B = (a1, b1, a2, b2, a3, b3) => p.bezierCurveTo(...P(a1, b1), ...P(a2, b2), ...P(a3, b3));
+  M(-1, .03); B(-1, -.13, -.82, -.2, -.5, -.2); B(-.2, -.2, 0, -.19, .06, -.18); Lt(.13, -.27); Lt(.2, -.17);
+  B(.32, -.15, .42, -.14, .48, -.13); Lt(.55, -.2); Lt(.6, -.11); B(.7, -.08, .78, -.06, .84, -.05);
+  Lt(1.18, -.3); B(1.12, -.15, 1.08, -.04, 1.03, .02); Lt(1.1, .14); Lt(.84, .05);
+  B(.65, .1, .5, .12, .45, .12); Lt(.42, .2); Lt(.36, .13); B(.1, .17, -.2, .19, -.42, .17);
+  B(-.65, .15, -.85, .14, -.95, .09); B(-.99, .07, -1, .05, -1, .03);
+  if (!opt.xray) { const gr = g.createLinearGradient(0, -.2 * s, 0, .2 * s); gr.addColorStop(0, `rgba(10,40,52,${a})`); gr.addColorStop(1, `rgba(3,14,20,${a})`); g.fillStyle = gr; g.fill(p); }
+  else { g.save(); g.globalCompositeOperation = 'lighter'; g.fillStyle = `rgba(111,246,255,${.06 * a})`; g.fill(p); g.restore(); }
+  glowStroke(g, p, C.glow, Math.max(1.2, s * .008), .75 * a, s * .03);
+  const d = new Path2D(); for (let i = 0; i < 5; i++) { d.moveTo(...P(-.62 + i * .035, -.04)); d.lineTo(...P(-.63 + i * .035, .08)); }
+  d.moveTo(...P(-.44, .15)); d.lineTo(...P(-.3, .34)); d.lineTo(...P(-.25, .17));   // pectoral fin
+  d.moveTo(...P(-.86, .07)); d.quadraticCurveTo(...P(-.8, .1), ...P(-.74, .08));   // mouth
+  for (let i = 0; i < 26; i++) { const u = -.7 + i * .06; d.moveTo(...P(u, -.15 + Math.sin(i) * .02)); d.lineTo(...P(u + .01, -.14 + Math.sin(i) * .02)); }   // speckles
+  glowStroke(g, d, C.glow, Math.max(.8, s * .005), .45 * a, s * .02);
+  orb(g, ...P(-.8, -.07), s * .018, .8 * a, '200,245,255');
+  if (opt.parasite) { const q = new Path2D(); const [ex, ey] = P(-.8, -.07); q.moveTo(ex, ey); q.bezierCurveTo(ex + s * .02, ey + s * .05, ex - s * .03 + Math.sin(t * 2) * s * .01, ey + s * .08, ex + Math.sin(t * 2.3) * s * .015, ey + s * .12); glowStroke(g, q, C.pink, Math.max(1.5, s * .012), opt.parasite * a, s * .03); orb(g, ex + Math.sin(t * 2.3) * s * .015, ey + s * .12, s * .012, opt.parasite * a, '255,179,193'); }
+  g.restore();
+}
+export function bear(g, x, y, s, a = 1, col = C.glow) {   // polar bear, side view, walking left
+  g.save(); g.translate(x, y);
+  const pts = [[-1, -.05], [-.95, -.18], [-.86, -.24], [-.8, -.3], [-.74, -.25], [-.6, -.2], [-.4, -.33], [0, -.4], [.4, -.42], [.7, -.36], [.85, -.2], [.86, .05], [.82, .4], [.7, .4], [.68, .12], [.55, .1], [.5, .4], [.38, .4], [.38, .1], [-.2, .08], [-.28, .4], [-.4, .4], [-.42, .08], [-.55, .06], [-.6, .4], [-.72, .4], [-.7, .02], [-.85, 0], [-.97, .02]];
+  const p = new Path2D(); pts.forEach(([u, v], i) => i ? p.lineTo(u * s, v * s) : p.moveTo(u * s, v * s)); p.closePath();
+  glowStroke(g, p, col, Math.max(1.2, s * .012), .8 * a, s * .04); orb(g, -.85 * s, -.17 * s, s * .02, a);
+  g.restore();
+}
+export function walker(g, x, y, s, t = 0, a = 1) {   // a person walking right, line figure
+  g.save(); g.translate(x, y); const k = Math.sin(t * 6);
+  const p = new Path2D(); p.arc(0, -s * .85, s * .1, 0, 7); p.moveTo(0, -s * .74); p.lineTo(0, -s * .25);
+  p.moveTo(0, -s * .25); p.lineTo(k * s * .18, s * .2); p.moveTo(0, -s * .25); p.lineTo(-k * s * .18, s * .2);
+  p.moveTo(0, -s * .62); p.lineTo(-k * s * .16, -s * .32); p.moveTo(0, -s * .62); p.lineTo(k * s * .16, -s * .32);
+  glowStroke(g, p, C.white, Math.max(2, s * .03), .85 * a, s * .06); g.restore();
+}

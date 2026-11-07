@@ -1,0 +1,7 @@
+[
+ {"t": "L1:older", "type": "boom", "gain": 0.4},
+ {"t": "L4:oldest", "type": "boom", "gain": 0.35},
+ {"t": "L9:polar", "type": "boom", "gain": 0.45},
+ {"t": "L10:toxic", "type": "creak", "gain": 0.4},
+ {"t": "L11:Titanic", "type": "boom", "gain": 0.5}
+]

@@ -22,6 +22,8 @@ A faceless Shorts channel about the deep ocean. Each short is one dive: a depth 
 | `lib/mix.py` | Underwater bed, drone, pad, sonar pings, foley cues, narration, ducking |
 | `lib/srt.py` | Caption file for upload |
 | `shorts/NN-name/` | One short: `lines.json`, `cues.json`, `scene.js`, final `.mp4` |
+| `UPLOADS.md`, `uploads/` | Titles and descriptions ready to paste |
+| `PLAYBOOK.md`, `TOPICS.md` | The daily 3-shorts routine and the topic list |
 
 ## Make a short
 ```sh

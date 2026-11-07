@@ -20,7 +20,7 @@ if (opt('stills')) {
   let done = 0; const t0 = Date.now();
   await Promise.all(Array.from({ length: WK }, async (_, w) => {
     const pg = await page(), f0 = Math.floor(N * w / WK), f1 = Math.floor(N * (w + 1) / WK);
-    const ff = spawn('ffmpeg', ['-v', 'error', '-y', '-f', 'image2pipe', '-framerate', String(FPS), '-c:v', 'mjpeg', '-i', '-', '-c:v', 'libx264', '-preset', 'medium', '-crf', '16', '-pix_fmt', 'yuv420p', `${out}/part${w}.mp4`], { stdio: ['pipe', 'inherit', 'inherit'] });
+    const ff = spawn('ffmpeg', ['-v', 'error', '-y', '-f', 'image2pipe', '-framerate', String(FPS), '-c:v', 'mjpeg', '-i', '-', '-c:v', 'libx264', '-preset', 'medium', '-crf', '19', '-pix_fmt', 'yuv420p', `${out}/part${w}.mp4`], { stdio: ['pipe', 'inherit', 'inherit'] });
     for (let f = f0; f < f1; f++) { const buf = Buffer.from(await frame(pg, f / FPS), 'base64'); if (!ff.stdin.write(buf)) await new Promise(r => ff.stdin.once('drain', r)); if (++done % 150 === 0) console.log(`${done}/${N} frames, ${((Date.now() - t0) / 1000).toFixed(0)} s`); }
     ff.stdin.end(); await new Promise(r => ff.on('close', r));
   }));
