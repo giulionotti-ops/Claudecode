@@ -45,8 +45,7 @@ function marine(extra = [], o = {}) {
     if (q.n === 'torso') return { ...q, paint: (g, op) => { brush(g, [[-28, -26], [0, -22], [28, -26]], 1.6); brush(g, [[-26, -12], [0, -9], [26, -12]], 1.6); brush(g, [[0, -64], [0, -30]], 1.4); aquila(g); } };
     if (q.n === 'pauldF') return { ...q, c: 'pauld', paint: (g, op) => { if (!op.heart) return q.paint(g, op);   // the Chapter pauldron: chequered all over, a white roundel with a red heart
       g.save(); g.clip(q.sh); checks(g, -34, -34, 68, 52, 9); g.restore(); brush(g, [[-30, 12], [0, 15], [28, 12]], 1.6);
-      g.fillStyle = '#f2ece0'; g.beginPath(); g.arc(0, -8, 11, 0, 7); g.fill(); g.lineWidth = 1.6; g.strokeStyle = 'rgba(24,16,10,.95)'; g.stroke();
-      g.save(); g.translate(0, -7); g.scale(.72, .72); g.fillStyle = '#c0141c'; g.fill(HEART); g.lineWidth = 2; g.stroke(HEART); g.restore(); } };
+      g.save(); g.translate(0, -7); g.scale(.95, .95); g.fillStyle = '#c0141c'; g.fill(HEART); g.lineWidth = 2; g.strokeStyle = 'rgba(24,16,10,.95)'; g.stroke(HEART); g.restore(); } };
     if (q.n === 'rimF' || q.n === 'rimB') return { ...q, c: 'rim', paint: g => { g.fillStyle = 'rgba(230,220,200,.75)'; for (const [x, y] of [[-26, -8], [-16, -24], [0, -30], [16, -27], [28, -12]]) { g.beginPath(); g.arc(x, y, 1.5, 0, 7); g.fill(); } } };
     if (q.n === 'kneeF') return { ...q, c: 'kneeR' };
     if (q.n === 'kneeB') return { ...q, c: 'knee' };
@@ -101,8 +100,7 @@ function chalice(P, x, y, s, id) { P.piece(smooth([[x - 12 * s, y - 20 * s, 1], 
 function banner(P, x, y, id, torn) {
   P.piece(smooth([[x - 2, y - 120, 1], [x + 2, y - 120, 1], [x + 2, y + 60, 1], [x - 2, y + 60, 1]]), '#3c3f46', { id, lead: 2.4, mat: false });
   P.piece(smooth([[x + 2, y - 116, 1], [x + 56, y - 112, 1], [x + 52, y - 80], [x + 58, y - 60, 1], [x + 40, y - 66], torn ? [x + 30, y - 52, 1] : [x + 30, y - 58, 1], [x + 16, y - 64], [x + 2, y - 56, 1]]), '#eee8dc', { id: id + 1, lead: 3, matW: 5,
-    paint: g => { checks(g, x + 2, y - 118, 60, 66, 7); g.fillStyle = '#f2ece0'; g.beginPath(); g.arc(x + 29, y - 88, 15, 0, 7); g.fill(); g.lineWidth = 1.8; g.strokeStyle = 'rgba(24,16,10,.95)'; g.stroke();
-      g.save(); g.translate(x + 29, y - 87); g.fillStyle = '#c0141c'; g.fill(HEART); g.lineWidth = 2; g.stroke(HEART); g.restore(); } });
+    paint: g => { checks(g, x + 2, y - 118, 60, 66, 7); g.save(); g.translate(x + 29, y - 87); g.scale(1.3, 1.3); g.fillStyle = '#c0141c'; g.fill(HEART); g.lineWidth = 2; g.strokeStyle = 'rgba(24,16,10,.95)'; g.stroke(HEART); g.restore(); } });
 }
 
 export const SKY = ['#1f1830', COL.purple2, '#3a1a20', COL.deepblue, '#3a1a20', '#1d2a50'];
