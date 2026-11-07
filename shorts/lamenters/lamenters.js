@@ -12,6 +12,19 @@ const helmPaint = g => { brush(g, [[-12, -46], [2, -54], [16, -48]], 1.4, { colo
   for (let k = 0; k < 4; k++) brush(g, [[18 + k * 2.6, -12], [17 + k * 2.6, -2]], 1.2); // breathing grille
   g.fillStyle = 'rgba(30,18,10,.8)'; g.beginPath(); g.arc(-6, -14, 4.4, 0, 7); g.fill(); g.fillStyle = 'rgba(255,255,255,.35)'; g.beginPath(); g.arc(-6, -14, 1.6, 0, 7); g.fill(); };   // side vent
 const HEART = smooth([[0, 7, 1], [-10, -3], [-9, -11], [-3, -12], [0, -8, 1], [3, -12], [9, -11], [10, -3]]);   // the Chapter's sign on the pauldron
+// the Chapter sign: a heart over a black-and-yellow checkered shield
+const SHIELD = smooth([[-12, -14, 1], [12, -14, 1], [12, 0], [6, 10], [0, 15, 1], [-6, 10], [-12, 0]]);
+function sign(g, x, y, s = 1, n = 4) {
+  g.save(); g.translate(x, y); g.scale(s, s);
+  g.save(); g.clip(SHIELD); g.fillStyle = '#f0c838'; g.fill(SHIELD); g.fillStyle = 'rgba(24,16,10,.92)';
+  const c = 24 / n; for (let i = 0; i < n; i++) for (let j = 0; j < n + 2; j++) if ((i + j) & 1) g.fillRect(-12 + i * c, -14 + j * c, c, c);
+  g.restore();
+  g.lineWidth = 1.6; g.strokeStyle = 'rgba(24,16,10,.95)'; g.stroke(SHIELD);
+  g.save(); g.translate(0, -1); g.scale(.62, .62); g.fillStyle = '#b0141c'; g.fill(HEART); g.lineWidth = 2.4; g.stroke(HEART);
+  g.fillStyle = 'rgba(255,220,200,.5)'; g.beginPath(); g.ellipse(-4, -6, 2.2, 1.4, -.5, 0, 7); g.fill(); g.restore();
+  g.restore();
+}
+const checks = (g, x0, y0, w, h, n) => { const c = w / n; g.fillStyle = 'rgba(24,16,10,.88)'; for (let i = 0; i < n; i++) for (let j = 0; j < Math.ceil(h / c); j++) if ((i + j) & 1) g.fillRect(x0 + i * c, y0 + j * c, c, c); };
 const aquila = g => { g.fillStyle = 'rgba(30,18,10,.85)'; for (const sd of [-1, 1]) { g.beginPath(); g.moveTo(0, -78); for (const [x, y] of [[8, -86], [18, -90], [28, -86], [22, -82], [26, -78], [16, -76], [18, -72], [6, -72]]) g.lineTo(sd * x, y); g.closePath(); g.fill(); }
   g.beginPath(); g.ellipse(0, -76, 3.4, 6, 0, 0, 7); g.fill(); };
 const CS = {   // a chainsword in place of the mace
@@ -30,8 +43,10 @@ function marine(extra = [], o = {}) {
   const parts = SON2.filter(o.keep || KEEP).map(q => {
     if (CS[q.n] && !o.mace) return { ...q, sh: CS[q.n], at: q.n === 'blade' ? [0, 26] : q.at, c: q.n === 'blade' ? 'steel' : q.c, paint: q.n === 'blade' ? csPaint : undefined };
     if (q.n === 'torso') return { ...q, paint: (g, op) => { brush(g, [[-28, -26], [0, -22], [28, -26]], 1.6); brush(g, [[-26, -12], [0, -9], [26, -12]], 1.6); brush(g, [[0, -64], [0, -30]], 1.4); aquila(g); } };
-    if (q.n === 'pauldF') return { ...q, paint: (g, op) => { q.paint(g, op); if (op.heart) { g.fillStyle = 'rgba(30,18,10,.88)'; g.save(); g.translate(0, -4); g.fill(HEART); g.restore(); } } };
-    if (q.n === 'rimF' || q.n === 'rimB') return { ...q, c: 'rim' };
+    if (q.n === 'pauldF') return { ...q, paint: (g, op) => { q.paint(g, op); if (op.heart) sign(g, 0, -6, .95); } };
+    if (q.n === 'rimF' || q.n === 'rimB') return { ...q, c: 'rim', paint: g => { g.fillStyle = 'rgba(230,220,200,.75)'; for (const [x, y] of [[-26, -8], [-16, -24], [0, -30], [16, -27], [28, -12]]) { g.beginPath(); g.arc(x, y, 1.5, 0, 7); g.fill(); } } };
+    if (q.n === 'kneeF' || q.n === 'kneeB') return { ...q, c: 'knee', paint: (g, op) => { if (op.heart) { g.save(); g.clip(q.sh); checks(g, -14, -14, 28, 24, 4); g.restore(); } } };
+    if (q.n === 'pack') return { ...q, paint: g => { for (const y of [-96, -74, -54]) brush(g, [[-30, y], [0, y + 2], [30, y]], 1.6); for (const x of [-20, -8, 4, 16]) brush(g, [[x, -50], [x, -44]], 2); } };
     return q; });
   return [...parts, { n: 'helm', p: 'head', at: [0, 0], sh: HELM, c: 'helm', z: 10.7, lead: 3, paint: helmPaint }, { n: 'lens', p: 'head', at: [0, 0], sh: smooth([[8, -33, 1], [19, -33], [20, -27, 1], [9, -26]]), c: 'lens', z: 10.8, lead: 2.4 },
     ...sealParts('tassetF', 6, 4, 4.6, 'sealA'), ...sealParts('pauldB', -10, 10, 7, 'sealB'), ...extra];
@@ -42,8 +57,8 @@ const HORN_B = smooth([[-10, -44, 1], [-16, -58], [-12, -78], [4, -94], [18, -10
 const hornPaint = g => { for (let k = 0; k < 4; k++) brush(g, [[6 + k * 6, -50 - k * 6], [12 + k * 6, -48 - k * 7]], 1, { color: 'rgba(52,30,14,.55)' }); };
 export const MARINE = marine();
 export const MINOTAUR = marine([{ n: 'hornB', p: 'head', at: [0, 0], sh: HORN_B, c: 'horn', z: 10.65, lead: 2.6, paint: hornPaint }, { n: 'hornF', p: 'head', at: [0, 0], sh: HORN_F, c: 'horn', z: 10.9, lead: 2.6, paint: hornPaint }], { mace: true });
-export const LAMENTER = { arm: '#e2b628', arm2: '#c0921c', helm: '#e2b628', rim: '#2a2c30', trim: '#2a2c30', cloth: COL.ruby2, dark: '#3c3f46', flesh: '#b07a5e', steel: COL.steel, lens: '#e0302a' };
-export const BRONZE = { arm: '#8a4e18', arm2: '#5a2c0e', helm: '#8a4e18', rim: '#e0b040', trim: '#e0b040', cloth: '#1c1a18', dark: '#2e2a26', flesh: '#b07a5e', steel: COL.steel2, lens: '#7fdc4a', horn: '#e8dcbc' };
+export const LAMENTER = { knee: '#e2b628', arm: '#e2b628', arm2: '#c0921c', helm: '#e2b628', rim: '#2a2c30', trim: '#2a2c30', cloth: COL.ruby2, dark: '#3c3f46', flesh: '#b07a5e', steel: COL.steel, lens: '#e0302a' };
+export const BRONZE = { knee: '#e0b040', arm: '#8a4e18', arm2: '#5a2c0e', helm: '#8a4e18', rim: '#e0b040', trim: '#e0b040', cloth: '#1c1a18', dark: '#2e2a26', flesh: '#b07a5e', steel: COL.steel2, lens: '#7fdc4a', horn: '#e8dcbc' };
 // the Tyrant of Badab: bare-headed, half his skull iron with a red bionic eye, the great power claw, a cloak of deep blue
 const CLAW = smooth([[-12, -4], [12, -6], [20, 10], [44, 30, 1], [24, 24], [30, 50, 1], [14, 30], [12, 58, 1], [2, 30], [-6, 52, 1], [-8, 26], [-14, 10]].map(([x, y, c]) => [x * 1.6, y * 1.6, c]));
 const IRON = smooth([[-15, -6], [-17, -28], [-13, -44], [0, -52], [10, -50], [8, -36], [16, -30, 1], [14, -20, 1], [2, -16], [-4, -6]]);
@@ -82,7 +97,7 @@ function chalice(P, x, y, s, id) { P.piece(smooth([[x - 12 * s, y - 20 * s, 1], 
 function banner(P, x, y, id, torn) {
   P.piece(smooth([[x - 2, y - 120, 1], [x + 2, y - 120, 1], [x + 2, y + 60, 1], [x - 2, y + 60, 1]]), '#3c3f46', { id, lead: 2.4, mat: false });
   P.piece(smooth([[x + 2, y - 116, 1], [x + 56, y - 112, 1], [x + 52, y - 80], [x + 58, y - 60, 1], [x + 40, y - 66], torn ? [x + 30, y - 52, 1] : [x + 30, y - 58, 1], [x + 16, y - 64], [x + 2, y - 56, 1]]), '#e2b628', { id: id + 1, lead: 3, matW: 5,
-    paint: g => { g.fillStyle = 'rgba(30,18,10,.85)'; g.save(); g.translate(x + 28, y - 90); g.scale(1.3, 1.3); g.fill(HEART); g.restore(); } });
+    paint: g => { checks(g, x + 2, y - 118, 56, 64, 6); sign(g, x + 29, y - 90, 1.25, 4); } });
 }
 
 export const SKY = ['#1f1830', COL.purple2, '#3a1a20', COL.deepblue, '#3a1a20', '#1d2a50'];
