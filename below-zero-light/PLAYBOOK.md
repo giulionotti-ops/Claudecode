@@ -55,7 +55,7 @@ The board is a private page: https://claude.ai/artifact/9S7wZjm9G2FsGnDeJG7Sas (
    ffmpeg -v error -y -i shorts/NN-slug/poster.jpg -vf scale=360:-1 -q:v 4 board/posters/NN.jpg
    ```
    Each video must stay under 15 MB (lower `-b:v` if not).
-2. Add one entry per short to `board/shorts.json` (same fields as the existing ones: `n`, `folder`, `file`, `video`, `poster`, `title`, `description`, `pinned`, `when`, `notes`, `made`). Use the same title, description and pinned comment as in the day's upload file.
+2. Add one entry per short to `board/shorts.json` (same fields as the existing ones: `n`, `folder`, `file`, `video`, `poster`, `title`, `description`, `pinned`, `when`, `notes`, `made`, `download`, `size_mb`). `download` is `https://github.com/giulionotti-ops/Claudecode/raw/claude/relaxed-darwin-ih2a5z/<folder>/<file>` (the full-quality mp4, so commit and push before publishing the board); `size_mb` is its size. Use the same title, description and pinned comment as in the day's upload file.
 3. **Upload suggestion** (`when` and `notes`): spread the day's 3 shorts over the next day at **15:00, 20:00 and 01:00 Rome time** (9:00, 14:00, 19:00 New York), the strongest hook first. Write `when` like `Sun 8 Nov · 15:00 Rome / 9:00 New York`. In `notes`, say in one or two sentences why it goes in that slot, and repeat the checklist: upload the .srt as captions, pin the comment, tick "Altered or synthetic content: Yes".
 4. Publish: first read the board with the Artifact tool (`action: "read"`, the URL above), then publish with that `url`, `file_path` = `board/index.html`, `root` = the `board` folder, and `files` = `shorts.json` plus only the new `videos/NN.mp4` and `posters/NN.jpg` (files you leave out stay on the board).
 
