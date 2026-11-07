@@ -42,12 +42,22 @@ ffmpeg -v error -y -ss 46 -i <slug>.mp4 -frames:v 1 -q:v 3 poster.jpg
 Then `python3 tools/srt.py <slug>` for the captions, and update `CREDITS`.
 
 ## 5. Upload text (the best for views)
-Add a section to `shorts/UPLOADS.md` with:
 - **Title:** under 70 characters. A big name or hook in CAPS, plus an emotion word or curiosity gap, one emoji, ending in `#warhammer40k`. Examples: "ANGRON's Story Is the SADDEST in 40k 💔", "A Whole Chapter VANISHED... Then THESE Appeared 🔥".
-- **Description:** 2–3 short lines that tease the story without the ending, a question that invites comments 👇, and 5 hashtags (`#warhammer40k`, 2–3 topic tags, `#shorts`).
-- **Suggested upload:** the date plus this run's slot (Italy time): run 1 → 13:30, run 2 → 18:30, run 3 → 21:30.
+- **Description:** 2–3 short lines that tease the story without the ending, a question that invites comments 👇, then 5 hashtags (`#warhammer40k`, 2–3 topic tags, `#shorts`).
+- **Pinned comment:** one line that starts an argument or asks for a theory, with one emoji.
+- **Suggested upload:** the next free slot after the last `when` in `shorts/board/shorts.json`. Slots are 13:30, 18:30 and 21:30 Italy time, and you write New York time next to it (Italy minus 6 h), e.g. `Tue 10 Nov · 18:30 Rome / 12:30 New York`. Add one line of notes (captions file, the checklist: pinned comment, AI-voice box "Altered or synthetic content: Yes").
+Also add the same text as a section in `shorts/UPLOADS.md`.
 
-## 6. Deliver
-- Commit everything except the video (`*.mp4` and `out/` are gitignored), then `git pull --rebase origin claude/youtube-banner && git push -u origin claude/youtube-banner`.
+## 6. Add it to the shorts board (the owner's page)
+The board is the artifact https://claude.ai/artifact/J3i4eEL1Go3LYtBF4HqkqB, built from `shorts/board/` (index.html, shorts.json, videos/, posters/).
+1. `n` = the highest `n` in `shorts/board/shorts.json` + 1. Use two digits `NN` in file names.
+2. Full quality for the download button: `cp shorts/<slug>/<slug>.mp4 shorts/videos/NN-<slug>.mp4` (this folder is NOT gitignored, so it gets committed).
+3. Preview (the page only holds files up to 15 MB): `ffmpeg -y -v error -i shorts/<slug>/<slug>.mp4 -vf scale=720:1280 -c:v libx264 -preset slow -crf 28 -c:a aac -b:a 96k -movflags +faststart shorts/board/videos/NN.mp4`, and the poster: `ffmpeg -v error -y -i shorts/<slug>/poster.jpg -vf scale=540:-1 -q:v 4 shorts/board/posters/NN.jpg`.
+4. Append an entry to `shorts.json`: `n, name, folder, title, description, pinned, when, notes, made` (today), `poster: "posters/NN.jpg"`, `video: "videos/NN.mp4"`, `download: "https://github.com/giulionotti-ops/Claudecode/raw/claude/youtube-banner/shorts/videos/NN-<slug>.mp4"`, and `size_mb` (the full file's size).
+5. Keep the page small: when more than 18 entries have a `video`, remove `video` from the oldest ones (their download button stays) and pass those preview paths as `null` in `files` below.
+6. Commit and push (step 7) BEFORE publishing, so the download link works. Then `Artifact` action `read` on the URL, then publish with `url` = that URL, `file_path: shorts/board/index.html` and `files` = only the changed ones: `{"shorts.json": "shorts/board/shorts.json", "videos/NN.mp4": "shorts/board/videos/NN.mp4", "posters/NN.jpg": "shorts/board/posters/NN.jpg"}`. Files you leave out are kept.
+
+## 7. Deliver
+- Commit everything (the short's own `*.mp4` and `out/` are gitignored; `shorts/videos/` is not), then `git pull --rebase origin claude/youtube-banner && git push -u origin claude/youtube-banner`.
 - Send `<slug>.mp4` to the owner with SendUserFile (status `proactive`).
-- Reply in a few lines: the title, the description and the upload time.
+- Reply in a few lines: the title, the upload time and the board link.
