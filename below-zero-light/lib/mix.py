@@ -29,7 +29,7 @@ T = np.arange(N) / SR
 L = TL['lines']; dep = np.zeros(N)
 for i in range(1, len(L)):
     a, b = L[i]['t0'] - 1.5, L[i]['t0'] + .1; k = np.clip((T - a) / (b - a), 0, 1); k = k * k * (3 - 2 * k)
-    m = T >= a; dep[m] = L[i - 1]['depth'] + (L[i]['depth'] - L[i - 1]['depth']) * k[m]
+    m = T >= a; dep[m] = L[i - 1].get('depth', 2500) + (L[i].get('depth', 2500) - L[i - 1].get('depth', 2500)) * k[m]
 dk = np.clip(np.log1p(dep / 40) / np.log1p(11000 / 40), 0, 1)
 
 # ---- underwater bed: muffled rumble, brighter near the surface ----
@@ -59,15 +59,26 @@ def creak(d=2.2):
     return filt(pulses * noise(d) * .6 + pulses, 'band', [90, 700]) * np.sin(np.pi * tt / d) ** .6 * .8
 def whale(d=3.5):
     tt = t_(d); f = 210 - 70 * tt / d + 8 * np.sin(2 * np.pi * 5 * tt); return np.sin(2 * np.pi * np.cumsum(f) / SR) * np.sin(np.pi * tt / d) ** 2 * .5
+def bloop():   # a rising, rumbling sweep, like the sped-up hydrophone recording
+    d = 3.2; tt = t_(d); f = 40 + 260 * (tt / d) ** 1.8; ph = np.cumsum(f) / SR; e = np.minimum(1, tt / .3) * np.exp(-np.maximum(0, tt - 2.2) / .35)
+    y = sum(a * np.sin(2 * np.pi * k * ph) for k, a in [(1, 1), (2, .5), (3, .3), (5, .12)]) * (1 + .5 * np.sin(2 * np.pi * 11 * tt))
+    return (y + filt(noise(d), 'low', 400) * .4) * e * .6
+def crack():   # ice fracturing: sharp snaps, then a long low groan
+    d = 3.5; tt = t_(d); y = filt(noise(d), 'low', 120) * np.exp(-tt / 1.2) * 1.2
+    for _ in range(40):
+        n0 = int(rng.uniform(0, 1.4) ** 1.5 * SR); s = filt(noise(.05), 'high', 1500) * np.exp(-t_(.05) / .008) * rng.uniform(.3, 1); y[n0:n0 + len(s)] += s[:len(y) - n0]
+    return y
+def growl():   # sub rumble with a slow wobble: the 'monster'
+    d = 6; tt = t_(d); return (np.sin(2 * np.pi * (28 + 3 * np.sin(2 * np.pi * .7 * tt)) * tt) + filt(noise(d), 'low', 90) * .8) * np.sin(np.pi * tt / d) ** 1.5 * .9
 def splash(): tt = t_(1.6); return filt(noise(1.6), 'low', 2500) * np.exp(-tt / .18) * 1.2 + filt(noise(1.6), 'band', [200, 600]) * np.exp(-tt / .5) * .6
 def bubble(): d = rng.uniform(.04, .12); tt = t_(d); f = rng.uniform(500, 1500) * (1 + 2.5 * tt / d); return np.sin(2 * np.pi * np.cumsum(f) / SR) * np.exp(-tt / (d / 3)) * .3
 
-add(fx, splash(), 0, .8)
-for _ in range(70): add(fx, bubble(), rng.uniform(.05, 2.6) ** 1.3, rng.uniform(.3, 1), rng.uniform(-.7, .7))
+if L[0].get('depth') == 0: add(fx, splash(), 0, .8)
+for _ in range(70 if L[0].get('depth') == 0 else 0): add(fx, bubble(), rng.uniform(.05, 2.6) ** 1.3, rng.uniform(.3, 1), rng.uniform(-.7, .7))
 for i in range(1, len(L)):
-    if L[i]['depth'] != L[i - 1]['depth']: add(fx, whoosh(1.7), L[i]['t0'] - 1.6, .7, rng.uniform(-.3, .3)); add(fx, ping(1150 - i * 30), L[i]['t0'] - .05, .45, .15)
+    if L[i].get('ping') or ('depth' in L[i] and L[i]['depth'] != L[i - 1]['depth']): add(fx, whoosh(1.7), L[i]['t0'] - 1.6, .7, rng.uniform(-.3, .3)); add(fx, ping(1150 - i * 30), L[i]['t0'] - .05, .45, .15)
 cues = json.load(open(os.path.join(P, 'cues.json'))) if os.path.exists(os.path.join(P, 'cues.json')) else []
-for c in cues: add(fx, {'boom': boom, 'creak': creak, 'whale': whale}[c['type']](), word_t(c['t']), c.get('gain', 1), c.get('pan', 0))
+for c in cues: add(fx, {'boom': boom, 'creak': creak, 'whale': whale, 'bloop': bloop, 'crack': crack, 'growl': growl, 'splash': splash}[c['type']](), word_t(c['t']), c.get('gain', 1), c.get('pan', 0))
 add(fx, ping(880), TL['end'] + .2, .5); add(fx, ping(1320), TL['end'] + .55, .25)
 fx = verb(fx, ir(3.2, 3500), .45)
 mus = verb(mus, ir(4, 2500), .4)

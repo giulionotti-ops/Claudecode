@@ -210,3 +210,52 @@ export function mark(g, x, y, s, t = 0, a = 1) {
   g.restore();
 }
 export function fmtDepth(m) { return '−' + Math.round(m).toLocaleString('en-US') + ' m'; }
+
+// Orthographic globe: graticule + rough coastlines. lon0/lat0 = the point facing us. Returns a projector.
+const COAST = {
+  samerica: [[-80,10],[-75,11],[-62,10],[-52,5],[-35,-5],[-39,-14],[-41,-22],[-48,-26],[-53,-34],[-58,-38],[-65,-41],[-68,-50],[-70,-55],[-74,-52],[-73,-45],[-72,-35],[-71,-25],[-70,-18],[-76,-14],[-81,-6],[-80,0],[-78,7],[-80,10]],
+  namerica: [[-78,7],[-83,9],[-87,13],[-92,15],[-97,16],[-105,20],[-110,24],[-112,29],[-117,33],[-121,36],[-124,41],[-124,48],[-130,55],[-140,60],[-152,58],[-165,62],[-168,66]],
+  australia: [[114,-22],[114,-34],[118,-35],[129,-32],[138,-35],[146,-39],[150,-37],[153,-28],[146,-19],[142,-11],[136,-12],[130,-12],[122,-17],[114,-22]],
+  antarctica: Array.from({ length: 73 }, (_, i) => [-180 + i * 5, -71 + 2 * Math.sin(i * .35) + 1.2 * Math.sin(i * .9)]),
+};
+export function globe(g, cx, cy, R, lon0, lat0, a = 1) {
+  const r = Math.PI / 180, cl = Math.cos(lat0 * r), sl = Math.sin(lat0 * r);
+  const P = (lon, lat) => { const x = Math.cos(lat * r) * Math.sin((lon - lon0) * r), y = cl * Math.sin(lat * r) - sl * Math.cos(lat * r) * Math.cos((lon - lon0) * r), z = sl * Math.sin(lat * r) + cl * Math.cos(lat * r) * Math.cos((lon - lon0) * r); return [cx + x * R, cy - y * R, z]; };
+  g.save();
+  const gr = g.createRadialGradient(cx - R * .3, cy - R * .3, 0, cx, cy, R); gr.addColorStop(0, `rgba(10,60,76,${.55 * a})`); gr.addColorStop(1, `rgba(2,12,18,${.9 * a})`);
+  g.fillStyle = gr; g.beginPath(); g.arc(cx, cy, R, 0, 7); g.fill();
+  const line = (pts, col, w, al) => { g.strokeStyle = col; g.lineWidth = w; g.globalAlpha = al * a; g.beginPath(); let pen = false; for (const [lo, la] of pts) { const [x, y, z] = P(lo, la); if (z > 0) { pen ? g.lineTo(x, y) : g.moveTo(x, y); pen = true; } else pen = false; } g.stroke(); };
+  for (let la = -75; la <= 75; la += 15) line(Array.from({ length: 73 }, (_, i) => [-180 + i * 5, la]), C.glow, 1, .16);
+  for (let lo = -180; lo < 180; lo += 15) line(Array.from({ length: 37 }, (_, i) => [lo, -90 + i * 5]), C.glow, 1, .16);
+  g.shadowColor = C.glow; g.shadowBlur = 10; for (const k in COAST) line(COAST[k], C.glow, 2.5, .8);
+  g.shadowBlur = 0; g.globalAlpha = .6 * a; g.strokeStyle = C.glow; g.lineWidth = 2; g.beginPath(); g.arc(cx, cy, R, 0, 7); g.stroke();
+  g.restore(); return P;
+}
+// A tabular iceberg at the waterline (y = waterline). crack 0..1 runs a fracture down it; split 0..1 tips the right slab away.
+export function iceberg(g, x, y, s, crack = 0, split = 0, t = 0, a = 1) {
+  const CUT = [[.18, -.36], [.22, -.1], [.15, .2], [.21, .55], [.16, 1.06]];
+  const LEFT = [[-1, -.32], [-.6, -.36], [-.1, -.34], ...CUT, [-.5, .95], [-1.05, .3]];
+  const RIGHT = [[.35, -.37], [1, -.33], [1.05, .25], [.7, .9], [.16, 1.06], ...CUT.slice(0, -1).reverse()];
+  const slab = (pts, dx, dy, rot, px, py) => {
+    g.save(); g.translate(x + dx * s, y + dy * s); g.translate(px * s, py * s); g.rotate(rot); g.translate(-px * s, -py * s);
+    const p = new Path2D(); pts.forEach(([u, v], i) => i ? p.lineTo(u * s, v * s) : p.moveTo(u * s, v * s)); p.closePath();
+    const gr = g.createLinearGradient(0, -.4 * s, 0, 1.1 * s); gr.addColorStop(0, `rgba(210,250,255,${.6 * a})`); gr.addColorStop(.28, `rgba(70,180,210,${.32 * a})`); gr.addColorStop(1, `rgba(10,50,70,${.12 * a})`);
+    g.fillStyle = gr; g.fill(p); g.strokeStyle = `rgba(210,250,255,${.85 * a})`; g.lineWidth = Math.max(1.5, s * .006); g.shadowColor = C.glow; g.shadowBlur = s * .04; g.stroke(p);
+    // strata lines in the ice
+    g.shadowBlur = 0; g.globalAlpha = .25 * a; g.beginPath(); for (let k = 1; k < 6; k++) { const v = -.32 + k * .22; g.moveTo(-1.1 * s, v * s); g.lineTo(1.1 * s, (v + .02) * s); } g.save(); g.clip(p); g.stroke(); g.restore();
+    g.restore();
+  };
+  const e = ss(split);
+  slab(LEFT, -e * .05, 0, -e * .04, -1, 1);
+  slab(RIGHT, e * .35, e * .12, e * .5, .2, 1.06);
+  if (crack > 0 && e < .2) {   // the fracture racing down the cut line
+    const pts = CUT, tot = crack * (pts.length - 1), n = Math.floor(tot), f = tot - n;
+    g.save(); g.translate(x, y); g.strokeStyle = `rgba(255,255,255,${a * (1 - e * 5)})`; g.lineWidth = Math.max(2, s * .01); g.shadowColor = '#fff'; g.shadowBlur = s * .06;
+    g.beginPath(); g.moveTo(pts[0][0] * s, pts[0][1] * s); for (let i = 1; i <= n; i++) g.lineTo(pts[i][0] * s, pts[i][1] * s);
+    if (n < pts.length - 1) g.lineTo(lerp(pts[n][0], pts[n + 1][0], f) * s, lerp(pts[n][1], pts[n + 1][1], f) * s); g.stroke();
+    const r = rng(8); g.lineWidth = Math.max(1, s * .004); for (let i = 0; i <= n; i++) { const [u, v] = pts[i]; g.beginPath(); g.moveTo(u * s, v * s); g.lineTo((u + (r() - .5) * .35) * s, (v + r() * .1) * s); g.stroke(); }
+    g.restore();
+  }
+  // waterline
+  g.save(); g.strokeStyle = `rgba(111,246,255,${.5 * a})`; g.lineWidth = 2; g.beginPath(); for (let u = -1.6; u <= 1.6; u += .02) g.lineTo(x + u * s, y + Math.sin(u * 9 + t * 2) * s * .01); g.stroke(); g.restore();
+}

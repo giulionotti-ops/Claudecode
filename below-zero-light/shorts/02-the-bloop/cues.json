@@ -1,0 +1,44 @@
+[
+ {
+  "t": "L1:sound",
+  "type": "bloop",
+  "gain": 0.45
+ },
+ {
+  "t": "L5:Bloop",
+  "type": "bloop",
+  "gain": 0.5
+ },
+ {
+  "t": "L6:louder",
+  "type": "boom",
+  "gain": 0.32
+ },
+ {
+  "t": "L7:So",
+  "type": "growl",
+  "gain": 0.45
+ },
+ {
+  "t": "L8:monster",
+  "type": "boom",
+  "gain": 0.41
+ },
+ {
+  "t": "L10:cracking",
+  "type": "crack",
+  "gain": 0.45,
+  "pan": -0.2
+ },
+ {
+  "t": "L10:breaking",
+  "type": "crack",
+  "gain": 0.5,
+  "pan": 0.3
+ },
+ {
+  "t": "L10:breaking",
+  "type": "boom",
+  "gain": 0.36
+ }
+]
