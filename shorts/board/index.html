@@ -1,0 +1,102 @@
+<title>Glazier of Terra Shorts</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Alegreya+Sans:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Mono:wght@400&display=swap">
+<style>
+/* Layout: a column of short cards, newest first (two or three across on wide screens). Each card: number, video, download, title, description,
+   pinned comment, upload slot. One dark look on purpose: lead came and lit glass, like the channel's windows. */
+:root {
+  --lead: #0e0c0b; --pane: #18140f; --came: #2e261d; --parch: #f0e4c9; --mute: #a99a7d;
+  --gold: #e3b04b; --ruby: #c9343f;
+  --display: 'Cinzel', 'Trajan Pro', Georgia, serif;
+  --body: 'Alegreya Sans', 'Segoe UI', system-ui, sans-serif;
+  --mono: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+  color-scheme: dark;
+}
+body { background: var(--lead); color: var(--parch); font: 16px/1.55 var(--body); }
+.wrap { max-width: 1240px; margin: 0 auto; padding-block: 28px 64px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 24px; margin-bottom: 26px; padding-bottom: 16px; border-bottom: 3px double var(--came); }
+h1 { font: 700 clamp(22px, 4.4vw, 32px)/1.1 var(--display); letter-spacing: .14em; margin: 0; color: var(--gold); text-shadow: 0 0 22px rgba(227,176,75,.35); text-wrap: balance; }
+.count { font: 13px var(--mono); color: var(--mute); letter-spacing: .06em; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 22px; align-items: start; }
+.card { background: var(--pane); border: 2px solid var(--came); border-radius: 12px; padding: 18px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.num { font: 13px var(--mono); letter-spacing: .12em; text-transform: uppercase; color: var(--gold); display: flex; justify-content: space-between; gap: 8px; }
+.num span:last-child { color: var(--mute); }
+.story { font: 500 13px var(--display); letter-spacing: .12em; color: var(--mute); margin: -6px 0 0; }
+video, .still { width: 100%; max-width: 100%; aspect-ratio: 9 / 16; max-height: 560px; background: #000; border-radius: 8px; display: block; object-fit: contain; border: 1px solid var(--came); }
+.nofile { font-size: 14px; color: var(--mute); margin: -4px 0 0; }
+.dl { display: flex; justify-content: center; align-items: baseline; gap: 10px; font: 700 15px var(--display); letter-spacing: .06em; color: var(--lead); background: var(--gold); border-radius: 8px; padding: 12px 16px; text-decoration: none; }
+.dl:hover { filter: brightness(1.08); }
+.dl:focus-visible { outline: 2px solid var(--parch); outline-offset: 2px; }
+.dl small { font: 12px var(--mono); letter-spacing: 0; opacity: .75; }
+.title { font: 500 21px/1.3 var(--body); margin: 0; text-wrap: balance; overflow-wrap: anywhere; }
+.row { display: flex; align-items: flex-start; gap: 10px; }
+.row > :first-child { flex: 1; min-width: 0; }
+.copy { flex: none; font: 12px var(--mono); color: var(--gold); background: transparent; border: 1px solid var(--came); border-radius: 999px; padding: 5px 12px; cursor: pointer; }
+.copy:hover { border-color: var(--gold); }
+.copy:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+.lbl { font: 11px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--mute); margin: 0 0 4px; }
+.desc { white-space: pre-line; margin: 0; opacity: .9; overflow-wrap: anywhere; }
+.pin { margin: 0; font-style: italic; color: var(--mute); overflow-wrap: anywhere; }
+.upload { border-top: 1px dashed var(--came); padding-top: 14px; display: grid; gap: 6px; }
+.upload h3 { font: 700 14px var(--display); letter-spacing: .1em; margin: 0; color: var(--ruby); }
+.when { font: 13px var(--mono); font-variant-numeric: tabular-nums; }
+.notes { margin: 0; color: var(--mute); font-size: 14px; }
+.empty { color: var(--mute); }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Glazier of Terra · Shorts</h1>
+    <div class="count" id="count">Loading shorts…</div>
+  </header>
+  <main class="grid" id="grid"></main>
+</div>
+
+<template id="tpl">
+  <article class="card">
+    <div class="num"><span data-k="num"></span><span data-k="made"></span></div>
+    <p class="story" data-k="name"></p>
+    <video controls playsinline preload="metadata"></video>
+    <img class="still" alt="">
+    <p class="nofile">The video file is in an earlier session, so it isn't on this board.</p>
+    <a class="dl" data-k="dl" target="_blank" rel="noopener">Download full quality</a>
+    <div class="row"><h2 class="title" data-k="title"></h2><button class="copy" data-copy="title" type="button">Copy</button></div>
+    <div class="row"><div><p class="lbl">Description</p><p class="desc" data-k="description"></p></div><button class="copy" data-copy="description" type="button">Copy</button></div>
+    <div class="row"><div><p class="lbl">Pinned comment</p><p class="pin" data-k="pinned"></p></div><button class="copy" data-copy="pinned" type="button">Copy</button></div>
+    <section class="upload">
+      <h3>Upload suggestion</h3>
+      <div class="when" data-k="when"></div>
+      <p class="notes" data-k="notes"></p>
+    </section>
+  </article>
+</template>
+
+<script>
+const grid = document.getElementById('grid'), tpl = document.getElementById('tpl');
+function select(btn) { const el = btn.parentElement.querySelector('[data-k]'); const r = document.createRange(); r.selectNodeContents(el); const s = getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent = 'Selected'; }
+function copy(btn, text) {
+  const done = () => { btn.textContent = 'Copied'; setTimeout(() => btn.textContent = 'Copy', 1400); };
+  try { navigator.clipboard.writeText(text).then(done, () => select(btn)); } catch { select(btn); }
+}
+function fmt(d) { try { return new Date(d + 'T12:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }); } catch { return d; } }
+fetch('shorts.json').then(r => r.json()).then(list => {
+  list.sort((a, b) => b.n - a.n);
+  document.getElementById('count').textContent = `${list.length} shorts · newest first`;
+  if (!list.length) { grid.innerHTML = '<p class="empty">No shorts yet. New ones appear here each day.</p>'; return; }
+  for (const s of list) {
+    const c = tpl.content.cloneNode(true);
+    c.querySelector('[data-k="num"]').textContent = `Short #${s.n}`;
+    c.querySelector('[data-k="made"]').textContent = s.made ? `made ${fmt(s.made)}` : '';
+    for (const k of ['name', 'title', 'description', 'pinned', 'when', 'notes']) c.querySelector(`[data-k="${k}"]`).textContent = s[k] || '';
+    const v = c.querySelector('video'), img = c.querySelector('.still'), nf = c.querySelector('.nofile');
+    if (s.video) { v.src = s.video; if (s.poster) v.poster = s.poster; img.remove(); nf.remove(); }
+    else { v.remove(); if (s.poster) { img.src = s.poster; img.alt = s.name + ' cover'; } else img.remove(); }
+    const dl = c.querySelector('[data-k="dl"]');
+    if (s.download) { dl.href = s.download; dl.innerHTML = 'Download full quality <small>1080p · ' + (s.size_mb || '') + ' MB</small>'; } else dl.remove();
+    if (s.download || s.video) nf?.remove();
+    c.querySelectorAll('[data-copy]').forEach(b => b.addEventListener('click', () => copy(b, s[b.dataset.copy] || '')));
+    grid.appendChild(c);
+  }
+}).catch(() => { document.getElementById('count').textContent = 'Could not load the list of shorts. Reload the page to try again.'; });
+</script>
