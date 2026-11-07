@@ -1,0 +1,27 @@
+<!doctype html><html><head><meta charset="utf-8"><title>Brand mockups</title>
+<link rel="stylesheet" href="../fonts/fonts.css">
+<style>
+body{margin:0;background:#0b0f14;color:#dfe9ef;font:16px 'Space Grotesk';padding:40px;width:1520px}
+h2{font-weight:500;letter-spacing:.08em;font-size:18px;color:#6ff6ff;margin:40px 0 16px}
+.row{display:flex;gap:40px;align-items:flex-end}
+.p{text-align:center}.p img{border-radius:50%;display:block;margin:0 auto 10px}
+.lbl{font:13px 'JetBrains Mono';opacity:.7}
+.ban{position:relative;width:1440px;margin-bottom:10px}.ban img{width:100%;display:block}
+.safe{position:absolute;left:calc((2560 - 1546)/2/2560*100%);width:calc(1546/2560*100%);top:calc((1440 - 423)/2/1440*100%);height:calc(423/1440*100%);outline:2px dashed #ffcf6b}
+.desk{position:absolute;left:0;right:0;top:calc((1440 - 423)/2/1440*100%);height:calc(423/1440*100%);outline:2px dashed rgba(255,255,255,.5)}
+.phone{width:380px;border-radius:28px;background:#000;padding:12px;border:2px solid #333}
+.phone .crop{width:100%;aspect-ratio:1546/423;background-size:calc(2560/1546*100%) auto;background-position:center;border-radius:8px}
+.phone .ch{display:flex;gap:12px;align-items:center;padding:14px 4px}.phone .ch img{width:64px;border-radius:50%}
+.phone b{font-weight:500}.phone small{font:12px 'JetBrains Mono';opacity:.6;display:block}
+</style></head><body>
+<h2>PROFILE PICTURE OPTIONS — shown as YouTube crops them (circle), at 3 sizes</h2>
+<div class="row" id="pfps"></div>
+<h2>BANNER OPTIONS — dashed yellow = what phones show (1546×423, the safe area) · dashed white = desktop strip</h2>
+<div id="bans"></div>
+<script>
+const P=[['pfp-lure','A · LURE'],['pfp-eye','B · EYE'],['pfp-mark','C · MARK'],['pfp-jelly','D · JELLY']];
+pfps.innerHTML=P.map(([f,n])=>`<div class="p"><div class="row" style="gap:14px;align-items:center"><img src="${f}.jpg" width="220"><img src="${f}.jpg" width="88"><img src="${f}.jpg" width="40"></div><div class="lbl">${n}</div></div>`).join('');
+const B=[['banner-descent','1 · DESCENT'],['banner-abyss','2 · ABYSS'],['banner-sonar','3 · SONAR']];
+bans.innerHTML=B.map(([f,n],i)=>`<div class="row" style="align-items:center;margin-bottom:30px"><div><div class="ban" style="width:1020px"><img src="${f}.jpg"><div class="desk"></div><div class="safe"></div></div><div class="lbl">${n} · full image (TV)</div></div>
+<div><div class="phone"><div class="crop" style="background-image:url(${f}.jpg)"></div><div class="ch"><img src="${P[[2,0,1][i]][0]}.jpg"><div><b>Below Zero Light</b><small>@belowzerolight</small></div></div></div><div class="lbl">on a phone</div></div></div>`).join('');
+</script></body></html>
