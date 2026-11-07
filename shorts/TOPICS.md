@@ -8,7 +8,11 @@
 - The Lamenters, the Cursed Chapter (lamenters), 2026-11-07
 - The Fire Hawks and the Legion of the Damned (vanished), 2026-11-07
 
-## Queue (take from the top)
+## Queue (take from the top; canon only, little-known stories welcome)
+- The Mantis Warriors: the other Chapter punished after the Badab War
+- The Tanith First: the regiment whose home world burned the day it was founded (Gaunt's Ghosts, Black Library)
+- The Doom of Malan'tai: the Zoanthrope that devoured a whole army's souls
+- The Astral Knights: the Chapter that sacrificed itself to stop a Necron World Engine
 - The Last Krieger: the Death Korps of Krieg and their penance
 - Why the Emperor sits on the Golden Throne (and what he endures there)
 - Ferrus Manus: beheaded by his best friend Fulgrim at Isstvan V

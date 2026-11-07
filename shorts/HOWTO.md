@@ -12,10 +12,11 @@ The Lemo-Opuscar library is NOT used (running it is blocked). Everything runs fr
 
 ## 1. Pick and claim a topic
 Open `shorts/TOPICS.md`, take the first topic under **Queue**, move it to **Done** with today's date and the folder name, then commit and push that change right away, so the other daily runs don't pick it too.
-Prefer tragic, emotional stories with a famous name (see `shorts/research-40k-shorts.md`). Never repeat a topic in **Done**.
+Prefer tragic, emotional stories (see `shorts/research-40k-shorts.md`). Mix famous names with **little-known stories, as long as they are canon** (codexes, Imperial Armour books, Black Library novels and short stories, Warhammer Community articles). Never use fan fiction or fan theories presented as fact. Never repeat a topic in **Done**. You may add new canon topics to the queue.
 
 ## 2. Research (mandatory)
-- **Lore:** WebSearch (standard) for the story beats, dates and names. Use only facts most sources agree on, and keep disputed ones out of the script.
+- **Lore:** WebSearch for the story beats, dates and names, and name the canon source (book, codex or article) for each beat in the commit message. Use only facts most sources agree on, and keep disputed ones out of the script.
+- **Blocked sources:** Lexicanum and the Fandom wiki usually return 403 from the cloud machine; Warhammer Community works. If you can't confirm a story is canon, pick another topic, and tell the owner in your final reply which pages were blocked.
 - **Reference art for EVERY character (owner's rule):** before drawing anyone, find real pictures (painted miniatures, official art) and LOOK at them. Download a few images with curl into the scratchpad and open them with Read. Write down the colour scheme and signature gear (helmet shape, pauldron heraldry, weapons, horns, claws, cloaks, icons). For example, the Lamenters' shoulder pad is checkered all over with a red heart, not a small shield.
 - Characters must be **instantly recognizable**: give each one its signature details in every panel where it appears.
 
