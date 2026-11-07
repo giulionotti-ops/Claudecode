@@ -47,3 +47,6 @@ fi
 if [ -n "${CLAUDE_ENV_FILE:-}" ]; then
   echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$CLAUDE_ENV_FILE"
 fi
+
+# Python audio libraries for the shorts (shorts/*/music/score.py, mix.py)
+python3 -c "import scipy, soundfile, soxr" 2>/dev/null || pip install -q scipy soundfile soxr
