@@ -106,7 +106,7 @@ vo *= 10 ** ((-17.5 - 20 * np.log10(np.sqrt((vo[np.abs(vo).max(1) > 1e-4] ** 2).
 st = {}
 for n in ['drone', 'harp_chimes', 'war', 'bell']:
     a, sr = sf.read(os.path.join(D, 'music', 'stems', n + '.wav')); a = rs(a, sr); b = np.zeros((N, 2)); b[:min(N, len(a))] = a[:N]; st[n] = b
-gains = {'drone': .85, 'harp_chimes': 1.0, 'war': 1.0, 'bell': 1.4}
+gains = {'drone': .45, 'harp_chimes': .7, 'war': .8, 'bell': .3}
 mus = sum(st[n] * g for n, g in gains.items() if n != 'bell')
 env = np.abs(vo).max(1); win = int(.25 * SR); env = np.convolve(env, np.ones(win) / win, 'same')
 duck = 1 - .645 * np.clip(env / .04, 0, 1); k = int(.12 * SR); duck = np.convolve(duck, np.ones(k) / k, 'same')
