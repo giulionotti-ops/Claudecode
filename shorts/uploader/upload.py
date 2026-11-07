@@ -84,7 +84,7 @@ def upload(entry, dry=False):
             if status: print(f'  uploading {entry["name"]}: {int(status.progress() * 100)}%')
         except Exception as e:   # transient network / 5xx: back off and resume the same upload
             tries += 1
-            if tries > 5: raise
+            if tries > 5 or 400 <= getattr(getattr(e, 'resp', None), 'status', 500) < 500: raise   # 4xx (e.g. upload limit) won't fix itself
             print(f'  retry {tries} after error: {e}'); time.sleep(2 ** tries)
     vid = resp['id']
     if srt:
