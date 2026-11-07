@@ -43,9 +43,13 @@ function marine(extra = [], o = {}) {
   const parts = SON2.filter(o.keep || KEEP).map(q => {
     if (CS[q.n] && !o.mace) return { ...q, sh: CS[q.n], at: q.n === 'blade' ? [0, 26] : q.at, c: q.n === 'blade' ? 'steel' : q.c, paint: q.n === 'blade' ? csPaint : undefined };
     if (q.n === 'torso') return { ...q, paint: (g, op) => { brush(g, [[-28, -26], [0, -22], [28, -26]], 1.6); brush(g, [[-26, -12], [0, -9], [26, -12]], 1.6); brush(g, [[0, -64], [0, -30]], 1.4); aquila(g); } };
-    if (q.n === 'pauldF') return { ...q, paint: (g, op) => { q.paint(g, op); if (op.heart) sign(g, 0, -6, .95); } };
+    if (q.n === 'pauldF') return { ...q, c: 'pauld', paint: (g, op) => { if (!op.heart) return q.paint(g, op);   // the Chapter pauldron: chequered all over, a white roundel with a red heart
+      g.save(); g.clip(q.sh); checks(g, -34, -34, 68, 52, 9); g.restore(); brush(g, [[-30, 12], [0, 15], [28, 12]], 1.6);
+      g.fillStyle = '#f2ece0'; g.beginPath(); g.arc(0, -8, 11, 0, 7); g.fill(); g.lineWidth = 1.6; g.strokeStyle = 'rgba(24,16,10,.95)'; g.stroke();
+      g.save(); g.translate(0, -7); g.scale(.72, .72); g.fillStyle = '#c0141c'; g.fill(HEART); g.lineWidth = 2; g.stroke(HEART); g.restore(); } };
     if (q.n === 'rimF' || q.n === 'rimB') return { ...q, c: 'rim', paint: g => { g.fillStyle = 'rgba(230,220,200,.75)'; for (const [x, y] of [[-26, -8], [-16, -24], [0, -30], [16, -27], [28, -12]]) { g.beginPath(); g.arc(x, y, 1.5, 0, 7); g.fill(); } } };
-    if (q.n === 'kneeF' || q.n === 'kneeB') return { ...q, c: 'knee', paint: (g, op) => { if (op.heart) { g.save(); g.clip(q.sh); checks(g, -14, -14, 28, 24, 4); g.restore(); } } };
+    if (q.n === 'kneeF') return { ...q, c: 'kneeR' };
+    if (q.n === 'kneeB') return { ...q, c: 'knee' };
     if (q.n === 'pack') return { ...q, paint: g => { for (const y of [-96, -74, -54]) brush(g, [[-30, y], [0, y + 2], [30, y]], 1.6); for (const x of [-20, -8, 4, 16]) brush(g, [[x, -50], [x, -44]], 2); } };
     return q; });
   return [...parts, { n: 'helm', p: 'head', at: [0, 0], sh: HELM, c: 'helm', z: 10.7, lead: 3, paint: helmPaint }, { n: 'lens', p: 'head', at: [0, 0], sh: smooth([[8, -33, 1], [19, -33], [20, -27, 1], [9, -26]]), c: 'lens', z: 10.8, lead: 2.4 },
@@ -57,15 +61,15 @@ const HORN_B = smooth([[-10, -44, 1], [-16, -58], [-12, -78], [4, -94], [18, -10
 const hornPaint = g => { for (let k = 0; k < 4; k++) brush(g, [[6 + k * 6, -50 - k * 6], [12 + k * 6, -48 - k * 7]], 1, { color: 'rgba(52,30,14,.55)' }); };
 export const MARINE = marine();
 export const MINOTAUR = marine([{ n: 'hornB', p: 'head', at: [0, 0], sh: HORN_B, c: 'horn', z: 10.65, lead: 2.6, paint: hornPaint }, { n: 'hornF', p: 'head', at: [0, 0], sh: HORN_F, c: 'horn', z: 10.9, lead: 2.6, paint: hornPaint }], { mace: true });
-export const LAMENTER = { knee: '#e2b628', arm: '#e2b628', arm2: '#c0921c', helm: '#e2b628', rim: '#2a2c30', trim: '#2a2c30', cloth: COL.ruby2, dark: '#3c3f46', flesh: '#b07a5e', steel: COL.steel, lens: '#e0302a' };
-export const BRONZE = { knee: '#e0b040', arm: '#8a4e18', arm2: '#5a2c0e', helm: '#8a4e18', rim: '#e0b040', trim: '#e0b040', cloth: '#1c1a18', dark: '#2e2a26', flesh: '#b07a5e', steel: COL.steel2, lens: '#7fdc4a', horn: '#e8dcbc' };
+export const LAMENTER = { pauld: '#eee8dc', kneeR: '#b8141c', knee: '#e2b628', arm: '#e2b628', arm2: '#c0921c', helm: '#e2b628', rim: '#c0921c', trim: '#2a2c30', cloth: COL.ruby2, dark: '#3c3f46', flesh: '#b07a5e', steel: COL.steel, lens: '#5fd84a' };
+export const BRONZE = { pauld: '#8a4e18', kneeR: '#e0b040', knee: '#e0b040', arm: '#8a4e18', arm2: '#5a2c0e', helm: '#8a4e18', rim: '#e0b040', trim: '#e0b040', cloth: '#1c1a18', dark: '#2e2a26', flesh: '#b07a5e', steel: COL.steel2, lens: '#7fdc4a', horn: '#e8dcbc' };
 // the Tyrant of Badab: bare-headed, half his skull iron with a red bionic eye, the great power claw, a cloak of deep blue
 const CLAW = smooth([[-12, -4], [12, -6], [20, 10], [44, 30, 1], [24, 24], [30, 50, 1], [14, 30], [12, 58, 1], [2, 30], [-6, 52, 1], [-8, 26], [-14, 10]].map(([x, y, c]) => [x * 1.6, y * 1.6, c]));
 const IRON = smooth([[-15, -6], [-17, -28], [-13, -44], [0, -52], [10, -50], [8, -36], [16, -30, 1], [14, -20, 1], [2, -16], [-4, -6]]);
 const TYRANT_PARTS = [...SON2.filter(q => !['hair', 'pelt', 'grip', 'guard', 'blade'].includes(q.n)).map(q => q.n === 'handF' ? { ...q, sh: CLAW, c: 'claw', lead: 3, paint: g => { for (const [x, y] of [[58, 45], [38, 70], [16, 80], [-6, 70]]) brush(g, [[x * .4, y * .4], [x, y]], 1.4, { color: 'rgba(255,255,255,.5)' }); } } : q),
   { n: 'iron', p: 'head', at: [0, 0], sh: IRON, c: 'steel', z: 10.6, lead: 2.6, paint: g => { for (const [x, y] of [[-10, -30], [-6, -42], [2, -46], [-12, -16]]) { g.fillStyle = 'rgba(30,18,10,.8)'; g.beginPath(); g.arc(x, y, 1.4, 0, 7); g.fill(); } } },
   { n: 'eyeR', p: 'head', at: [0, 0], sh: circle(10, -27, 4.6), c: '#ff3a1a', z: 10.8, lead: 2.2 }];
-export const TYRANT = { arm: '#9aa8a6', arm2: '#6e7c7a', trim: COL.blue2, cloak: COL.deepblue, cloth: COL.blue2, dark: '#26282c', flesh: '#a87a62', steel: '#7c8a88', claw: '#c8d2d0', rim: COL.blue2 };
+export const TYRANT = { arm: '#9aa8a6', arm2: '#6e7c7a', trim: COL.gold2, cloak: COL.deepblue, cloth: COL.blue2, dark: '#26282c', flesh: '#a87a62', steel: '#7c8a88', claw: '#c8d2d0', rim: COL.gold2 };
 
 // a Tyranid of Hive Fleet Kraken: bone carapace over red flesh, ribbed belly, dorsal spines, fanged jaws, scything talons (facing left)
 const BONE = '#e6d8b4', FLESH = '#b8302a', FLESH2 = '#8a1e22';
@@ -96,8 +100,9 @@ function chalice(P, x, y, s, id) { P.piece(smooth([[x - 12 * s, y - 20 * s, 1], 
   P.piece(circle(x, y - 13 * s, 4 * s), COL.ruby, { id: id + 1, lead: 2, mat: false }); }
 function banner(P, x, y, id, torn) {
   P.piece(smooth([[x - 2, y - 120, 1], [x + 2, y - 120, 1], [x + 2, y + 60, 1], [x - 2, y + 60, 1]]), '#3c3f46', { id, lead: 2.4, mat: false });
-  P.piece(smooth([[x + 2, y - 116, 1], [x + 56, y - 112, 1], [x + 52, y - 80], [x + 58, y - 60, 1], [x + 40, y - 66], torn ? [x + 30, y - 52, 1] : [x + 30, y - 58, 1], [x + 16, y - 64], [x + 2, y - 56, 1]]), '#e2b628', { id: id + 1, lead: 3, matW: 5,
-    paint: g => { checks(g, x + 2, y - 118, 56, 64, 6); sign(g, x + 29, y - 90, 1.25, 4); } });
+  P.piece(smooth([[x + 2, y - 116, 1], [x + 56, y - 112, 1], [x + 52, y - 80], [x + 58, y - 60, 1], [x + 40, y - 66], torn ? [x + 30, y - 52, 1] : [x + 30, y - 58, 1], [x + 16, y - 64], [x + 2, y - 56, 1]]), '#eee8dc', { id: id + 1, lead: 3, matW: 5,
+    paint: g => { checks(g, x + 2, y - 118, 60, 66, 7); g.fillStyle = '#f2ece0'; g.beginPath(); g.arc(x + 29, y - 88, 15, 0, 7); g.fill(); g.lineWidth = 1.8; g.strokeStyle = 'rgba(24,16,10,.95)'; g.stroke();
+      g.save(); g.translate(x + 29, y - 87); g.fillStyle = '#c0141c'; g.fill(HEART); g.lineWidth = 2; g.stroke(HEART); g.restore(); } });
 }
 
 export const SKY = ['#1f1830', COL.purple2, '#3a1a20', COL.deepblue, '#3a1a20', '#1d2a50'];
