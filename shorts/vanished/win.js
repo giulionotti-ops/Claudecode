@@ -94,7 +94,8 @@ export function drawWindow(P, M, view, st) {
     P.piece(smooth([[x - 16, y], [x - 4, y - 8], [x + 10, y - 7], [x + 18, y, 1], [x + 8, y + 7], [x - 6, y + 7]]), COL.green, { id: 7000 + k, lead: 3, mat: false, paint: g => { g.fillStyle = 'rgba(10,20,8,.9)'; g.beginPath(); g.ellipse(x + 1, y, 2, 6, 0, 0, 7); g.fill(); } }); });
   // title scroll in white glass between the top two medallions
   if (SCROLL_Y > view[1] - 60 && SCROLL_Y < view[3] + 60) P.piece(smooth([[-132, SCROLL_Y - 26], [-120, SCROLL_Y - 32], [0, SCROLL_Y - 26], [120, SCROLL_Y - 32], [132, SCROLL_Y - 26], [134, SCROLL_Y + 24], [122, SCROLL_Y + 30], [0, SCROLL_Y + 26], [-122, SCROLL_Y + 30], [-134, SCROLL_Y + 24]]), COL.white, { id: 7100, lead: 4.5, matW: 6, paint: g => {
-    g.font = '600 17px Cinzel'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillStyle = 'rgba(52,30,14,.92)'; g.fillText("THE CHAPTER THAT VANISHED", 0, SCROLL_Y + 1); } });
+    const TT = "THE CHAPTER THAT VANISHED"; let fs = 17; g.font = `600 ${fs}px Cinzel`; while (g.measureText(TT).width > 236 && fs > 9) g.font = `600 ${--fs}px Cinzel`;   // shrink long titles to fit the scroll
+    g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillStyle = 'rgba(52,30,14,.92)'; g.fillText(TT, 0, SCROLL_Y + 1); } });
   for (let i = 0; i < MED.length; i++) {
     const y = MED[i], r = MR[i]; if (y + r + 20 < view[1] || y - r - 20 > view[3]) continue;
     P.setTransform(M);
