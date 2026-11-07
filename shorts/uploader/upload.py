@@ -13,7 +13,7 @@ On a server without a browser: run `auth`, open the printed link on any device, 
 import sys, os, json, time, datetime
 HERE = os.path.dirname(os.path.abspath(__file__))
 SECRET, TOKEN, SCHEDULE, LOG = (os.path.join(HERE, f) for f in ('client_secret.json', 'token.json', 'schedule.json', 'uploaded.json'))
-SCOPES = ['https://www.googleapis.com/auth/youtube.upload', 'https://www.googleapis.com/auth/youtube.readonly', 'https://www.googleapis.com/auth/yt-analytics.readonly']
+SCOPES = ['https://www.googleapis.com/auth/youtube.upload', 'https://www.googleapis.com/auth/youtube.force-ssl', 'https://www.googleapis.com/auth/youtube.readonly', 'https://www.googleapis.com/auth/yt-analytics.readonly']
 
 
 def credentials():
@@ -88,8 +88,11 @@ def upload(entry, dry=False):
             print(f'  retry {tries} after error: {e}'); time.sleep(2 ** tries)
     vid = resp['id']
     if srt:
-        yt.captions().insert(part='snippet', body={'snippet': {'videoId': vid, 'language': 'en', 'name': 'English', 'isDraft': False}},
-                             media_body=MediaFileUpload(srt, mimetype='application/octet-stream')).execute()
+        try:   # captions need the youtube.force-ssl scope; a failure here must not lose the uploaded video's id
+            yt.captions().insert(part='snippet', body={'snippet': {'videoId': vid, 'language': 'en', 'name': 'English', 'isDraft': False}},
+                                 media_body=MediaFileUpload(srt, mimetype='application/octet-stream')).execute()
+        except Exception as e:
+            print(f'  captions failed ({e}); add {os.path.basename(srt)} by hand in YouTube Studio')
     print(f"  done: https://youtube.com/shorts/{vid}  scheduled for {entry['publish']} ({b['status']['publishAt']} UTC)")
     return vid
 
