@@ -1,0 +1,249 @@
+{
+ "dur": 54,
+ "ev": [
+  {
+   "t": 0.3,
+   "type": "ray"
+  },
+  {
+   "t": 3.8,
+   "type": "whoosh",
+   "d": 1.2
+  },
+  {
+   "t": 5.1,
+   "type": "light"
+  },
+  {
+   "t": 8.9,
+   "type": "crack"
+  },
+  {
+   "t": 11.7,
+   "type": "glide",
+   "d": 0.7
+  },
+  {
+   "t": 12.25,
+   "type": "light"
+  },
+  {
+   "t": 17,
+   "type": "step"
+  },
+  {
+   "t": 19.7,
+   "type": "glide",
+   "d": 0.6
+  },
+  {
+   "t": 20.15,
+   "type": "light"
+  },
+  {
+   "t": 21.4,
+   "type": "clash"
+  },
+  {
+   "t": 22.6,
+   "type": "strike"
+  },
+  {
+   "t": 23,
+   "type": "thump"
+  },
+  {
+   "t": 23.9,
+   "type": "glide",
+   "d": 0.6
+  },
+  {
+   "t": 24.35,
+   "type": "light"
+  },
+  {
+   "t": 26.6,
+   "type": "tinkle"
+  },
+  {
+   "t": 26.700000000000003,
+   "type": "tinkle"
+  },
+  {
+   "t": 28.4,
+   "type": "step"
+  },
+  {
+   "t": 30.9,
+   "type": "glide",
+   "d": 0.6
+  },
+  {
+   "t": 31.35,
+   "type": "light"
+  },
+  {
+   "t": 32.4,
+   "type": "whisper",
+   "d": 2.6
+  },
+  {
+   "t": 32.8,
+   "type": "slide",
+   "d": 0.3
+  },
+  {
+   "t": 33.199999999999996,
+   "type": "slide",
+   "d": 0.3
+  },
+  {
+   "t": 33.6,
+   "type": "slide",
+   "d": 0.3
+  },
+  {
+   "t": 34,
+   "type": "slide",
+   "d": 0.3
+  },
+  {
+   "t": 34.4,
+   "type": "slide",
+   "d": 0.3
+  },
+  {
+   "t": 37.4,
+   "type": "clash"
+  },
+  {
+   "t": 39.5,
+   "type": "glide",
+   "d": 0.8
+  },
+  {
+   "t": 40.15,
+   "type": "light"
+  },
+  {
+   "t": 44.9,
+   "type": "ray"
+  },
+  {
+   "t": 48,
+   "type": "bell"
+  },
+  {
+   "t": 0.6,
+   "type": "voice",
+   "id": "L1"
+  },
+  {
+   "t": 5.4,
+   "type": "voice",
+   "id": "L2"
+  },
+  {
+   "t": 13.2,
+   "type": "voice",
+   "id": "L3"
+  },
+  {
+   "t": 20.6,
+   "type": "voice",
+   "id": "L4"
+  },
+  {
+   "t": 24.8,
+   "type": "voice",
+   "id": "L5"
+  },
+  {
+   "t": 31.8,
+   "type": "voice",
+   "id": "L6"
+  },
+  {
+   "t": 33.5,
+   "type": "voice",
+   "id": "L7"
+  },
+  {
+   "t": 40.6,
+   "type": "voice",
+   "id": "L8"
+  },
+  {
+   "t": 44,
+   "type": "voice",
+   "id": "L9"
+  },
+  {
+   "t": 46.4,
+   "type": "voice",
+   "id": "L10"
+  }
+ ],
+ "subs": [
+  {
+   "id": "L1",
+   "t0": 0.6,
+   "t1": 5.050000000000001,
+   "text": "The Lamenters may be the unluckiest Chapter in the Imperium."
+  },
+  {
+   "id": "L2",
+   "t0": 5.4,
+   "t1": 12.85,
+   "text": "Sons of the Blood Angels, they carry their father's curse, and misfortune follows them everywhere."
+  },
+  {
+   "id": "L3",
+   "t0": 13.2,
+   "t1": 20.25,
+   "text": "When the Tyrant of Badab rose against the Imperium, the Lamenters believed his cause was just."
+  },
+  {
+   "id": "L4",
+   "t0": 20.6,
+   "t1": 24.45,
+   "text": "They fought their loyal brothers, and they lost."
+  },
+  {
+   "id": "L5",
+   "t0": 24.8,
+   "t1": 31.45,
+   "text": "They were spared, but stripped of their relics, and sent on a hundred-year penitent crusade."
+  },
+  {
+   "id": "L6",
+   "t0": 31.8,
+   "t1": 33.15,
+   "text": "Then the Tyranids came."
+  },
+  {
+   "id": "L7",
+   "t0": 33.5,
+   "t1": 39.96,
+   "text": "Hive Fleet Kraken devoured world after world, and the Lamenters stood in its path."
+  },
+  {
+   "id": "L8",
+   "t0": 40.6,
+   "t1": 43.65,
+   "text": "When it was over, only a few hundred remained."
+  },
+  {
+   "id": "L9",
+   "t0": 44,
+   "t1": 46.05,
+   "text": "Still, they fight on."
+  },
+  {
+   "id": "L10",
+   "t0": 46.4,
+   "t1": 51.66,
+   "text": "Their very name means mourning, and they have never stopped."
+  }
+ ]
+}
