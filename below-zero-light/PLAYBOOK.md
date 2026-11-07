@@ -46,6 +46,19 @@ Write them in `uploads/YYYY-MM-DD.md` (same format as `UPLOADS.md`), one block p
 - **Pinned comment:** a question that is easy to answer.
 - Always note: tick "Altered or synthetic content → Yes" (AI voice).
 
+## 6b. Add the cards to the Shorts Board
+The board is a private page: https://claude.ai/artifact/9S7wZjm9G2FsGnDeJG7Sas (source in `board/`). Every short gets one card: number, video, title, description, pinned comment, upload suggestion.
+1. Make the small web copy and poster for each new short (NN = its number):
+   ```sh
+   mkdir -p board/videos board/posters
+   ffmpeg -v error -y -i shorts/NN-slug/slug.mp4 -vf scale=720:1280 -c:v libx264 -preset slow -b:v 1100k -maxrate 1500k -bufsize 3000k -c:a aac -b:a 96k -movflags +faststart board/videos/NN.mp4
+   ffmpeg -v error -y -i shorts/NN-slug/poster.jpg -vf scale=360:-1 -q:v 4 board/posters/NN.jpg
+   ```
+   Each video must stay under 15 MB (lower `-b:v` if not).
+2. Add one entry per short to `board/shorts.json` (same fields as the existing ones: `n`, `folder`, `file`, `video`, `poster`, `title`, `description`, `pinned`, `when`, `notes`, `made`). Use the same title, description and pinned comment as in the day's upload file.
+3. **Upload suggestion** (`when` and `notes`): spread the day's 3 shorts over the next day at **15:00, 20:00 and 01:00 Rome time** (9:00, 14:00, 19:00 New York), the strongest hook first. Write `when` like `Sun 8 Nov · 15:00 Rome / 9:00 New York`. In `notes`, say in one or two sentences why it goes in that slot, and repeat the checklist: upload the .srt as captions, pin the comment, tick "Altered or synthetic content: Yes".
+4. Publish: first read the board with the Artifact tool (`action: "read"`, the URL above), then publish with that `url`, `file_path` = `board/index.html`, `root` = the `board` folder, and `files` = `shorts.json` plus only the new `videos/NN.mp4` and `posters/NN.jpg` (files you leave out stay on the board).
+
 ## 7. Commit and push
 ```sh
 cd .. && git add below-zero-light && git commit -m "Below Zero Light: shorts NN-NN (<topics>)" && git push -u origin claude/relaxed-darwin-ih2a5z

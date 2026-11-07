@@ -1,0 +1,88 @@
+<title>Below Zero Light Shorts</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500&family=IBM+Plex+Sans:wght@400;500&family=JetBrains+Mono:wght@400&display=swap">
+<style>
+/* Layout: a column of short cards (number, video, title, description, upload suggestion), newest first; two or three across on wide screens.
+   Single dark look on purpose: it matches the channel's black-water brand. */
+:root {
+  --abyss: #03080d; --panel: #08141c; --line: #15303c; --ink: #e6f6fa; --mute: #8fb0ba;
+  --glow: #6ff6ff; --amber: #ffcf6b;
+  --display: 'Space Grotesk', 'Segoe UI', system-ui, sans-serif;
+  --body: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
+  --mono: 'JetBrains Mono', ui-monospace, Menlo, monospace;
+  color-scheme: dark;
+}
+body { background: var(--abyss); color: var(--ink); font: 15px/1.55 var(--body); }
+.wrap { max-width: 1240px; margin: 0 auto; padding-block: 28px 64px; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+header { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px 24px; margin-bottom: 24px; }
+h1 { font: 400 clamp(22px, 4vw, 30px)/1.1 var(--display); letter-spacing: .28em; text-transform: uppercase; margin: 0; text-shadow: 0 0 18px rgba(111,246,255,.45); }
+.count { font: 13px var(--mono); color: var(--mute); letter-spacing: .08em; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 22px; align-items: start; }
+.card { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: 18px; display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.num { font: 13px var(--mono); letter-spacing: .14em; color: var(--glow); text-transform: uppercase; display: flex; justify-content: space-between; }
+.num span:last-child { color: var(--mute); }
+video { width: 100%; max-width: 100%; aspect-ratio: 9 / 16; max-height: 560px; background: #000; border-radius: 10px; display: block; object-fit: contain; }
+.title { font: 500 22px/1.25 var(--display); margin: 0; text-wrap: balance; }
+.desc { white-space: pre-line; color: var(--ink); opacity: .88; margin: 0; overflow-wrap: anywhere; }
+.row { display: flex; align-items: flex-start; gap: 10px; }
+.row > :first-child { flex: 1; min-width: 0; }
+.copy { flex: none; font: 12px var(--mono); color: var(--glow); background: transparent; border: 1px solid var(--line); border-radius: 999px; padding: 5px 11px; cursor: pointer; }
+.copy:hover { border-color: var(--glow); }
+.copy:focus-visible { outline: 2px solid var(--glow); outline-offset: 2px; }
+.lbl { font: 11px var(--mono); letter-spacing: .14em; text-transform: uppercase; color: var(--mute); margin: 0 0 4px; }
+.pin { margin: 0; font-style: italic; color: var(--mute); }
+.upload { border-top: 1px dashed var(--line); padding-top: 14px; display: grid; gap: 6px; }
+.upload h3 { font: 500 15px var(--display); margin: 0; color: var(--amber); letter-spacing: .02em; }
+.when { font: 13px var(--mono); color: var(--ink); }
+.notes { margin: 0; color: var(--mute); font-size: 14px; }
+.empty { color: var(--mute); }
+@media (prefers-reduced-motion: reduce) { * { transition: none !important; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <h1>Below Zero Light</h1>
+    <div class="count" id="count">Loading shorts…</div>
+  </header>
+  <main class="grid" id="grid"></main>
+</div>
+
+<template id="tpl">
+  <article class="card">
+    <div class="num"><span data-k="num"></span><span data-k="made"></span></div>
+    <video controls playsinline preload="metadata"></video>
+    <div class="row"><h2 class="title" data-k="title"></h2><button class="copy" data-copy="title" type="button">Copy</button></div>
+    <div class="row"><div><p class="lbl">Description</p><p class="desc" data-k="description"></p></div><button class="copy" data-copy="description" type="button">Copy</button></div>
+    <div class="row"><div><p class="lbl">Pinned comment</p><p class="pin" data-k="pinned"></p></div><button class="copy" data-copy="pinned" type="button">Copy</button></div>
+    <section class="upload">
+      <h3>Upload suggestion</h3>
+      <div class="when" data-k="when"></div>
+      <p class="notes" data-k="notes"></p>
+    </section>
+  </article>
+</template>
+
+<script>
+const grid = document.getElementById('grid'), tpl = document.getElementById('tpl');
+function copy(btn, text) {
+  const done = () => { btn.textContent = 'Copied'; setTimeout(() => btn.textContent = 'Copy', 1400); };
+  navigator.clipboard?.writeText(text).then(done, () => select(btn)) ?? select(btn);
+}
+function select(btn) { const el = btn.parentElement.querySelector('[data-k]'); const r = document.createRange(); r.selectNodeContents(el); const s = getSelection(); s.removeAllRanges(); s.addRange(r); btn.textContent = 'Selected'; }
+function fmt(d) { try { return new Date(d + 'T12:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short' }); } catch { return d; } }
+fetch('shorts.json').then(r => r.json()).then(list => {
+  list.sort((a, b) => b.n - a.n);
+  document.getElementById('count').textContent = `${list.length} shorts · newest first`;
+  if (!list.length) { grid.innerHTML = '<p class="empty">No shorts yet. New ones appear here each morning.</p>'; return; }
+  for (const s of list) {
+    const c = tpl.content.cloneNode(true);
+    c.querySelector('[data-k="num"]').textContent = `Short #${s.n}`;
+    c.querySelector('[data-k="made"]').textContent = `made ${fmt(s.made)}`;
+    for (const k of ['title', 'description', 'pinned', 'when', 'notes']) c.querySelector(`[data-k="${k}"]`).textContent = s[k] || '';
+    const v = c.querySelector('video'); v.src = s.video; if (s.poster) v.poster = s.poster;
+    c.querySelectorAll('[data-copy]').forEach(b => b.addEventListener('click', () => copy(b, s[b.dataset.copy])));
+    grid.appendChild(c);
+  }
+}).catch(() => { document.getElementById('count').textContent = 'Could not load the list of shorts. Reload the page to try again.'; });
+</script>
