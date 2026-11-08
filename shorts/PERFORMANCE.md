@@ -1,6 +1,8 @@
 # What performs (read before writing a short)
 
-Public numbers from the channel feed (no Studio access, so no retention, CTR or traffic sources):
+**Studio analytics:** the Windsor.ai connector (connector `youtube`, account `79665`) reads YouTube Analytics: `average_view_percentage`, `average_view_duration`, `engaged_views`, `likes`, `shares`, `subscribers_gained`, `traffic_source`. Pull per `video` for the last 14 days and rank topics by retention first. The data lags 2–3 days.
+
+Public numbers from the channel feed (live, but only views and likes):
 `curl -s "https://www.youtube.com/feeds/videos.xml?channel_id=UCG5mly4O1-Ouz2kt9KeYCVg"` (each entry has `views` and a like `count`). Refresh this table at the start of each run.
 
 | Uploaded | Short | Views | Likes | Note |
