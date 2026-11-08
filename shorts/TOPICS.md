@@ -9,9 +9,9 @@
 - The Fire Hawks and the Legion of the Damned (vanished), 2026-11-07
 - Ferrus Manus and Fulgrim, Brother Against Brother (ferrus), 2026-11-08
 - Konrad Curze, the Night Haunter (curze), 2026-11-08
+- The Mantis Warriors, the Chapter Punished for Being Lied To (mantis-warriors; made by daily run 1, sources lost), 2026-11-08
 
 ## Queue (take from the top; canon only, little-known stories welcome)
-- The Mantis Warriors: the other Chapter punished after the Badab War
 - The Tanith First: the regiment whose home world burned the day it was founded (Gaunt's Ghosts, Black Library)
 - The Doom of Malan'tai: the Zoanthrope that devoured a whole army's souls
 - The Astral Knights: the Chapter that sacrificed itself to stop a Necron World Engine
