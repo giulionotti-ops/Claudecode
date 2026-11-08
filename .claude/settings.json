@@ -15,7 +15,8 @@
     "claude-code-setup@claude-plugins-official": true,
     "claude-mem@thedotmack": true,
     "lemo-opuscar@lemolab": true,
-    "ponytail@ponytail": true
+    "ponytail@ponytail": true,
+    "hyperframes@hyperframes": true
   },
   "extraKnownMarketplaces": {
     "claude-plugins-official": {
@@ -40,6 +41,12 @@
       "source": {
         "source": "github",
         "repo": "DietrichGebert/ponytail"
+      }
+    },
+    "hyperframes": {
+      "source": {
+        "source": "github",
+        "repo": "heygen-com/hyperframes"
       }
     }
   }
