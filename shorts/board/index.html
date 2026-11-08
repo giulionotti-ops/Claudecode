@@ -93,7 +93,7 @@ fetch('shorts.json').then(r => r.json()).then(list => {
     if (s.video) { v.src = s.video; if (s.poster) v.poster = s.poster; img.remove(); nf.remove(); }
     else { v.remove(); if (s.poster) { img.src = s.poster; img.alt = s.name + ' cover'; } else img.remove(); }
     const dl = c.querySelector('[data-k="dl"]');
-    if (s.download) { dl.href = s.download; dl.innerHTML = 'Download full quality <small>1080p · ' + (s.size_mb || '') + ' MB</small>'; } else dl.remove();
+    if (s.download) { dl.href = s.download; dl.innerHTML = "Download full quality <small>" + (s.res || "1080p") + " · " + (s.size_mb || "") + " MB</small>"; } else dl.remove();
     if (s.download || s.video) nf?.remove();
     c.querySelectorAll('[data-copy]').forEach(b => b.addEventListener('click', () => copy(b, s[b.dataset.copy] || '')));
     grid.appendChild(c);
