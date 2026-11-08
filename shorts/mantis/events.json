@@ -1,0 +1,210 @@
+{
+ "dur": 51,
+ "ev": [
+  {
+   "t": 0.3,
+   "type": "ray"
+  },
+  {
+   "t": 3.7,
+   "type": "whoosh",
+   "d": 1.2
+  },
+  {
+   "t": 4.8,
+   "type": "light"
+  },
+  {
+   "t": 7.4,
+   "type": "glide",
+   "d": 0.7
+  },
+  {
+   "t": 7.95,
+   "type": "light"
+  },
+  {
+   "t": 14.5,
+   "type": "clash"
+  },
+  {
+   "t": 16,
+   "type": "glide",
+   "d": 0.7
+  },
+  {
+   "t": 16.65,
+   "type": "light"
+  },
+  {
+   "t": 19.6,
+   "type": "whisper",
+   "d": 2
+  },
+  {
+   "t": 19.6,
+   "type": "crack"
+  },
+  {
+   "t": 21,
+   "type": "glide",
+   "d": 0.7
+  },
+  {
+   "t": 21.65,
+   "type": "light"
+  },
+  {
+   "t": 25.4,
+   "type": "ray"
+  },
+  {
+   "t": 27.2,
+   "type": "glide",
+   "d": 0.7
+  },
+  {
+   "t": 27.85,
+   "type": "light"
+  },
+  {
+   "t": 29.8,
+   "type": "slide",
+   "d": 0.4
+  },
+  {
+   "t": 31.4,
+   "type": "thump"
+  },
+  {
+   "t": 33.1,
+   "type": "glide",
+   "d": 0.6
+  },
+  {
+   "t": 33.65,
+   "type": "light"
+  },
+  {
+   "t": 34.4,
+   "type": "step"
+  },
+  {
+   "t": 41.5,
+   "type": "tinkle"
+  },
+  {
+   "t": 42.199999999999996,
+   "type": "tinkle"
+  },
+  {
+   "t": 42.9,
+   "type": "tinkle"
+  },
+  {
+   "t": 47,
+   "type": "bell"
+  },
+  {
+   "t": 0.6,
+   "type": "voice",
+   "id": "L1"
+  },
+  {
+   "t": 8,
+   "type": "voice",
+   "id": "L2"
+  },
+  {
+   "t": 14.4,
+   "type": "voice",
+   "id": "L3"
+  },
+  {
+   "t": 17.2,
+   "type": "voice",
+   "id": "L4"
+  },
+  {
+   "t": 22.2,
+   "type": "voice",
+   "id": "L5"
+  },
+  {
+   "t": 28.4,
+   "type": "voice",
+   "id": "L6"
+  },
+  {
+   "t": 34.1,
+   "type": "voice",
+   "id": "L7"
+  },
+  {
+   "t": 40.8,
+   "type": "voice",
+   "id": "L8"
+  },
+  {
+   "t": 43.6,
+   "type": "voice",
+   "id": "L9"
+  }
+ ],
+ "subs": [
+  {
+   "id": "L1",
+   "t0": 0.6,
+   "t1": 7.65,
+   "text": "For a thousand years, the Mantis Warriors guarded a cluster of worlds at the edge of the Maelstrom, alone."
+  },
+  {
+   "id": "L2",
+   "t0": 8,
+   "t1": 14.05,
+   "text": "Then Lufgt Huron, the Tyrant of Badab, called on his brothers to defend their freedom from Terra."
+  },
+  {
+   "id": "L3",
+   "t0": 14.4,
+   "t1": 16.849999999999998,
+   "text": "The Mantis Warriors answered."
+  },
+  {
+   "id": "L4",
+   "t0": 17.2,
+   "t1": 21.849999999999998,
+   "text": "They never knew Huron had already given his soul to Chaos."
+  },
+  {
+   "id": "L5",
+   "t0": 22.2,
+   "t1": 28.049999999999997,
+   "text": "When the war was lost, they begged the Emperor's forgiveness, and it was granted."
+  },
+  {
+   "id": "L6",
+   "t0": 28.4,
+   "t1": 33.75,
+   "text": "But their Chapter Master was stripped of his armour, and locked away for life."
+  },
+  {
+   "id": "L7",
+   "t0": 34.1,
+   "t1": 40.449999999999996,
+   "text": "Their home was given away, and they were sent on a hundred-year crusade, forbidden to recruit."
+  },
+  {
+   "id": "L8",
+   "t0": 40.8,
+   "t1": 43.25,
+   "text": "Year after year, their numbers dwindled."
+  },
+  {
+   "id": "L9",
+   "t0": 43.6,
+   "t1": 48.52666666666667,
+   "text": "They were forgiven. But many still call them traitors."
+  }
+ ]
+}
