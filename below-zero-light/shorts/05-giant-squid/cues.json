@@ -1,0 +1,6 @@
+[
+ {"t": "L1:kraken", "type": "growl", "gain": 0.35},
+ {"t": "L6:2004", "type": "boom", "gain": 0.3},
+ {"t": "L8:whale", "type": "whale", "gain": 0.5, "pan": -0.3},
+ {"t": "L10:dark", "type": "boom", "gain": 0.35}
+]

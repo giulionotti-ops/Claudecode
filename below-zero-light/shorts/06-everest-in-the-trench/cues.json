@@ -1,0 +1,6 @@
+[
+ {"t": "L1:disappear", "type": "boom", "gain": 0.4},
+ {"t": "L5:summit", "type": "boom", "gain": 0.35},
+ {"t": "L7:press", "type": "creak", "gain": 0.45},
+ {"t": "L10:space", "type": "boom", "gain": 0.3}
+]

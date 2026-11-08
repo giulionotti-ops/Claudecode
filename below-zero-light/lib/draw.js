@@ -296,3 +296,85 @@ export function walker(g, x, y, s, t = 0, a = 1) {   // a person walking right, 
   p.moveTo(0, -s * .62); p.lineTo(-k * s * .16, -s * .32); p.moveTo(0, -s * .62); p.lineTo(k * s * .16, -s * .32);
   glowStroke(g, p, C.white, Math.max(2, s * .03), .85 * a, s * .06); g.restore();
 }
+
+// Small crewed submersible: a cylinder with a domed viewport, end cap and thruster pods. Faces left.
+export function sub(g, x, y, s, t = 0, a = 1) {
+  g.save(); g.translate(x, y); g.rotate(Math.sin(t * .7) * .02);
+  const p = new Path2D(); p.moveTo(-s * .55, -s * .2); p.lineTo(s * .7, -s * .2); p.arcTo(s * .9, -s * .2, s * .9, 0, s * .2); p.arcTo(s * .9, s * .2, s * .7, s * .2, s * .2); p.lineTo(-s * .55, s * .2); p.closePath();
+  const gr = g.createLinearGradient(0, -s * .2, 0, s * .2); gr.addColorStop(0, `rgba(30,70,84,${a})`); gr.addColorStop(1, `rgba(6,20,28,${a})`); g.fillStyle = gr; g.fill(p);
+  glowStroke(g, p, C.glow, Math.max(1.2, s * .012), .8 * a, s * .05);
+  const dome = new Path2D(); dome.moveTo(-s * .55, -s * .2); dome.bezierCurveTo(-s * .85, -s * .2, -s * .85, s * .2, -s * .55, s * .2);
+  glowStroke(g, dome, C.glow, Math.max(1.2, s * .012), .8 * a, s * .05);
+  g.save(); g.globalCompositeOperation = 'lighter'; const vg = g.createRadialGradient(-s * .68, 0, 0, -s * .68, 0, s * .16); vg.addColorStop(0, `rgba(255,230,170,${.8 * a})`); vg.addColorStop(1, 'rgba(255,207,107,0)'); g.fillStyle = vg; g.beginPath(); g.arc(-s * .68, 0, s * .16, 0, 7); g.fill(); g.restore();
+  const d = new Path2D(); for (const yy of [-.2, .2]) { d.rect(s * .55, yy * s - s * .07 + (yy > 0 ? s * .02 : -s * .02), s * .3, s * .1); }
+  d.moveTo(-s * .2, -s * .2); d.lineTo(-s * .2, s * .2); d.moveTo(s * .3, -s * .2); d.lineTo(s * .3, s * .2); d.moveTo(-s * .45, s * .2); d.lineTo(-s * .5, s * .28); d.lineTo(s * .6, s * .28); d.lineTo(s * .55, s * .2);
+  glowStroke(g, d, C.glow, Math.max(1, s * .008), .5 * a, s * .03);
+  g.restore();
+}
+export function gamepad(g, x, y, s, a = 1) {
+  g.save(); g.translate(x, y);
+  const p = new Path2D(); p.moveTo(-s * .55, -s * .22); p.bezierCurveTo(-s * .2, -s * .3, s * .2, -s * .3, s * .55, -s * .22); p.bezierCurveTo(s * .85, -s * .15, s * 1.0, s * .35, s * .8, s * .42); p.bezierCurveTo(s * .6, s * .5, s * .45, s * .2, s * .3, s * .15);
+  p.lineTo(-s * .3, s * .15); p.bezierCurveTo(-s * .45, s * .2, -s * .6, s * .5, -s * .8, s * .42); p.bezierCurveTo(-s * 1.0, s * .35, -s * .85, -s * .15, -s * .55, -s * .22);
+  glowStroke(g, p, C.white, Math.max(1.5, s * .012), .85 * a, s * .05);
+  const d = new Path2D(); d.rect(-s * .58, -s * .04, s * .24, s * .08); d.rect(-s * .5, -s * .12, s * .08, s * .24);
+  for (const [u, v] of [[.45, -.1], [.6, 0], [.45, .1], [.3, 0]]) { d.moveTo((u + .05) * s, v * s); d.arc(u * s, v * s, s * .05, 0, 7); }
+  for (const u of [-.18, .18]) { d.moveTo((u + .1) * s, s * .1); d.arc(u * s, s * .1, s * .1, 0, 7); }
+  glowStroke(g, d, C.glow, Math.max(1, s * .01), .7 * a, s * .03); g.restore();
+}
+// Giant squid, swimming left (mantle trailing to the right). arms ripple with t.
+export function squid(g, x, y, s, t = 0, a = 1, col = '111,246,255') {
+  g.save(); g.translate(x, y); const c = `rgb(${col})`;
+  const m = new Path2D(); m.moveTo(-s * .1, -s * .12); m.bezierCurveTo(s * .3, -s * .16, s * .7, -s * .1, s * .95, 0); m.bezierCurveTo(s * .7, s * .1, s * .3, s * .16, -s * .1, s * .12); m.closePath();
+  const fin = new Path2D(); fin.moveTo(s * .72, -s * .06); fin.lineTo(s * .98, -s * .16); fin.lineTo(s * 1.0, 0); fin.lineTo(s * .98, s * .16); fin.lineTo(s * .72, s * .06);
+  const gr = g.createLinearGradient(-s * .1, 0, s, 0); gr.addColorStop(0, `rgba(${col},${.12 * a})`); gr.addColorStop(1, `rgba(${col},${.03 * a})`);
+  g.save(); g.globalCompositeOperation = 'lighter'; g.fillStyle = gr; g.fill(m); g.restore();
+  glowStroke(g, m, c, Math.max(1.2, s * .008), .8 * a, s * .03); glowStroke(g, fin, c, Math.max(1, s * .006), .6 * a, s * .02);
+  const head = new Path2D(); head.ellipse(-s * .17, 0, s * .1, s * .09, 0, 0, 7); glowStroke(g, head, c, Math.max(1.2, s * .008), .8 * a, s * .03);
+  orb(g, -s * .17, -s * .02, s * .035, a, '220,250,255');
+  const arms = new Path2D();
+  for (let i = 0; i < 8; i++) { const yy = (i - 3.5) * s * .022; arms.moveTo(-s * .26, yy); for (let k = 1; k <= 20; k++) { const u = k / 20; arms.lineTo(-s * .26 - u * s * .45, yy * (1 + u * 1.5) + Math.sin(t * 2 + u * 6 + i) * s * .03 * u); } }
+  for (const sd of [-1, 1]) { arms.moveTo(-s * .26, sd * s * .02); for (let k = 1; k <= 40; k++) { const u = k / 40; arms.lineTo(-s * .26 - u * s * 1.05, sd * s * (.02 + u * .1) + Math.sin(t * 1.6 + u * 5 + sd) * s * .05 * u); } }
+  glowStroke(g, arms, c, Math.max(1, s * .006), .6 * a, s * .02);
+  for (const sd of [-1, 1]) { const u = 1, xx = -s * .26 - u * s * 1.05, yy = sd * s * .12 + Math.sin(t * 1.6 + 5 + sd) * s * .05; const club = new Path2D(); club.ellipse(xx + s * .04, yy, s * .06, s * .02, 0, 0, 7); glowStroke(g, club, c, Math.max(1, s * .007), .7 * a, s * .02); }
+  g.restore();
+}
+export function spermWhale(g, x, y, s, a = 1) {   // boxy head, faces left
+  g.save(); g.translate(x, y);
+  const p = new Path2D(); p.moveTo(-s, -s * .12); p.lineTo(-s, s * .1); p.quadraticCurveTo(-s * .95, s * .2, -s * .7, s * .18); p.bezierCurveTo(-s * .2, s * .22, s * .4, s * .12, s * .75, s * .03);
+  p.lineTo(s * .95, -s * .12); p.quadraticCurveTo(s * .9, 0, s * 1.0, s * .12); p.lineTo(s * .75, -s * .01); p.bezierCurveTo(s * .4, -s * .1, s * .1, -s * .14, -s * .3, -s * .2); p.quadraticCurveTo(-s * .8, -s * .26, -s, -s * .12);
+  g.fillStyle = `rgba(2,10,16,${a})`; g.fill(p); glowStroke(g, p, C.glow, Math.max(1.2, s * .008), .65 * a, s * .03);
+  const j = new Path2D(); j.moveTo(-s * .95, s * .12); j.lineTo(-s * .55, s * .13); glowStroke(g, j, C.glow, Math.max(1, s * .006), .5 * a, s * .02);
+  orb(g, -s * .62, s * .02, s * .012, .7 * a); g.restore();
+}
+export function bus(g, x, y, s, a = 1) {   // side view, s = half length
+  g.save(); g.translate(x, y); const p = new Path2D(); p.roundRect(-s, -s * .28, s * 2, s * .28, s * .04);
+  for (let i = 0; i < 7; i++) p.rect(-s * .9 + i * s * .26, -s * .24, s * .2, s * .1);
+  p.moveTo(-s * .62, 0); p.arc(-s * .7, 0, s * .08, 0, 7); p.moveTo(s * .78, 0); p.arc(s * .7, 0, s * .08, 0, 7);
+  glowStroke(g, p, C.white, Math.max(1.2, s * .006), .6 * a, s * .02); g.restore();
+}
+export function mountain(g, x, y, s, a = 1) {   // Everest-like massif, base centred at (x, y), s = height
+  g.save(); g.translate(x, y);
+  const pts = [[-.95, 0], [-.7, -.35], [-.55, -.3], [-.32, -.68], [-.2, -.6], [0, -1], [.12, -.82], [.22, -.86], [.4, -.55], [.55, -.6], [.8, -.25], [1.0, 0]];
+  const p = new Path2D(); pts.forEach(([u, v], i) => i ? p.lineTo(u * s * .75, v * s) : p.moveTo(u * s * .75, v * s)); p.closePath();
+  const gr = g.createLinearGradient(0, -s, 0, 0); gr.addColorStop(0, `rgba(40,80,92,${a})`); gr.addColorStop(1, `rgba(6,18,24,${a})`); g.fillStyle = gr; g.fill(p);
+  glowStroke(g, p, C.white, Math.max(1.5, s * .004), .7 * a, s * .015);
+  const snow = new Path2D(); snow.moveTo(-.16 * s * .75, -.68 * s); snow.lineTo(0, -s); snow.lineTo(.1 * s * .75, -.84 * s); snow.lineTo(.04 * s * .75, -.74 * s); snow.lineTo(-.06 * s * .75, -.78 * s); snow.closePath();
+  g.fillStyle = `rgba(233,251,255,${.8 * a})`; g.fill(snow); g.restore();
+}
+export function amphipod(g, x, y, s, t = 0, a = 1) {   // curled, segmented shrimp-like crustacean
+  g.save(); g.translate(x, y); g.rotate(Math.sin(t * 2) * .05);
+  const p = new Path2D(); for (let i = 0; i < 9; i++) { const an = Math.PI * (.95 - i * .11), r = s * (1 - i * .03); const x0 = Math.cos(an) * r, y0 = -Math.sin(an) * r * .7; p.moveTo(x0, y0); p.ellipse(x0, y0, s * .16, s * .2, an, 0, 7); }
+  glowStroke(g, p, C.pink, Math.max(1, s * .02), .75 * a, s * .1);
+  const l = new Path2D(); for (let i = 0; i < 7; i++) { const an = Math.PI * (.9 - i * .12), x0 = Math.cos(an) * s * .9, y0 = -Math.sin(an) * s * .63; l.moveTo(x0, y0 + s * .12); l.lineTo(x0 + Math.sin(t * 8 + i) * s * .05, y0 + s * .45); }
+  l.moveTo(-s * .95, -s * .05); l.quadraticCurveTo(-s * 1.4, -s * .4, -s * 1.5, -s * .1); l.moveTo(-s * .95, -s * .05); l.quadraticCurveTo(-s * 1.3, -s * .6, -s * 1.6, -s * .5);
+  glowStroke(g, l, C.pink, Math.max(1, s * .015), .55 * a, s * .06); orb(g, -s * .85, -s * .15, s * .05, a, '255,220,228'); g.restore();
+}
+export function trieste(g, x, y, s, a = 1) {   // 1960 bathyscaphe: long float on top, crew sphere hanging below
+  g.save(); g.translate(x, y);
+  const p = new Path2D(); p.moveTo(-s, 0); p.bezierCurveTo(-s, -s * .22, -s * .7, -s * .25, -s * .4, -s * .25); p.lineTo(s * .7, -s * .25); p.quadraticCurveTo(s * 1.0, -s * .2, s, 0); p.quadraticCurveTo(s * 1.0, s * .15, s * .7, s * .15); p.lineTo(-s * .7, s * .15); p.quadraticCurveTo(-s, s * .12, -s, 0);
+  p.rect(-s * .12, -s * .45, s * .3, s * .2);
+  p.moveTo(-s * .05, s * .15); p.lineTo(-s * .05, s * .28); p.moveTo(s * .12, s * .15); p.lineTo(s * .12, s * .28);
+  p.moveTo(s * .26, s * .45); p.arc(s * .04, s * .45, s * .22, 0, 7);
+  g.fillStyle = `rgba(3,12,18,${a})`; g.fill(p); glowStroke(g, p, C.glow, Math.max(1.2, s * .01), .75 * a, s * .04);
+  orb(g, s * .04, s * .5, s * .03, a, '255,207,107'); g.restore();
+}

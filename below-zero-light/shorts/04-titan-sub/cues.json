@@ -1,0 +1,6 @@
+[
+ {"t": "L4:silent", "type": "creak", "gain": 0.35},
+ {"t": "L7:pressure", "type": "creak", "gain": 0.45, "pan": 0.3},
+ {"t": "L8:collapsed", "type": "boom", "gain": 0.6},
+ {"t": "L10:five", "type": "boom", "gain": 0.3}
+]
