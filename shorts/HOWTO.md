@@ -4,6 +4,7 @@ One run = one finished short (about 50 s, 1080×1920) in the stained-glass lance
 Keep replies to the user short (CLAUDE.md).
 
 ## 0. Setup
+In a scheduled run, FIRST call the `add_repo` tool (owner `giulionotti-ops`, repo `claudecode`, access `push`); without it every push is refused with 403.
 ```sh
 cd <repo>; git fetch origin claude/youtube-banner && git checkout claude/youtube-banner && git pull --rebase origin claude/youtube-banner
 python3 -c "import scipy, soundfile, soxr" || pip install -q scipy soundfile soxr
@@ -11,6 +12,7 @@ python3 -c "import scipy, soundfile, soxr" || pip install -q scipy soundfile sox
 The Lemo-Opuscar library is NOT used (running it is blocked). Everything runs from the short's own folder with `tools/film.js`.
 
 ## 1. Pick and claim a topic
+Read `shorts/PERFORMANCE.md` first, refresh its numbers from the channel feed, and write the short to the formula that is working.
 Open `shorts/TOPICS.md`, take the first topic under **Queue**, move it to **Done** with today's date and the folder name, then commit and push that change right away, so the other daily runs don't pick it too.
 Prefer tragic, emotional stories (see `shorts/research-40k-shorts.md`). Mix famous names with **little-known stories, as long as they are canon** (codexes, Imperial Armour books, Black Library novels and short stories, Warhammer Community articles). Never use fan fiction or fan theories presented as fact. Never repeat a topic in **Done**. You may add new canon topics to the queue.
 

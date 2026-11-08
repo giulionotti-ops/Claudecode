@@ -1,0 +1,226 @@
+{
+ "dur": 54,
+ "ev": [
+  {
+   "t": 0.3,
+   "type": "ray"
+  },
+  {
+   "t": 5.3,
+   "type": "whoosh",
+   "d": 1.2
+  },
+  {
+   "t": 6.4,
+   "type": "light"
+  },
+  {
+   "t": 8.4,
+   "type": "strike"
+  },
+  {
+   "t": 8.9,
+   "type": "tinkle"
+  },
+  {
+   "t": 10.1,
+   "type": "glide",
+   "d": 0.7
+  },
+  {
+   "t": 10.75,
+   "type": "light"
+  },
+  {
+   "t": 12.3,
+   "type": "ray"
+  },
+  {
+   "t": 15.9,
+   "type": "clash"
+  },
+  {
+   "t": 18.8,
+   "type": "glide",
+   "d": 0.7
+  },
+  {
+   "t": 19.45,
+   "type": "light"
+  },
+  {
+   "t": 21.2,
+   "type": "whisper",
+   "d": 3
+  },
+  {
+   "t": 25.1,
+   "type": "thump"
+  },
+  {
+   "t": 26.4,
+   "type": "glide",
+   "d": 0.7
+  },
+  {
+   "t": 27.05,
+   "type": "light"
+  },
+  {
+   "t": 30,
+   "type": "clash"
+  },
+  {
+   "t": 32.6,
+   "type": "strike"
+  },
+  {
+   "t": 34.5,
+   "type": "whisper",
+   "d": 1.4
+  },
+  {
+   "t": 35.9,
+   "type": "glide",
+   "d": 0.7
+  },
+  {
+   "t": 36.55,
+   "type": "light"
+  },
+  {
+   "t": 38,
+   "type": "whoosh",
+   "d": 0.6
+  },
+  {
+   "t": 39.3,
+   "type": "crack"
+  },
+  {
+   "t": 40.7,
+   "type": "glide",
+   "d": 0.7
+  },
+  {
+   "t": 41.25,
+   "type": "light"
+  },
+  {
+   "t": 48.4,
+   "type": "bell"
+  },
+  {
+   "t": 0.6,
+   "type": "voice",
+   "id": "L1"
+  },
+  {
+   "t": 6.6,
+   "type": "voice",
+   "id": "L2"
+  },
+  {
+   "t": 11.2,
+   "type": "voice",
+   "id": "L3"
+  },
+  {
+   "t": 19.9,
+   "type": "voice",
+   "id": "L4"
+  },
+  {
+   "t": 25,
+   "type": "voice",
+   "id": "L5"
+  },
+  {
+   "t": 27.8,
+   "type": "voice",
+   "id": "L6"
+  },
+  {
+   "t": 32.4,
+   "type": "voice",
+   "id": "L7"
+  },
+  {
+   "t": 37.1,
+   "type": "voice",
+   "id": "L8"
+  },
+  {
+   "t": 41.7,
+   "type": "voice",
+   "id": "L9"
+  },
+  {
+   "t": 45.4,
+   "type": "voice",
+   "id": "L10"
+  }
+ ],
+ "subs": [
+  {
+   "id": "L1",
+   "t0": 0.6,
+   "t1": 6.25,
+   "text": "Ferrus Manus and Fulgrim were the closest of all the Emperor's sons."
+  },
+  {
+   "id": "L2",
+   "t0": 6.6,
+   "t1": 10.85,
+   "text": "To honour their bond, they forged weapons for each other."
+  },
+  {
+   "id": "L3",
+   "t0": 11.2,
+   "t1": 18.854999999999997,
+   "text": "Ferrus made Fireblade, a sword that burned forever. Fulgrim made Forgebreaker, a mighty hammer."
+  },
+  {
+   "id": "L4",
+   "t0": 19.9,
+   "t1": 24.65,
+   "text": "Then Fulgrim fell to the dark gods, and begged his brother to join Horus."
+  },
+  {
+   "id": "L5",
+   "t0": 25,
+   "t1": 27.45,
+   "text": "Ferrus refused."
+  },
+  {
+   "id": "L6",
+   "t0": 27.8,
+   "t1": 32.05,
+   "text": "On Isstvan Five, they met again, each holding the other's gift."
+  },
+  {
+   "id": "L7",
+   "t0": 32.4,
+   "t1": 36.75,
+   "text": "Ferrus was winning. Then Fulgrim drew a daemon blade."
+  },
+  {
+   "id": "L8",
+   "t0": 37.1,
+   "t1": 41.35,
+   "text": "With one stroke, he cut off his best friend's head."
+  },
+  {
+   "id": "L9",
+   "t0": 41.7,
+   "t1": 45.05,
+   "text": "The Iron Hands never found their father's body."
+  },
+  {
+   "id": "L10",
+   "t0": 45.4,
+   "t1": 49.99333333333333,
+   "text": "And Fulgrim knew, too late, how far he had fallen."
+  }
+ ]
+}

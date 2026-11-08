@@ -7,6 +7,8 @@
 - Angron, the Saddest Primarch (angron)
 - The Lamenters, the Cursed Chapter (lamenters), 2026-11-07
 - The Fire Hawks and the Legion of the Damned (vanished), 2026-11-07
+- Ferrus Manus and Fulgrim, Brother Against Brother (ferrus), 2026-11-08
+- Konrad Curze, the Night Haunter (curze), 2026-11-08
 
 ## Queue (take from the top; canon only, little-known stories welcome)
 - The Mantis Warriors: the other Chapter punished after the Badab War
@@ -15,8 +17,6 @@
 - The Astral Knights: the Chapter that sacrificed itself to stop a Necron World Engine
 - The Last Krieger: the Death Korps of Krieg and their penance
 - Why the Emperor sits on the Golden Throne (and what he endures there)
-- Ferrus Manus: beheaded by his best friend Fulgrim at Isstvan V
-- Konrad Curze: the Night Haunter who foresaw his own assassination
 - Leman Russ and the Space Wolves: the Burning of Prospero
 - Magnus the Red: he tried to warn his father, and doomed his Legion
 - The Lion and Luther: the betrayal of Caliban and the Fallen
