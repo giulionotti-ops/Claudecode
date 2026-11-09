@@ -1,0 +1,35 @@
+{
+  "handle": "@ViceCityClips",
+  "shorts": [
+    {
+      "id": 1,
+      "slug": "first-5-minutes",
+      "source": "footage/launch-day.mp4",
+      "start": "0:12",
+      "end": "0:40",
+      "zoom": 1.25,
+      "title": "GTA 6 first 5 minutes are insane",
+      "captions": [
+        { "from": 0, "to": 4, "text": "We finally made it to Vice City" },
+        { "from": 4, "to": 10, "text": "Look at the detail on this street" },
+        { "from": 10, "to": 18, "text": "Wait for it..." },
+        { "from": 18, "to": 28, "text": "Rockstar did NOT hold back", "color": "#FF4FA3" }
+      ]
+    },
+    {
+      "id": 2,
+      "slug": "police-chase",
+      "source": "footage/police-chase.mp4",
+      "start": "1:05",
+      "end": "1:30",
+      "zoom": 1.15,
+      "title": "5-star chase in GTA 6 hits different",
+      "captions": [
+        { "from": 0, "to": 5, "text": "One wrong move..." },
+        { "from": 5, "to": 12, "text": "The cops actually box you in now" },
+        { "from": 12, "to": 19, "text": "How did we get out of that?!" },
+        { "from": 19, "to": 25, "text": "Follow for daily GTA 6 clips", "color": "#4DE1FF" }
+      ]
+    }
+  ]
+}
