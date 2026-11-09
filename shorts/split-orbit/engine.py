@@ -4,7 +4,7 @@
   python engine.py <episode> --probe [--seeds 0-40]       simulate without drawing; print when each seed finishes
   python engine.py <episode> --still T --seed N --out x.jpg   draw one frame at time T
 
-Episodes: overflow (every hit splits a ball), escape (break out of 15 spinning rings), fill (the ball grows every bounce).
+Episodes: overflow (every hit splits a ball), swing (a paddle swings in a bowl; every hit splits a ball), escape (break out of 15 spinning rings), fill (the ball grows every bounce).
 Needs numpy, pycairo and ffmpeg.
 """
 import argparse, math, os, subprocess, sys, wave
@@ -333,7 +333,199 @@ class Fill(Episode):
             fx.banner(ctx, 'FILLED!', self.t - self.done_at)
 
 
-EPISODES = {'overflow': Overflow, 'escape': Escape, 'fill': Fill}
+class Swing(Episode):
+    """A V-shaped bowl at the bottom of the circle with a paddle swinging inside it. Every ball the paddle hits splits in two."""
+    title, subtitle = 'Will It Overflow?', 'every hit splits a ball'
+    GOAL, BR, COOL = 1000, 7.0, 3.4
+    SIDE = math.radians(52)          # the fixed walls of the bowl, measured from straight up
+    HALF = math.radians(10)          # half-width of the paddle
+    AMP = math.radians(41)           # how far the paddle swings each way
+    LEN = 0.92 * R
+
+    def __init__(self, seed):
+        super().__init__(seed)
+        self.P = C + np.array([0, 0.9 * R])                       # pivot, near the bottom of the circle
+        a = self.rng.uniform(-0.6, 0.6)
+        self.p = np.array([C + [self.rng.uniform(-120, 120), -260]], float)
+        self.v = np.array([[math.sin(a) * 400, 0.0]])
+        self.col = np.array([int(self.rng.integers(0, len(PALETTE)))])
+        self.cool = np.zeros(1)
+        self.w0 = 2 * math.pi / self.rng.uniform(2.2, 2.8)      # swing speed
+        self.ph = self.rng.uniform(0, 2 * math.pi)
+        self.hits_this_frame = 0
+        # inward normals of the two fixed walls (lines from the pivot)
+        self.walls = []
+        for sgn in (-1, 1):
+            d = np.array([math.sin(sgn * self.SIDE), -math.cos(sgn * self.SIDE)])   # from pivot up along the wall
+            n = np.array([-d[1], d[0]]) * (1 if sgn < 0 else -1)                   # pointing into the bowl
+            self.walls.append((d, n))
+
+    counter = Overflow.counter
+
+    def phi(self, t=None):
+        t = self.t if t is None else t
+        return self.AMP * math.sin(self.w0 * t + self.ph)
+
+    def omega(self):
+        return self.AMP * self.w0 * math.cos(self.w0 * self.t + self.ph)
+
+    def paddle(self, phi=None):
+        """The paddle as a convex polygon: the pivot plus points along its arc."""
+        phi = self.phi() if phi is None else phi
+        pts = [self.P]
+        for k in range(9):
+            a = phi - self.HALF + 2 * self.HALF * k / 8
+            pts.append(self.P + self.LEN * np.array([math.sin(a), -math.cos(a)]))
+        return np.array(pts)
+
+    def step(self, dt):
+        p, v = self.p, self.v
+        v += G * dt
+        p += v * dt
+        self.cool -= dt
+        if self.done_at is not None:
+            return
+        # rim
+        rel = p - C; d = np.linalg.norm(rel, axis=1) + 1e-9
+        m = d + self.BR > R
+        if m.any():
+            n = rel[m] / d[m, None]
+            p[m] = C + n * (R - self.BR)
+            vn = (v[m] * n).sum(1)
+            v[m] -= ((1 + 0.9) * np.maximum(vn, 0))[:, None] * n
+        # fixed walls of the bowl (half-planes through the pivot)
+        for dvec, n in self.walls:
+            s = (p - self.P) @ n
+            m = s < self.BR
+            if m.any():
+                p[m] += (self.BR - s[m])[:, None] * n
+                vn = v[m] @ n
+                v[m] -= ((1 + 0.85) * np.minimum(vn, 0))[:, None] * n
+        # swinging paddle (convex polygon, moving)
+        poly = self.paddle()
+        a, b = poly, np.roll(poly, -1, axis=0)
+        e = b - a
+        el = (e ** 2).sum(1)
+        en = np.stack([e[:, 1], -e[:, 0]], 1) / np.sqrt(el)[:, None]      # outward normals (polygon is clockwise on screen)
+        if (en[1] @ (poly.mean(0) - a[1])) > 0:
+            en = -en
+        rel = p[:, None, :] - a[None]
+        tt = np.clip((rel * e[None]).sum(2) / el[None], 0, 1)
+        q = a[None] + tt[..., None] * e[None]
+        diff = p[:, None, :] - q
+        dist = np.linalg.norm(diff, axis=2)
+        k = dist.argmin(1)
+        idx = np.arange(len(p))
+        dmin = dist[idx, k]
+        inside = ((rel * en[None]).sum(2) < 0).all(1)
+        m = inside | (dmin < self.BR)
+        if not m.any():
+            return
+        ii = np.nonzero(m)[0]
+        qq = q[ii, k[ii]]
+        nrm = np.where(inside[ii, None], en[k[ii]], diff[ii, k[ii]] / np.maximum(dmin[ii], 1e-9)[:, None])
+        p[ii] = qq + nrm * self.BR
+        r = qq - self.P
+        vb = self.omega() * np.stack([-r[:, 1], r[:, 0]], 1)
+        vn = ((v[ii] - vb) * nrm).sum(1)
+        hit = vn < 0
+        v[ii] -= ((1 + 0.95) * np.minimum(vn, 0))[:, None] * nrm
+        sp = np.linalg.norm(v, axis=1)
+        fast = sp > 2300
+        v[fast] *= (2300 / sp[fast])[:, None]
+        split = ii[hit & (self.cool[ii] <= 0)]
+        if len(split):
+            self.hits_this_frame += len(split)
+            split = split[:max(self.GOAL - len(p), 0)]
+            if len(split):
+                rot = self.rng.choice([-1, 1], len(split)) * self.rng.uniform(0.25, 0.6, len(split))
+                cs, sn = np.cos(rot), np.sin(rot)
+                vv = v[split]
+                nv = np.stack([vv[:, 0] * cs - vv[:, 1] * sn, vv[:, 0] * sn + vv[:, 1] * cs], 1)
+                self.p = np.vstack([p, p[split] + self.rng.normal(0, 1.5, (len(split), 2))])
+                self.v = np.vstack([v, nv])
+                self.col = np.concatenate([self.col, self.rng.integers(0, len(PALETTE), len(split))])
+                self.cool[split] = self.COOL
+                self.cool = np.concatenate([self.cool, np.full(len(split), self.COOL)])
+                if len(self.p) >= self.GOAL:
+                    self.done_at = self.t + DT
+                    self.sounds.append((self.done_at, 0, 1.0, 'finale'))
+                    self.v += self.rng.normal(0, 250, self.v.shape)
+
+    def frame(self):
+        self.hits_this_frame = 0
+        Episode.frame(self)
+        if self.hits_this_frame and self.done_at is None:
+            step = int(math.log2(max(len(self.p), 1)) * 1.6)
+            self.sounds.append((self.t, note_freq(step), min(1.0, 0.45 + 0.08 * self.hits_this_frame), 'pluck'))
+
+    def draw(self, ctx, fx):
+        shatter = None if self.done_at is None else self.t - self.done_at
+        if shatter is None or shatter < 1.2:
+            fall = 0 if shatter is None else 1400 * shatter ** 2
+            alpha = 1 if shatter is None else max(0, 1 - shatter / 1.2)
+            ctx.set_source_rgb(0.075, 0.08, 0.14)
+            ctx.arc(C[0], C[1], R, 0, 2 * math.pi); ctx.fill()
+            ctx.save(); ctx.translate(0, fall)
+            # brick rim
+            ctx.set_line_width(26)
+            ctx.set_source_rgba(0.27, 0.29, 0.45, alpha)
+            ctx.arc(C[0], C[1], R + 13, 0, 2 * math.pi); ctx.stroke()
+            ctx.set_line_width(2)
+            ctx.set_source_rgba(0.16, 0.17, 0.28, alpha)
+            for kk in range(72):
+                a = kk / 72 * 2 * math.pi
+                ca, sa = math.cos(a), math.sin(a)
+                ctx.move_to(C[0] + ca * R, C[1] + sa * R); ctx.line_to(C[0] + ca * (R + 26), C[1] + sa * (R + 26))
+            ctx.stroke()
+            # fixed walls of the bowl
+            ctx.save(); ctx.arc(C[0], C[1], R, 0, 2 * math.pi); ctx.clip()
+            ctx.set_source_rgba(0.55, 0.56, 0.74, alpha)
+            for sgn in (-1, 1):
+                ang = sgn * self.SIDE
+                far = self.P + 2 * R * np.array([math.sin(ang), -math.cos(ang)])
+                side = self.P + 2 * R * np.array([sgn, 0.3])
+                ctx.move_to(*self.P); ctx.line_to(*far); ctx.line_to(far[0] + sgn * 2 * R, far[1]); ctx.line_to(*side)
+                ctx.close_path(); ctx.fill()
+            ctx.rectangle(self.P[0] - 2 * R, self.P[1] - 1, 4 * R, 2 * R); ctx.fill()
+            ctx.restore()
+            # paddle with ruler marks
+            poly = self.paddle()
+            ctx.move_to(*poly[0])
+            for pt in poly[1:]:
+                ctx.line_to(*pt)
+            ctx.close_path()
+            ctx.set_source_rgba(0.80, 0.81, 0.94, alpha); ctx.fill()
+            phi = self.phi()
+            u = np.array([math.sin(phi), -math.cos(phi)]); w = np.array([-u[1], u[0]])
+            ctx.set_line_width(3); ctx.set_source_rgba(0.45, 0.46, 0.62, alpha)
+            for kk in range(1, 7):
+                c0 = self.P + u * self.LEN * (0.3 + kk * 0.09)
+                half = math.tan(self.HALF) * self.LEN * (0.3 + kk * 0.09) * 0.55
+                ctx.move_to(*(c0 - w * half)); ctx.line_to(*(c0 + w * half * 0.3))
+            ctx.stroke()
+            ctx.set_source_rgba(0.40, 0.41, 0.58, alpha)
+            ctx.arc(self.P[0], self.P[1], 26, math.pi, 2 * math.pi); ctx.fill()
+            ctx.restore()
+        for kk, rgb in enumerate(PALETTE):
+            sel = self.p[self.col == kk]
+            if not len(sel):
+                continue
+            ctx.set_source_rgb(*rgb)
+            for x, y in sel:
+                if -20 < y < H + 20:
+                    ctx.arc(x, y, self.BR, 0, 2 * math.pi); ctx.new_sub_path()
+            ctx.fill()
+        ctx.set_source_rgba(1, 1, 1, 0.55)
+        for x, y in self.p:
+            if -20 < y < H + 20:
+                ctx.arc(x - 2, y - 2, 2, 0, 2 * math.pi); ctx.new_sub_path()
+        ctx.fill()
+        if shatter is not None:
+            fx.banner(ctx, 'OVERFLOW!', shatter)
+
+
+EPISODES = {'overflow': Overflow, 'escape': Escape, 'fill': Fill, 'swing': Swing}
 
 
 # ---------------------------------------------------------------- drawing

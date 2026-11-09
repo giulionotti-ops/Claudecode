@@ -7,6 +7,7 @@ A second channel: satisfying ball-physics shorts (like "Will It Overflow? Every 
 | `will-it-overflow` | A spinning bar; every ball it hits splits in two | 1,000 balls, the circle bursts |
 | `can-it-escape` | One ball inside 15 spinning rings with gaps; each gap it finds breaks a ring | the last ring breaks |
 | `will-it-fill` | One ball that grows 2.2% every bounce | it fills the circle |
+| `will-it-overflow-swing` | A paddle swings in a V-shaped bowl; every ball it hits splits in two | 1,000 balls |
 
 - `engine.py`: physics, picture (1080x1920, 60 fps) and sound (a note on every hit, rising as it goes).
   New short: add an `Episode` class, then `python engine.py <name> --probe` to find a seed that finishes at 40–45 s.
