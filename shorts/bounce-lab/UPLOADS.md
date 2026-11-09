@@ -6,21 +6,21 @@ Times are Italian time (CET).
 
 | # | File | Post | Title |
 |---|---|---|---|
-| 1 | will-it-overflow.mp4 | Nov 10, 15:00 | Will It Overflow? Every Hit Splits a Ball 🔴 |
-| 2 | can-it-escape.mp4 | Nov 10, 19:00 | Can This Ball Escape 15 Spinning Rings? |
-| 3 | will-it-fill.mp4 | Nov 10, 23:00 | Every Bounce It Grows… Will It Fill the Circle? |
+| 1 | will-it-overflow.mp4 | Tue 10 Nov, 13:30 | Will It Overflow? Every Hit Splits a Ball 🔴 #satisfying |
+| 2 | can-it-escape.mp4 | Tue 10 Nov, 18:30 | Can This Ball Escape 15 Spinning Rings? #satisfying |
+| 3 | will-it-fill.mp4 | Tue 10 Nov, 21:30 | Every Bounce It Grows… Will It Fill the Circle? #satisfying |
 
 ## Channel setup
 - **Name:** Bounce Lab
 - **Handle:** @bouncelab (or the closest free one)
 - **Profile picture:** `brand/pfp.jpg`
 - **Banner:** `brand/banner.jpg`
-- **Description:** Satisfying physics simulations, every day. Balls that split, grow and escape. Every video is simulated and rendered from scratch.
+- **Description:** Satisfying physics, every day. Balls that split, grow and break free, all simulated and rendered from scratch. Will it overflow? Can it escape? Watch to the end to find out. New shorts every day.
 
 ---
 
 ## 1. will-it-overflow.mp4
-**Title:** Will It Overflow? Every Hit Splits a Ball 🔴
+**Title:** Will It Overflow? Every Hit Splits a Ball 🔴 #satisfying
 
 **Description:**
 One ball. A spinning bar. Every time it gets hit, it splits in two. Can it reach 1,000?
@@ -32,7 +32,7 @@ Original physics simulation, made from scratch. Follow for a new one every day.
 **Tags:** satisfying, physics simulation, ball splits, will it overflow, oddly satisfying, bouncing ball, asmr
 
 ## 2. can-it-escape.mp4
-**Title:** Can This Ball Escape 15 Spinning Rings?
+**Title:** Can This Ball Escape 15 Spinning Rings? #satisfying
 
 **Description:**
 One ball, fifteen spinning rings, one gap in each. Every gap it finds breaks a ring. Does it get out?
@@ -44,7 +44,7 @@ Original physics simulation, made from scratch. Follow for a new one every day.
 **Tags:** satisfying, physics simulation, ball escape, spinning rings, oddly satisfying, bouncing ball, asmr
 
 ## 3. will-it-fill.mp4
-**Title:** Every Bounce It Grows… Will It Fill the Circle?
+**Title:** Every Bounce It Grows… Will It Fill the Circle? #satisfying
 
 **Description:**
 Every time the ball bounces, it gets a little bigger. Watch it speed up until it fills the whole circle.
