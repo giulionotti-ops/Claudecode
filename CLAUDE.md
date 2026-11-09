@@ -20,3 +20,4 @@ the machine (user/global scope) is lost when the session ends.
 ## Replies
 
 Keep replies to the user short and simple: plain words, a few lines, no long reports.
+Use the `caveman` skill for every reply (start of each session: invoke it).
