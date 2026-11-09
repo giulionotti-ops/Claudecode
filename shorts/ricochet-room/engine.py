@@ -1,4 +1,4 @@
-"""Bounce Lab: satisfying ball-physics shorts, simulated and rendered from scratch.
+"""Ricochet Room: satisfying ball-physics shorts, simulated and rendered from scratch.
 
   python engine.py <episode> --seed N --out file.mp4     render one short (1080x1920, 60 fps, with sound)
   python engine.py <episode> --probe [--seeds 0-40]       simulate without drawing; print when each seed finishes

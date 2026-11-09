@@ -1,4 +1,4 @@
-"""Bounce Lab uploader: upload, caption and schedule the channel's own shorts with the YouTube Data API.
+"""Ricochet Room uploader: upload, caption and schedule the channel's own shorts with the YouTube Data API.
 
   python upload.py auth                  sign in once (opens Google's consent screen); saves token.json
   python upload.py upload <name>         upload one entry from schedule.json (e.g. will-it-overflow)

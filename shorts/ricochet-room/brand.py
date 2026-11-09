@@ -1,4 +1,4 @@
-"""Bounce Lab brand art: profile picture and banner, drawn with the same look as the shorts.
+"""Ricochet Room brand art: profile picture and banner, drawn with the same look as the shorts.
   python brand.py        writes brand/pfp.jpg (800x800) and brand/banner.jpg (2560x1440, text inside the 1546x423 safe area)
 """
 import math, os, subprocess
@@ -54,7 +54,7 @@ bg(c, 2560, 1440)
 for k, (x, y, r) in enumerate(((330, 380, 260), (2230, 1060, 300), (2300, 300, 150), (260, 1130, 170))):
     c.set_source_rgba(*PALETTE[(k * 3) % 8], 0.10); c.arc(x, y, r, 0, 2 * math.pi); c.fill()
 ring(c, 700, 720, 165, 12); ball_arc(c, 700, 720, 165, 24)
-text(c, "Bounce Lab", 1460, 745, 150, (1, 1, 1))
-text(c, 'satisfying physics, every day', 1460, 815, 52, (1, 0.9, 0.35), cairo.FONT_WEIGHT_NORMAL)
+text(c, "Ricochet Room", 1480, 740, 132, (1, 1, 1))
+text(c, 'balls, walls and a lot of bouncing', 1480, 815, 52, (1, 0.9, 0.35), cairo.FONT_WEIGHT_NORMAL)
 save(s, 'banner')
 print('wrote brand/pfp.jpg and brand/banner.jpg')
