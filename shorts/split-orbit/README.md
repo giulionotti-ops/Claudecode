@@ -1,4 +1,4 @@
-# Ricochet Room
+# Split Orbit
 
 A second channel: satisfying ball-physics shorts (like "Will It Overflow? Every hit splits a ball"). Everything is simulated and drawn from scratch, so there's no footage or music to license.
 
@@ -13,4 +13,4 @@ A second channel: satisfying ball-physics shorts (like "Will It Overflow? Every 
 - `build.sh`: rebuilds all three videos and the brand art.
 - `brand/`: profile picture and banner. `brand.py` draws them.
 - `UPLOADS.md`: titles, descriptions, tags and post times.
-- `uploader/`: the same uploader as the 40K channel, with this channel's videos and `schedule.json`. Run `python upload.py auth` signed in with the **Ricochet Room** Google account (it gets its own `token.json`).
+- `uploader/`: the same uploader as the 40K channel, with this channel's videos and `schedule.json`. Run `python upload.py auth` signed in with the **Split Orbit** Google account (it gets its own `token.json`).

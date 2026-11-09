@@ -1,4 +1,4 @@
-# Ricochet Room: upload sheet for the first 3 shorts
+# Split Orbit: upload sheet for the first 3 shorts
 
 A second channel of satisfying ball-physics shorts. Upload in YouTube Studio → Create → Upload video, then choose **Schedule**, or use `uploader/upload.py`. No captions are needed (there's no speech). Set "Altered or synthetic content" to **No** and "Made for kids" to **No**.
 
@@ -11,11 +11,11 @@ Times are Italian time (CET).
 | 3 | will-it-fill.mp4 | Tue 10 Nov, 21:30 | Every Bounce It Grows… Will It Fill the Circle? #satisfying |
 
 ## Channel setup
-- **Name:** Ricochet Room
-- **Handle:** @ricochetroom (or the closest free one)
+- **Name:** Split Orbit
+- **Handle:** @splitorbit (or the closest free one)
 - **Profile picture:** `brand/pfp.jpg`
 - **Banner:** `brand/banner.jpg`
-- **Description:** Welcome to the Ricochet Room: balls bounce, split, grow and break free, and every hit counts. Satisfying physics simulations, made from scratch. Will it overflow? Can it escape? Watch to the end to find out. New shorts every day.
+- **Description:** Balls bounce, split, grow and spin their way out, one hit at a time. Satisfying physics simulations, made from scratch. Will it overflow? Can it escape? Watch to the end to find out. New shorts every day.
 
 ---
 
