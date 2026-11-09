@@ -1,0 +1,6 @@
+out/
+stills/
+music/stems/
+*.mp4
+voice/raw/
+__pycache__/

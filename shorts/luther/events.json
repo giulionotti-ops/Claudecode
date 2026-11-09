@@ -1,0 +1,215 @@
+{
+ "dur": 54,
+ "ev": [
+  {
+   "t": 0.3,
+   "type": "ray"
+  },
+  {
+   "t": 3.7,
+   "type": "whoosh",
+   "d": 1.2
+  },
+  {
+   "t": 4.8,
+   "type": "light"
+  },
+  {
+   "t": 4.6,
+   "type": "step"
+  },
+  {
+   "t": 6.6,
+   "type": "glide",
+   "d": 0.7
+  },
+  {
+   "t": 7.25,
+   "type": "light"
+  },
+  {
+   "t": 9.6,
+   "type": "ray"
+  },
+  {
+   "t": 11.4,
+   "type": "glide",
+   "d": 0.7
+  },
+  {
+   "t": 12.05,
+   "type": "light"
+  },
+  {
+   "t": 14.6,
+   "type": "whoosh",
+   "d": 2
+  },
+  {
+   "t": 20.6,
+   "type": "thump"
+  },
+  {
+   "t": 22.5,
+   "type": "glide",
+   "d": 0.7
+  },
+  {
+   "t": 23.15,
+   "type": "light"
+  },
+  {
+   "t": 24.4,
+   "type": "whisper",
+   "d": 2.4
+  },
+  {
+   "t": 26.7,
+   "type": "glide",
+   "d": 0.7
+  },
+  {
+   "t": 27.35,
+   "type": "light"
+  },
+  {
+   "t": 30.4,
+   "type": "clash"
+  },
+  {
+   "t": 33.4,
+   "type": "clash"
+  },
+  {
+   "t": 35,
+   "type": "crack"
+  },
+  {
+   "t": 37.1,
+   "type": "glide",
+   "d": 0.7
+  },
+  {
+   "t": 37.75,
+   "type": "light"
+  },
+  {
+   "t": 38.8,
+   "type": "whoosh",
+   "d": 1
+  },
+  {
+   "t": 41.6,
+   "type": "thump"
+  },
+  {
+   "t": 45.6,
+   "type": "step"
+  },
+  {
+   "t": 50,
+   "type": "bell"
+  },
+  {
+   "t": 0.6,
+   "type": "voice",
+   "id": "L1"
+  },
+  {
+   "t": 7.8,
+   "type": "voice",
+   "id": "L2"
+  },
+  {
+   "t": 12.6,
+   "type": "voice",
+   "id": "L3"
+  },
+  {
+   "t": 18,
+   "type": "voice",
+   "id": "L4"
+  },
+  {
+   "t": 23.6,
+   "type": "voice",
+   "id": "L5"
+  },
+  {
+   "t": 27.8,
+   "type": "voice",
+   "id": "L6"
+  },
+  {
+   "t": 32.9,
+   "type": "voice",
+   "id": "L7"
+  },
+  {
+   "t": 38.2,
+   "type": "voice",
+   "id": "L8"
+  },
+  {
+   "t": 45,
+   "type": "voice",
+   "id": "L9"
+  }
+ ],
+ "subs": [
+  {
+   "id": "L1",
+   "t0": 0.6,
+   "t1": 7.326666666666666,
+   "text": "Luther found the Lion as a wild child in the forests of Caliban, and raised him like a son."
+  },
+  {
+   "id": "L2",
+   "t0": 7.8,
+   "t1": 12.25,
+   "text": "They became brothers. Then the Emperor came for the Lion."
+  },
+  {
+   "id": "L3",
+   "t0": 12.6,
+   "t1": 17.65,
+   "text": "The Lion led the Dark Angels to the stars. Luther was left behind."
+  },
+  {
+   "id": "L4",
+   "t0": 18,
+   "t1": 23.25,
+   "text": "Year after year in the Lion's shadow, his love turned to jealousy."
+  },
+  {
+   "id": "L5",
+   "t0": 23.6,
+   "t1": 27.45,
+   "text": "The dark gods whispered, and Luther listened."
+  },
+  {
+   "id": "L6",
+   "t0": 27.8,
+   "t1": 32.55,
+   "text": "When the Lion came home, Luther turned the guns of Caliban on his brother."
+  },
+  {
+   "id": "L7",
+   "t0": 32.9,
+   "t1": 37.85,
+   "text": "The two friends fought, and Caliban broke apart around them."
+  },
+  {
+   "id": "L8",
+   "t0": 38.2,
+   "t1": 44.65,
+   "text": "The Lion vanished. Luther was taken alive, and locked away for ten thousand years."
+  },
+  {
+   "id": "L9",
+   "t0": 45,
+   "t1": 50.46,
+   "text": "To this day, the Dark Angels hunt the Fallen, to bury their shame."
+  }
+ ]
+}

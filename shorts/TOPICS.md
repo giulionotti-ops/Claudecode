@@ -9,7 +9,9 @@
 - The Fire Hawks and the Legion of the Damned (vanished), 2026-11-07
 - Ferrus Manus and Fulgrim, Brother Against Brother (ferrus), 2026-11-08
 - Konrad Curze, the Night Haunter (curze), 2026-11-08
-- The Mantis Warriors, the Chapter Punished for Being Lied To (mantis-warriors; made by daily run 1, sources lost), 2026-11-08
+- The Mantis Warriors, the Chapter Punished for Being Lied To (mantis-warriors; made by daily run 1, sources lost; remade in 1080p as mantis), 2026-11-08
+- Magnus the Red, the Crimson King (magnus), 2026-11-09
+- Luther and the Lion, the First Betrayal (luther), 2026-11-09
 
 ## Queue (take from the top; canon only, little-known stories welcome)
 - The Tanith First: the regiment whose home world burned the day it was founded (Gaunt's Ghosts, Black Library)
@@ -18,8 +20,6 @@
 - The Last Krieger: the Death Korps of Krieg and their penance
 - Why the Emperor sits on the Golden Throne (and what he endures there)
 - Leman Russ and the Space Wolves: the Burning of Prospero
-- Magnus the Red: he tried to warn his father, and doomed his Legion
-- The Lion and Luther: the betrayal of Caliban and the Fallen
 - Roboute Guilliman: the son who woke 10,000 years later to a broken Imperium
 - Ollanius Pius: the ordinary soldier who stood before Horus
 - Bjorn the Fell-Handed: the oldest Space Marine alive, entombed in a Dreadnought
