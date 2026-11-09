@@ -1,5 +1,5 @@
 """Split Orbit brand art: profile picture and banner, drawn with the same look as the shorts.
-  python brand.py        writes brand/pfp.jpg (800x800) and brand/banner.jpg (2560x1440, text inside the 1546x423 safe area)
+  python brand.py        writes brand/pfp.jpg (800x800) and brand/banner.jpg (2560x1440) and brand/banner-1080p.jpg (1920x1080)
 """
 import math, os, subprocess
 import cairo
@@ -49,12 +49,19 @@ bg(c, 800, 800); ring(c, 400, 400, 300, 22); ball_arc(c, 400, 400, 300, 46)
 save(s, 'pfp')
 
 # banner
-s = cairo.ImageSurface(cairo.FORMAT_RGB24, 2560, 1440); c = cairo.Context(s)
-bg(c, 2560, 1440)
-for k, (x, y, r) in enumerate(((330, 380, 260), (2230, 1060, 300), (2300, 300, 150), (260, 1130, 170))):
-    c.set_source_rgba(*PALETTE[(k * 3) % 8], 0.10); c.arc(x, y, r, 0, 2 * math.pi); c.fill()
-ring(c, 700, 720, 165, 12); ball_arc(c, 700, 720, 165, 24)
-text(c, "Split Orbit", 1460, 740, 150, (1, 1, 1))
-text(c, 'satisfying physics, every day', 1460, 815, 52, (1, 0.9, 0.35), cairo.FONT_WEIGHT_NORMAL)
-save(s, 'banner')
-print('wrote brand/pfp.jpg and brand/banner.jpg')
+def banner(w, h, name):
+    s = cairo.ImageSurface(cairo.FORMAT_RGB24, w, h); c = cairo.Context(s)
+    c.scale(w / 2560, h / 1440)
+    bg(c, 2560, 1440)
+    for k, (x, y, r) in enumerate(((330, 380, 260), (2230, 1060, 300), (2300, 300, 150), (260, 1130, 170))):
+        c.set_source_rgba(*PALETTE[(k * 3) % 8], 0.10); c.arc(x, y, r, 0, 2 * math.pi); c.fill()
+    ring(c, 700, 720, 165, 12); ball_arc(c, 700, 720, 165, 24)
+    text(c, "Split Orbit", 1460, 740, 150, (1, 1, 1))
+    text(c, 'satisfying physics, every day', 1460, 815, 52, (1, 0.9, 0.35), cairo.FONT_WEIGHT_NORMAL)
+    save(s, name)
+
+
+banner(2560, 1440, 'banner')
+banner(1920, 1080, 'banner-1080p')
+
+print('wrote brand/pfp.jpg, brand/banner.jpg and brand/banner-1080p.jpg')
