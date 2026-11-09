@@ -47,3 +47,11 @@ fi
 if [ -n "${CLAUDE_ENV_FILE:-}" ]; then
   echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$CLAUDE_ENV_FILE"
 fi
+
+# Lemo-Opuscar: film-style library + render tools (three.js, headless browser, Python venv) in ~/lemo-opuscar
+if [ ! -f "$HOME/lemo-opuscar/core/render/video.mjs" ]; then
+  git clone -q --depth 1 https://github.com/lemomo-ai/lemo-opuscar "$HOME/lemo-opuscar"
+fi
+if [ ! -x "$HOME/lemo-opuscar/.venv/bin/python" ] || [ ! -d "$HOME/lemo-opuscar/node_modules/three" ]; then
+  (cd "$HOME/lemo-opuscar" && sh plugin/skills/lemo-opuscar/scripts/setup.sh deps) || true
+fi
