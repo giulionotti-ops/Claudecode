@@ -52,7 +52,7 @@ Also add the same text as a section in `shorts/UPLOADS.md`.
 
 ## 5b. Upload to YouTube, scheduled
 ```sh
-python3 shorts/yt_upload.py shorts/<slug>/<slug>.mp4 --title "<title>" --desc "<description>" --at "YYYY-MM-DD HH:MM" --srt shorts/srt/<slug>.srt
+python3 shorts/yt_upload.py shorts/<slug>/<slug>.mp4 --title "<title>" --desc "<description>" --at "YYYY-MM-DD HH:MM" --srt shorts/<slug>/<slug>.srt
 ```
 `--at` is the slot in Italy time. The video goes up private and turns public at that time; it is marked as synthetic content (AI voice) and not made for kids. Put the printed video id and URL in the board entry (`youtube`) and in UPLOADS.md. If it fails (missing token, quota, refresh error), don't retry in a loop: finish the rest, and tell the owner in the final reply that the short needs a manual upload.
 
