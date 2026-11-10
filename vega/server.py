@@ -7,7 +7,11 @@ import os
 from pathlib import Path
 
 import httpx
-from claude_agent_sdk import AssistantMessage, ClaudeAgentOptions, ClaudeSDKClient, TextBlock
+import datetime
+import json
+import sys
+
+from claude_agent_sdk import AssistantMessage, ClaudeAgentOptions, ClaudeSDKClient, TextBlock, create_sdk_mcp_server, tool
 from fastapi import FastAPI, HTTPException, UploadFile
 from fastapi.responses import FileResponse, Response
 from pydantic import BaseModel
@@ -17,12 +21,50 @@ VS_KEY = os.environ.get("VOICESTUDIO_API_KEY", "")
 DEFAULT_VOICE = os.environ.get("VEGA_VOICE", "alloy")
 MODEL = os.environ.get("VEGA_MODEL", "claude-opus-5-5")
 HERE = Path(__file__).parent
+UPLOADER = HERE.parent / "shorts" / "uploader"   # its token.json is the channel login
 
 SYSTEM_PROMPT = (
     "You are Neesmo, a calm, witty personal assistant speaking through a voice interface. "
     "Your replies are read aloud, so answer in one to three short spoken sentences: "
-    "no markdown, lists, code, emoji or URLs. Address the user as 'sir' or 'ma'am' only if they ask you to."
+    "no markdown, lists, code, emoji or URLs. Address the user as 'sir' or 'ma'am' only if they ask you to. "
+    "For questions about the Glazier of Terra YouTube channel, call the channel_stats tool and answer from its numbers only."
 )
+
+def _channel_stats() -> dict:
+    """Read-only snapshot of the channel signed in through the uploader."""
+    sys.path.insert(0, str(UPLOADER))
+    from upload import credentials  # noqa: E402  (reuses the uploader's login and token refresh)
+    from googleapiclient.discovery import build
+    creds = credentials()
+    yt = build("youtube", "v3", credentials=creds, cache_discovery=False)
+    ch = yt.channels().list(part="snippet,statistics,contentDetails", mine=True).execute()["items"][0]
+    uploads = ch["contentDetails"]["relatedPlaylists"]["uploads"]
+    ids = [i["contentDetails"]["videoId"] for i in
+           yt.playlistItems().list(part="contentDetails", playlistId=uploads, maxResults=10).execute().get("items", [])]
+    vids = yt.videos().list(part="snippet,statistics,status", id=",".join(ids)).execute().get("items", []) if ids else []
+    end = datetime.date.today(); start = end - datetime.timedelta(days=28)
+    yta = build("youtubeAnalytics", "v2", credentials=creds, cache_discovery=False)
+    rep = yta.reports().query(ids="channel==MINE", startDate=str(start), endDate=str(end),
+                              metrics="views,estimatedMinutesWatched,averageViewPercentage,subscribersGained").execute()
+    last28 = dict(zip([h["name"] for h in rep.get("columnHeaders", [])], (rep.get("rows") or [[0, 0, 0, 0]])[0]))
+    return {
+        "channel": ch["snippet"]["title"], "subscribers": ch["statistics"].get("subscriberCount"),
+        "total_views": ch["statistics"].get("viewCount"), "videos": ch["statistics"].get("videoCount"),
+        "last_28_days": last28,
+        "latest_videos": [{"title": v["snippet"]["title"], "views": v["statistics"].get("viewCount", "0"),
+                           "likes": v["statistics"].get("likeCount", "0"), "status": v["status"]["privacyStatus"],
+                           "publish_at": v["status"].get("publishAt")} for v in vids],
+    }
+
+
+@tool("channel_stats", "Glazier of Terra YouTube channel: subscribers, views, last 28 days analytics and the latest videos", {})
+async def channel_stats(_args):
+    try:
+        data = await asyncio.to_thread(_channel_stats)
+    except (Exception, SystemExit) as e:  # missing token (uploader exits), expired login, API error: tell the model instead of crashing the chat
+        return {"content": [{"type": "text", "text": f"Could not read the channel: {e}"}], "is_error": True}
+    return {"content": [{"type": "text", "text": json.dumps(data)}]}
+
 
 app = FastAPI()
 _client: ClaudeSDKClient | None = None
@@ -83,7 +125,9 @@ async def chat(body: ChatIn):
             _client = ClaudeSDKClient(ClaudeAgentOptions(
                 model=MODEL,
                 system_prompt=SYSTEM_PROMPT,
-                tools=[],              # pure conversation: no file or shell access
+                tools=[],              # no built-in file or shell tools
+                mcp_servers={"youtube": create_sdk_mcp_server("youtube", tools=[channel_stats])},
+                allowed_tools=["mcp__youtube__channel_stats"],  # the only tool: read-only channel stats
                 setting_sources=[],    # don't load this repo's plugins/hooks
                 effort="low",          # snappy replies for voice
             ))
