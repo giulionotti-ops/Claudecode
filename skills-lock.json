@@ -169,6 +169,18 @@
       "skillPath": "skills/frontend-ui-engineering/SKILL.md",
       "computedHash": "22ee43d0367d2c3f611585eead5f0c413bcefa947da34b25a4935726ed76533e"
     },
+    "gemini-api-cli": {
+      "source": "google-gemini/gemini-skills",
+      "sourceType": "github",
+      "skillPath": "skills/gemini-api-cli/SKILL.md",
+      "computedHash": "72250d2d4b504e94e9c502e7c6a0018a5647c4d016202e147f97b77bef0e4a32"
+    },
+    "gemini-api-dev": {
+      "source": "google-gemini/gemini-skills",
+      "sourceType": "github",
+      "skillPath": "skills/gemini-api-dev/SKILL.md",
+      "computedHash": "6a8f7f1781a1a420ec4ca7d6e39bbf13129da7dd8c3a789eb0417053fe862bf2"
+    },
     "git-workflow-and-versioning": {
       "source": "addyosmani/agent-skills",
       "sourceType": "github",
@@ -222,6 +234,12 @@
       "sourceType": "github",
       "skillPath": "docs/skill/SKILL.md",
       "computedHash": "6fa6b305e45276f76942257987cd4354b97ef72a7d00236a74dfcfe706060410"
+    },
+    "nano-banana-pro": {
+      "source": "steipete/agent-scripts",
+      "sourceType": "github",
+      "skillPath": "skills/nano-banana-pro/SKILL.md",
+      "computedHash": "e8bf8721a9770842a3c1cf9d49a23c0548affd52af031edbe6f7544a2a520fd8"
     },
     "observability-and-instrumentation": {
       "source": "addyosmani/agent-skills",

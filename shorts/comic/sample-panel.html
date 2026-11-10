@@ -1,0 +1,192 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>
+@font-face{font-family:Bangers;src:url(fonts/Bangers-Regular.ttf)}
+@font-face{font-family:ComicNeue;src:url(fonts/ComicNeue-Bold.ttf)}
+html,body{margin:0;background:#fff}
+svg{display:block}
+.cap{font-family:ComicNeue;font-weight:700;font-style:italic;font-size:30px;letter-spacing:.5px}
+.say{font-family:ComicNeue;font-weight:700;font-size:34px;text-anchor:middle}
+.sfx{font-family:Bangers;text-anchor:middle}
+</style></head><body>
+<!-- Sample panel: original characters in a flat, thick-outline cartoon style. 1080x1350 -->
+<svg width="1080" height="1350" viewBox="0 0 1080 1350" xmlns="http://www.w3.org/2000/svg"
+     stroke="#1a1410" stroke-width="6" stroke-linejoin="round" stroke-linecap="round">
+  <defs>
+    <clipPath id="panel"><rect x="34" y="34" width="1012" height="1282"/></clipPath>
+  </defs>
+  <rect width="1080" height="1350" fill="#fff" stroke="none"/>
+  <g clip-path="url(#panel)">
+    <!-- sky -->
+    <rect x="0" y="0" width="1080" height="1350" fill="#F2B33D" stroke="none"/>
+    <rect x="0" y="560" width="1080" height="200" fill="#F6C65A" stroke="none"/>
+    <!-- distant flyers -->
+    <g fill="#5a3a22" stroke="none">
+      <path d="M180 250 l40 -8 l14 -14 l6 12 l30 4 l-30 6 l-6 12 l-14 -12z"/>
+      <path d="M900 330 l30 -6 l10 -10 l5 9 l22 3 l-22 4 l-5 9 l-10 -9z"/>
+      <path d="M640 200 l22 -4 l8 -8 l4 7 l16 2 l-16 3 l-4 7 l-8 -7z"/>
+    </g>
+    <!-- far dunes -->
+    <path d="M0 700 Q120 640 260 690 T540 670 T820 690 T1080 660 V1350 H0Z" fill="#C97B3A"/>
+    <path d="M0 790 Q180 730 380 780 T760 760 T1080 780 V1350 H0Z" fill="#A85E2C"/>
+    <!-- explosion -->
+    <g>
+      <path d="M560 760 l10 -60 l-30 -20 l40 0 l-6 -60 l36 50 l24 -70 l10 70 l50 -40 l-20 60 l54 10 l-50 30 l10 30z"
+            fill="#E8452C"/>
+      <g fill="#F7E3B5">
+        <circle cx="640" cy="560" r="70"/><circle cx="560" cy="600" r="60"/>
+        <circle cx="720" cy="610" r="62"/><circle cx="600" cy="500" r="55"/>
+        <circle cx="690" cy="490" r="58"/><circle cx="640" cy="430" r="48"/>
+        <circle cx="760" cy="540" r="44"/><circle cx="520" cy="530" r="40"/>
+      </g>
+      <g fill="#F7E3B5" stroke="none">
+        <circle cx="640" cy="560" r="64"/><circle cx="560" cy="600" r="54"/>
+        <circle cx="720" cy="610" r="56"/><circle cx="600" cy="500" r="49"/>
+        <circle cx="690" cy="490" r="52"/><circle cx="640" cy="430" r="42"/>
+        <circle cx="760" cy="540" r="38"/><circle cx="520" cy="530" r="34"/>
+      </g>
+      <path d="M600 640 q20 60 40 120 M680 650 q-10 50 -30 110" fill="none" stroke-width="5"/>
+      <!-- debris -->
+      <g fill="#3b2a1e" stroke="none">
+        <rect x="470" y="420" width="16" height="12" transform="rotate(20 478 426)"/>
+        <rect x="800" y="430" width="14" height="10" transform="rotate(-30 807 435)"/>
+        <rect x="560" y="380" width="10" height="10"/>
+        <rect x="760" y="390" width="12" height="9" transform="rotate(45 766 394)"/>
+        <circle cx="830" cy="500" r="6"/><circle cx="450" cy="500" r="5"/>
+      </g>
+      <text class="sfx" x="650" y="580" font-size="120" fill="#E8452C" stroke="#1a1410" stroke-width="7"
+            paint-order="stroke" transform="rotate(-8 650 560)">BOOM</text>
+    </g>
+
+    <!-- ======= ROOKIE (left) ======= -->
+    <g id="rookie">
+      <!-- torso / greatcoat -->
+      <path d="M150 1350 Q150 930 330 900 Q510 930 510 1350Z" fill="#6F7A3A"/>
+      <path d="M330 900 L330 1350" fill="none" stroke-width="5"/>
+      <path d="M250 915 L330 1000 L410 915" fill="#565f2c"/>
+      <!-- neck -->
+      <rect x="300" y="860" width="60" height="50" fill="#EFC39B"/>
+      <!-- head -->
+      <ellipse cx="330" cy="760" rx="100" ry="110" fill="#F2C9A2"/>
+      <!-- ear -->
+      <ellipse cx="232" cy="780" rx="20" ry="30" fill="#EFC39B"/>
+      <!-- helmet -->
+      <path d="M210 735 Q215 600 335 595 Q455 600 455 735Z" fill="#7C8842"/>
+      <path d="M190 740 Q330 705 475 740 Q480 762 470 768 Q330 735 196 768 Q186 760 190 740Z" fill="#5f6a2f"/>
+      <path d="M280 625 Q300 610 330 608" fill="none" stroke="#a5b260" stroke-width="8"/>
+      <!-- eyes (big, eager, looking right) -->
+      <ellipse cx="305" cy="790" rx="26" ry="32" fill="#fff"/>
+      <ellipse cx="372" cy="790" rx="26" ry="32" fill="#fff"/>
+      <circle cx="316" cy="796" r="11" fill="#1a1410"/>
+      <circle cx="383" cy="796" r="11" fill="#1a1410"/>
+      <circle cx="320" cy="791" r="3.5" fill="#fff" stroke="none"/>
+      <circle cx="387" cy="791" r="3.5" fill="#fff" stroke="none"/>
+      <path d="M282 750 Q305 738 326 748 M352 748 Q374 738 396 750" fill="none" stroke-width="6"/>
+      <!-- freckles -->
+      <g fill="#c98b5f" stroke="none"><circle cx="285" cy="835" r="3"/><circle cx="297" cy="842" r="3"/><circle cx="398" cy="835" r="3"/><circle cx="386" cy="842" r="3"/></g>
+      <!-- grin -->
+      <path d="M300 845 Q345 900 392 842 Q348 858 300 845Z" fill="#8a2a1e"/>
+      <path d="M306 848 Q348 860 386 846 L384 856 Q348 866 308 857Z" fill="#fff" stroke-width="4"/>
+      <!-- arm + lasgun -->
+      <path d="M455 1350 L470 1040 L520 1030" fill="none" stroke-width="0"/>
+      <g transform="rotate(-12 470 900)">
+        <rect x="440" y="700" width="34" height="380" rx="6" fill="#8C5A32"/>
+        <rect x="446" y="610" width="22" height="110" fill="#4b4b4b"/>
+        <rect x="436" y="820" width="44" height="70" rx="6" fill="#3f3f3f"/>
+        <rect x="450" y="560" width="14" height="60" fill="#4b4b4b"/>
+      </g>
+      <path d="M420 1350 Q400 1060 470 1000" fill="#6F7A3A"/>
+      <ellipse cx="478" cy="985" rx="40" ry="34" fill="#F2C9A2"/>
+    </g>
+
+    <!-- ======= SARGE (right) ======= -->
+    <g id="sarge">
+      <!-- torso / flak armour -->
+      <path d="M560 1350 Q560 900 790 870 Q1020 900 1020 1350Z" fill="#5d6631"/>
+      <path d="M640 940 Q790 900 940 940 L960 1120 Q790 1150 620 1120Z" fill="#454b22"/>
+      <path d="M660 1000 L920 1000 M650 1060 L930 1060" fill="none" stroke-width="5"/>
+      <!-- neck -->
+      <rect x="740" y="820" width="100" height="70" fill="#D9A27A"/>
+      <!-- head: blocky jaw -->
+      <path d="M680 700 Q680 580 790 575 Q900 580 900 700 L895 820 Q870 880 790 885 Q710 880 685 820Z" fill="#E2AC83"/>
+      <!-- stubble -->
+      <g fill="#8a6a50" stroke="none">
+        <circle cx="720" cy="830" r="3"/><circle cx="740" cy="852" r="3"/><circle cx="765" cy="866" r="3"/>
+        <circle cx="815" cy="866" r="3"/><circle cx="840" cy="852" r="3"/><circle cx="862" cy="830" r="3"/>
+        <circle cx="730" cy="810" r="3"/><circle cx="852" cy="810" r="3"/><circle cx="790" cy="872" r="3"/>
+      </g>
+      <!-- ear -->
+      <ellipse cx="898" cy="745" rx="20" ry="32" fill="#D9A27A"/>
+      <!-- helmet, low and battered -->
+      <path d="M665 715 Q665 545 790 540 Q915 545 915 715Z" fill="#6c7637"/>
+      <path d="M645 718 Q790 680 935 718 Q942 742 930 750 Q790 712 652 750 Q640 742 645 718Z" fill="#525a28"/>
+      <path d="M760 560 l12 26 l-14 14" fill="none" stroke-width="5"/>
+      <!-- tired, half-lidded eyes looking left -->
+      <path d="M712 770 Q742 755 772 770 Q742 790 712 770Z" fill="#fff"/>
+      <path d="M808 770 Q838 755 868 770 Q838 790 808 770Z" fill="#fff"/>
+      <circle cx="728" cy="773" r="7" fill="#1a1410"/>
+      <circle cx="824" cy="773" r="7" fill="#1a1410"/>
+      <path d="M706 766 Q742 750 778 764 M804 764 Q840 750 874 766" fill="none" stroke-width="9"/>
+      <!-- bags under eyes -->
+      <path d="M718 790 Q742 800 766 790 M814 790 Q838 800 862 790" fill="none" stroke-width="4"/>
+      <!-- scar -->
+      <path d="M850 735 L878 810" fill="none" stroke="#a2493a" stroke-width="6"/>
+      <path d="M856 755 l14 -4 M862 775 l14 -4 M868 795 l14 -4" fill="none" stroke="#a2493a" stroke-width="4"/>
+      <!-- nose -->
+      <path d="M790 780 Q776 815 792 822 Q806 822 804 812" fill="none" stroke-width="5"/>
+      <!-- flat mouth + cigar -->
+      <path d="M745 845 Q790 838 835 846" fill="none" stroke-width="6"/>
+      <rect x="680" y="836" width="80" height="18" rx="6" fill="#7a4a2a" transform="rotate(8 720 845)"/>
+      <rect x="676" y="830" width="16" height="18" rx="4" fill="#E8452C" transform="rotate(8 684 839)"/>
+      <!-- smoke -->
+      <path d="M672 820 q-20 -20 0 -40 q20 -20 -2 -44 q-18 -22 6 -48" fill="none" stroke="#fff3d6" stroke-width="10"/>
+      <path d="M672 820 q-20 -20 0 -40 q20 -20 -2 -44 q-18 -22 6 -48" fill="none" stroke-width="3"/>
+    </g>
+
+    <!-- sandbags (trench lip) over both -->
+    <g fill="#C8A465">
+      <rect x="-20" y="1150" width="240" height="110" rx="45"/>
+      <rect x="200" y="1160" width="240" height="105" rx="45"/>
+      <rect x="420" y="1150" width="240" height="110" rx="45"/>
+      <rect x="640" y="1160" width="240" height="105" rx="45"/>
+      <rect x="860" y="1150" width="240" height="110" rx="45"/>
+      <rect x="80" y="1240" width="250" height="110" rx="45"/>
+      <rect x="310" y="1245" width="250" height="110" rx="45"/>
+      <rect x="540" y="1240" width="250" height="110" rx="45"/>
+      <rect x="770" y="1245" width="250" height="110" rx="45"/>
+    </g>
+    <g fill="none" stroke="#9c7b43" stroke-width="5">
+      <path d="M60 1185 q40 10 80 0 M280 1195 q40 10 80 0 M500 1185 q40 10 80 0 M720 1195 q40 10 80 0 M940 1185 q40 10 80 0"/>
+      <path d="M160 1280 q40 10 80 0 M390 1285 q40 10 80 0 M620 1280 q40 10 80 0 M850 1285 q40 10 80 0"/>
+    </g>
+  </g>
+  <rect x="34" y="34" width="1012" height="1282" fill="none" stroke-width="10"/>
+
+  <!-- caption box -->
+  <rect x="34" y="34" width="640" height="64" fill="#fff" stroke-width="8"/>
+  <text class="cap" x="54" y="77" fill="#1a1410" stroke="none">SOMEWHERE ON A FORGOTTEN WORLD...</text>
+
+  <!-- rookie bubble -->
+  <path d="M90 170 Q90 130 140 130 L470 130 Q520 130 520 170 L520 330 Q520 370 470 370 L330 370 L300 450 L280 370 L140 370 Q90 370 90 330Z"
+        fill="#fff" stroke-width="6"/>
+  <text class="say" fill="#1a1410" stroke="none">
+    <tspan x="305" y="190">FIRST DAY, SARGE!</tspan>
+    <tspan x="305" y="236">HOW LONG DOES A</tspan>
+    <tspan x="305" y="282">GUARDSMAN USUALLY</tspan>
+    <tspan x="305" y="328">LAST OUT HERE?</tspan>
+  </text>
+
+  <!-- sarge bubble -->
+  <ellipse cx="880" cy="250" rx="150" ry="100" fill="#fff" stroke-width="6"/>
+  <path d="M860 345 L850 420 L900 342" fill="#fff" stroke-width="6"/>
+  <path d="M858 340 L902 340" fill="none" stroke="#fff" stroke-width="10"/>
+  <text class="say" fill="#1a1410" stroke="none">
+    <tspan x="880" y="232">FIFTEEN</tspan>
+    <tspan x="880" y="280">HOURS, SON.</tspan>
+  </text>
+
+  <!-- issue tag -->
+  <rect x="980" y="1270" width="56" height="38" fill="#fff" stroke-width="5"/>
+  <text x="1008" y="1298" font-family="ComicNeue" font-weight="700" font-size="24" text-anchor="middle" fill="#1a1410" stroke="none">#1</text>
+</svg>
+</body></html>
