@@ -47,8 +47,14 @@ Then `python3 tools/srt.py <slug>` for the captions, and update `CREDITS`.
 - **Title:** under 70 characters. A big name or hook in CAPS, plus an emotion word or curiosity gap, one emoji, ending in `#warhammer40k`. Examples: "ANGRON's Story Is the SADDEST in 40k 💔", "A Whole Chapter VANISHED... Then THESE Appeared 🔥".
 - **Description:** 2–3 short lines that tease the story without the ending, a question that invites comments 👇, then 5 hashtags (`#warhammer40k`, 2–3 topic tags, `#shorts`).
 - **Pinned comment:** one line that starts an argument or asks for a theory, with one emoji.
-- **Suggested upload:** the next free slot after the last `when` in `shorts/board/shorts.json`. Slots are 13:30, 18:30 and 21:30 Italy time, and you write New York time next to it (Italy minus 6 h), e.g. `Tue 10 Nov · 18:30 Rome / 12:30 New York`. Add one line of notes (captions file, the checklist: pinned comment, AI-voice box "Altered or synthetic content: Yes").
+- **Upload slot:** two shorts a day, at **15:30** and **18:30** Italy time. Run 1 of the day takes today's 15:30, run 2 takes today's 18:30; if that time is already past or taken in `shorts/board/shorts.json`, take the next free slot. Write New York time next to it (Italy minus 6 h), e.g. `Tue 10 Nov · 18:30 Rome / 12:30 New York`. Add one line of notes (the pinned comment still has to be added by hand).
 Also add the same text as a section in `shorts/UPLOADS.md`.
+
+## 5b. Upload to YouTube, scheduled
+```sh
+python3 shorts/yt_upload.py shorts/<slug>/<slug>.mp4 --title "<title>" --desc "<description>" --at "YYYY-MM-DD HH:MM" --srt shorts/srt/<slug>.srt
+```
+`--at` is the slot in Italy time. The video goes up private and turns public at that time; it is marked as synthetic content (AI voice) and not made for kids. Put the printed video id and URL in the board entry (`youtube`) and in UPLOADS.md. If it fails (missing token, quota, refresh error), don't retry in a loop: finish the rest, and tell the owner in the final reply that the short needs a manual upload.
 
 ## 6. Add it to the shorts board (the owner's page)
 The board is the artifact https://claude.ai/artifact/J3i4eEL1Go3LYtBF4HqkqB, built from `shorts/board/` (index.html, shorts.json, videos/, posters/).
