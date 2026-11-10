@@ -1,4 +1,4 @@
-"""Vega: a voice assistant HUD. Claude thinks, VoiceStudio speaks and listens.
+"""Neesmo: a voice assistant HUD. Claude thinks, VoiceStudio speaks and listens.
 
 Run:  uv run --with-requirements requirements.txt uvicorn server:app --port 8080
 """
@@ -19,7 +19,7 @@ MODEL = os.environ.get("VEGA_MODEL", "claude-opus-5-5")
 HERE = Path(__file__).parent
 
 SYSTEM_PROMPT = (
-    "You are Vega, a calm, witty personal assistant speaking through a voice interface. "
+    "You are Neesmo, a calm, witty personal assistant speaking through a voice interface. "
     "Your replies are read aloud, so answer in one to three short spoken sentences: "
     "no markdown, lists, code, emoji or URLs. Address the user as 'sir' or 'ma'am' only if they ask you to."
 )

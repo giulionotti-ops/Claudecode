@@ -1,4 +1,4 @@
-# Vega
+# Neesmo
 
 A voice-assistant HUD. Claude does the thinking, and [VoiceStudio](https://github.com/debpalash/VoiceStudio) speaks and listens.
 

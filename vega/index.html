@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Vega</title>
+<title>Neesmo</title>
 <style>
-  :root { --c: #3fe0ff; --c2: #ffb547; --bg: #02070d; --dim: rgba(63,224,255,.35); --err: #ff5f6d; }
+  :root { --c: #3dff8f; --c2: #c6ff4a; --bg: #02070d; --dim: rgba(61,255,143,.35); --err: #ff5f6d; }
   * { box-sizing: border-box; }
-  html, body { margin: 0; height: 100%; background: radial-gradient(ellipse at center, #062033 0%, var(--bg) 70%); color: var(--c);
+  html, body { margin: 0; height: 100%; background: radial-gradient(ellipse at center, #06331a 0%, var(--bg) 70%); color: var(--c);
     font: 14px/1.4 ui-monospace, "SF Mono", Menlo, Consolas, monospace; overflow: hidden; }
   body::after { content: ""; position: fixed; inset: 0; pointer-events: none;
-    background: repeating-linear-gradient(0deg, rgba(63,224,255,.03) 0 1px, transparent 1px 3px); }
+    background: repeating-linear-gradient(0deg, rgba(61,255,143,.03) 0 1px, transparent 1px 3px); }
   canvas { position: fixed; inset: 0; width: 100%; height: 100%; }
   .corner { position: fixed; padding: 16px; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); }
   .tl { top: 0; left: 0; } .tr { top: 0; right: 0; text-align: right; }
@@ -20,7 +20,7 @@
   #status.err { color: var(--err); text-shadow: 0 0 8px var(--err); letter-spacing: .1em; }
   #log { position: fixed; left: 16px; bottom: 84px; width: min(420px, calc(100% - 32px)); max-height: 30vh; overflow-y: auto;
     display: flex; flex-direction: column; gap: 6px; mask-image: linear-gradient(transparent, #000 30%); padding-top: 24px; }
-  #log p { margin: 0; padding: 6px 10px; border-left: 2px solid var(--dim); background: rgba(63,224,255,.05); }
+  #log p { margin: 0; padding: 6px 10px; border-left: 2px solid var(--dim); background: rgba(61,255,143,.05); }
   #log p.you { border-color: var(--c2); color: var(--c2); }
   form { position: fixed; left: 16px; right: 16px; bottom: 16px; display: flex; gap: 8px; max-width: 720px; margin: 0 auto; }
   input, select, button { font: inherit; color: var(--c); background: rgba(2,20,30,.8); border: 1px solid var(--dim); border-radius: 4px; }
@@ -34,8 +34,8 @@
 </head>
 <body>
 <canvas id="hud" aria-hidden="true"></canvas>
-<div class="corner tl">Vega // online<br><b id="clock">--:--:--</b><br><span id="date"></span></div>
-<div class="corner tr"><label for="voice">Voice</label><br><select id="voice"><option>loading…</option></select><br><span id="vs">voicestudio: …</span></div>
+<div class="corner tl">Neesmo // online<br><b id="clock">--:--:--</b><br><span id="date"></span></div>
+<div class="corner tr"><label for="voice">Voice</label><br><select id="voice"><option>loading…</option></select><br><span id="vs">voice: …</span></div>
 <div id="status" role="status" aria-live="polite">Standby</div>
 <div id="log" aria-live="polite"></div>
 <form id="f">
@@ -67,16 +67,16 @@ function audio() {
     const { voices } = await (await api('/api/voices')).json();
     voiceSel.innerHTML = '';
     for (const v of voices) voiceSel.add(new Option(`${v.name}${v.type === 'profile' ? '' : ' (alias)'}`, v.id));
-    voiceSel.value = localStorage.getItem('vega-voice') || cfg.voice;
+    voiceSel.value = localStorage.getItem('neesmo-voice') || cfg.voice;
     if (!voiceSel.value) voiceSel.selectedIndex = 0;
-    $('#vs').textContent = 'voicestudio: linked';
+    $('#vs').textContent = 'voice: linked';
   } catch (e) {
     voiceSel.innerHTML = `<option value="${cfg.voice}">${cfg.voice}</option>`;
-    $('#vs').textContent = 'voicestudio: offline';
-    setStatus('VoiceStudio offline — text only', true);
+    $('#vs').textContent = 'voice: offline';
+    setStatus('Voice offline — text only', true);
   }
 })();
-voiceSel.onchange = () => { try { localStorage.setItem('vega-voice', voiceSel.value); } catch {} };
+voiceSel.onchange = () => { try { localStorage.setItem('neesmo-voice', voiceSel.value); } catch {} };
 
 // ── conversation ──
 async function ask(text) {
@@ -137,16 +137,16 @@ function frame(t) {
   t = reduce ? 0 : t / 1000;
   if (analyser && mode !== 'idle' && mode !== 'thinking') { analyser.getByteFrequencyData(data); level += (data.reduce((a, b) => a + b, 0) / data.length / 255 * 2.2 - level) * .3; }
   else level *= .9;
-  const R = Math.min(cv.width, cv.height) * .22, hot = mode === 'listening' ? '#ffb547' : '#3fe0ff';
+  const R = Math.min(cv.width, cv.height) * .22, hot = mode === 'listening' ? '#c6ff4a' : '#3dff8f';
   g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, cv.width, cv.height);
   g.translate(cv.width / 2, cv.height / 2 - R * .15);
   // core glow
   const core = g.createRadialGradient(0, 0, 0, 0, 0, R * (.45 + level * .25));
-  core.addColorStop(0, '#e9fdff'); core.addColorStop(.25, hot); core.addColorStop(1, 'transparent');
+  core.addColorStop(0, '#eaffef'); core.addColorStop(.25, hot); core.addColorStop(1, 'transparent');
   g.fillStyle = core; g.beginPath(); g.arc(0, 0, R * (.45 + level * .25), 0, 7); g.fill();
   // inner ring + spokes
   arc(R * .32, 0, 7, 2, hot, 20);
-  for (let i = 0; i < 12; i++) { const a = i / 12 * 6.283 + t * .4; arc(R * .4, a, a + .3, 6, 'rgba(63,224,255,.7)', 10); }
+  for (let i = 0; i < 12; i++) { const a = i / 12 * 6.283 + t * .4; arc(R * .4, a, a + .3, 6, 'rgba(61,255,143,.7)', 10); }
   // audio-reactive bars
   g.save(); g.shadowBlur = 12; g.shadowColor = hot; g.strokeStyle = hot; g.lineWidth = 2;
   for (let i = 0; i < 96; i++) {
@@ -156,15 +156,15 @@ function frame(t) {
   }
   g.restore();
   // rotating segmented rings
-  for (let i = 0; i < 3; i++) { const a = t * -.25 + i * 2.094; arc(R * 1.02, a, a + 1.5, 3, 'rgba(63,224,255,.8)', 12); }
-  for (let i = 0; i < 4; i++) { const a = t * .15 + i * 1.571; arc(R * 1.15, a, a + 1.1, 1.5, 'rgba(63,224,255,.45)'); }
-  arc(R * 1.25, 0, 7, 1, 'rgba(63,224,255,.2)');
+  for (let i = 0; i < 3; i++) { const a = t * -.25 + i * 2.094; arc(R * 1.02, a, a + 1.5, 3, 'rgba(61,255,143,.8)', 12); }
+  for (let i = 0; i < 4; i++) { const a = t * .15 + i * 1.571; arc(R * 1.15, a, a + 1.1, 1.5, 'rgba(61,255,143,.45)'); }
+  arc(R * 1.25, 0, 7, 1, 'rgba(61,255,143,.2)');
   // tick marks
-  g.strokeStyle = 'rgba(63,224,255,.4)'; g.lineWidth = 1; g.shadowBlur = 0;
+  g.strokeStyle = 'rgba(61,255,143,.4)'; g.lineWidth = 1; g.shadowBlur = 0;
   for (let i = 0; i < 120; i++) { const a = i / 120 * 6.283 + t * .05, l = i % 10 ? 6 : 14, r = R * 1.32;
     g.beginPath(); g.moveTo(Math.cos(a) * r, Math.sin(a) * r); g.lineTo(Math.cos(a) * (r + l), Math.sin(a) * (r + l)); g.stroke(); }
   // thinking sweep
-  if (mode === 'thinking') { const a = t * 4; arc(R * .85, a, a + .8, 4, '#ffb547', 18); arc(R * .85, a + 3.14, a + 3.94, 4, '#ffb547', 18); }
+  if (mode === 'thinking') { const a = t * 4; arc(R * .85, a, a + .8, 4, '#c6ff4a', 18); arc(R * .85, a + 3.14, a + 3.94, 4, '#c6ff4a', 18); }
   requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);
