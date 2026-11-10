@@ -1,0 +1,22 @@
+{
+ "voices": {
+  "rookie": "TX3LPaxmHKxFdv7VOQHJ",
+  "sarge": "M5E055lOUxMi0kJpGyE9",
+  "commissar": "onwK4e9ZLuTAKqWW03F9",
+  "ork": "SOYHLrjzK2X1ezoPC6cr"
+ },
+ "lines": [
+  {"id": "l01", "who": "rookie", "say": "[excited] First day, Sarge! How long does a Guardsman usually last?", "text": "FIRST DAY, SARGE! HOW LONG DOES A GUARDSMAN USUALLY LAST?"},
+  {"id": "l02", "who": "sarge", "say": "[flatly] Fifteen hours, son.", "text": "FIFTEEN HOURS, SON."},
+  {"id": "l03", "who": "rookie", "say": "[nervous] ...And how long have I been here?", "text": "...AND HOW LONG HAVE I BEEN HERE?"},
+  {"id": "l04", "who": "sarge", "say": "[deadpan] Fourteen.", "text": "FOURTEEN."},
+  {"id": "l05", "who": "ork", "say": "[roaring] WAAAAAGH!", "text": "WAAAGH!!"},
+  {"id": "l06", "who": "rookie", "say": "[panicked] Retreat?!", "text": "RETREAT?!"},
+  {"id": "l07", "who": "commissar", "say": "[coldly] Retreat is heresy, Private.", "text": "RETREAT IS HERESY, PRIVATE."},
+  {"id": "l08", "who": "rookie", "say": "[screaming] FOR THE EMPERORRR!", "text": "FOR THE EMPEROR!!"},
+  {"id": "l09", "who": "sarge", "say": "[stunned] ...He actually hit something.", "text": "...HE ACTUALLY HIT SOMETHING."},
+  {"id": "l10", "who": "commissar", "say": "[proudly] One Ork slain. The Emperor is pleased.", "text": "ONE ORK SLAIN. THE EMPEROR IS PLEASED."},
+  {"id": "l11", "who": "sarge", "say": "[deadpan] Congrats, kid. You've got one hour left.", "text": "CONGRATS, KID. YOU'VE GOT ONE HOUR LEFT."},
+  {"id": "l12", "who": "rookie", "say": "[gulps] ...gulp.", "text": "GULP."}
+ ]
+}

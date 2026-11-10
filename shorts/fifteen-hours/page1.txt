@@ -1,0 +1,11 @@
+Image 1 is the exact PAGE LAYOUT: draw a comic page with exactly these 5 panels, in exactly these positions and sizes, thick black panel borders, white gutters. Do not draw the numbers.
+Image 2 is the STYLE and CHARACTER reference: same drawing style, same two characters (the skinny eager rookie with huge round eyes in an oversized olive helmet with ear guards and green greatcoat; the big grizzled sergeant with battered helmet, scar, grey stubble, cigar, dusty flak armour).
+
+Style: flat cartoon webcomic, thick uniform black outlines, flat colours with one shadow tone, warm orange-yellow sky, dusty brown desert battlefield, grimdark sci-fi drawn funny. Every panel keeps EMPTY plain sky or plain background in its TOP 30% for speech bubbles that will be added later.
+ABSOLUTELY NO text, letters, numbers, speech bubbles, sound effects or logos anywhere.
+
+Panel 1 (top, full width): the rookie and sergeant peek over sandbags in a trench, rookie grinning and talking excitedly to the sergeant, sergeant deadpan with cigar. Big cartoon explosion far in the background.
+Panel 2 (middle left): close-up of the rookie looking down at a chunky brass wrist chronometer, sweating, nervous smile.
+Panel 3 (middle right): close-up of the sergeant, completely deadpan, half-lidded eyes, puff of cigar smoke.
+Panel 4 (bottom left, wide): a huge green-skinned brutish alien warrior with tusks, crude scrap-metal armour and a giant cleaver, charging straight at the viewer out of a dust cloud, roaring with mouth wide open. Speed lines.
+Panel 5 (bottom right): the rookie turning to run away in panic, and right behind him a stern tall officer in a black peaked cap and long black greatcoat with red sash, sharp moustache, calmly pointing a pistol at the rookie. Rookie frozen mid-step.

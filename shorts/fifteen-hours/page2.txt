@@ -1,0 +1,10 @@
+Image 1 is the exact PAGE LAYOUT: draw a comic page with exactly these 4 panels, in exactly these positions and sizes, thick black panel borders, white gutters. Do not draw the numbers.
+Image 2 is the previous page of the same comic: keep the identical drawing style and the identical characters (skinny eager rookie with huge round eyes, oversized olive helmet with ear guards, green greatcoat; big grizzled sergeant with battered helmet, scar, grey stubble, cigar, dusty flak armour; tall stern officer in black peaked cap, black greatcoat, red sash, moustache; huge green tusked alien brute in scrap armour).
+
+Style: flat cartoon webcomic, thick uniform black outlines, flat colours with one shadow tone, warm orange-yellow sky, dusty brown desert battlefield, grimdark sci-fi drawn funny. Every panel keeps EMPTY plain sky or plain background in its TOP 30% for speech bubbles added later.
+ABSOLUTELY NO text, letters, numbers, speech bubbles, sound effects or logos anywhere.
+
+Panel 1 (top, full width): the rookie, eyes squeezed shut, screaming, firing his chunky rifle wildly in all directions, bright red laser bolts flying everywhere, the green alien brute charging in from the right side.
+Panel 2 (middle left): the green alien brute lying flat on its back, knocked out, cartoon X eyes, one tiny smoking hole in its forehead. The sergeant stands behind it, jaw dropped in shock, his cigar falling out of his mouth.
+Panel 3 (middle right): the stern officer pinning a shiny medal on the rookie's chest; the rookie beaming with pride, chest puffed out.
+Panel 4 (bottom, full width): the sergeant resting a hand on the rookie's shoulder, deadpan; the rookie's proud grin frozen, eyes huge with dawning horror. High in the sky behind them, a giant artillery shell whistling down straight toward them.
