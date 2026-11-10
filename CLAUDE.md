@@ -21,3 +21,8 @@ the machine (user/global scope) is lost when the session ends.
 
 Keep replies to the user short and simple: plain words, a few lines, no long reports.
 Use caveman mode (the `caveman` skill) for replies.
+
+## 40k Comic Shorts channel
+
+Follow the channel rules in `shorts/comic/README.md`. Above all: every short's
+description must explain the lore of that short (a `📜 THE LORE` section).

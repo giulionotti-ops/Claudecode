@@ -20,12 +20,22 @@ Gemini cost: 2 pages × ~$0.135 = **~$0.27**. Gemini drew the commissar in two p
 Mek: Callum (pitched down) · Boss: Harry (pitched down) · Rookie: Liam · Sarge: Gravel Midnight · Commissar: Daniel
 
 ## Upload
-**Title:** In 40k, RED Paint Makes You FASTER (Seriously)
+**Title:** In 40k, RED Paint Makes You FASTER (Seriously) 🔴 #warhammer40k
+
 **Description:**
-Orks believe red ones go faster... and in Warhammer 40,000, if enough Orks believe something, it becomes true.
+An Ork Mek paints his buggy red, and it really goes faster. 🔴💨
 
-#warhammer40k #40k #orks #40klore #40kmemes #shorts
+📜 THE LORE
+• Orks give off a psychic field without knowing it. When enough Orks believe something, that shared belief bends reality, so Ork guns made of scrap still fire and their junk machines still run.
+• "Red wunz go fasta" is the most famous example: Orks believe red vehicles are faster, so red vehicles really are faster. The Evil Sunz clan, obsessed with speed, paint everything red for this reason.
+• Meks (Mekboyz) are the Ork engineers who build and "improve" their vehicles and weapons, mostly by instinct.
+• It only works for Orks. A human painting his tank red gets nothing, unless the Orks decide it belongs to them.
+• To the Imperial Guard, leaving the battlefield without orders is desertion, a crime the Commissars punish without mercy.
 
-*Unofficial fan work. Warhammer 40,000 is a trademark of Games Workshop Ltd. Original characters and artwork.*
+What's the most ridiculous Ork logic that actually works? 👇
 
-**Tags:** warhammer 40k, orks, red ones go faster, waaagh, 40k lore, imperial guard, commissar, 40k comic, 40k funny
+#warhammer40k #orks #waaagh #40klore #40kmemes #shorts
+
+Unofficial fan work. Warhammer 40,000 is a trademark of Games Workshop Ltd. Original characters and artwork.
+
+**Pinned comment:** Red ones go faster. Purple ones are sneakier. Change my mind 🔴🟣
