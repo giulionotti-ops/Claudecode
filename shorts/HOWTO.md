@@ -7,7 +7,7 @@ Keep replies to the user short (CLAUDE.md).
 In a scheduled run, FIRST call the `add_repo` tool (owner `giulionotti-ops`, repo `claudecode`, access `push`); without it every push is refused with 403.
 ```sh
 cd <repo>; git fetch origin claude/youtube-banner && git checkout claude/youtube-banner && git pull --rebase origin claude/youtube-banner
-python3 -c "import scipy, soundfile, soxr" || pip install -q scipy soundfile soxr
+bash shorts/setup.sh    # ffmpeg, Node + Playwright/Chromium, Python audio libs (skips what's installed)
 ```
 The Lemo-Opuscar library is NOT used (running it is blocked). Everything runs from the short's own folder with `tools/film.js`.
 
