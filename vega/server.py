@@ -157,6 +157,22 @@ def index():
     return FileResponse(HERE / "index.html")
 
 
+_stats_cache: dict = {"at": 0.0, "data": None}
+
+
+@app.get("/api/stats")
+async def stats():
+    """Numbers for the side cards; cached 10 minutes to spare the YouTube quota."""
+    loop = asyncio.get_running_loop()
+    if _stats_cache["data"] is None or loop.time() - _stats_cache["at"] > 600:
+        try:
+            _stats_cache["data"] = await asyncio.to_thread(_channel_stats)
+        except (Exception, SystemExit) as e:
+            raise HTTPException(503, f"Could not read the channel: {e}")
+        _stats_cache["at"] = loop.time()
+    return _stats_cache["data"]
+
+
 @app.get("/api/config")
 def config():
     return {"voice": DEFAULT_VOICE, "voicestudio": VS_URL, "model": MODEL}

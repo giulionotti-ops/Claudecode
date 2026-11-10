@@ -30,12 +30,34 @@
   #mic { width: 48px; padding: 0; font-size: 18px; }
   #mic.on { color: var(--bg); background: var(--c2); border-color: var(--c2); box-shadow: 0 0 16px var(--c2); }
   select { padding: 4px; max-width: 180px; }
+  .cards { position: fixed; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 10px; width: 190px; }
+  .cards.l { left: 16px; } .cards.r { right: 16px; }
+  .card { padding: 10px 12px; border: 1px solid var(--dim); border-radius: 6px; background: rgba(2,26,14,.6); }
+  .card span { display: block; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); }
+  .card b { display: block; font-size: 22px; font-weight: 600; text-shadow: 0 0 8px var(--dim); }
+  .card small { color: var(--dim); font-size: 11px; }
+  @media (max-width: 900px) {  /* phones and narrow windows: two scrolling strips under the clock */
+    .cards { flex-direction: row; transform: none; left: 16px; right: 16px; width: auto; overflow-x: auto; gap: 8px; }
+    .cards.l { top: 84px; left: 16px; } .cards.r { top: 146px; right: 16px; }
+    .card { min-width: 118px; padding: 6px 10px; } .card b { font-size: 16px; } .card small { display: none; }
+  }
 </style>
 </head>
 <body>
 <canvas id="hud" aria-hidden="true"></canvas>
 <div class="corner tl">Neesmo // online<br><b id="clock">--:--:--</b><br><span id="date"></span></div>
 <div class="corner tr"><label for="voice">Voice</label><br><select id="voice"><option>loading…</option></select><br><span id="vs">voice: …</span></div>
+<div class="cards l" aria-label="Channel stats">
+  <div class="card"><span>Subscribers</span><b id="s-subs">—</b><small id="s-name">Glazier of Terra</small></div>
+  <div class="card"><span>Total views</span><b id="s-views">—</b><small id="s-vids"></small></div>
+  <div class="card"><span>Revenue</span><b id="s-rev">—</b><small>not monetised yet</small></div>
+</div>
+<div class="cards r" aria-label="Last 28 days">
+  <div class="card"><span>Views · 28 days</span><b id="s-v28">—</b></div>
+  <div class="card"><span>Watch time · 28 days</span><b id="s-wt">—</b></div>
+  <div class="card"><span>Avg viewed</span><b id="s-avp">—</b><small id="s-sg"></small></div>
+  <div class="card"><span>Latest short</span><b id="s-last">—</b><small id="s-lastt"></small></div>
+</div>
 <div id="status" role="status" aria-live="polite">Standby</div>
 <div id="log" aria-live="polite"></div>
 <form id="f">
@@ -123,6 +145,22 @@ const stopRec = () => rec?.state === 'recording' && rec.stop();
 $('#mic').onclick = () => rec?.state === 'recording' ? stopRec() : startRec();
 addEventListener('keydown', e => { if (e.code === 'Space' && e.target === document.body && !e.repeat) { e.preventDefault(); startRec(); } });
 addEventListener('keyup', e => { if (e.code === 'Space' && e.target === document.body) stopRec(); });
+
+// ── stat cards ──
+const fmt = n => n == null ? '—' : Number(n).toLocaleString();
+async function loadStats() {
+  try {
+    const d = await (await api('/api/stats')).json(), m = d.last_28_days || {}, v = (d.latest_videos || [])[0];
+    $('#s-subs').textContent = fmt(d.subscribers); $('#s-name').textContent = d.channel;
+    $('#s-views').textContent = fmt(d.total_views); $('#s-vids').textContent = `${fmt(d.videos)} videos`;
+    $('#s-v28').textContent = fmt(m.views);
+    $('#s-wt').textContent = m.estimatedMinutesWatched == null ? '—' : `${fmt(Math.round(m.estimatedMinutesWatched / 60))} h`;
+    $('#s-avp').textContent = m.averageViewPercentage == null ? '—' : `${Math.round(m.averageViewPercentage)}%`;
+    $('#s-sg').textContent = m.subscribersGained == null ? '' : `+${fmt(m.subscribersGained)} subs`;
+    if (v) { $('#s-last').textContent = fmt(v.views); $('#s-lastt').textContent = v.title.slice(0, 40); }
+  } catch (e) { $('#s-name').textContent = 'stats offline'; }
+}
+loadStats(); setInterval(loadStats, 600000);
 
 // ── clock ──
 setInterval(() => { const d = new Date(); $('#clock').textContent = d.toLocaleTimeString(); $('#date').textContent = d.toDateString(); }, 1000);
