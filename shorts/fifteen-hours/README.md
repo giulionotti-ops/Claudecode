@@ -12,6 +12,7 @@ python3 ../comic/gen_page.py page1.txt page1-art.jpg --ref page1-layout.png --re
 python3 ../comic/gen_page.py page2.txt page2-art.jpg --ref page2-layout.png --ref page1-art.jpg
 python3 panels.py           # finds panel boxes
 python3 voice.py            # ElevenLabs v3, one voice per character
+python3 words.py            # word timings -> bubble text types out as it is spoken
 python3 sfx.py              # ElevenLabs SFX + music bed
 python3 render.py --sheet   # contact sheet to check framing
 python3 render.py           # fifteen-hours.mp4 + .srt  (~3.5 min)

@@ -9,6 +9,7 @@ A = OW / OH
 FONT = '../comic/fonts/ComicNeue-Bold.ttf'; BANG = '../comic/fonts/Bangers-Regular.ttf'
 INK = (26, 20, 16)
 dur = json.load(open('voice/dur.json'))
+words = json.load(open('voice/words.json'))
 import re
 texts = {l['id']: l['text'] for l in json.load(open('script.json'))['lines']}
 said = {l['id']: re.sub(r'\[[^]]*\]\s*', '', l['say']) for l in json.load(open('script.json'))['lines']}
@@ -78,7 +79,7 @@ def wrap(d, text, font, maxw):
         if d.textlength(nxt, font=font) <= maxw or not cur: cur = nxt
         else: lines.append(cur); cur = w
     return lines + [cur]
-def bubble(box, tip, kind, fs, text):
+def bubble(box, tip, kind, fs, text, nvis=None, chars=False):
     """Returns (sprite RGBA at K scale, (x,y) page-K position, centre)."""
     S = 2 * K                                      # supersample
     x0, y0, x1, y1 = box; tx, ty = tip
@@ -117,8 +118,13 @@ def bubble(box, tip, kind, fs, text):
         font = ImageFont.truetype(FONT, int(fs * S)); lh = fs * 1.22; maxw = (x1 - x0) - 2 * max(26, fs)
     ln = wrap(d, text, font, maxw * S)
     ystart = cy - lh * (len(ln) - 1) / 2
+    left = nvis if nvis is not None else 10 ** 9      # words (or characters) still to draw
     for k, l in enumerate(ln):
-        d.text(P(cx, ystart + k * lh), l, font=font, fill=INK if kind != 'shout' else (200, 30, 20), anchor='mm',
+        units = list(l) if chars else l.split(' ')
+        vis = (''.join if chars else ' '.join)(units[:max(0, left)]); left -= len(units)
+        if not vis: break
+        x = P(cx, 0)[0] - d.textlength(l, font=font) / 2   # layout from the full line: words never shift
+        d.text((x, P(0, ystart + k * lh)[1]), vis, font=font, fill=INK if kind != 'shout' else (200, 30, 20), anchor='lm',
                **({'stroke_width': int(2 * S), 'stroke_fill': INK} if kind == 'shout' else {}))
     im = im.resize((W * K // S, H * K // S), Image.LANCZOS)
     return im, (bx0 * K, by0 * K), (cx * K, cy * K)
@@ -132,14 +138,25 @@ def mark(text, x, y, size, rot, col):
     im = im.rotate(rot, expand=True, resample=Image.BICUBIC)
     im = im.resize((im.width * K // S, im.height * K // S), Image.LANCZOS)
     return im, (x * K - im.width / 2, y * K - im.height / 2), (x * K, y * K)
+empty_bubble = {}
 # sprite list per page: (appear_time, kind, sprite, pos, centre)
 sprites = {}
 for sh in tl:
     L = sprites.setdefault(sh['page'], [])
     for lid, box, tip, kind, fs in sh['spec'].get('lines', []):
-        L.append((sh['lines'][lid], 'pop', *bubble(box, tip, kind, fs, texts[lid])))
+        st, txt = sh['lines'][lid], texts[lid]
+        wt = words.get(lid, [])
+        if len(wt) == len(txt.split()) and wt:            # one word per spoken word
+            times, chars = [st + max(0, w - 0.03) for w in wt], False
+        else:                                              # no timings (a roar): grow letter by letter
+            n = len(txt); times, chars = [st + dur[lid] * 0.75 * k / n for k in range(n)], True
+        states = [(tt, bubble(box, tip, kind, fs, txt, k + 1, chars)[0]) for k, tt in enumerate(times)]
+        e, pos, ctr = bubble(box, tip, kind, fs, txt, 0)
+        empty_bubble[id(states)] = e
+        L.append((min(st, times[0]) - 0.08, 'pop', states, pos, ctr))
     for (txt, x, y, size, rot, col), w in sh['marks']:
-        L.append((w, 'slam', *mark(txt, x, y, size, rot, col)))
+        spr, pos, ctr = mark(txt, x, y, size, rot, col)
+        L.append((w, 'slam', [(w, spr)], pos, ctr))
 
 # ---------- camera ----------
 ease = lambda p: p * p * (3 - 2 * p)
@@ -174,8 +191,11 @@ def render_view(pg, view, t, dx, dy):
     ix0, iy0 = int(math.floor(x0)) - 2, int(math.floor(y0)) - 2
     ix1, iy1 = int(math.ceil(x0 + vw * K)) + 2, int(math.ceil(y0 + vh * K)) + 2
     crop = page(pg).crop((ix0, iy0, ix1, iy1))
-    for at, kind, spr, pos, ctr in sprites.get(pg, []):
+    for at, kind, states, pos, ctr in sprites.get(pg, []):
         if t < at: continue
+        spr = empty_bubble.get(id(states)) or states[0][1]
+        for tt, sp in states:
+            if tt <= t: spr = sp
         s = scale_pop(t - at, kind)
         if s != 1:
             spr = spr.resize((max(1, int(spr.width * s)), max(1, int(spr.height * s))), Image.BILINEAR)
