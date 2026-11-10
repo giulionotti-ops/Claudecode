@@ -1,0 +1,16 @@
+How a 3-Tonne Dragon Could Actually Fly: third-party material
+
+3D model
+- Dragon (Low Poly Animated Monsters) by Quaternius, https://quaternius.itch.io/lowpoly-animated-monsters, CC0 1.0.
+  Copy taken from github.com/euuuuuuan/cairnfall-public (assets/vendor/quaternius_monsters/Dragon.glb), which records the CC0 licence.
+
+Fonts
+- Lilita One and Fredoka, SIL Open Font License 1.1 (subsets from the Lemo-Opuscar library, core/fonts/OFL.md).
+
+Voice
+- ElevenLabs text-to-speech, voice "Liam", generated for this film.
+
+Tools
+- Lemo-Opuscar (MIT) by Lemomo: rendering, sound helpers. three.js (MIT).
+
+Everything else (scenes, egg, cutaway, music, sound effects) was made in code for this film.
