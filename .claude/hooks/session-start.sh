@@ -11,6 +11,17 @@ fi
 exec 1>&2
 
 cd "${CLAUDE_PROJECT_DIR:-.}"
+export PATH="$HOME/.local/bin:/usr/local/bin:$PATH"
+
+# Node 20+ (Lemo-Opuscar needs it) and uv
+if ! command -v node >/dev/null 2>&1 || [ "$(node -p 'process.versions.node.split(".")[0]')" -lt 20 ]; then
+  command -v npm >/dev/null 2>&1 || { apt-get update -qq && apt-get install -y -qq nodejs npm; }
+  npm install -g n --loglevel=error && n 22
+  hash -r
+fi
+if ! command -v uv >/dev/null 2>&1; then
+  curl -LsSf https://astral.sh/uv/install.sh | sh
+fi
 
 # OmniRoute: global npm package
 if ! command -v omniroute >/dev/null 2>&1; then
@@ -52,6 +63,10 @@ fi
 if [ ! -f "$HOME/lemo-opuscar/core/render/video.mjs" ]; then
   git clone -q --depth 1 https://github.com/lemomo-ai/lemo-opuscar "$HOME/lemo-opuscar"
 fi
-if [ ! -x "$HOME/lemo-opuscar/.venv/bin/python" ] || [ ! -d "$HOME/lemo-opuscar/node_modules/three" ]; then
-  (cd "$HOME/lemo-opuscar" && sh plugin/skills/lemo-opuscar/scripts/setup.sh deps) || true
+git -C "$HOME/lemo-opuscar" config lemo.managed true
+# core = render, voice = speech check, music = pluck.py (some shorts use both). Fast no-op when already installed.
+(cd "$HOME/lemo-opuscar" && sh plugin/skills/lemo-opuscar/scripts/setup.sh deps voice music) || true
+# YouTube uploader packages, into the same venv
+if [ -x "$HOME/lemo-opuscar/.venv/bin/python" ]; then
+  uv pip install --quiet --python "$HOME/lemo-opuscar/.venv/bin/python" -r shorts/uploader/requirements.txt || true
 fi
