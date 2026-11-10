@@ -12,6 +12,15 @@ exec 1>&2
 
 cd "${CLAUDE_PROJECT_DIR:-.}"
 
+# Shorts render pipeline: Python libs (ffmpeg, ffprobe and curl are also needed)
+if ! python3 -c "import numpy, scipy, PIL, soundfile, soxr, googleapiclient, google_auth_oauthlib" 2>/dev/null; then
+  pip install --break-system-packages -q numpy scipy pillow soundfile soxr \
+    google-api-python-client google-auth-oauthlib
+fi
+if ! command -v ffmpeg >/dev/null 2>&1; then
+  (apt-get update -qq && apt-get install -y -qq ffmpeg) || true
+fi
+
 # OmniRoute: global npm package
 if ! command -v omniroute >/dev/null 2>&1; then
   npm install -g omniroute
