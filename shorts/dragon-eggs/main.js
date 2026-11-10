@@ -21,7 +21,7 @@ const fog = new THREE.Fog(HOR, 30, 260);
 const sky = makeSky(scene);
 const hemi = new THREE.HemisphereLight(0xbfc9d6, 0x3a2e28, 1.1); scene.add(hemi);
 const sun = new THREE.DirectionalLight(0xffe2c0, 2.4); sun.castShadow = true;
-sun.shadow.mapSize.set(2048, 2048); Object.assign(sun.shadow.camera, { left: -14, right: 14, top: 14, bottom: -14, near: 1, far: 80 }); sun.shadow.bias = -.0005;
+sun.shadow.mapSize.set(2048, 2048); Object.assign(sun.shadow.camera, { left: -20, right: 20, top: 20, bottom: -20, near: 1, far: 80 }); sun.shadow.bias = -.0005;
 scene.add(sun); scene.add(sun.target);
 
 const slope = makeSlope(); scene.add(slope.group);
@@ -70,7 +70,7 @@ function makeDragon(height, tint) {
   scene.add(holder);
   return { holder, root, mixer, acts, bones, height };
 }
-const mother = makeDragon(4.2, { Main: [.30, .10, .07], Wings: [.20, .07, .06], Belly: [.80, .55, .22] });
+const mother = makeDragon(9.0, { Main: [.30, .10, .07], Wings: [.20, .07, .06], Belly: [.80, .55, .22] });
 const baby = makeDragon(.9, { Main: [.62, .28, .12], Wings: [.48, .20, .10], Belly: [.95, .75, .40] });
 
 // set a pose: main clip at time ta, optionally blended with clip b
@@ -150,10 +150,10 @@ window.render = (t) => {
     // 1. the mother and her egg on the slope; she sits and crushes it
     useSet('slope');
     const p = seg(t, 0, S.s2);
-    cam(V(lerp(5.2, 3.0, eio(p)), lerp(2.6, 2.0, eio(p)), lerp(9.5, 6.4, eio(p))), V(.7, 1.5, -.3));
+    cam(V(lerp(7, 4.5, eio(p)), lerp(4.2, 3.4, eio(p)), lerp(19, 14.5, eio(p))), V(1.6, 3.6, -1.2));
     egg.position.copy(NEST);
     const sit = eio(seg(t, T.ton + .2, T.crush - .05));
-    mother.holder.position.set(lerp(2.6, .35, sit), groundH(1, -1) - .05 - .55 * sit, lerp(-1.4, -.35, sit)); mother.holder.rotation.y = lerp(-.5, -.15, sit);
+    mother.holder.position.set(lerp(3.6, .5, sit), groundH(1, -1) - .05 - 1.3 * sit, lerp(-2.8, -1.3, sit)); mother.holder.rotation.y = lerp(-.45, -.15, sit);
     pose(mother, 'Idle', t * .9);
     const c = seg(t, T.crush, T.crush + .15);
     if (c > 0) { egg.scale.set(1 + .45 * c, 1 - .62 * c, 1 + .45 * c); egg.position.y = NEST.y - .4 * c; setCracks(c); }
@@ -161,7 +161,7 @@ window.render = (t) => {
     after = () => {
       showChip('3 MONTHS', T.months - .4, T.ton - .15, t);
       showChip('≈ 3 TONNES', T.ton, S.s2, t);
-      const top = toScreen(V(.6, 4.6, -.4)), low = toScreen(V(.5, 2.6, -.3));
+      const top = toScreen(V(.6, 8.6, -1.2)), low = toScreen(V(.5, 6.6, -1.2));
       O.arrow(ov, top[0], top[1], low[0], low[1], seg(t, T.ton + .1, T.ton + .6) * (t < T.crush + .3 ? 1 : 0));
       const e = toScreen(NEST); O.mark(ov, e[0] + 120, e[1] - 160, false, seg(t, T.crush + .2, T.crush + .6));
     };
@@ -170,7 +170,7 @@ window.render = (t) => {
     useSet('cut'); mother.holder.visible = t < S.s3;
     const sink = eio(seg(t, T.bury - .1, T.bury + 2.6));
     egg.position.set(EGG_DEEP.x, lerp(.9, EGG_DEEP.y, sink), EGG_DEEP.z); egg.rotation.z = sink * .4;
-    mother.holder.position.set(cx - 2.8, 0, 1.2); mother.holder.rotation.y = .5; pose(mother, 'Idle', t);
+    mother.holder.position.set(cx - 3.4, 0, 2.2); mother.holder.rotation.y = .6; pose(mother, 'Idle', t);
     if (t < S.s3) {
       const p = seg(t, S.s2, S.s3);
       cam(V(cx + .6, lerp(-1.2, -2.6, eio(p)), 17.5), V(cx + .4, lerp(-2.6, -3.6, eio(p)), FACE));
@@ -196,11 +196,11 @@ window.render = (t) => {
     useSet('slope'); egg.visible = false;
     const p = seg(t, S.s4, S.s5), walk = eio(seg(t, T.test + .3, T.t34 + .2));
     const hx = lerp(6.0, -1.0, walk);
-    mother.holder.position.set(hx + 2.0, groundH(hx, -2.4) - .05, -2.6); mother.holder.rotation.y = -Math.PI / 2 + .35;
-    pose(mother, 'Idle', t * .8); headDown(mother, ss(seg(t, T.test, T.test + .8)));
+    mother.holder.position.set(hx + 4.2, groundH(hx, -2.4) - .05, -3.2); mother.holder.rotation.y = -Math.PI / 2 + .35;
+    pose(mother, 'Idle', t * .8); headDown(mother, 1.7 * ss(seg(t, T.test, T.test + .8)));
     slope.stripe.material.opacity = .75 * ss(seg(t, T.test + .2, T.test + 1));
     plume(steam, V(7, groundH(7, -3), -3), t, 9, 24, 3.5, .9, .45);
-    cam(V(lerp(4.4, .6, eio(p)), .8, 4.6), V(lerp(4.4, .2, eio(p)), 1.0, -2.4), 50);
+    cam(V(lerp(6.5, 2.0, eio(p)), 2.4, 11), V(lerp(5.5, 1.5, eio(p)), 2.8, -2.4), 50);
     const temp = lerp(85, 34, walk);
     after = () => {
       showChip('LIKE A MALLEEFOWL', T.mallee - .1, T.t34 - .5, t);
@@ -273,10 +273,10 @@ window.render = (t) => {
     // 9a. the mother leaves
     useSet('slope'); egg.visible = false;
     const k = seg(t, S.s9a, S.s9b), lift = eio(seg(t, S.s9a + .2, S.s9b));
-    mother.holder.position.set(lerp(1.5, -6, lift), groundH(1.5, -1.5) + lift * 9, lerp(-1.5, -26, lift)); mother.holder.rotation.y = Math.PI + .3; mother.holder.rotation.x = -.25 * lift;
+    mother.holder.position.set(lerp(1.5, -10, lift), groundH(1.5, -1.5) + lift * 16, lerp(-3, -45, lift)); mother.holder.rotation.y = Math.PI + .3; mother.holder.rotation.x = -.25 * lift;
     pose(mother, 'Idle', t); flap(mother, t, .9 * ss(seg(t, S.s9a, S.s9a + .3)), 8);
-    cam(V(-2.5, 1.6, 6.5), V(lerp(0, -3, k), lerp(1.4, 4, k), -4), 50);
-    burst(dust, V(1.5, groundH(1.5, -1.5), -1.5), S.s9a + .2, t, 12, 24, 4, .6, 1.4, .6);
+    cam(V(-3.5, 2.2, 12), V(lerp(0, -4, k), lerp(3.5, 8, k), -6), 50);
+    burst(dust, V(1.5, groundH(1.5, -3), -3), S.s9a + .2, t, 12, 30, 7, 1, 1.4, 1.2);
   } else if (t < S.s9c) {
     // 9b. the chick digs up through the ash, alone
     useSet('cut'); mother.holder.visible = false; egg.visible = false; baby.holder.visible = true;
