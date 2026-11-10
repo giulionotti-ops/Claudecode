@@ -1,0 +1,10 @@
+Image 1 is the exact PAGE LAYOUT: draw a comic page with exactly these 4 panels, in exactly these positions and sizes, thick black panel borders, white gutters. Do not draw the numbers.
+Image 2 is the previous page of the same comic: keep the identical drawing style and the identical characters (the green alien BOSS with horned iron helmet and underbite; the small MEK with goggles and apron; the skinny rookie with huge eyes and oversized olive helmet; the big grizzled sergeant with cigar).
+
+Style: flat cartoon webcomic, thick uniform black outlines, flat colours with one shadow tone, warm orange-yellow sky, dusty brown desert, grimdark sci-fi drawn funny. Every panel keeps EMPTY plain sky or plain background in its TOP 30% for speech bubbles added later.
+ABSOLUTELY NO text, letters, numbers, speech bubbles, sound effects or logos anywhere.
+
+Panel 1 (top, full width): the alien camp gone mad: a crowd of green alien brutes gleefully slapping red paint on everything (a tank, a barrel, a small round toothy pet monster, each other); the boss in the middle pointing and bellowing orders.
+Panel 2 (middle left): the rookie happily painting a small olive-green military tank red with a brush and bucket; the sergeant beside him with a hand over his face (facepalm), cigar.
+Panel 3 (middle right): the boss and the mek peeking over a rock, eyes huge with delight, the boss pointing excitedly at something off-panel to the left.
+Panel 4 (bottom, full width): a mob of cheering green alien brutes carrying and pushing the half-red military tank across the desert at ridiculous speed, flames and speed lines, the rookie clinging to the tank's hatch screaming in terror; on the far left, the sergeant stands alone in a cloud of dust, cigar, completely deadpan, watching them go.

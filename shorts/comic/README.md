@@ -17,3 +17,6 @@ Look: flat cartoon webcomic. Thick black outlines, flat colours with one shadow 
 
 ## Gemini setup
 The key is injected by the cloud proxy under `x-goog-api-key`. Tested Nov 10 2026: works; image models available: gemini-3-pro-image(-preview), gemini-3.1-flash-image(-preview), gemini-2.5-flash-image.
+
+## Engine (`engine/`)
+Every new short is a folder with `script.json` (layout, voices, lines, SFX, music), `page1.txt`/`page2.txt` (Gemini prompts) and `shots.py` (camera, bubbles, SFX lettering). Run the engine scripts from that folder; see `../red-wunz/README.md` for the full command list. Output: `<folder>.mp4` + `.srt`.

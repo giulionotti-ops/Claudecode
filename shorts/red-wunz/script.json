@@ -1,0 +1,190 @@
+{
+ "layout": {
+  "page1": [
+   [
+    0.33,
+    [
+     1
+    ]
+   ],
+   [
+    0.31,
+    [
+     0.45,
+     0.55
+    ]
+   ],
+   [
+    0.36,
+    [
+     0.6,
+     0.4
+    ]
+   ]
+  ],
+  "page2": [
+   [
+    0.3,
+    [
+     1
+    ]
+   ],
+   [
+    0.34,
+    [
+     0.5,
+     0.5
+    ]
+   ],
+   [
+    0.36,
+    [
+     1
+    ]
+   ]
+  ]
+ },
+ "voices": {
+  "mek": "N2lVS1w4EtoT3dr4eOWO",
+  "boss": "SOYHLrjzK2X1ezoPC6cr",
+  "rookie": "TX3LPaxmHKxFdv7VOQHJ",
+  "sarge": "M5E055lOUxMi0kJpGyE9",
+  "commissar": "onwK4e9ZLuTAKqWW03F9"
+ },
+ "voice_fx": {
+  "boss": "asetrate=44100*0.8,aresample=48000,atempo=1.12,acrusher=bits=10:mix=0.2",
+  "mek": "asetrate=44100*0.9,aresample=48000,atempo=1.06,acrusher=bits=12:mix=0.15"
+ },
+ "lines": [
+  {
+   "id": "l01",
+   "who": "mek",
+   "say": "[excited, cockney] Boss! Boss! I made da buggy go fasta!",
+   "text": "BOSS! BOSS! I MADE DA BUGGY GO FASTA!"
+  },
+  {
+   "id": "l02",
+   "who": "boss",
+   "say": "[growling, suspicious] 'Ow'd ya do dat?",
+   "text": "'OW'D YA DO DAT?"
+  },
+  {
+   "id": "l03",
+   "who": "mek",
+   "say": "[proud] I painted it RED!",
+   "text": "I PAINTED IT RED!"
+  },
+  {
+   "id": "l04",
+   "who": "rookie",
+   "say": "[whispering] Sarge... paint doesn't make things faster. Right?",
+   "text": "SARGE... PAINT DOESN'T MAKE THINGS FASTER. RIGHT?"
+  },
+  {
+   "id": "l05",
+   "who": "sarge",
+   "say": "[deadpan] For Orks? It does.",
+   "text": "FOR ORKS? IT DOES."
+  },
+  {
+   "id": "l06",
+   "who": "boss",
+   "say": "[roaring] WAAAAAGH!",
+   "text": "WAAAGH!!"
+  },
+  {
+   "id": "l07",
+   "who": "commissar",
+   "say": "[coldly] Orks believe it, so it's true. Don't think about it, Private.",
+   "text": "ORKS BELIEVE IT, SO IT'S TRUE. DON'T THINK ABOUT IT, PRIVATE."
+  },
+  {
+   "id": "l08",
+   "who": "boss",
+   "say": "[bellowing] Paint EVERYFINK red!",
+   "text": "PAINT EVERYFINK RED!"
+  },
+  {
+   "id": "l09",
+   "who": "sarge",
+   "say": "[flatly] ...What are you doing?",
+   "text": "...WHAT ARE YOU DOING?"
+  },
+  {
+   "id": "l10",
+   "who": "rookie",
+   "say": "[sheepish] Worth a shot, Sarge.",
+   "text": "WORTH A SHOT, SARGE."
+  },
+  {
+   "id": "l11",
+   "who": "boss",
+   "say": "[shouting happily] Oi, lads! That one's red! It's one of ours!",
+   "text": "OI, LADZ! DAT ONE'S RED! IT'S ONE OF OURS!",
+   "model": "eleven_multilingual_v2"
+  },
+  {
+   "id": "l12",
+   "who": "rookie",
+   "say": "[screaming in terror] SAAAARGE!",
+   "text": "SAAARGE!!"
+  },
+  {
+   "id": "l13",
+   "who": "commissar",
+   "say": "[dry, unimpressed] Desertion. At remarkable speed.",
+   "text": "DESERTION. AT REMARKABLE SPEED."
+  }
+ ],
+ "sfx": {
+  "rev": [
+   "Rusty junk buggy engine revving loudly, sputtering, backfire pop",
+   2.5
+  ],
+  "zoom": [
+   "Cartoon car zooming past at insane speed, doppler roar and whoosh",
+   2.0
+  ],
+  "paint": [
+   "Wet paint brush slapping and sloshing on metal, bucket clank",
+   1.5
+  ],
+  "cheer": [
+   "Crowd of rowdy brutish monsters cheering and laughing",
+   3.0
+  ],
+  "brush": [
+   "Single paint brush stroke on metal, wet swish",
+   1.0
+  ],
+  "gasp": [
+   "Two gruff monsters gasp with delight, ooooh",
+   1.2
+  ],
+  "stampede": [
+   "Mob of heavy monsters stampeding while pushing a tank, rumbling, clanking metal, roaring engine",
+   3.0
+  ],
+  "wind": [
+   "Strong gust of wind blast, flapping cloth",
+   1.2
+  ],
+  "page": [
+   "Comic book page turning quickly, paper whoosh",
+   1.0
+  ],
+  "whoosh": [
+   "Quick soft camera whoosh swipe transition",
+   0.6
+  ],
+  "puff": [
+   "Man exhales a long puff of cigar smoke, slow breath",
+   1.5
+  ],
+  "boing": [
+   "Cartoon spring boing, comedic",
+   0.8
+  ]
+ },
+ "music": "Rowdy comedic chase music, fast punk drums, honky-tonk brass stabs, twangy electric guitar, cartoon mayhem, instrumental, no vocals, 150 bpm"
+}
