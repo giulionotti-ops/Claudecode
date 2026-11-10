@@ -26,7 +26,7 @@ def main():
 
     parts = []
     if a.ref:
-        mime = "image/png" if a.ref.endswith(".png") else "image/jpeg"
+        mime = "image/png" if a.ref.lower().endswith(".png") else "image/jpeg"
         parts.append({"inline_data": {"mime_type": mime,
                       "data": base64.b64encode(open(a.ref, "rb").read()).decode()}})
         parts.append({"text": "Match the drawing style and characters of this reference."})

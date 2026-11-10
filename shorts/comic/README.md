@@ -4,7 +4,8 @@ Look: flat cartoon webcomic. Thick black outlines, flat colours with one shadow 
 
 ## Files
 - `sample-panel.html` → `sample-panel.jpg`: hand-built SVG sample (no AI). Joke hook: "how long does a Guardsman last?" / "Fifteen hours, son."
-- `gen_panel.py`: makes panels with Gemini image models once the key works.
+- `gemini-panel-art.jpg` → `gemini-panel.html` → `gemini-panel.jpg`: same panel, art by Gemini 3 Pro Image, lettering by code. **This is the pipeline to use.**
+- `gen_panel.py`: makes panel art with Gemini (`--model gemini-3-pro-image-preview` for best results, `--ref` to keep characters consistent).
 - `fonts/`: Bangers (SFX) and Comic Neue (lettering), both OFL.
 
 ## Short format (same rules as the other films)
@@ -15,4 +16,4 @@ Look: flat cartoon webcomic. Thick black outlines, flat colours with one shadow 
 - Lettering is drawn by code on top of the art (so text is always spelled right and can be animated), not by the image model.
 
 ## Gemini setup
-The environment's saved key uses header `-goog-api-key` (typo). It must be `x-goog-api-key`: edit the environment → Network secrets → Gemini API key, then start a new session.
+The key is injected by the cloud proxy under `x-goog-api-key`. Tested Nov 10 2026: works; image models available: gemini-3-pro-image(-preview), gemini-3.1-flash-image(-preview), gemini-2.5-flash-image.
