@@ -1,5 +1,6 @@
 """Upload a short to YouTube as a scheduled video (private until the publish time, then public).
-Needs ~/.config/glazier/youtube_token.json from yt_auth.py.
+Uses the channel login already on this server: /root/Claudecode/shorts/uploader/token.json
+(made by `python3 upload.py auth` in that folder; set YT_TOKEN to use another file).
 
   python3 shorts/yt_upload.py --check
   python3 shorts/yt_upload.py <file.mp4> --title "..." --desc "..." --at "2026-11-11 15:30" [--srt file.srt] [--tags a,b]
@@ -11,19 +12,19 @@ import argparse, json, os, sys, urllib.parse, urllib.request, urllib.error
 from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
 
-TOKEN = os.path.expanduser('~/.config/glazier/youtube_token.json')
+TOKEN = os.environ.get('YT_TOKEN', '/root/Claudecode/shorts/uploader/token.json')
 API = 'https://www.googleapis.com'
 
 def access_token():
     if not os.path.exists(TOKEN):
-        sys.exit(f'Missing {TOKEN}: the owner must run python3 shorts/yt_auth.py once.')
+        sys.exit(f'Missing {TOKEN}: the owner must sign in once: cd /root/Claudecode/shorts/uploader && python3 upload.py auth')
     t = json.load(open(TOKEN))
     body = urllib.parse.urlencode({'refresh_token': t['refresh_token'], 'client_id': t['client_id'],
                                    'client_secret': t['client_secret'], 'grant_type': 'refresh_token'}).encode()
     try:
         return json.load(urllib.request.urlopen(f'https://oauth2.googleapis.com/token', body))['access_token']
     except urllib.error.HTTPError as e:
-        sys.exit(f'Token refresh failed ({e.code}): {e.read().decode()[:300]}\nThe owner must run yt_auth.py again.')
+        sys.exit(f'Token refresh failed ({e.code}): {e.read().decode()[:300]}\nThe owner must sign in again: cd /root/Claudecode/shorts/uploader && python3 upload.py auth')
 
 def call(req):
     try:
@@ -34,7 +35,7 @@ def call(req):
 p = argparse.ArgumentParser()
 p.add_argument('mp4', nargs='?'); p.add_argument('--title'); p.add_argument('--desc', default='')
 p.add_argument('--at', help='publish time, Italy time: "YYYY-MM-DD HH:MM"'); p.add_argument('--srt')
-p.add_argument('--tags', default='warhammer40k,warhammer,40k lore,shorts'); p.add_argument('--category', default='20')
+p.add_argument('--tags', default='warhammer40k,warhammer,40k lore,shorts'); p.add_argument('--category', default='24')
 p.add_argument('--check', action='store_true')
 a = p.parse_args()
 H = {'Authorization': 'Bearer ' + access_token()}
