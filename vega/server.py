@@ -8,7 +8,9 @@ from pathlib import Path
 
 import httpx
 import datetime
+import itertools
 import json
+import shutil
 import sys
 
 from claude_agent_sdk import AssistantMessage, ClaudeAgentOptions, ClaudeSDKClient, TextBlock, create_sdk_mcp_server, tool
@@ -22,12 +24,25 @@ DEFAULT_VOICE = os.environ.get("VEGA_VOICE", "alloy")
 MODEL = os.environ.get("VEGA_MODEL", "claude-opus-5-5")
 HERE = Path(__file__).parent
 UPLOADER = HERE.parent / "shorts" / "uploader"   # its token.json is the channel login
+# The server's project folders (one git worktree per channel), as set up in ~/start-claude.sh
+CHANNELS = {
+    "setup": Path.home() / "Claudecode",          # uploader, skills, Neesmo itself
+    "glazier": Path.home() / "glazier-40k",       # Glazier of Terra, 40k lore shorts
+    "comics": Path.home() / "comics-40k",         # Warhammer 40K comics
+    "gta6": Path.home() / "gta6",                 # GTA 6 clips and shorts
+    "physics": Path.home() / "physics-channel",   # Fable Physics
+}
+JOB_LOGS = Path.home() / "neesmo-jobs"
 
 SYSTEM_PROMPT = (
     "You are Neesmo, a calm, witty personal assistant speaking through a voice interface. "
     "Your replies are read aloud, so answer in one to three short spoken sentences: "
     "no markdown, lists, code, emoji or URLs. Address the user as 'sir' or 'ma'am' only if they ask you to. "
-    "For questions about the Glazier of Terra YouTube channel, call the channel_stats tool and answer from its numbers only."
+    "For questions about the Glazier of Terra YouTube channel, call the channel_stats tool and answer from its numbers only. "
+    "You can hand work to the server's project agents with run_channel: setup (uploader, skills), glazier (Glazier of Terra), "
+    "comics (Warhammer 40K comics), gta6 (GTA 6 clips) and physics (Fable Physics). Write the task as a clear, complete instruction. "
+    "Before starting anything that changes, uploads or deletes something, repeat the task back in one sentence and wait for a yes. "
+    "Jobs run in the background: say it started, and use channel_jobs when asked how they are going."
 )
 
 def _channel_stats() -> dict:
@@ -64,6 +79,41 @@ async def channel_stats(_args):
     except (Exception, SystemExit) as e:  # missing token (uploader exits), expired login, API error: tell the model instead of crashing the chat
         return {"content": [{"type": "text", "text": f"Could not read the channel: {e}"}], "is_error": True}
     return {"content": [{"type": "text", "text": json.dumps(data)}]}
+
+
+_jobs: dict[int, dict] = {}
+_job_ids = itertools.count(1)
+
+
+@tool("run_channel", "Start a background Claude Code agent in one of the server's project folders to do a task",
+      {"channel": str, "task": str})
+async def run_channel(args):
+    folder = CHANNELS.get(str(args.get("channel", "")).lower())
+    task = str(args.get("task", "")).strip()
+    if not folder or not task:
+        return {"content": [{"type": "text", "text": f"Need a task and one of: {', '.join(CHANNELS)}"}], "is_error": True}
+    claude = shutil.which("claude") or str(Path.home() / ".local/bin/claude")
+    JOB_LOGS.mkdir(exist_ok=True)
+    jid = next(_job_ids)
+    log = JOB_LOGS / f"{jid}-{args['channel']}.log"
+    with open(log, "wb") as out:  # the child keeps its own copy of the file handle
+        proc = await asyncio.create_subprocess_exec(claude, "-p", task, "--permission-mode", "auto",
+                                                    cwd=folder, stdout=out, stderr=asyncio.subprocess.STDOUT)
+    _jobs[jid] = {"channel": args["channel"], "task": task, "proc": proc, "log": log,
+                  "started": datetime.datetime.now().strftime("%H:%M")}
+    return {"content": [{"type": "text", "text": f"Job {jid} started in {args['channel']}."}]}
+
+
+@tool("channel_jobs", "Status and latest output of the background jobs started with run_channel", {})
+async def channel_jobs(_args):
+    rows = []
+    for jid, j in _jobs.items():
+        code = j["proc"].returncode
+        state = "running" if code is None else ("done" if code == 0 else f"failed (exit {code})")
+        tail = j["log"].read_text(errors="replace")[-600:] if j["log"].exists() else ""
+        rows.append({"job": jid, "channel": j["channel"], "started": j["started"], "state": state,
+                     "task": j["task"][:200], "latest_output": tail})
+    return {"content": [{"type": "text", "text": json.dumps(rows) if rows else "No jobs yet."}]}
 
 
 app = FastAPI()
@@ -126,8 +176,8 @@ async def chat(body: ChatIn):
                 model=MODEL,
                 system_prompt=SYSTEM_PROMPT,
                 tools=[],              # no built-in file or shell tools
-                mcp_servers={"youtube": create_sdk_mcp_server("youtube", tools=[channel_stats])},
-                allowed_tools=["mcp__youtube__channel_stats"],  # the only tool: read-only channel stats
+                mcp_servers={"neesmo": create_sdk_mcp_server("neesmo", tools=[channel_stats, run_channel, channel_jobs])},
+                allowed_tools=["mcp__neesmo__channel_stats", "mcp__neesmo__run_channel", "mcp__neesmo__channel_jobs"],
                 setting_sources=[],    # don't load this repo's plugins/hooks
                 effort="low",          # snappy replies for voice
             ))
