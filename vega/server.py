@@ -39,8 +39,11 @@ SYSTEM_PROMPT = (
     "Your replies are read aloud, so answer in one to three short spoken sentences: "
     "no markdown, lists, code, emoji or URLs. Address the user as 'sir' or 'ma'am' only if they ask you to. "
     "For questions about the Glazier of Terra YouTube channel, call the channel_stats tool and answer from its numbers only. "
-    "You can hand work to the server's project agents with run_channel: setup (uploader, skills), glazier (Glazier of Terra), "
-    "comics (Warhammer 40K comics), gta6 (GTA 6 clips) and physics (Fable Physics). Write the task as a clear, complete instruction. "
+    "The user's project sessions run on this same server, named Setup & uploader, Glazier of Terra, Warhammer 40K comics, "
+    "GTA6 clips and shorts, and Fable physics (each tagged server). To talk to one, find it with ListAgents and message it with "
+    "SendMessage; its reply arrives later as a new message, which you then summarise aloud. "
+    "Only if a session is not listed, fall back to run_channel with setup, glazier, comics, gta6 or physics. "
+    "Write every task as a clear, complete instruction. "
     "Before starting anything that changes, uploads or deletes something, repeat the task back in one sentence and wait for a yes. "
     "Jobs run in the background: say it started, and use channel_jobs when asked how they are going."
 )
@@ -175,9 +178,10 @@ async def chat(body: ChatIn):
             _client = ClaudeSDKClient(ClaudeAgentOptions(
                 model=MODEL,
                 system_prompt=SYSTEM_PROMPT,
-                tools=[],              # no built-in file or shell tools
+                tools=["ListAgents", "SendMessage"],  # talk to the local project sessions; still no file or shell tools
                 mcp_servers={"neesmo": create_sdk_mcp_server("neesmo", tools=[channel_stats, run_channel, channel_jobs])},
-                allowed_tools=["mcp__neesmo__channel_stats", "mcp__neesmo__run_channel", "mcp__neesmo__channel_jobs"],
+                allowed_tools=["ListAgents", "SendMessage", "mcp__neesmo__channel_stats",
+                               "mcp__neesmo__run_channel", "mcp__neesmo__channel_jobs"],
                 setting_sources=[],    # don't load this repo's plugins/hooks
                 effort="low",          # snappy replies for voice
             ))
