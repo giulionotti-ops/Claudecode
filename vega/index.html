@@ -46,7 +46,7 @@
 <body>
 <canvas id="hud" aria-hidden="true"></canvas>
 <div class="corner tl">Neesmo // online<br><b id="clock">--:--:--</b><br><span id="date"></span></div>
-<div class="corner tr"><label for="voice">Voice</label><br><select id="voice"><option>loading…</option></select><br><span id="vs">voice: …</span><form method="post" action="/logout" style="position:static;display:block;margin:6px 0 0"><button style="font:inherit;font-size:11px;padding:2px 8px">Log out</button></form></div>
+<div class="corner tr"><label for="voice">Voice</label><br><select id="voice"><option>loading…</option></select><br><span id="vs">voice: …</span></div>
 <div class="cards l" aria-label="Channel stats">
   <div class="card"><span>Subscribers</span><b id="s-subs">—</b><small id="s-name">Glazier of Terra</small></div>
   <div class="card"><span>Total views</span><b id="s-views">—</b><small id="s-vids"></small></div>
@@ -74,7 +74,6 @@ function setStatus(t, err) { statusEl.textContent = t; statusEl.classList.toggle
 function say(text, who) { const p = document.createElement('p'); p.className = who; p.textContent = text; logEl.append(p); logEl.scrollTop = 1e9; }
 async function api(path, opts) {
   const r = await fetch(path, opts);
-  if (r.status === 401) { location.href = '/login'; throw new Error('login required'); }
   if (!r.ok) throw new Error((await r.json().catch(() => ({}))).detail || r.statusText);
   return r;
 }
@@ -85,7 +84,7 @@ function audio() {
 
 // ── voices ──
 (async () => {
-  const cfg = await (await api('/api/config')).json();
+  const cfg = await (await fetch('/api/config')).json();
   try {
     const { voices } = await (await api('/api/voices')).json();
     voiceSel.innerHTML = '';
