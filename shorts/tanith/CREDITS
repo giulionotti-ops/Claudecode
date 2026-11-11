@@ -1,0 +1,19 @@
+First and Only: credits and licences
+
+Unofficial fan work. Warhammer 40,000, Luther, Lion El'Jonson, the Dark Angels, Caliban, the Fallen, the Rock and the Emperor are trademarks of Games Workshop Ltd, used here only to retell the lore. All pictures are original glass designs drawn in code. No Games Workshop art, logos or designs are used.
+
+Voice
+- Narration: ElevenLabs, voice "James - Deep, Raspy and Grim" (voice library), used under the account's ElevenLabs plan terms.
+
+Music
+- Original score, fully synthesized in music/score.py (organ, chimes, drums, flute, bell). No samples.
+
+Sound effects
+- All synthesized in mix.py: glass, lead, air, hall, whisper. There are no recordings.
+
+Fonts, SIL Open Font License 1.1 (licence texts in fonts/)
+- Cinzel (Natanael Gama). https://github.com/google/fonts/tree/main/ofl/cinzel
+- IM Fell English (Igino Marini). https://github.com/google/fonts/tree/main/ofl/imfellenglish
+
+Code
+- glass.js and comp.js are adapted from the Stained Glass style of the Lemo-Opuscar library (MIT License, copyright 2026 LemoLab).
