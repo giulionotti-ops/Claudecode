@@ -12,9 +12,9 @@
 - The Mantis Warriors, the Chapter Punished for Being Lied To (mantis-warriors; made by daily run 1, sources lost; remade in 1080p as mantis), 2026-11-08
 - Magnus the Red, the Crimson King (magnus), 2026-11-09
 - Luther and the Lion, the First Betrayal (luther), 2026-11-09
+- The Tanith First, the Ghosts Who Lost Their World (tanith), 2026-11-11
 
 ## Queue (take from the top; canon only, little-known stories welcome)
-- The Tanith First: the regiment whose home world burned the day it was founded (Gaunt's Ghosts, Black Library)
 - The Doom of Malan'tai: the Zoanthrope that devoured a whole army's souls
 - The Astral Knights: the Chapter that sacrificed itself to stop a Necron World Engine
 - The Last Krieger: the Death Korps of Krieg and their penance
