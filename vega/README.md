@@ -29,3 +29,14 @@ Open http://localhost:8080. Then:
 | `VEGA_MODEL` | `claude-opus-5-5` | Claude model |
 
 Claude runs through the Claude Agent SDK with your Claude Code login, so no API key is needed. Every built-in tool is turned off: Vega can only talk, not touch your files. If VoiceStudio is off, Vega still answers in text.
+
+## Login (for access from the internet)
+
+Neesmo asks for a password and a 6-digit code from an authenticator app before anything works. Set it up on the server:
+
+```bash
+cd vega && .venv/bin/python auth.py setup        # choose a password, scan the QR code
+.venv/bin/python auth.py logout-all              # log out every device
+```
+
+Five wrong tries lock that address for 15 minutes, and 20 wrong tries from anywhere lock all logins for 15 minutes; devices already logged in keep working. Every attempt is logged in `~/neesmo-logins.log`. Settings live in `~/.config/neesmo/` and are never committed.

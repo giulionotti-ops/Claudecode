@@ -14,9 +14,11 @@ import shutil
 import sys
 
 from claude_agent_sdk import AssistantMessage, ClaudeAgentOptions, ClaudeSDKClient, TextBlock, create_sdk_mcp_server, tool
-from fastapi import FastAPI, HTTPException, UploadFile
-from fastapi.responses import FileResponse, Response
+from fastapi import FastAPI, HTTPException, Request, UploadFile
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, RedirectResponse, Response
 from pydantic import BaseModel
+
+import auth
 
 VS_URL = os.environ.get("VOICESTUDIO_URL", "http://localhost:3900").rstrip("/")
 VS_KEY = os.environ.get("VOICESTUDIO_API_KEY", "")
@@ -119,7 +121,60 @@ async def channel_jobs(_args):
     return {"content": [{"type": "text", "text": json.dumps(rows) if rows else "No jobs yet."}]}
 
 
-app = FastAPI()
+app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
+
+
+@app.middleware("http")
+async def require_login(request: Request, call_next):
+    """Everything except the login page needs a valid session (see auth.py)."""
+    path = request.url.path
+    if path not in auth.PUBLIC:
+        if request.method not in ("GET", "HEAD") and not auth.same_origin(request):
+            resp = JSONResponse({"detail": "cross-site request refused"}, status_code=403)
+        elif not auth.valid_session(request.cookies.get(auth.COOKIE)):
+            resp = (JSONResponse({"detail": "login required"}, status_code=401) if path.startswith("/api/")
+                    else RedirectResponse("/login", status_code=303))
+        else:
+            resp = await call_next(request)
+    else:
+        resp = await call_next(request)
+    for k, v in auth.SECURITY_HEADERS.items():
+        resp.headers.setdefault(k, v)
+    return resp
+
+
+@app.get("/login")
+def login_form():
+    return HTMLResponse(auth.login_page())
+
+
+@app.post("/login")
+async def login(request: Request):
+    ip, ua = auth.client_ip(request), request.headers.get("user-agent", "")
+    if not auth.same_origin(request):
+        auth._log(ip, "refused (cross-site)", ua)
+        return HTMLResponse(auth.login_page("Sign-in refused."), status_code=403)
+    form = await request.form()
+    result = await auth.check_login(ip, str(form.get("password", "")), str(form.get("code", "")))
+    auth._log(ip, {"ok": "login OK"}.get(result, f"login failed ({result})"), ua)
+    if result == "ok":
+        resp = RedirectResponse("/", status_code=303)
+        resp.set_cookie(auth.COOKIE, auth.new_session(), max_age=auth.SESSION_DAYS * 86400,
+                        path="/", secure=True, httponly=True, samesite="strict")
+        return resp
+    msg = {"locked": "Too many tries. Locked for 15 minutes.",
+           "unconfigured": "Login isn't set up yet. Run: .venv/bin/python auth.py setup"}.get(result, "Wrong password or code.")
+    return HTMLResponse(auth.login_page(msg), status_code=429 if result == "locked" else 401)
+
+
+@app.post("/logout")
+async def logout(request: Request):
+    auth.end_session(request.cookies.get(auth.COOKIE))
+    resp = RedirectResponse("/login", status_code=303)
+    resp.delete_cookie(auth.COOKIE, path="/", secure=True, httponly=True, samesite="strict")
+    return resp
+
+
 _client: ClaudeSDKClient | None = None
 _lock = asyncio.Lock()  # one conversation, one turn at a time
 
