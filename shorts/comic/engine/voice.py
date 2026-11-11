@@ -12,7 +12,7 @@ for l in S['lines']:
     mp3 = f"voice/raw/{l['id']}.mp3"
     body = {'text': l['say'] if l.get('model', MODEL) == 'eleven_v3' else __import__('re').sub(r'\[[^]]*\]\s*', '', l['say']), 'model_id': l.get('model', MODEL), 'voice_settings': {'stability': 0.5, 'similarity_boost': 0.8}}
     req = urllib.request.Request(f"https://api.elevenlabs.io/v1/text-to-speech/{S['voices'][l['who']]}", json.dumps(body).encode(),
-                                 {'Content-Type': 'application/json', 'xi-api-key': 'proxy-injected'})
+                                 {'Content-Type': 'application/json', 'xi-api-key': os.environ.get('ELEVENLABS_API_KEY', 'proxy-injected')})
     open(mp3, 'wb').write(urllib.request.urlopen(req, timeout=120).read())
     fx = 'silenceremove=start_periods=1:start_threshold=-45dB,areverse,silenceremove=start_periods=1:start_threshold=-45dB,areverse'
     pre = S.get('voice_fx', {}).get(l['who'])        # e.g. Orks: pitched down + grit

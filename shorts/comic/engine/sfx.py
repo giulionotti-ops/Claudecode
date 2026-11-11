@@ -3,7 +3,7 @@ import json, os, sys, urllib.request
 S = json.load(open('script.json')); SFX = S['sfx']; MUSIC = S['music']
 os.makedirs('sfx', exist_ok=True)
 def post(url, body):
-    req = urllib.request.Request(url, json.dumps(body).encode(), {'Content-Type': 'application/json', 'xi-api-key': 'proxy-injected'})
+    req = urllib.request.Request(url, json.dumps(body).encode(), {'Content-Type': 'application/json', 'xi-api-key': os.environ.get('ELEVENLABS_API_KEY', 'proxy-injected')})
     return urllib.request.urlopen(req, timeout=300).read()
 for name, (text, d) in SFX.items():
     p = f'sfx/{name}.mp3'

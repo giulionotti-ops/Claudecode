@@ -13,7 +13,7 @@ for l in lines:
     mp3 = os.path.join(P, 'voice', 'el', l['id'] + '.mp3')
     if not os.path.exists(mp3):
         body = json.dumps({'text': l['text'], 'model_id': 'eleven_multilingual_v2', 'voice_settings': {'stability': .55, 'similarity_boost': .8, 'style': .25}}).encode()
-        req = urllib.request.Request(f'https://api.elevenlabs.io/v1/text-to-speech/{VOICE}', body, {'Content-Type': 'application/json', 'xi-api-key': 'proxy-injected'})
+        req = urllib.request.Request(f'https://api.elevenlabs.io/v1/text-to-speech/{VOICE}', body, {'Content-Type': 'application/json', 'xi-api-key': os.environ.get('ELEVENLABS_API_KEY', 'proxy-injected')})
         open(mp3, 'wb').write(urllib.request.urlopen(req, timeout=120).read())
     # trim edge silence
     tmp = mp3[:-4] + '.trim.wav'
