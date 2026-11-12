@@ -13,10 +13,14 @@ import json
 import shutil
 import sys
 
-from claude_agent_sdk import AssistantMessage, ClaudeAgentOptions, ClaudeSDKClient, TextBlock, create_sdk_mcp_server, tool
+from claude_agent_sdk import (AssistantMessage, ClaudeAgentOptions, ClaudeSDKClient, ResultMessage, TextBlock,
+                              create_sdk_mcp_server, tool)
 from fastapi import FastAPI, HTTPException, UploadFile
 from fastapi.responses import FileResponse, Response
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
+
+import push
 
 VS_URL = os.environ.get("VOICESTUDIO_URL", "http://localhost:3900").rstrip("/")
 VS_KEY = os.environ.get("VOICESTUDIO_API_KEY", "")
@@ -105,7 +109,23 @@ async def run_channel(args):
                                                     cwd=folder, stdout=out, stderr=asyncio.subprocess.STDOUT)
     _jobs[jid] = {"channel": args["channel"], "task": task, "proc": proc, "log": log,
                   "started": datetime.datetime.now().strftime("%H:%M")}
+    asyncio.create_task(_watch_job(jid))
     return {"content": [{"type": "text", "text": f"Job {jid} started in {args['channel']}."}]}
+
+
+async def _watch_job(jid: int) -> None:
+    """Push a notification when a background job ends."""
+    j = _jobs[jid]
+    code = await j["proc"].wait()
+    await _notify(f"Job {jid} ({j['channel']}) " + ("finished" if code == 0 else f"failed (exit {code})"),
+                  j["task"][:150], tag=f"job-{jid}")
+
+
+async def _notify(title: str, body: str, tag: str | None = None) -> None:
+    try:
+        await asyncio.to_thread(push.send, title, body, tag)
+    except Exception as e:  # never let a push problem break a reply or a job
+        print(f"push error: {e}", flush=True)
 
 
 @tool("channel_jobs", "Status and latest output of the background jobs started with run_channel", {})
@@ -121,8 +141,45 @@ async def channel_jobs(_args):
 
 
 app = FastAPI()
+app.mount("/static", StaticFiles(directory=HERE / "static"), name="static")
 _client: ClaudeSDKClient | None = None
 _lock = asyncio.Lock()  # one conversation, one turn at a time
+
+# One reader drains the Claude session for its whole life. While /api/chat waits, messages go to that
+# turn; otherwise they are turns the session ran on its own (a project session's SendMessage reply
+# arriving), which become an inbox entry and a push notification.
+_turn: asyncio.Queue | None = None
+_side_parts: list[str] = []
+_side_active = asyncio.Event()  # set while an unprompted turn is in progress
+_inbox: list[dict] = []
+_inbox_ids = itertools.count(1)
+
+
+async def _pump(client: ClaudeSDKClient) -> None:
+    global _client
+    try:
+        async for m in client.receive_messages():
+            if _turn is not None:
+                await _turn.put(m)
+                continue
+            if isinstance(m, ResultMessage):
+                text = " ".join(_side_parts).strip()
+                _side_parts.clear(); _side_active.clear()
+                if text:
+                    _inbox.append({"id": next(_inbox_ids), "text": text, "at": datetime.datetime.now().strftime("%H:%M")})
+                    del _inbox[:-50]
+                    await _notify("Neesmo", text, tag="reply")
+            else:
+                _side_active.set()
+                if isinstance(m, AssistantMessage):
+                    _side_parts.extend(b.text for b in m.content if isinstance(b, TextBlock))
+    except Exception as e:
+        print(f"session reader stopped: {e}", flush=True)
+    finally:
+        if _client is client:  # reconnect on the next chat
+            _client = None
+        if _turn is not None:
+            await _turn.put(None)
 
 
 def _vs_headers() -> dict:
@@ -203,10 +260,53 @@ async def chat(body: ChatIn):
                 effort="low",          # snappy replies for voice
             ))
             await _client.connect()
-        await _client.query(text)
-        parts = [b.text for m in [m async for m in _client.receive_response()]
-                 if isinstance(m, AssistantMessage) for b in m.content if isinstance(b, TextBlock)]
+            asyncio.create_task(_pump(_client))
+        global _turn
+        for _ in range(240):  # let an unprompted turn (a session's reply) finish first, up to 2 minutes
+            if not _side_active.is_set():
+                break
+            await asyncio.sleep(0.5)
+        _turn = asyncio.Queue()
+        parts = []
+        try:
+            await _client.query(text)
+            while (m := await _turn.get()) is not None and not isinstance(m, ResultMessage):
+                if isinstance(m, AssistantMessage):
+                    parts.extend(b.text for b in m.content if isinstance(b, TextBlock))
+        finally:
+            _turn = None
     return {"reply": " ".join(parts).strip()}
+
+
+@app.get("/api/inbox")
+def inbox(after: int = 0):
+    """Replies that arrived on their own (from the project sessions), newer than `after`."""
+    return {"items": [i for i in _inbox if i["id"] > after]}
+
+
+@app.get("/manifest.webmanifest")
+def manifest():
+    return FileResponse(HERE / "static" / "manifest.webmanifest", media_type="application/manifest+json")
+
+
+@app.get("/sw.js")
+def service_worker():
+    return FileResponse(HERE / "static" / "sw.js", media_type="text/javascript", headers={"Cache-Control": "no-cache"})
+
+
+@app.get("/api/push/key")
+def push_key():
+    return {"key": push.public_key()}
+
+
+@app.post("/api/push/subscribe")
+async def push_subscribe(sub: dict):
+    try:
+        push.subscribe(sub)
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+    await _notify("Neesmo", "Notifications are on. You'll hear from me when a session replies.", tag="hello")
+    return {"ok": True}
 
 
 @app.post("/api/speak")

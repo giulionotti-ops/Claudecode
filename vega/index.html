@@ -2,8 +2,16 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Neesmo</title>
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/static/icon-180.png">
+<link rel="icon" type="image/png" href="/static/icon-192.png">
+<meta name="theme-color" content="#02070d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Neesmo">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <style>
   :root { --c: #3dff8f; --c2: #c6ff4a; --bg: #02070d; --dim: rgba(61,255,143,.35); --err: #ff5f6d; }
   * { box-sizing: border-box; }
@@ -13,16 +21,16 @@
     background: repeating-linear-gradient(0deg, rgba(61,255,143,.03) 0 1px, transparent 1px 3px); }
   canvas { position: fixed; inset: 0; width: 100%; height: 100%; }
   .corner { position: fixed; padding: 16px; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); }
-  .tl { top: 0; left: 0; } .tr { top: 0; right: 0; text-align: right; }
+  .tl { top: env(safe-area-inset-top); left: env(safe-area-inset-left); } .tr { top: env(safe-area-inset-top); right: env(safe-area-inset-right); text-align: right; }
   .corner b { color: var(--c); font-weight: 600; }
   #status { position: fixed; left: 0; right: 0; top: calc(50% + min(26vmin, 210px)); text-align: center;
     letter-spacing: .4em; text-transform: uppercase; font-size: 13px; text-shadow: 0 0 8px var(--c); }
   #status.err { color: var(--err); text-shadow: 0 0 8px var(--err); letter-spacing: .1em; }
-  #log { position: fixed; left: 16px; bottom: 84px; width: min(420px, calc(100% - 32px)); max-height: 30vh; overflow-y: auto;
+  #log { position: fixed; left: 16px; bottom: calc(84px + env(safe-area-inset-bottom)); width: min(420px, calc(100% - 32px)); max-height: 30vh; overflow-y: auto;
     display: flex; flex-direction: column; gap: 6px; mask-image: linear-gradient(transparent, #000 30%); padding-top: 24px; }
   #log p { margin: 0; padding: 6px 10px; border-left: 2px solid var(--dim); background: rgba(61,255,143,.05); }
   #log p.you { border-color: var(--c2); color: var(--c2); }
-  form { position: fixed; left: 16px; right: 16px; bottom: 16px; display: flex; gap: 8px; max-width: 720px; margin: 0 auto; }
+  form { position: fixed; left: 16px; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); display: flex; gap: 8px; max-width: 720px; margin: 0 auto; }
   input, select, button { font: inherit; color: var(--c); background: rgba(2,20,30,.8); border: 1px solid var(--dim); border-radius: 4px; }
   input { flex: 1; min-width: 0; padding: 12px; outline: none; }
   input:focus, select:focus, button:focus-visible { border-color: var(--c); box-shadow: 0 0 10px var(--dim); outline: none; }
@@ -30,6 +38,8 @@
   #mic { width: 48px; padding: 0; font-size: 18px; }
   #mic.on { color: var(--bg); background: var(--c2); border-color: var(--c2); box-shadow: 0 0 16px var(--c2); }
   select { padding: 4px; max-width: 180px; }
+  #bell { margin-top: 6px; padding: 3px 8px; font-size: 11px; }
+  #bell[hidden] { display: none; }
   .cards { position: fixed; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 10px; width: 190px; }
   .cards.l { left: 16px; } .cards.r { right: 16px; }
   .card { padding: 10px 12px; border: 1px solid var(--dim); border-radius: 6px; background: rgba(2,26,14,.6); }
@@ -38,7 +48,7 @@
   .card small { color: var(--dim); font-size: 11px; }
   @media (max-width: 900px) {  /* phones and narrow windows: two scrolling strips under the clock */
     .cards { flex-direction: row; transform: none; left: 16px; right: 16px; width: auto; overflow-x: auto; gap: 8px; }
-    .cards.l { top: 84px; left: 16px; } .cards.r { top: 146px; right: 16px; }
+    .cards.l { top: calc(122px + env(safe-area-inset-top)); left: 16px; } .cards.r { top: calc(184px + env(safe-area-inset-top)); right: 16px; }
     .card { min-width: 118px; padding: 6px 10px; } .card b { font-size: 16px; } .card small { display: none; }
   }
 </style>
@@ -46,7 +56,7 @@
 <body>
 <canvas id="hud" aria-hidden="true"></canvas>
 <div class="corner tl">Neesmo // online<br><b id="clock">--:--:--</b><br><span id="date"></span></div>
-<div class="corner tr"><label for="voice">Voice</label><br><select id="voice"><option>loading…</option></select><br><span id="vs">voice: …</span></div>
+<div class="corner tr"><label for="voice">Voice</label><br><select id="voice"><option>loading…</option></select><br><span id="vs">voice: …</span><br><button type="button" id="bell" hidden>🔔 Notifications</button></div>
 <div class="cards l" aria-label="Channel stats">
   <div class="card"><span>Subscribers</span><b id="s-subs">—</b><small id="s-name">Glazier of Terra</small></div>
   <div class="card"><span>Total views</span><b id="s-views">—</b><small id="s-vids"></small></div>
@@ -161,6 +171,45 @@ async function loadStats() {
   } catch (e) { $('#s-name').textContent = 'stats offline'; }
 }
 loadStats(); setInterval(loadStats, 600000);
+
+// ── home-screen app: notifications + replies that arrive on their own ──
+const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+const b64 = s => Uint8Array.from(atob((s + '='.repeat((4 - s.length % 4) % 4)).replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0));
+async function setupPush() {
+  if (!('serviceWorker' in navigator)) return;
+  const reg = await navigator.serviceWorker.register('/sw.js');
+  const bell = $('#bell');
+  if (!('PushManager' in window) || !('Notification' in window)) {   // iPhone: only inside the home-screen app
+    if (!standalone && /iPhone|iPad/.test(navigator.userAgent)) { bell.hidden = false; bell.textContent = '🔔 Add to Home Screen first'; bell.disabled = true; }
+    return;
+  }
+  const on = Notification.permission === 'granted' && await reg.pushManager.getSubscription();
+  bell.hidden = false; bell.textContent = on ? '🔔 On' : '🔔 Turn on notifications';
+  bell.onclick = async () => {   // must run from a tap on iPhone
+    try {
+      if (await Notification.requestPermission() !== 'granted') return setStatus('Notifications blocked in Settings', true);
+      const { key } = await (await api('/api/push/key')).json();
+      const sub = await reg.pushManager.getSubscription() || await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64(key) });
+      await api('/api/push/subscribe', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(sub) });
+      bell.textContent = '🔔 On';
+    } catch (e) { setStatus('Notifications: ' + e.message, true); }
+  };
+}
+setupPush().catch(() => {});
+let inboxAfter = 0, inboxPrimed = false;
+async function pollInbox() {
+  try {
+    const { items } = await (await api('/api/inbox?after=' + inboxAfter)).json();
+    for (const i of inboxPrimed ? items : items.slice(-3)) {   // on opening: show the last few replies, quietly
+      say(`[${i.at}] ${i.text}`, 'vega');
+      if (inboxPrimed && mode === 'idle' && !document.hidden) await speak(i.text);
+    }
+    for (const i of items) inboxAfter = Math.max(inboxAfter, i.id);
+    inboxPrimed = true;
+  } catch {}
+}
+pollInbox(); setInterval(pollInbox, 10000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) { pollInbox(); loadStats(); } });
 
 // ── clock ──
 setInterval(() => { const d = new Date(); $('#clock').textContent = d.toLocaleTimeString(); $('#date').textContent = d.toDateString(); }, 1000);
