@@ -1,0 +1,318 @@
+{
+ "title": "4 mesi di DAZN gratis",
+ "brand": {
+  "disclaimer": "DAZN è un marchio dei rispettivi proprietari · nessuna affiliazione"
+ },
+ "cast": {
+  "hero": {
+   "shirt": "#1f8f4a",
+   "hair": "#2b1a10",
+   "pants": "#1d1d1d"
+  },
+  "friend": {
+   "shirt": "#3a6cff",
+   "cap": "#ffffff",
+   "skin": "#c98b5e",
+   "pants": "#1f2a44"
+  }
+ },
+ "tail": 3.2,
+ "lines": [
+  {
+   "text": "Quattro mesi di DAZN gratis.",
+   "say": "Quattro mesi di DAZN gratis.",
+   "scene": {
+    "type": "screen",
+    "wall": "#0b2b1a",
+    "sofa": "#e8384f",
+    "panel": {
+     "kind": "pitch",
+     "home": "CASA",
+     "away": "OSPITI",
+     "score": "1-0",
+     "clock": "88'"
+    },
+    "badges": [
+     {
+      "text": "GRATIS",
+      "kind": "yellow",
+      "at": "@gratis",
+      "pos": [
+       540,
+       1010
+      ],
+      "scale": 1.4
+     }
+    ]
+   }
+  },
+  {
+   "text": "Il piano Goal costa 19,99€ al mese,",
+   "say": "Il piano Goal costa diciannove e novantanove al mese,",
+   "scene": {
+    "type": "desk",
+    "wall": "#141414",
+    "led": "#ffd23f",
+    "turn": "@costa",
+    "faces": [
+     {
+      "at": 0,
+      "face": "neutral"
+     },
+     {
+      "at": "@mese",
+      "face": "bored"
+     }
+    ],
+    "panel": {
+     "kind": "store",
+     "title": "DAZN GOAL",
+     "price": "19,99€",
+     "button": "AL MESE"
+    }
+   }
+  },
+  {
+   "text": "quattro mesi fanno 79,96€.",
+   "say": "quattro mesi fanno settantanove e novantasei.",
+   "scene": {
+    "type": "room",
+    "wall": "#1e3a5f",
+    "floor": "#8a5a3a",
+    "sofa": "#e8384f",
+    "cam": "wide",
+    "camTo": "close",
+    "hold": "phone",
+    "faces": [
+     {
+      "at": 0,
+      "face": "bored"
+     },
+     {
+      "at": "@banca",
+      "face": "smug"
+     }
+    ],
+    "badges": [
+     {
+      "text": "−79,96€",
+      "kind": "red",
+      "at": "@fanno",
+      "out": "@banca",
+      "pos": [
+       300,
+       520
+      ]
+     },
+     {
+      "text": "+80€",
+      "kind": "green",
+      "at": "@80",
+      "pos": [
+       780,
+       520
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "text": "Ma la banca me ne regala 80.",
+   "say": "Ma la banca me ne regala ottanta."
+  },
+  {
+   "text": "Apri il conto Buddy con un codice invito entro il 16 novembre.",
+   "say": "Apri il conto Buddy con un codice invito entro il sedici novembre.",
+   "scene": {
+    "type": "phone",
+    "bg": "#1f8f4a",
+    "ground": "#ffffff",
+    "form": {
+     "dark": true,
+     "accent": "#33c26b",
+     "title": "Apri il conto",
+     "sub": "Conto Buddy",
+     "chip": "entro il 16/11",
+     "chipAt": "@entro",
+     "field": "CODICE INVITO",
+     "typeAt": "@codice",
+     "typeDur": 1.0,
+     "pressAt": "@novembre"
+    }
+   }
+  },
+  {
+   "text": "Spendi almeno 10€ con la carta entro 30 giorni,",
+   "say": "Spendi almeno dieci euro con la carta entro trenta giorni,",
+   "scene": {
+    "type": "desk",
+    "wall": "#2a1450",
+    "led": "#33c26b",
+    "cardAt": "@carta",
+    "turn": "@spendi",
+    "panel": {
+     "kind": "paid",
+     "title": "PAGATO 19,99€",
+     "checks": [
+      "almeno 10€ con la carta",
+      "entro 30 giorni"
+     ],
+     "checkAt": "@spendi"
+    },
+    "faces": [
+     {
+      "at": 0,
+      "face": "happy"
+     }
+    ]
+   }
+  },
+  {
+   "text": "e ti arrivano 80€ di bonus.",
+   "say": "e ti arrivano ottanta euro di bonus.",
+   "scene": {
+    "type": "bigcal",
+    "wall": "#1f8f4a",
+    "note": "Solo maggiorenni residenti in Italia e nuovi clienti: nessun rapporto con UniCredit dal 2020",
+    "pages": [
+     {
+      "day": "16",
+      "month": "NOVEMBRE",
+      "label": "CONTO APERTO",
+      "color": "#141414"
+     },
+     {
+      "day": "+80€",
+      "month": "BONUS",
+      "label": "ARRIVATO",
+      "color": "#33c26b",
+      "at": "@80",
+      "markAt": "@bonus"
+     }
+    ]
+   }
+  },
+  {
+   "text": "Quattro mesi di partite, e avanzano pure 4 centesimi.",
+   "say": "Quattro mesi di partite, e avanzano pure quattro centesimi.",
+   "scene": {
+    "type": "screen",
+    "wall": "#0b2b1a",
+    "sofa": "#e8384f",
+    "panel": {
+     "kind": "pitch",
+     "home": "CASA",
+     "away": "OSPITI",
+     "score": "2-1",
+     "clock": "90+3'"
+    },
+    "badges": [
+     {
+      "text": "4 MESI",
+      "kind": "green",
+      "at": "@partite",
+      "pos": [
+       290,
+       1010
+      ]
+     },
+     {
+      "text": "+0,04€",
+      "kind": "yellow",
+      "at": "@centesimi",
+      "pos": [
+       790,
+       1010
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "text": "E io prendo 50€ per l'invito: conviene a tutti e due.",
+   "say": "E io prendo cinquanta euro per l'invito: conviene a tutti e due.",
+   "scene": {
+    "type": "room",
+    "day": true,
+    "wall": "#ffd23f",
+    "floor": "#c98b5e",
+    "sofa": "#e8384f",
+    "cam": "duo",
+    "friend": true,
+    "lookAtFriend": "@conviene",
+    "faces": [
+     {
+      "at": 0,
+      "face": "happy"
+     }
+    ],
+    "friendFaces": [
+     {
+      "at": 0,
+      "face": "happy"
+     },
+     {
+      "at": "@conviene",
+      "face": "wink"
+     }
+    ],
+    "badges": [
+     {
+      "text": "+80€",
+      "kind": "green",
+      "at": "@conviene",
+      "pos": [
+       290,
+       520
+      ],
+      "scale": 0.85
+     },
+     {
+      "text": "+50€",
+      "kind": "green",
+      "at": "@50",
+      "pos": [
+       790,
+       520
+      ],
+      "scale": 0.85
+     }
+    ]
+   }
+  },
+  {
+   "text": "Il codice è qui. Vale solo fino al 16!",
+   "say": "Il codice è qui. Vale solo fino al sedici!",
+   "scene": {
+    "type": "end",
+    "title": "CODICE INVITO",
+    "sub": "conto Buddy · UniCredit",
+    "card": "#33c26b",
+    "ink": "#0b2b1a",
+    "sky0": "#05150c",
+    "sky1": "#1f5f3a",
+    "seed": 12,
+    "lines": [
+     "Tu ricevi 80€ · io ricevo 50€",
+     "Solo fino al 16/11/26"
+    ]
+   }
+  }
+ ],
+ "post": [
+  "🔑 Codice invito: {code}",
+  "⚽ DAZN Goal costa 19,99€ al mese: 4 mesi = 79,96€. Con il bonus Buddy ricevi 80€ se apri il conto entro il 16/11 ⏳",
+  "1️⃣ Scarica l'app buddy UniCredit e apri il conto Genius buddy (canone zero)",
+  "2️⃣ Inserisci il codice {code} quando apri il conto",
+  "3️⃣ Entro 30 giorni spendi almeno 10€ con la carta (bonifici e ricariche non contano)",
+  "💸 Il bonus arriva entro 90 giorni lavorativi.",
+  "🔞 Solo maggiorenni residenti in Italia e nuovi clienti (nessun rapporto con UniCredit dal 2020).",
+  "ℹ️ Codice personale: se lo usi ricevo anch'io 50€. Prezzo DAZN Goal mensile di listino a novembre 2026. Condizioni complete sul sito buddy UniCredit."
+ ],
+ "hashtags": [
+  "#dazn",
+  "#calcio",
+  "#seriea",
+  "#gratis"
+ ]
+}

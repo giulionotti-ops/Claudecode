@@ -65,4 +65,17 @@ export function drawPoster(g, W, H, t, p) {
   if (p.text) { fitText(g, p.text, W - 60, H * .2, 900); g.fillText(p.text, W / 2, H * .82); }
 }
 
-export const PANELS = { form: drawPhoneForm, store: drawStore, paid: drawPaid, billboard: drawBillboard, poster: drawPoster };
+// Football match on TV: pitch, players moving, score bug. p: {home, away, score, clock}
+export function drawPitch(g, W, H, t, p) {
+  for (let i = 0; i < 10; i++) { g.fillStyle = i % 2 ? '#2f9e44' : '#37b24d'; g.fillRect(i * W / 10, 0, W / 10, H); }
+  g.strokeStyle = 'rgba(255,255,255,.85)'; g.lineWidth = 6; g.strokeRect(30, 30, W - 60, H - 60);
+  g.beginPath(); g.moveTo(W / 2, 30); g.lineTo(W / 2, H - 30); g.stroke(); g.beginPath(); g.arc(W / 2, H / 2, 80, 0, 7); g.stroke();
+  g.strokeRect(30, H / 2 - 120, 110, 240); g.strokeRect(W - 140, H / 2 - 120, 110, 240);
+  for (let i = 0; i < 8; i++) { const x = W / 2 + Math.sin(t * .8 + i * 1.7) * W * .32, y = H / 2 + Math.cos(t * .6 + i * 2.3) * H * .3; g.fillStyle = i % 2 ? '#e8384f' : '#ffffff'; g.beginPath(); g.arc(x, y, 14, 0, 7); g.fill(); }
+  const bx = W / 2 + Math.sin(t * 1.3) * W * .3, by = H / 2 + Math.sin(t * 1.9) * H * .25; g.fillStyle = '#fff'; g.beginPath(); g.arc(bx, by, 8, 0, 7); g.fill();
+  center(g); g.fillStyle = 'rgba(10,10,20,.85)'; rrect(g, 40, 40, 330, 70, 14); g.fill();
+  g.fillStyle = '#fff'; g.font = '900 40px Nunito'; g.fillText(`${p.home || 'CASA'} ${p.score || '1-0'} ${p.away || 'OSPITI'}`, 205, 77);
+  g.fillStyle = '#ffd23f'; rrect(g, 380, 40, 120, 70, 14); g.fill(); g.fillStyle = '#1d1d1d'; g.fillText(p.clock || "88'", 440, 77);
+}
+
+export const PANELS = { pitch: drawPitch, form: drawPhoneForm, store: drawStore, paid: drawPaid, billboard: drawBillboard, poster: drawPoster };
