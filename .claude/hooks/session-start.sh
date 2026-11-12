@@ -43,6 +43,12 @@ if ! command -v skillspector >/dev/null 2>&1; then
   uv tool install git+https://github.com/NVIDIA/skillspector.git
 fi
 
+# Reels engine (reels/): three.js + fonts. Playwright/Chromium and ffmpeg are preinstalled in cloud sessions.
+if [ -f reels/package.json ] && [ ! -d reels/node_modules/three ]; then
+  (cd reels && npm install --no-audit --no-fund)
+fi
+python3 -c "import numpy" 2>/dev/null || pip install -q numpy
+
 # Make sure the claude-mem launcher is on PATH for the session
 if [ -n "${CLAUDE_ENV_FILE:-}" ]; then
   echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$CLAUDE_ENV_FILE"

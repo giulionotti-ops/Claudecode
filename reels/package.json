@@ -1,0 +1,14 @@
+{
+  "name": "reels",
+  "private": true,
+  "type": "module",
+  "description": "Italian Instagram reels in a blocky 3D cartoon style (Three.js + ElevenLabs + Playwright + ffmpeg).",
+  "scripts": {
+    "make": "bash tools/make.sh"
+  },
+  "dependencies": {
+    "three": "0.170.0",
+    "@fontsource/baloo-2": "5.1.0",
+    "@fontsource/nunito": "5.1.0"
+  }
+}

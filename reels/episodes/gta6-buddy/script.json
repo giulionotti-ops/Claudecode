@@ -1,0 +1,318 @@
+{
+ "title": "GTA 6 pagato dalla banca",
+ "brand": {
+  "disclaimer": "GTA VI è un marchio di Rockstar Games · nessuna affiliazione"
+ },
+ "tail": 3.0,
+ "lines": [
+  {
+   "text": "Mezzanotte del 19 novembre: esce GTA 6.",
+   "say": "Mezzanotte del diciannove novembre: esce GTA sei.",
+   "scene": {
+    "type": "city",
+    "billboard": {
+     "title": "GTA 6",
+     "sub": "00:00:00",
+     "small": "19 NOVEMBRE",
+     "after": {
+      "title": "GTA 6",
+      "sub": "FUORI ORA"
+     }
+    },
+    "switchAt": "@esce",
+    "lightUp": "@accende"
+   }
+  },
+  {
+   "text": "E tutta la città si accende."
+  },
+  {
+   "text": "Costa 79,99€ a tutti.",
+   "say": "Costa settantanove e novantanove a tutti.",
+   "scene": {
+    "type": "screen",
+    "panel": {
+     "kind": "store",
+     "title": "GTA 6",
+     "price": "79,99€",
+     "button": "ACQUISTA"
+    }
+   }
+  },
+  {
+   "text": "Anche a me, ma a me lo paga la banca.",
+   "scene": {
+    "type": "room",
+    "cam": "wide",
+    "camTo": "close",
+    "hold": "laptop",
+    "calendar": [
+     {
+      "label": "NOV",
+      "year": 2026
+     }
+    ],
+    "faces": [
+     {
+      "at": "@anche",
+      "face": "bored"
+     },
+     {
+      "at": "@banca",
+      "face": "smug"
+     }
+    ],
+    "badges": [
+     {
+      "text": "−79,99€",
+      "kind": "red",
+      "at": "@anche",
+      "out": "@banca",
+      "pos": [
+       300,
+       520
+      ]
+     },
+     {
+      "text": "+80€",
+      "kind": "green",
+      "at": "@banca",
+      "pos": [
+       780,
+       520
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "text": "Una settimana prima un amico mi passa il suo codice invito.",
+   "scene": {
+    "type": "park",
+    "give": "@passa",
+    "cardText": "CODICE",
+    "cardSub": "INVITO",
+    "faces": [
+     {
+      "at": "@passa",
+      "face": "surprised"
+     },
+     {
+      "at": "@invito",
+      "face": "happy"
+     }
+    ]
+   }
+  },
+  {
+   "text": "Apro il conto Buddy entro il 16 novembre e inserisco il codice.",
+   "say": "Apro il conto Buddy entro il sedici novembre e inserisco il codice.",
+   "scene": {
+    "type": "phone",
+    "form": {
+     "title": "Apri il conto",
+     "sub": "Conto Buddy",
+     "chip": "entro il 16/11",
+     "chipAt": "@entro",
+     "field": "CODICE INVITO",
+     "typeAt": "@inserisco",
+     "typeDur": 1.1,
+     "pressAt": "@codice+0.5"
+    }
+   }
+  },
+  {
+   "text": "Poi spendo almeno 10€ con la carta entro 30 giorni.",
+   "say": "Poi spendo almeno dieci euro con la carta entro trenta giorni.",
+   "scene": {
+    "type": "screen",
+    "cardAt": "@carta",
+    "panel": {
+     "kind": "paid",
+     "title": "PAGATO 79,99€",
+     "checks": [
+      "almeno 10€ con la carta",
+      "entro 30 giorni"
+     ],
+     "checkAt": "@spendo"
+    }
+   }
+  },
+  {
+   "text": "Il bonus arriva entro 90 giorni lavorativi.",
+   "say": "Il bonus arriva entro novanta giorni lavorativi.",
+   "scene": {
+    "type": "room",
+    "cam": "wide",
+    "note": "Solo maggiorenni residenti in Italia e nuovi clienti: nessun rapporto con UniCredit dal 2020",
+    "calendar": [
+     {
+      "label": "NOV",
+      "year": 2026
+     },
+     {
+      "label": "DIC",
+      "year": 2026,
+      "at": "@arriva"
+     },
+     {
+      "label": "GEN",
+      "year": 2027,
+      "at": "@giorni"
+     },
+     {
+      "label": "MAR",
+      "year": 2027,
+      "at": "@lavorativi"
+     }
+    ],
+    "faces": [
+     {
+      "at": "@bonus",
+      "face": "neutral"
+     },
+     {
+      "at": "@lavorativi",
+      "face": "happy"
+     }
+    ],
+    "badges": [
+     {
+      "text": "+80€",
+      "kind": "green",
+      "at": "@lavorativi+0.3",
+      "scale": 0.8,
+      "pos": [
+       810,
+       800
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "text": "Solo per maggiorenni e nuovi clienti."
+  },
+  {
+   "text": "80 meno 79,99: mi resta un centesimo.",
+   "say": "Ottanta meno settantanove e novantanove: mi resta un centesimo.",
+   "scene": {
+    "type": "room",
+    "cam": "close",
+    "push": 0.2,
+    "coinAt": "@centesimo",
+    "faces": [
+     {
+      "at": 0,
+      "face": "smug"
+     },
+     {
+      "at": "@centesimo",
+      "face": "happy"
+     }
+    ],
+    "badges": [
+     {
+      "text": "−79,99€",
+      "kind": "red",
+      "at": "@meno",
+      "out": "@resta",
+      "pos": [
+       290,
+       500
+      ]
+     },
+     {
+      "text": "+80€",
+      "kind": "green",
+      "at": "@80",
+      "out": "@resta",
+      "pos": [
+       790,
+       500
+      ]
+     },
+     {
+      "text": "0,01€",
+      "kind": "yellow",
+      "at": "@resta",
+      "scale": 0.8,
+      "pos": [
+       300,
+       640
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "text": "E il mio amico? Prende 50€.",
+   "say": "E il mio amico? Prende cinquanta euro.",
+   "scene": {
+    "type": "room",
+    "cam": "duo",
+    "friend": true,
+    "lookAtFriend": "@amico",
+    "faces": [
+     {
+      "at": 0,
+      "face": "surprised"
+     },
+     {
+      "at": "@ecco",
+      "face": "bored"
+     }
+    ],
+    "friendFaces": [
+     {
+      "at": 0,
+      "face": "happy"
+     },
+     {
+      "at": "@ecco",
+      "face": "wink"
+     }
+    ],
+    "badges": [
+     {
+      "text": "+50€",
+      "kind": "green",
+      "at": "@prende",
+      "scale": 0.8,
+      "pos": [
+       800,
+       520
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "text": "Ecco perché me l'ha detto!"
+  },
+  {
+   "text": "Il mio codice è qui: usalo anche tu.",
+   "scene": {
+    "type": "end",
+    "title": "CODICE INVITO",
+    "sub": "conto Buddy · UniCredit",
+    "lines": [
+     "Io ricevo 50€ se usi il mio codice",
+     "80€ per te se apri entro il 16/11/26"
+    ]
+   }
+  }
+ ],
+ "post": [
+  "🔑 Codice invito: {code}",
+  "🎮 Il 19/11 esce GTA 6 a 79,99€. Con il bonus Buddy ricevi 80€ 💸 se apri il conto entro il 16/11.",
+  "✅ Inserisci il codice quando apri il conto.",
+  "💳 Entro 30 giorni spendi almeno 10€ con la carta (bonifici e ricariche non contano).",
+  "⏳ Il bonus arriva entro 90 giorni lavorativi.",
+  "🔞 Solo maggiorenni residenti in Italia e nuovi clienti (nessun rapporto con UniCredit dal 2020).",
+  "ℹ️ Codice personale: se lo usi ricevo anch'io un bonus. Controlla le condizioni sul sito UniCredit."
+ ],
+ "hashtags": [
+  "#gta6"
+ ]
+}
