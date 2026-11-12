@@ -55,9 +55,10 @@ export function makeEndCard(B) {
   return (g, t, p) => {
     const k = pop(seg(t, p._t0, p._t0 + .45));
     g.save(); g.translate(540, 760); g.scale(k, k);
+    const CARD = p.card || '#ffd23f', INK = p.ink || '#1d1d1d';
     g.fillStyle = '#1d1d1d'; rrect(g, -410, -190, 820, 380, 36); g.fill();
-    g.fillStyle = '#ffd23f'; rrect(g, -400, -200, 800, 370, 32); g.fill();
-    g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillStyle = '#1d1d1d';
+    g.fillStyle = CARD; rrect(g, -400, -200, 800, 370, 32); g.fill();
+    g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillStyle = INK;
     if (B.logo) { g.font = '900 80px Nunito'; g.fillText(B.logo, 0, -110); }
     const title = p.title || B.handle || 'CODICE INVITO'; fitText(g, title, 720, 104, 900); g.fillText(title, 0, B.logo ? 0 : -40);
     g.font = '800 40px Nunito'; g.fillText(p.sub || 'il codice invito è qui', 0, B.logo ? 90 : 70);

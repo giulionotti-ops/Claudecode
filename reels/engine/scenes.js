@@ -78,10 +78,10 @@ function room(p, ctx) {
   const scene = new THREE.Scene(); scene.background = new THREE.Color(p.wall || '#6c4bd1');
   K.lights(scene, { sky: '#fff1e0', ground: '#7a5bb0', hemi: 1.5, sunI: 1.5, dir: [4, 10, 9] });
   box(30, 20, .5, p.wall || '#6c4bd1', 0, 10, -3, scene);
-  box(30, .3, 20, '#c96f3b', 0, -.15, 6, scene);
-  for (let x = -14; x < 15; x += 2) box(.05, .32, 20, '#b05f30', x, -.14, 6, scene);
-  box(30, .6, .3, '#5a3cb0', 0, .3, -2.7, scene);
-  const cityT = K.cityTexture(1024, 768, { seed: 11 });
+  box(30, .3, 20, p.floor || '#c96f3b', 0, -.15, 6, scene);
+  for (let x = -14; x < 15; x += 2) box(.05, .32, 20, new THREE.Color(p.floor || '#c96f3b').offsetHSL(0, 0, -.06).getStyle(), x, -.14, 6, scene);
+  box(30, .6, .3, new THREE.Color(p.wall || '#6c4bd1').offsetHSL(0, 0, -.12).getStyle(), 0, .3, -2.7, scene);
+  const cityT = p.day ? K.cityTexture(1024, 768, { seed: 11, sky0: '#7cc8ff', sky1: '#d6f1ff', moon: false }) : K.cityTexture(1024, 768, { seed: 11 });
   const win = K.windowFrame(cityT, 3.4, 2.6); win.position.set(-1.9, 5.3, -2.7); scene.add(win);
   const cal = p.calendar ? K.calendar(p.calendar) : null; if (cal) { cal.position.set(2.2, 5.4, -2.6); cal.scale.setScalar(1.15); scene.add(cal); }
   const so = K.sofa(p.sofa || '#d93a54'); so.position.set(0, 0, -1.6); scene.add(so);
@@ -192,14 +192,87 @@ function screen(p, ctx) {
 
 // ---------------- end card: skyline + brand card + code (2D on top) ----------------
 function end(p, ctx) {
-  const scene = new THREE.Scene(); scene.background = new THREE.Color('#1b1550');
-  const tex = K.cityTexture(1024, 1820, { seed: 3, sky0: '#140f40', sky1: '#3a2a8a' });
+  const scene = new THREE.Scene(); scene.background = new THREE.Color(p.sky0 || '#1b1550');
+  const tex = K.cityTexture(1024, 1820, { seed: p.seed || 3, sky0: p.sky0 || '#140f40', sky1: p.sky1 || '#3a2a8a' });
   const m = new THREE.Mesh(new THREE.PlaneGeometry(9, 16), new THREE.MeshBasicMaterial({ map: tex })); scene.add(m);
   const camera = cam(40);
   return {
     scene, camera, end: true,
     update(t) { lookCam(camera, [0, 0, 21.9 - ease(seg(t, p._t0, p._t1 + 2)) * .8], [0, 0, 0]); tex.redraw(.6 + .4 * Math.sin(t * 2) ** 2); },
     overlay2d(g, t) { ctx.drawEndCard(g, t, p); },
+  };
+}
+
+// ---------------- gaming desk: hero at a big monitor, LED strip, posters ----------------
+function desk(p, ctx) {
+  const wall = p.wall || '#1f2a5a', led = p.led || '#ff3d8b';
+  const scene = new THREE.Scene(); scene.background = new THREE.Color(wall);
+  K.lights(scene, { sky: '#e6e9ff', ground: '#3a2f6a', hemi: 1.35, sunI: 1.1, dir: [6, 9, 8] });
+  box(30, 20, .5, wall, 0, 10, -3, scene);
+  box(30, .3, 20, p.floor || '#3b3f6b', 0, -.15, 6, scene);
+  const strip = new THREE.Mesh(new THREE.BoxGeometry(30, .12, .1), new THREE.MeshBasicMaterial({ color: led })); strip.position.set(0, 8.6, -2.7); scene.add(strip);
+  const glow = new THREE.Mesh(new THREE.PlaneGeometry(30, 3), new THREE.MeshBasicMaterial({ color: led, transparent: true, opacity: .18 })); glow.position.set(0, 8.2, -2.74); scene.add(glow);
+  [['#ffd23f', -4.2, 6.2, 1.8, 2.4], ['#33c26b', 4.4, 6.6, 1.6, 2.2], ['#8ef0ff', 3.2, 4.4, 1.2, 1.2]].forEach(([c, x, y, w, h]) => { box(w, h, .08, c, x, y, -2.7, scene); box(w * .6, h * .3, .1, new THREE.Color(c).offsetHSL(0, 0, -.25).getStyle(), x, y, -2.66, scene); });
+  box(3, .15, .8, '#5a3a24', -4, 3.6, -2.4, scene); [['#ff5ea8', -4.8], ['#3a6cff', -4.2], ['#ffd23f', -3.5]].forEach(([c, x], i) => box(.4, .6 + i * .15, .4, c, x, 4.0 + i * .07, -2.4, scene));
+  // desk + monitor
+  box(7, .25, 2.6, '#26283f', 0, 2.3, -1.2, scene); for (const x of [-3.2, 3.2]) box(.25, 2.3, 2.2, '#1b1c2c', x, 1.15, -1.2, scene);
+  const panel = p.panel || { kind: 'poster', text: '' };
+  const mT = K.canvasTex(1024, 640, (g, W, H, t = 0) => PANELS[panel.kind](g, W, H, t, panel));
+  box(5.2, 3.3, .2, '#0e0f18', -.4, 4.55, -2.1, scene); box(.3, 1.2, .3, '#0e0f18', -.4, 2.9, -2.1, scene);
+  const mon = new THREE.Mesh(new THREE.PlaneGeometry(4.95, 3.05), new THREE.MeshBasicMaterial({ map: mT })); mon.position.set(-.4, 4.55, -1.99); scene.add(mon);
+  const kb = box(2.2, .1, .7, '#15161f', -.4, 2.48, -.5, scene);
+  const kbL = new THREE.Mesh(new THREE.BoxGeometry(2.1, .03, .6), new THREE.MeshBasicMaterial({ color: led })); kbL.position.set(-.4, 2.54, -.5); scene.add(kbL);
+  // chair + hero (3/4 from behind-right, head turns to camera)
+  const H = hero(ctx).sit(); H.root.position.set(2.0, .35, 1.4); H.root.rotation.y = -1.25; scene.add(H.root);
+  box(1.7, .3, 1.7, p.chair || '#e8384f', 2.0, 1.25, 1.45, scene); box(.3, 1.1, .3, '#222', 2.0, .55, 1.45, scene); box(.35, 2.2, 1.7, p.chair || '#e8384f', 2.85, 2.5, 1.45, scene);
+  const cn = p.coinAt != null ? K.coin('1', -Math.PI / 2) : null; if (cn) { cn.position.set(2.1, 4.9, 1.6); scene.add(cn); }
+  const cd = p.cardAt != null ? K.card('#141414', '#ffd23f') : null; if (cd) { cd.position.set(.6, 3.4, .8); scene.add(cd); }
+  const camera = cam(40);
+  return {
+    scene, camera, update(t) {
+      const k = ease(seg(t, p._t0, p._t1)); lookCam(camera, lerp3([4.6, 5.0, 9.4], [4.0, 4.8, 8.2], k), [.6, 3.9, -.8]);
+      H.reset(); H.sit(); idle(H, t, .6); mT.redraw(t);
+      const turn = ease(seg(t, at(p.turn, p._t0 + .4), at(p.turn, p._t0 + .4) + .3)); H.head.rotation.y = .3 + 1.0 * turn; H.torso.rotation.y = .3 * turn;
+      H.face(faceAt(p.faces, t, p.face || 'neutral'));
+      H.armL.s.rotation.x = H.armR.s.rotation.x = -1.1; H.armL.el.rotation.x = H.armR.el.rotation.x = -.3;
+      if (cn) { const c = pop(seg(t, p.coinAt, p.coinAt + .4)); cn.scale.setScalar(c * .6); cn.rotation.y = .3 + Math.sin(t * 2) * .3; }
+      if (cd) { const c = ease(seg(t, p.cardAt, p.cardAt + .4)); cd.visible = c > 0; cd.position.y = 2.8 + c * 1.3; cd.rotation.y = -.6; }
+      kbL.material.color.setHSL((t * .15) % 1, .9, .6);
+    },
+  };
+}
+
+// ---------------- giant wall calendar: pages [{day, month, label, at}], red circle at markAt ----------------
+function bigcal(p, ctx) {
+  const scene = new THREE.Scene(); scene.background = new THREE.Color(p.wall || '#2b8cff');
+  K.lights(scene, { hemi: 1.6, sunI: 1.2, dir: [3, 6, 10] });
+  box(30, 30, .4, p.wall || '#2b8cff', 0, 0, -.6, scene);
+  for (let i = 0; i < 12; i++) box(.6, .6, .1, '#ffffff', -6 + (i % 4) * 4 + (i > 3 ? 2 : 0), -7 + Math.floor(i / 4) * 7, -.35, scene).material = new THREE.MeshLambertMaterial({ color: '#ffffff', transparent: true, opacity: .15 });
+  const pages = p.pages || [{ day: '16', month: 'NOVEMBRE' }];
+  const meshes = pages.map((pg, i) => {
+    const tex = K.canvasTex(512, 640, (g, W, H, t = 0) => {
+      g.fillStyle = '#fff'; K.rrect(g, 0, 0, W, H, 30); g.fill();
+      g.fillStyle = pg.color || '#e8384f'; g.fillRect(0, 0, W, 130); g.fillStyle = 'rgba(0,0,0,.25)'; for (let k = 0; k < 5; k++) g.fillRect(60 + k * 88, 16, 26, 60);
+      g.fillStyle = '#fff'; g.textAlign = 'center'; g.textBaseline = 'middle'; K.fitText(g, pg.month, 440, 64, 900); g.fillText(pg.month, W / 2, 96);
+      g.fillStyle = '#1d1d1d'; g.font = '900 300px Nunito'; g.fillText(pg.day, W / 2, 360);
+      if (pg.label) { g.fillStyle = '#555'; K.fitText(g, pg.label, 440, 56, 900); g.fillText(pg.label, W / 2, 570); }
+      const m = seg(t, at(pg.markAt), at(pg.markAt) + .5);
+      if (m > 0) { g.strokeStyle = '#e8384f'; g.lineWidth = 22; g.lineCap = 'round'; g.beginPath(); g.ellipse(W / 2, 360, 200, 165, -.15, -1.9, -1.9 + m * 6.7); g.stroke(); }
+    });
+    const mesh = new THREE.Mesh(new THREE.BoxGeometry(5.12, 6.4, .08), [K.mat('#ddd'), K.mat('#ddd'), K.mat('#ddd'), K.mat('#ddd'), new THREE.MeshLambertMaterial({ map: tex }), K.mat('#ddd')]);
+    const pivot = new THREE.Group(); pivot.position.set(0, 3.2, .05 * (pages.length - i)); mesh.position.y = -3.2; pivot.add(mesh); scene.add(pivot); mesh.castShadow = true;
+    return { pivot, tex };
+  });
+  box(5.6, .5, .5, '#b71f35', 0, 3.35, .3, scene);
+  const camera = cam(40);
+  return {
+    scene, camera, update(t) {
+      const k = ease(seg(t, p._t0, p._t1)); lookCam(camera, [0, -.6, 18.5 - k * 1.5], [0, -.9, 0]);
+      meshes.forEach((m, i) => {
+        const nx = pages[i + 1]; const f = nx ? ease(seg(t, at(nx.at), at(nx.at) + .4)) : 0;
+        m.pivot.rotation.x = f * 2.6; m.pivot.visible = f < .98; m.tex.redraw(t);
+      });
+    },
   };
 }
 
@@ -215,4 +288,4 @@ function portrait(p, ctx) {
   return { scene, camera, update() { lookCam(camera, [.5, 3.4, 12.5], [.35, 3.2, 0]); } };
 }
 
-export const SCENES = { city, room, park, phone, screen, end, portrait };
+export const SCENES = { city, room, park, phone, screen, end, portrait, desk, bigcal };

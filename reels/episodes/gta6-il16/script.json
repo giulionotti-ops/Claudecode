@@ -1,40 +1,309 @@
 {
  "title": "Tutti aspettano il 19, io il 16",
- "brand": { "disclaimer": "GTA VI è un marchio di Rockstar Games · nessuna affiliazione" },
+ "brand": {
+  "disclaimer": "GTA VI è un marchio di Rockstar Games · nessuna affiliazione"
+ },
  "tail": 3.2,
  "lines": [
-  { "text": "Tutti aspettano il 19 novembre per GTA 6.", "say": "Tutti aspettano il diciannove novembre per GTA sei.",
-    "scene": { "type": "city", "billboard": { "title": "GTA 6", "sub": "00:00:00", "small": "19 NOVEMBRE", "after": { "title": "16 NOV", "sub": "BONUS 80€" } },
-               "switchAt": "@16", "lightUp": "@16" } },
-  { "text": "Io aspetto il 16.", "say": "Io aspetto il sedici." },
-  { "text": "Perché fino al 16 la banca ti regala 80€.", "say": "Perché fino al sedici la banca ti regala ottanta euro.",
-    "scene": { "type": "room", "cam": "wide", "camTo": "close", "hold": "phone", "calendar": [{ "label": "16", "year": "NOVEMBRE" }],
-               "faces": [{ "at": 0, "face": "smug" }, { "at": "@regala", "face": "happy" }],
-               "badges": [{ "text": "+80€", "kind": "green", "at": "@80", "pos": [780, 520] }] } },
-  { "text": "E GTA ne costa 79,99.", "say": "E GTA ne costa settantanove e novantanove.",
-    "scene": { "type": "screen", "panel": { "kind": "store", "title": "GTA 6", "price": "79,99€", "button": "ACQUISTA" } } },
-  { "text": "Ti serve solo un codice invito.",
-    "scene": { "type": "park", "give": "@codice", "cardText": "CODICE", "cardSub": "INVITO",
-               "faces": [{ "at": 0, "face": "neutral" }, { "at": "@invito", "face": "happy" }] } },
-  { "text": "Apri il conto Buddy e lo inserisci.",
-    "scene": { "type": "phone", "form": { "title": "Apri il conto", "sub": "Conto Buddy", "chip": "entro il 16/11", "chipAt": "@apri",
-               "field": "CODICE INVITO", "typeAt": "@inserisci", "typeDur": 0.9, "pressAt": "@inserisci+1.2" } } },
-  { "text": "Poi spendi almeno 10€ con la carta entro 30 giorni.", "say": "Poi spendi almeno dieci euro con la carta entro trenta giorni.",
-    "scene": { "type": "screen", "cardAt": "@carta", "panel": { "kind": "paid", "title": "PAGATO 79,99€", "checks": ["almeno 10€ con la carta", "entro 30 giorni"], "checkAt": "@spendi" } } },
-  { "text": "Arrivano gli 80€ e GTA è praticamente gratis.", "say": "Arrivano gli ottanta euro e GTA è praticamente gratis.",
-    "scene": { "type": "room", "cam": "close", "push": 0.2, "coinAt": "@gratis", "note": "Solo maggiorenni residenti in Italia e nuovi clienti: nessun rapporto con UniCredit dal 2020",
-               "faces": [{ "at": 0, "face": "smug" }, { "at": "@gratis", "face": "happy" }],
-               "badges": [{ "text": "+80€", "kind": "green", "at": "@80", "out": "@gratis", "pos": [790, 520] },
-                          { "text": "−79,99€", "kind": "red", "at": "@gta", "out": "@gratis", "pos": [290, 520] },
-                          { "text": "GRATIS", "kind": "yellow", "at": "@gratis", "pos": [540, 520] }] } },
-  { "text": "Io prendo 50€ per l'invito: conviene a tutti e due.", "say": "Io prendo cinquanta euro per l'invito: conviene a tutti e due.",
-    "scene": { "type": "room", "cam": "duo", "friend": true, "lookAtFriend": "@conviene",
-               "faces": [{ "at": 0, "face": "happy" }], "friendFaces": [{ "at": 0, "face": "happy" }, { "at": "@conviene", "face": "wink" }],
-               "badges": [{ "text": "+80€", "kind": "green", "at": "@conviene", "pos": [290, 520], "scale": 0.85 },
-                          { "text": "+50€", "kind": "green", "at": "@50", "pos": [790, 520], "scale": 0.85 }] } },
-  { "text": "Il codice è qui. Dopo il 16 il bonus scende.", "say": "Il codice è qui. Dopo il sedici il bonus scende.",
-    "scene": { "type": "end", "title": "CODICE INVITO", "sub": "conto Buddy · UniCredit",
-               "lines": ["Tu ricevi 80€ · io ricevo 50€", "Solo fino al 16/11/26"] } }
+  {
+   "text": "Tutti aspettano il 19 novembre per GTA 6.",
+   "say": "Tutti aspettano il diciannove novembre per GTA sei.",
+   "scene": {
+    "type": "bigcal",
+    "wall": "#2b8cff",
+    "pages": [
+     {
+      "day": "19",
+      "month": "NOVEMBRE",
+      "label": "GTA 6",
+      "color": "#7a3cff"
+     },
+     {
+      "day": "16",
+      "month": "NOVEMBRE",
+      "label": "BONUS 80€",
+      "at": "@aspetto",
+      "markAt": "@16+0.1"
+     }
+    ]
+   }
+  },
+  {
+   "text": "Io aspetto il 16.",
+   "say": "Io aspetto il sedici."
+  },
+  {
+   "text": "Perché fino al 16 la banca ti regala 80€.",
+   "say": "Perché fino al sedici la banca ti regala ottanta euro.",
+   "scene": {
+    "type": "room",
+    "day": true,
+    "wall": "#ff9f43",
+    "floor": "#e6c79c",
+    "sofa": "#3a6cff",
+    "cam": "wide",
+    "camTo": "close",
+    "hold": "phone",
+    "faces": [
+     {
+      "at": 0,
+      "face": "smug"
+     },
+     {
+      "at": "@regala",
+      "face": "happy"
+     }
+    ],
+    "badges": [
+     {
+      "text": "+80€",
+      "kind": "green",
+      "at": "@80",
+      "pos": [
+       780,
+       520
+      ]
+     },
+     {
+      "text": "fino al 16/11",
+      "kind": "white",
+      "at": "@fino",
+      "pos": [
+       300,
+       520
+      ],
+      "scale": 0.7
+     }
+    ]
+   }
+  },
+  {
+   "text": "E GTA ne costa 79,99.",
+   "say": "E GTA ne costa settantanove e novantanove.",
+   "scene": {
+    "type": "desk",
+    "panel": {
+     "kind": "store",
+     "title": "GTA 6",
+     "price": "79,99€",
+     "button": "ACQUISTA"
+    },
+    "faces": [
+     {
+      "at": 0,
+      "face": "neutral"
+     }
+    ],
+    "turn": "@79"
+   }
+  },
+  {
+   "text": "Ti serve solo un codice invito.",
+   "scene": {
+    "type": "room",
+    "day": true,
+    "wall": "#ff9f43",
+    "floor": "#e6c79c",
+    "sofa": "#3a6cff",
+    "cam": "duo",
+    "friend": true,
+    "lookAtFriend": "@codice",
+    "faces": [
+     {
+      "at": 0,
+      "face": "neutral"
+     },
+     {
+      "at": "@invito",
+      "face": "surprised"
+     }
+    ],
+    "friendFaces": [
+     {
+      "at": 0,
+      "face": "happy"
+     }
+    ],
+    "badges": [
+     {
+      "text": "CODICE INVITO",
+      "kind": "yellow",
+      "at": "@codice",
+      "pos": [
+       540,
+       520
+      ],
+      "scale": 0.8
+     }
+    ]
+   }
+  },
+  {
+   "text": "Apri il conto Buddy e lo inserisci.",
+   "scene": {
+    "type": "phone",
+    "form": {
+     "title": "Apri il conto",
+     "sub": "Conto Buddy",
+     "chip": "entro il 16/11",
+     "chipAt": "@apri",
+     "field": "CODICE INVITO",
+     "typeAt": "@inserisci",
+     "typeDur": 0.9,
+     "pressAt": "@inserisci+1.2",
+     "dark": true,
+     "accent": "#ff3d8b"
+    },
+    "bg": "#ff5ea8",
+    "ground": "#ffd23f"
+   }
+  },
+  {
+   "text": "Poi spendi almeno 10€ con la carta entro 30 giorni.",
+   "say": "Poi spendi almeno dieci euro con la carta entro trenta giorni.",
+   "scene": {
+    "type": "desk",
+    "led": "#33c26b",
+    "cardAt": "@carta",
+    "panel": {
+     "kind": "paid",
+     "title": "PAGATO 79,99€",
+     "checks": [
+      "almeno 10€ con la carta",
+      "entro 30 giorni"
+     ],
+     "checkAt": "@spendi"
+    },
+    "faces": [
+     {
+      "at": 0,
+      "face": "happy"
+     }
+    ]
+   }
+  },
+  {
+   "text": "Arrivano gli 80€ e GTA è praticamente gratis.",
+   "say": "Arrivano gli ottanta euro e GTA è praticamente gratis.",
+   "scene": {
+    "type": "room",
+    "cam": "close",
+    "push": 0.2,
+    "coinAt": "@gratis",
+    "note": "Solo maggiorenni residenti in Italia e nuovi clienti: nessun rapporto con UniCredit dal 2020",
+    "faces": [
+     {
+      "at": 0,
+      "face": "smug"
+     },
+     {
+      "at": "@gratis",
+      "face": "happy"
+     }
+    ],
+    "badges": [
+     {
+      "text": "+80€",
+      "kind": "green",
+      "at": "@80",
+      "out": "@gratis",
+      "pos": [
+       790,
+       520
+      ]
+     },
+     {
+      "text": "−79,99€",
+      "kind": "red",
+      "at": "@gta",
+      "out": "@gratis",
+      "pos": [
+       290,
+       520
+      ]
+     },
+     {
+      "text": "GRATIS",
+      "kind": "yellow",
+      "at": "@gratis",
+      "pos": [
+       540,
+       520
+      ]
+     }
+    ],
+    "day": true,
+    "wall": "#ff9f43",
+    "floor": "#e6c79c",
+    "sofa": "#3a6cff"
+   }
+  },
+  {
+   "text": "Io prendo 50€ per l'invito: conviene a tutti e due.",
+   "say": "Io prendo cinquanta euro per l'invito: conviene a tutti e due.",
+   "scene": {
+    "type": "park",
+    "give": 0,
+    "cardText": "+50€",
+    "cardSub": "PER ME",
+    "faces": [
+     {
+      "at": 0,
+      "face": "happy"
+     }
+    ],
+    "friendFaces": [
+     {
+      "at": 0,
+      "face": "happy"
+     },
+     {
+      "at": "@conviene",
+      "face": "wink"
+     }
+    ],
+    "badges": [
+     {
+      "text": "+80€",
+      "kind": "green",
+      "at": "@conviene",
+      "pos": [
+       290,
+       520
+      ],
+      "scale": 0.85
+     },
+     {
+      "text": "+50€",
+      "kind": "green",
+      "at": "@50",
+      "pos": [
+       790,
+       520
+      ],
+      "scale": 0.85
+     }
+    ]
+   }
+  },
+  {
+   "text": "Il codice è qui. Dopo il 16 il bonus scende.",
+   "say": "Il codice è qui. Dopo il sedici il bonus scende.",
+   "scene": {
+    "type": "end",
+    "title": "CODICE INVITO",
+    "sub": "conto Buddy · UniCredit",
+    "lines": [
+     "Tu ricevi 80€ · io ricevo 50€",
+     "Solo fino al 16/11/26"
+    ],
+    "card": "#ff5ea8",
+    "ink": "#ffffff",
+    "sky0": "#0b3b4f",
+    "sky1": "#1e8a8a",
+    "seed": 8
+   }
+  }
  ],
  "post": [
   "🔑 Codice invito: {code}",
@@ -46,5 +315,22 @@
   "🔞 Solo maggiorenni residenti in Italia e nuovi clienti (nessun rapporto con UniCredit dal 2020).",
   "ℹ️ Codice personale: se lo usi ricevo anch'io 50€. Condizioni complete sul sito buddy UniCredit."
  ],
- "hashtags": ["#gta6", "#gtavi", "#gratis"]
+ "hashtags": [
+  "#gta6",
+  "#gtavi",
+  "#gratis"
+ ],
+ "cast": {
+  "hero": {
+   "shirt": "#e84a5f",
+   "hair": "#1d1d1d",
+   "pants": "#2b2b3a"
+  },
+  "friend": {
+   "shirt": "#6b5bff",
+   "cap": "#ffd23f",
+   "skin": "#c98b5e",
+   "pants": "#1f2a44"
+  }
+ }
 }
