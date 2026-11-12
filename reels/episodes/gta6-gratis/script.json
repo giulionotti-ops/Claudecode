@@ -1,0 +1,300 @@
+{
+ "title": "GTA 6 gratis con il bonus Buddy",
+ "brand": {
+  "disclaimer": "GTA VI è un marchio di Rockstar Games · nessuna affiliazione"
+ },
+ "tail": 3.2,
+ "lines": [
+  {
+   "text": "Il 19 novembre esce GTA 6.",
+   "say": "Il diciannove novembre esce GTA sei.",
+   "scene": {
+    "type": "city",
+    "billboard": {
+     "title": "GTA 6",
+     "sub": "00:00:00",
+     "small": "19 NOVEMBRE",
+     "after": {
+      "title": "GTA 6",
+      "sub": "FUORI ORA"
+     }
+    },
+    "switchAt": "@esce",
+    "lightUp": "@pago"
+   }
+  },
+  {
+   "text": "E io non lo pago."
+  },
+  {
+   "text": "Costa 79,99€,",
+   "say": "Costa settantanove e novantanove,",
+   "scene": {
+    "type": "screen",
+    "panel": {
+     "kind": "store",
+     "title": "GTA 6",
+     "price": "79,99€",
+     "button": "ACQUISTA"
+    }
+   }
+  },
+  {
+   "text": "ma la banca me ne regala 80.",
+   "say": "ma la banca me ne regala ottanta.",
+   "scene": {
+    "type": "room",
+    "cam": "wide",
+    "camTo": "close",
+    "hold": "laptop",
+    "calendar": [
+     {
+      "label": "NOV",
+      "year": 2026
+     }
+    ],
+    "faces": [
+     {
+      "at": 0,
+      "face": "bored"
+     },
+     {
+      "at": "@regala",
+      "face": "smug"
+     }
+    ],
+    "badges": [
+     {
+      "text": "−79,99€",
+      "kind": "red",
+      "at": "@ma",
+      "out": "@banca",
+      "pos": [
+       300,
+       520
+      ]
+     },
+     {
+      "text": "+80€",
+      "kind": "green",
+      "at": "@banca",
+      "pos": [
+       780,
+       520
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "text": "Apri il conto Buddy con un codice invito",
+   "scene": {
+    "type": "phone",
+    "form": {
+     "title": "Apri il conto",
+     "sub": "Conto Buddy",
+     "chip": "entro il 16/11",
+     "chipAt": "@entro",
+     "field": "CODICE INVITO",
+     "typeAt": "@codice",
+     "typeDur": 1.0,
+     "pressAt": "@novembre+0.3"
+    }
+   }
+  },
+  {
+   "text": "entro il 16 novembre.",
+   "say": "entro il sedici novembre."
+  },
+  {
+   "text": "Spendi almeno 10€ con la carta entro 30 giorni.",
+   "say": "Spendi almeno dieci euro con la carta entro trenta giorni.",
+   "scene": {
+    "type": "screen",
+    "cardAt": "@carta",
+    "panel": {
+     "kind": "paid",
+     "title": "PAGATO 79,99€",
+     "checks": [
+      "almeno 10€ con la carta",
+      "entro 30 giorni"
+     ],
+     "checkAt": "@spendi"
+    }
+   }
+  },
+  {
+   "text": "E ti arrivano 80€ di bonus.",
+   "say": "E ti arrivano ottanta euro di bonus.",
+   "scene": {
+    "type": "room",
+    "cam": "wide",
+    "note": "Solo maggiorenni residenti in Italia e nuovi clienti: nessun rapporto con UniCredit dal 2020",
+    "calendar": [
+     {
+      "label": "NOV",
+      "year": 2026
+     },
+     {
+      "label": "DIC",
+      "year": 2026,
+      "at": "@arrivano"
+     },
+     {
+      "label": "GEN",
+      "year": 2027,
+      "at": "@bonus"
+     }
+    ],
+    "faces": [
+     {
+      "at": 0,
+      "face": "neutral"
+     },
+     {
+      "at": "@bonus",
+      "face": "happy"
+     }
+    ],
+    "badges": [
+     {
+      "text": "+80€",
+      "kind": "green",
+      "at": "@80",
+      "pos": [
+       810,
+       800
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "text": "80 meno 79,99: GTA gratis, e avanza un centesimo.",
+   "say": "Ottanta meno settantanove e novantanove: GTA gratis, e avanza un centesimo.",
+   "scene": {
+    "type": "room",
+    "cam": "close",
+    "push": 0.2,
+    "coinAt": "@centesimo",
+    "faces": [
+     {
+      "at": 0,
+      "face": "smug"
+     },
+     {
+      "at": "@gratis",
+      "face": "happy"
+     }
+    ],
+    "badges": [
+     {
+      "text": "−79,99€",
+      "kind": "red",
+      "at": "@meno",
+      "out": "@gratis",
+      "pos": [
+       290,
+       500
+      ]
+     },
+     {
+      "text": "+80€",
+      "kind": "green",
+      "at": "@80",
+      "out": "@gratis",
+      "pos": [
+       790,
+       500
+      ]
+     },
+     {
+      "text": "GRATIS",
+      "kind": "yellow",
+      "at": "@gratis",
+      "pos": [
+       540,
+       500
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "text": "Tu prendi 80€, io 50: ci guadagniamo tutti e due.",
+   "say": "Tu prendi ottanta euro, io cinquanta: ci guadagniamo tutti e due.",
+   "scene": {
+    "type": "room",
+    "cam": "duo",
+    "friend": true,
+    "lookAtFriend": "@io",
+    "faces": [
+     {
+      "at": 0,
+      "face": "happy"
+     }
+    ],
+    "friendFaces": [
+     {
+      "at": 0,
+      "face": "happy"
+     },
+     {
+      "at": "@guadagniamo",
+      "face": "wink"
+     }
+    ],
+    "badges": [
+     {
+      "text": "+80€",
+      "kind": "green",
+      "at": "@80",
+      "pos": [
+       290,
+       520
+      ],
+      "scale": 0.85
+     },
+     {
+      "text": "+50€",
+      "kind": "green",
+      "at": "@50",
+      "pos": [
+       790,
+       520
+      ],
+      "scale": 0.85
+     }
+    ]
+   }
+  },
+  {
+   "text": "Il codice è qui: copialo prima del 16!",
+   "say": "Il codice è qui: copialo prima del sedici!",
+   "scene": {
+    "type": "end",
+    "title": "CODICE INVITO",
+    "sub": "conto Buddy · UniCredit",
+    "lines": [
+     "Tu ricevi 80€ · io ricevo 50€",
+     "Solo fino al 16/11/26"
+    ]
+   }
+  }
+ ],
+ "post": [
+  "🔑 Codice invito: {code}",
+  "🎮 GTA 6 esce il 19/11 a 79,99€. Con il bonus Buddy te lo paga la banca: 80€ se apri il conto entro il 16/11 ⏳",
+  "1️⃣ Scarica l'app buddy UniCredit e apri il conto Genius buddy (canone zero)",
+  "2️⃣ Inserisci il codice {code} quando apri il conto",
+  "3️⃣ Entro 30 giorni spendi almeno 10€ con la carta (bonifici e ricariche non contano)",
+  "💸 Il bonus arriva entro 90 giorni lavorativi.",
+  "🔞 Solo maggiorenni residenti in Italia e nuovi clienti (nessun rapporto con UniCredit dal 2020).",
+  "ℹ️ Codice personale: se lo usi ricevo anch'io 50€. Condizioni complete sul sito buddy UniCredit."
+ ],
+ "hashtags": [
+  "#gta6",
+  "#gtavi",
+  "#gratis"
+ ]
+}

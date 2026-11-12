@@ -96,7 +96,7 @@ function room(p, ctx) {
   if (p.hold === 'phone') { held = K.phoneMesh(K.canvasTex(64, 128, g => { g.fillStyle = '#3ad37a'; g.fillRect(0, 0, 64, 128); }), .5, .9); held.position.set(0, 2.1, .9); held.rotation.x = -.5; H.root.add(held); }
   const greenPhone = K.phoneMesh(K.canvasTex(64, 128, g => { g.fillStyle = '#3ad37a'; g.fillRect(0, 0, 64, 128); }), .5, .9);
   greenPhone.rotation.x = -Math.PI / 2; greenPhone.position.set(-.8, 1.12, 2.2); scene.add(greenPhone);
-  const cn = p.coinAt != null ? K.coin('1') : null; if (cn) { cn.position.set(1.6, 3.6, 0); cn.scale.setScalar(0); scene.add(cn); }
+  const cn = p.coinAt != null ? K.coin('1', p.coinRot ?? -Math.PI / 2) : null; if (cn) { cn.position.set(.95, 3.8, .3); cn.scale.setScalar(0); scene.add(cn); }
   const badges = () => {};
   const presets = { wide: [[0, 4.4, 11], [0, 3.4, 0]], close: [[.2, 3.6, 5.6], [0, 3.0, -1]], duo: [[0, 3.9, 8.6], [0, 3.0, -1]] };
   const camera = cam(40);
@@ -111,7 +111,7 @@ function room(p, ctx) {
       if (held) { H.armL.s.rotation.x = H.armR.s.rotation.x = -1.0; H.armL.el.rotation.x = H.armR.el.rotation.x = -.5; H.armL.s.rotation.z = -.25; H.armR.s.rotation.z = .25; }
       if (F) { F.reset(); F.sit(); idle(F, t + 1); F.face(faceAt(p.friendFaces, t, 'happy')); F.head.rotation.y = -.35; }
       if (p.lookAtFriend && F && t > at(p.lookAtFriend)) H.head.rotation.y = .35 * ease(seg(t, at(p.lookAtFriend), at(p.lookAtFriend) + .3));
-      if (cn) { const c = pop(seg(t, p.coinAt, p.coinAt + .4)); cn.scale.setScalar(c); cn.rotation.y = Math.sin(t * 2) * .4; H.armR.s.rotation.x = -2.2 * ease(seg(t, p.coinAt - .2, p.coinAt + .2)); H.armR.s.rotation.z = .2; }
+      if (cn) { const c = pop(seg(t, p.coinAt, p.coinAt + .4)); cn.scale.setScalar(c * .7); cn.rotation.y = Math.sin(t * 2) * .4; H.armR.s.rotation.x = -2.2 * ease(seg(t, p.coinAt - .2, p.coinAt + .2)); H.armR.s.rotation.z = .2; }
       cal?.update(t); cityT.redraw(1); badges(t);
     },
   };
@@ -203,4 +203,16 @@ function end(p, ctx) {
   };
 }
 
-export const SCENES = { city, room, park, phone, screen, end };
+// ---------------- portrait for profile pictures: hero head-and-shoulders on a flat colour ----------------
+function portrait(p, ctx) {
+  const scene = new THREE.Scene(); scene.background = new THREE.Color(p.bg || '#ffd23f');
+  K.lights(scene, { hemi: 1.7, sunI: 1.4, dir: [4, 8, 10] });
+  const H = hero(ctx); scene.add(H.root); H.face(p.face || 'happy');
+  const cn = K.coin(p.coinLabel || '€', p.coinRot ?? -Math.PI / 2); cn.position.set(1.3, 3.75, .9); cn.rotation.y = Math.PI - .35; cn.scale.setScalar(.7); scene.add(cn);
+  H.armR.s.rotation.x = -2.3; H.armR.s.rotation.z = .25; H.armR.el.rotation.x = -.4;
+  H.head.rotation.y = -.12; H.head.rotation.z = .05;
+  const camera = cam(30);
+  return { scene, camera, update() { lookCam(camera, [.5, 3.4, 12.5], [.35, 3.2, 0]); } };
+}
+
+export const SCENES = { city, room, park, phone, screen, end, portrait };

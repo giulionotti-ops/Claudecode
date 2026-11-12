@@ -83,9 +83,10 @@ window.render = t => {
   if (b.t0 > 0 && t - b.t0 < .1) { g.fillStyle = `rgba(255,255,255,${.35 * (1 - (t - b.t0) / .1)})`; g.fillRect(0, 0, 1080, 1920); }
   if (b.overlay2d) b.overlay2d(g, t);
   drawBadges(g, b.p.badges, t);
+  if (Q.has('clean')) return;   // bare picture (profile pics, thumbnails)
   drawTopBar(g, B);
   if (b.p.note) drawNote(g, b.p.note, seg(t, b.t0, b.t0 + .2));
-  drawCaption(g, groups, t, b.end ? 1560 : 1340);
+  drawCaption(g, groups, t, b.p.captionY || (b.end ? 1560 : b.p.type === 'phone' ? 1640 : 1340));
   const fo = seg(t, DUR - .35, DUR); if (fo > 0) { g.fillStyle = `rgba(0,0,0,${fo})`; g.fillRect(0, 0, 1080, 1920); }
 };
 window.frameJPEG = q => out.toDataURL('image/jpeg', q || .93);

@@ -206,9 +206,9 @@ export function badge(text, kind = 'green', scale = 1) {
   sp.renderOrder = 10; sp.base = [2.6 * scale, 1.0 * scale]; sp.scale.set(...sp.base, 1);
   return sp;
 }
-export function coin(label = '1') {
+export function coin(label = '1', rot = 0) {
   const g = new THREE.Group();
-  const face = canvasTex(256, 256, (c, W) => { c.fillStyle = '#d9893a'; c.fillRect(0, 0, W, W); c.fillStyle = '#c0712a'; c.beginPath(); c.arc(128, 128, 104, 0, 7); c.fill(); c.fillStyle = '#e9a55a'; c.font = '900 150px Nunito'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.fillText(label, 128, 138); });
+  const face = canvasTex(256, 256, (c, W) => { c.fillStyle = '#d9893a'; c.fillRect(0, 0, W, W); c.fillStyle = '#c0712a'; c.beginPath(); c.arc(128, 128, 104, 0, 7); c.fill(); c.fillStyle = '#e9a55a'; c.font = '900 150px Nunito'; c.textAlign = 'center'; c.textBaseline = 'middle'; c.translate(128, 128); c.rotate(rot); c.fillText(label, 0, 10); });
   const side = mat('#b8682a');
   const m = new THREE.Mesh(new THREE.CylinderGeometry(.6, .6, .14, 32), [side, new THREE.MeshLambertMaterial({ map: face }), new THREE.MeshLambertMaterial({ map: face })]);
   m.rotation.x = Math.PI / 2; m.castShadow = true; g.add(m);

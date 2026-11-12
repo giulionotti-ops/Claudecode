@@ -1,0 +1,2 @@
+{ "title": "profile picture", "brand": { "adLabel": "", "topRight": [], "disclaimer": "", "handle": "" }, "tail": 0.5,
+  "lines": [{ "text": "x", "scene": { "type": "portrait", "bg": "#ffd23f", "face": "happy", "coinLabel": "€", "captionY": -500 } }] }
