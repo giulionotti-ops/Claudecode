@@ -43,6 +43,11 @@ if ! command -v skillspector >/dev/null 2>&1; then
   uv tool install git+https://github.com/NVIDIA/skillspector.git
 fi
 
+# yt-dlp: YouTube downloads for the youtube-downloader skill and auto_clip.py --url
+if ! command -v yt-dlp >/dev/null 2>&1; then
+  uv tool install yt-dlp
+fi
+
 # Make sure the claude-mem launcher is on PATH for the session
 if [ -n "${CLAUDE_ENV_FILE:-}" ]; then
   echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$CLAUDE_ENV_FILE"
