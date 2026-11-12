@@ -52,3 +52,8 @@ fi
 if [ -n "${CLAUDE_ENV_FILE:-}" ]; then
   echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$CLAUDE_ENV_FILE"
 fi
+
+# graphify: CLI for the graphify skill and its hooks (update: uv tool upgrade graphifyy)
+if ! command -v graphify >/dev/null 2>&1; then
+  uv tool install graphifyy
+fi
