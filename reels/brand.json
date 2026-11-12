@@ -3,8 +3,22 @@
   "handle": "",
   "logo": "",
   "adLabel": "Pubblicità",
-  "topRight": ["codice invito personale", "ricevo un bonus se lo usi"],
-  "voice": "t3hJ92dgZhDVtsff084B",
-  "voice_settings": { "speed": 1.08 },
-  "hashtags": ["#unicredit", "#buddy", "#codiceinvito", "#risparmio", "#bonus"]
+  "topRight": [
+    "codice invito personale",
+    "ricevo un bonus se lo usi"
+  ],
+  "voice": "ImsA1Fn5TNc843fFdz99",
+  "voice_settings": {
+    "stability": 0.35,
+    "similarity_boost": 0.75,
+    "style": 0.45,
+    "speed": 1.0
+  },
+  "hashtags": [
+    "#unicredit",
+    "#buddy",
+    "#codiceinvito",
+    "#risparmio",
+    "#bonus"
+  ]
 }
