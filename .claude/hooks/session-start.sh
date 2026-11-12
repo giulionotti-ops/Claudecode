@@ -50,3 +50,8 @@ fi
 
 # Shorts toolchain: ffmpeg, Node + Playwright, Python audio libs
 bash shorts/setup.sh
+
+# graphify: CLI for the graphify skill and its hooks (update: uv tool upgrade graphifyy)
+if ! command -v graphify >/dev/null 2>&1; then
+  uv tool install graphifyy
+fi
