@@ -34,6 +34,19 @@ Live view while editing: `node tools/serve.mjs` → http://localhost:8123/engine
 Every scene also takes `badges: [{text, kind: green/red/yellow, at, out, pos:[x,y], scale}]`.
 Faces: neutral, happy, smug, wink, surprised, bored.
 
+## Server variant (no Claude session needed)
+Runs the same pipeline on your own machine or VPS, with a small web studio (edit script → preview → make reel → download).
+```bash
+cd reels
+cp server/.env.example server/.env        # fill ELEVENLABS_API_KEY and REELS_TOKEN
+docker compose -f server/docker-compose.yml up -d --build
+# open http://SERVER:8080, paste the token
+```
+Without Docker: `npm ci && REELS_TOKEN=... ELEVENLABS_API_KEY=... node server/server.mjs` (needs ffmpeg, python3-numpy, Playwright Chromium).
+HTTP API is listed at the top of `server/server.mjs`. Put it behind HTTPS (e.g. Caddy) if it is public.
+
+Full Claude session on your server, with every plugin from `.claude/settings.json`: `bash reels/server/claude-session.sh`.
+
 ## Rules for these reels
 - Always keep the "Pubblicità" label and say the code is personal (you get a bonus). Italian law (AGCM) wants referral promos disclosed.
 - Check the bank's current offer terms (amounts, deadlines) before each reel; they change.

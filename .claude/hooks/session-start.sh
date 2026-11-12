@@ -49,6 +49,26 @@ if [ -f reels/package.json ] && [ ! -d reels/node_modules/three ]; then
 fi
 python3 -c "import numpy" 2>/dev/null || pip install -q numpy
 
+# Plugins: cloud sessions don't install enabledPlugins from .claude/settings.json by themselves.
+# Add every marketplace and install every enabled plugin that is missing (idempotent).
+if command -v claude >/dev/null 2>&1 && [ -f .claude/settings.json ]; then
+  installed="$(claude plugin list 2>/dev/null || true)"
+  python3 - <<'PY' | while read -r kind a b; do
+import json
+s = json.load(open('.claude/settings.json'))
+for name, m in s.get('extraKnownMarketplaces', {}).items():
+    print('m', name, m['source'].get('repo', ''))
+for p, on in s.get('enabledPlugins', {}).items():
+    if on: print('p', p, '-')
+PY
+    if [ "$kind" = m ] && [ ! -d "$HOME/.claude/plugins/marketplaces/$a" ]; then
+      timeout 180 claude plugin marketplace add "$b" || echo "marketplace $a failed"
+    elif [ "$kind" = p ] && ! grep -q "> $a" <<<"$installed"; then
+      timeout 180 claude plugin install "$a" --scope project || echo "plugin $a failed"
+    fi
+  done
+fi
+
 # Make sure the claude-mem launcher is on PATH for the session
 if [ -n "${CLAUDE_ENV_FILE:-}" ]; then
   echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$CLAUDE_ENV_FILE"

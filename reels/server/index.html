@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Reels Studio</title>
+<style>
+:root{--bg:#f6f5fb;--card:#fff;--ink:#1d2340;--mute:#6b6f88;--line:#e3e2ee;--acc:#3b4cca;--ok:#1f8f4a;--bad:#c62f2f}
+@media (prefers-color-scheme:dark){:root{--bg:#14131c;--card:#1d1c28;--ink:#ecebf5;--mute:#9b9ab0;--line:#2c2b3a;--acc:#7d8bff;--ok:#4cc77e;--bad:#ff6b6b}}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 system-ui,sans-serif}
+main{max-width:1100px;margin:0 auto;padding:20px 16px;display:grid;gap:16px;grid-template-columns:260px 1fr}
+@media (max-width:800px){main{grid-template-columns:1fr}}
+h1{font-size:20px;margin:0 0 4px}section{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px}
+input,textarea{width:100%;font:inherit;color:inherit;background:transparent;border:1px solid var(--line);border-radius:8px;padding:8px}
+textarea{font:13px/1.4 ui-monospace,monospace;min-height:420px;resize:vertical}
+button{font:inherit;border:0;border-radius:8px;padding:8px 14px;background:var(--acc);color:#fff;cursor:pointer}button.sec{background:transparent;color:var(--ink);border:1px solid var(--line)}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0}ul{list-style:none;padding:0;margin:8px 0}
+li a{display:block;padding:6px 8px;border-radius:6px;color:inherit;text-decoration:none}li a:hover,li a.on{background:var(--bg)}
+.muted{color:var(--mute);font-size:13px}pre{white-space:pre-wrap;font-size:12px;max-height:200px;overflow:auto;background:var(--bg);padding:8px;border-radius:8px}
+video,img{max-width:100%;border-radius:10px;display:block;margin-top:8px}.st-done{color:var(--ok)}.st-failed{color:var(--bad)}
+</style></head><body>
+<main>
+<div>
+  <section><h1>Reels Studio</h1><div class="muted">Blocky 3D Italian reels</div>
+    <div class="row"><input id="tok" type="password" placeholder="Access token" autocomplete="off"></div>
+    <ul id="eps"></ul>
+    <div class="row"><input id="newName" placeholder="new-episode-name"><button class="sec" id="newBtn">New from template</button></div>
+  </section>
+</div>
+<div>
+  <section>
+    <div class="row"><strong id="cur">Pick an episode</strong></div>
+    <textarea id="ed" spellcheck="false" placeholder="script.json"></textarea>
+    <div class="row"><button id="save">Save</button><button class="sec" id="prev">Preview sheet</button><button id="make">Make reel</button><span id="st" class="muted"></span></div>
+    <pre id="log" hidden></pre>
+    <div id="res"></div>
+  </section>
+</div>
+</main>
+<script>
+const $ = id => document.getElementById(id); let ep = null;
+try { $('tok').value = localStorage.getItem('reelsToken') || ''; } catch {}
+$('tok').onchange = () => { try { localStorage.setItem('reelsToken', $('tok').value); } catch {} load(); };
+const api = (p, o = {}) => fetch(p, { ...o, headers: { Authorization: 'Bearer ' + $('tok').value, 'Content-Type': 'application/json' } }).then(async r => { const j = await r.json().catch(() => ({})); if (!r.ok) throw new Error(j.error || r.status); return j; });
+const fileUrl = (e, f) => `/files/${e}/${f}?token=${encodeURIComponent($('tok').value)}&v=${Date.now()}`;
+async function load() {
+  try { const list = await api('/api/episodes'); $('eps').innerHTML = list.map(x => `<li><a href="#" data-ep="${x.ep}" class="${x.ep === ep ? 'on' : ''}">${x.ep}${x.reel ? ' ✓' : ''}</a></li>`).join(''); }
+  catch (e) { $('eps').innerHTML = `<li class="muted">${e.message}</li>`; }
+}
+$('eps').onclick = async e => { const a = e.target.closest('a'); if (!a) return; e.preventDefault(); ep = a.dataset.ep; $('cur').textContent = ep; $('ed').value = JSON.stringify(await api('/api/episodes/' + ep), null, 1); $('res').innerHTML = ''; load(); };
+$('newBtn').onclick = async () => { const n = $('newName').value.trim(); if (!n) return; const t = await api('/api/episodes/gta6-buddy'); await api('/api/episodes/' + n, { method: 'PUT', body: JSON.stringify(t) }); ep = n; $('cur').textContent = n; $('ed').value = JSON.stringify(t, null, 1); load(); };
+const save = async () => { JSON.parse($('ed').value); await api('/api/episodes/' + ep, { method: 'PUT', body: $('ed').value }); };
+$('save').onclick = () => save().then(() => $('st').textContent = 'Saved').catch(e => $('st').textContent = e.message);
+async function run(preview) {
+  if (!ep) return; try { await save(); } catch (e) { $('st').textContent = e.message; return; }
+  const { job } = await api(`/api/episodes/${ep}/render${preview ? '?preview=1' : ''}`, { method: 'POST' });
+  $('log').hidden = false; const tick = async () => {
+    const j = await api('/api/jobs/' + job); $('st').textContent = j.status; $('st').className = 'st-' + j.status; $('log').textContent = j.log; $('log').scrollTop = 1e9;
+    if (j.status === 'done') { $('res').innerHTML = preview ? `<img src="${fileUrl(ep, 'preview.jpg')}" alt="Preview contact sheet">` : `<video controls src="${fileUrl(ep, 'reel.mp4')}"></video><div class="row"><a href="${fileUrl(ep, 'reel.mp4')}" download>Download mp4</a> · <a href="${fileUrl(ep, 'post.txt')}" target="_blank">Post text</a></div>`; load(); }
+    else if (j.status !== 'failed') setTimeout(tick, 2000);
+  }; tick();
+}
+$('prev').onclick = () => run(true); $('make').onclick = () => run(false);
+load();
+</script>
+</body></html>
