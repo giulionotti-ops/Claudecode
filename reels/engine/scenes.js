@@ -230,7 +230,7 @@ function desk(p, ctx) {
   const camera = cam(40);
   return {
     scene, camera, update(t) {
-      const k = ease(seg(t, p._t0, p._t1)); lookCam(camera, lerp3([4.6, 5.0, 9.4], [4.0, 4.8, 8.2], k), [.6, 3.9, -.8]);
+      const k = ease(seg(t, p._t0, p._t1)); lookCam(camera, lerp3([4.2, 5.1, 11.2], [3.6, 4.9, 10.0], k), [.25, 3.9, -.8]);
       H.reset(); H.sit(); idle(H, t, .6); mT.redraw(t);
       const turn = ease(seg(t, at(p.turn, p._t0 + .4), at(p.turn, p._t0 + .4) + .3)); H.head.rotation.y = .3 + 1.0 * turn; H.torso.rotation.y = .3 * turn;
       H.face(faceAt(p.faces, t, p.face || 'neutral'));
@@ -254,7 +254,7 @@ function bigcal(p, ctx) {
       g.fillStyle = '#fff'; K.rrect(g, 0, 0, W, H, 30); g.fill();
       g.fillStyle = pg.color || '#e8384f'; g.fillRect(0, 0, W, 130); g.fillStyle = 'rgba(0,0,0,.25)'; for (let k = 0; k < 5; k++) g.fillRect(60 + k * 88, 16, 26, 60);
       g.fillStyle = '#fff'; g.textAlign = 'center'; g.textBaseline = 'middle'; K.fitText(g, pg.month, 440, 64, 900); g.fillText(pg.month, W / 2, 96);
-      g.fillStyle = '#1d1d1d'; g.font = '900 300px Nunito'; g.fillText(pg.day, W / 2, 360);
+      g.fillStyle = '#1d1d1d'; K.fitText(g, pg.day, 460, 300, 900); g.fillText(pg.day, W / 2, 360);
       if (pg.label) { g.fillStyle = '#555'; K.fitText(g, pg.label, 440, 56, 900); g.fillText(pg.label, W / 2, 570); }
       const m = seg(t, at(pg.markAt), at(pg.markAt) + .5);
       if (m > 0) { g.strokeStyle = '#e8384f'; g.lineWidth = 22; g.lineCap = 'round'; g.beginPath(); g.ellipse(W / 2, 360, 200, 165, -.15, -1.9, -1.9 + m * 6.7); g.stroke(); }

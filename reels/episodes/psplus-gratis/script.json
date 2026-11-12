@@ -1,0 +1,298 @@
+{
+ "title": "Un anno di PS Plus gratis",
+ "brand": {
+  "disclaimer": "Marchi dei rispettivi proprietari · nessuna affiliazione"
+ },
+ "cast": {
+  "hero": {
+   "shirt": "#3a6cff",
+   "hair": "#7a4a2a"
+  },
+  "friend": {
+   "shirt": "#ffd23f",
+   "cap": "#e8384f",
+   "pants": "#2a2a2a"
+  }
+ },
+ "tail": 3.2,
+ "lines": [
+  {
+   "text": "Un anno di PlayStation Plus gratis.",
+   "scene": {
+    "type": "desk",
+    "wall": "#2a1450",
+    "led": "#3a6cff",
+    "turn": "@gratis",
+    "faces": [
+     {
+      "at": 0,
+      "face": "smug"
+     },
+     {
+      "at": "@gratis",
+      "face": "happy"
+     }
+    ],
+    "panel": {
+     "kind": "store",
+     "title": "PS PLUS 12 MESI",
+     "price": "71,99€",
+     "button": "ABBONATI"
+    },
+    "badges": [
+     {
+      "text": "GRATIS",
+      "kind": "yellow",
+      "at": "@gratis",
+      "pos": [
+       540,
+       1010
+      ],
+      "scale": 1.4
+     }
+    ]
+   }
+  },
+  {
+   "text": "Costa 71,99€ l'anno,",
+   "say": "Costa settantuno e novantanove l'anno,",
+   "scene": {
+    "type": "room",
+    "wall": "#0f8a8a",
+    "floor": "#c98b5e",
+    "sofa": "#ffd23f",
+    "cam": "wide",
+    "camTo": "close",
+    "hold": "laptop",
+    "faces": [
+     {
+      "at": 0,
+      "face": "bored"
+     },
+     {
+      "at": "@banca",
+      "face": "smug"
+     }
+    ],
+    "badges": [
+     {
+      "text": "−71,99€",
+      "kind": "red",
+      "at": "@costa",
+      "out": "@banca",
+      "pos": [
+       300,
+       520
+      ]
+     },
+     {
+      "text": "+80€",
+      "kind": "green",
+      "at": "@80",
+      "pos": [
+       780,
+       520
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "text": "ma la banca me ne ha dati 80.",
+   "say": "ma la banca me ne ha dati ottanta."
+  },
+  {
+   "text": "Apri il conto Buddy con un codice invito entro il 16 novembre.",
+   "say": "Apri il conto Buddy con un codice invito entro il sedici novembre.",
+   "scene": {
+    "type": "phone",
+    "bg": "#3a6cff",
+    "ground": "#8ef0ff",
+    "form": {
+     "title": "Apri il conto",
+     "sub": "Conto Buddy",
+     "chip": "entro il 16/11",
+     "chipAt": "@entro",
+     "field": "CODICE INVITO",
+     "typeAt": "@codice",
+     "typeDur": 1.0,
+     "pressAt": "@novembre"
+    }
+   }
+  },
+  {
+   "text": "Spendi almeno 10€ con la carta entro 30 giorni,",
+   "say": "Spendi almeno dieci euro con la carta entro trenta giorni,",
+   "scene": {
+    "type": "screen",
+    "wall": "#0f6b5f",
+    "sofa": "#3a6cff",
+    "cardAt": "@carta",
+    "panel": {
+     "kind": "paid",
+     "title": "PAGATO 71,99€",
+     "checks": [
+      "almeno 10€ con la carta",
+      "entro 30 giorni"
+     ],
+     "checkAt": "@spendi"
+    }
+   }
+  },
+  {
+   "text": "e ti arrivano 80€ di bonus.",
+   "say": "e ti arrivano ottanta euro di bonus.",
+   "scene": {
+    "type": "bigcal",
+    "wall": "#ff9f43",
+    "note": "Solo maggiorenni residenti in Italia e nuovi clienti: nessun rapporto con UniCredit dal 2020",
+    "pages": [
+     {
+      "day": "16",
+      "month": "NOVEMBRE",
+      "label": "CONTO APERTO",
+      "color": "#3a6cff"
+     },
+     {
+      "day": "+80€",
+      "month": "BONUS",
+      "label": "ARRIVATO",
+      "color": "#33c26b",
+      "at": "@80",
+      "markAt": "@bonus"
+     }
+    ]
+   }
+  },
+  {
+   "text": "Hai la Xbox? Sono 6 mesi di Game Pass Premium.",
+   "say": "Hai la Xbox? Sono sei mesi di Game Pass Premium.",
+   "scene": {
+    "type": "desk",
+    "wall": "#123d1f",
+    "led": "#33c26b",
+    "turn": "@xbox",
+    "faces": [
+     {
+      "at": 0,
+      "face": "surprised"
+     },
+     {
+      "at": "@mesi",
+      "face": "happy"
+     }
+    ],
+    "panel": {
+     "kind": "store",
+     "title": "GAME PASS PREMIUM",
+     "price": "6 MESI",
+     "button": "12,99€ AL MESE"
+    }
+   }
+  },
+  {
+   "text": "Ami il calcio? 4 mesi di DAZN.",
+   "say": "Ami il calcio? Quattro mesi di DAZN.",
+   "scene": {
+    "type": "screen",
+    "wall": "#1b1b1b",
+    "sofa": "#e8384f",
+    "panel": {
+     "kind": "store",
+     "title": "DAZN GOAL",
+     "price": "4 MESI",
+     "button": "19,99€ AL MESE"
+    }
+   }
+  },
+  {
+   "text": "E io prendo 50€ per l'invito: conviene a tutti e due.",
+   "say": "E io prendo cinquanta euro per l'invito: conviene a tutti e due.",
+   "scene": {
+    "type": "room",
+    "day": true,
+    "wall": "#33c26b",
+    "floor": "#e6c79c",
+    "sofa": "#e8384f",
+    "cam": "duo",
+    "friend": true,
+    "lookAtFriend": "@conviene",
+    "faces": [
+     {
+      "at": 0,
+      "face": "happy"
+     }
+    ],
+    "friendFaces": [
+     {
+      "at": 0,
+      "face": "happy"
+     },
+     {
+      "at": "@conviene",
+      "face": "wink"
+     }
+    ],
+    "badges": [
+     {
+      "text": "+80€",
+      "kind": "green",
+      "at": "@conviene",
+      "pos": [
+       290,
+       520
+      ],
+      "scale": 0.85
+     },
+     {
+      "text": "+50€",
+      "kind": "green",
+      "at": "@50",
+      "pos": [
+       790,
+       520
+      ],
+      "scale": 0.85
+     }
+    ]
+   }
+  },
+  {
+   "text": "Il codice è qui. Vale solo fino al 16!",
+   "say": "Il codice è qui. Vale solo fino al sedici!",
+   "scene": {
+    "type": "end",
+    "title": "CODICE INVITO",
+    "sub": "conto Buddy · UniCredit",
+    "card": "#3a6cff",
+    "ink": "#ffffff",
+    "sky0": "#2a0f3f",
+    "sky1": "#8a2a6a",
+    "seed": 5,
+    "lines": [
+     "Tu ricevi 80€ · io ricevo 50€",
+     "Solo fino al 16/11/26"
+    ]
+   }
+  }
+ ],
+ "post": [
+  "🔑 Codice invito: {code}",
+  "🎮 PS Plus Essential 12 mesi costa 71,99€. Con il bonus Buddy ricevi 80€ se apri il conto entro il 16/11 ⏳",
+  "🟢 Xbox? 80€ = 6 mesi di Game Pass Premium (12,99€/mese)",
+  "⚽ Calcio? 80€ = 4 mesi di DAZN Goal (19,99€/mese)",
+  "1️⃣ Scarica l'app buddy UniCredit e apri il conto Genius buddy (canone zero)",
+  "2️⃣ Inserisci il codice {code} quando apri il conto",
+  "3️⃣ Entro 30 giorni spendi almeno 10€ con la carta (bonifici e ricariche non contano)",
+  "💸 Il bonus arriva entro 90 giorni lavorativi.",
+  "🔞 Solo maggiorenni residenti in Italia e nuovi clienti (nessun rapporto con UniCredit dal 2020).",
+  "ℹ️ Codice personale: se lo usi ricevo anch'io 50€. Prezzi di listino a novembre 2026. Condizioni complete sul sito buddy UniCredit."
+ ],
+ "hashtags": [
+  "#psplus",
+  "#playstation",
+  "#gamepass",
+  "#dazn",
+  "#gratis"
+ ]
+}
