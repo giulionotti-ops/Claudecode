@@ -70,3 +70,8 @@ git -C "$HOME/lemo-opuscar" config lemo.managed true
 if [ -x "$HOME/lemo-opuscar/.venv/bin/python" ]; then
   uv pip install --quiet --python "$HOME/lemo-opuscar/.venv/bin/python" -r shorts/uploader/requirements.txt || true
 fi
+
+# graphify: CLI for the graphify skill and its hooks (update: uv tool upgrade graphifyy)
+if ! command -v graphify >/dev/null 2>&1; then
+  uv tool install graphifyy
+fi
