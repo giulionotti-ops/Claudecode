@@ -16,3 +16,7 @@ the machine (user/global scope) is lost when the session ends.
   push.
 - **Tools that must be installed or started each session** (e.g. OmniRoute,
   the claude-mem worker) go in `.claude/hooks/session-start.sh`.
+
+## GTA 6 clips
+
+Before making any clip, read `gta6-clips/CLIPPING_RULES.md` and follow it.

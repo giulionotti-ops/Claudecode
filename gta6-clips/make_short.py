@@ -8,6 +8,11 @@ Usage:
 Optional "credit" ("@streamer") and "credit_url" (top level or per short) put
 "via @streamer" on screen and write a description .txt with the source link.
 
+"facecam": "x:y:w:h" (the streamer's camera box in source pixels) switches to
+the streamer layout: camera on top, gameplay filling the rest; tune with
+"cam_height" (default 640), "game_x" (0-1, which part of the game to keep) and
+"zoom". "text": false writes nothing on screen (credit goes in the .txt only).
+
 Each short in the JSON names a source video, a start/end time, a hook title
 (top of screen) and timed captions (lower third). Output: 1080x1920, 30 fps,
 H.264 + AAC, loudness-normalised, ready to upload.
@@ -67,18 +72,41 @@ def drawtext(font, text, size, y, color="white", box=None, enable=None):
     return "drawtext=" + ":".join(opts)
 
 
-def build_filter(short, font, duration, handle, credit=""):
-    zoom = float(short.get("zoom", 1.0))  # >1 crops in on the action
-    fg_w = int(W * zoom) // 2 * 2
-    f = [
-        # blurred, darkened fill so the frame is never letterboxed black
-        f"[0:v]scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},"
-        "boxblur=30:3,eq=brightness=-0.15[bg]",
-        # sharp gameplay in the middle
-        f"[0:v]scale={fg_w}:-2,crop='min(iw,{W})':ih[fg]",
-        "[bg][fg]overlay=(W-w)/2:(H-h)/2[base]",
-    ]
+def opt(short, cfg, key, default=None):
+    """Per-short setting, falling back to the config's top level."""
+    return short.get(key, cfg.get(key, default))
+
+
+def build_filter(short, cfg, font, duration, handle, credit=""):
+    facecam = opt(short, cfg, "facecam")
+    if facecam:
+        # streamer layout: facecam strip on top, gameplay fills the rest (no bars)
+        x, y, w, h = (int(v) for v in str(facecam).split(":"))
+        cam_h = int(opt(short, cfg, "cam_height", 640)) // 2 * 2
+        game_h = H - cam_h
+        gx = float(opt(short, cfg, "game_x", 0.5))   # 0 = left edge, 1 = right edge
+        gz = float(opt(short, cfg, "zoom", 1.0))     # >1 crops in further
+        f = [
+            "[0:v]split[c][g]",
+            f"[c]crop={w}:{h}:{x}:{y},scale={W}:{cam_h}:force_original_aspect_ratio=increase,"
+            f"crop={W}:{cam_h}[cam]",
+            f"[g]scale=-2:{int(game_h * gz) // 2 * 2},crop={W}:{game_h}:(iw-{W})*{gx}:(ih-{game_h})/2[game]",
+            "[cam][game]vstack[base]",
+        ]
+    else:
+        zoom = float(short.get("zoom", 1.0))  # >1 crops in on the action
+        fg_w = int(W * zoom) // 2 * 2
+        f = [
+            # blurred, darkened fill so the frame is never letterboxed black
+            f"[0:v]scale={W}:{H}:force_original_aspect_ratio=increase,crop={W}:{H},"
+            "boxblur=30:3,eq=brightness=-0.15[bg]",
+            # sharp gameplay in the middle
+            f"[0:v]scale={fg_w}:-2,crop='min(iw,{W})':ih[fg]",
+            "[bg][fg]overlay=(W-w)/2:(H-h)/2[base]",
+        ]
     layers = []
+    if not opt(short, cfg, "text", True):   # clean: nothing written on screen
+        short, handle, credit = {**short, "title": "", "captions": []}, "", ""
     # hook title, wrapped to two lines max
     lines = textwrap.wrap(short["title"].upper(), 16)[:3]
     # shrink to fit: heavy caps run ~0.68 em wide, keep 40 px margins
@@ -128,7 +156,7 @@ def render(short, cfg, base_dir, out_dir):
     credit = short.get("credit", cfg.get("credit", ""))
     if credit and not credit.lower().startswith(("via ", "clip:", "credit")):
         credit = f"via {credit}"
-    fc = build_filter(short, font, duration, cfg.get("handle", ""), credit)
+    fc = build_filter(short, cfg, font, duration, cfg.get("handle", ""), credit)
     fc += (f";[{0 if has_audio else 1}:a]loudnorm=I=-14:TP=-1.5:LRA=11,"
            f"afade=t=out:st={max(duration - 0.4, 0)}:d=0.4[a]")
     cmd += ["-filter_complex", fc, "-map", "[v]", "-map", "[a]",

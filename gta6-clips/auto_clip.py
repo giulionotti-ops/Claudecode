@@ -252,6 +252,10 @@ def main():
     ap.add_argument("--credit", default="",
                     help='footage owner shown on screen, e.g. "@streamer"')
     ap.add_argument("--credit-url", default="", help="source link for the description")
+    ap.add_argument("--facecam", metavar="X:Y:W:H",
+                    help="streamer camera box in source pixels -> camera-on-top layout")
+    ap.add_argument("--text", action="store_true",
+                    help="write hook/captions on screen (default: clean, no text)")
     ap.add_argument("--render", action="store_true", help="render with make_short.py")
     args = ap.parse_args()
 
@@ -299,7 +303,9 @@ def main():
         })
         print(f"  #{i}  {f.name}  {ts(start)}-{ts(end)}  score {sc:.2f}", flush=True)
 
-    cfg = {"handle": args.handle, "shorts": shorts}
+    cfg = {"handle": args.handle, "text": args.text, "shorts": shorts}
+    if args.facecam:
+        cfg["facecam"] = args.facecam
     if args.credit:
         cfg.update(credit=args.credit, credit_url=args.credit_url or (args.url[0] if args.url else ""))
     out_path.write_text(json.dumps(cfg, indent=2) + "\n")
