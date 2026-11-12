@@ -5,6 +5,9 @@ Usage:
     python3 make_short.py shorts.json            # render every short in the file
     python3 make_short.py shorts.json --only 2   # render one short by id
 
+Optional "credit" ("@streamer") and "credit_url" (top level or per short) put
+"via @streamer" on screen and write a description .txt with the source link.
+
 Each short in the JSON names a source video, a start/end time, a hook title
 (top of screen) and timed captions (lower third). Output: 1080x1920, 30 fps,
 H.264 + AAC, loudness-normalised, ready to upload.
@@ -64,7 +67,7 @@ def drawtext(font, text, size, y, color="white", box=None, enable=None):
     return "drawtext=" + ":".join(opts)
 
 
-def build_filter(short, font, duration, handle):
+def build_filter(short, font, duration, handle, credit=""):
     zoom = float(short.get("zoom", 1.0))  # >1 crops in on the action
     fg_w = int(W * zoom) // 2 * 2
     f = [
@@ -77,8 +80,11 @@ def build_filter(short, font, duration, handle):
     ]
     layers = []
     # hook title, wrapped to two lines max
-    for i, line in enumerate(textwrap.wrap(short["title"].upper(), 18)[:3]):
-        layers.append(drawtext(font, line, 96, 230 + i * 118, "white"))
+    lines = textwrap.wrap(short["title"].upper(), 16)[:3]
+    # shrink to fit: heavy caps run ~0.68 em wide, keep 40 px margins
+    size = min(96, int((W - 80) / (0.68 * max(len(l) for l in lines)))) if lines else 96
+    for i, line in enumerate(lines):
+        layers.append(drawtext(font, line, size, 230 + i * int(size * 1.23), "white"))
     # timed captions
     for c in short.get("captions", []):
         a, b = to_seconds(c["from"]), to_seconds(c["to"])
@@ -86,6 +92,8 @@ def build_filter(short, font, duration, handle):
             layers.append(drawtext(font, line, 70, 1400 + i * 92,
                                    c.get("color", "#FFE14D"),
                                    enable=f"between(t,{a},{b})"))
+    if credit:  # whose footage this is, e.g. "via @streamer"
+        layers.append(drawtext(font, credit, 50, H - 290, "#4DE1FF"))
     if handle:
         layers.append(drawtext(font, handle, 44, H - 210, "white@0.85"))
     fade_out = max(duration - 0.4, 0)
@@ -117,7 +125,10 @@ def render(short, cfg, base_dir, out_dir):
     if not has_audio:
         cmd += ["-f", "lavfi", "-t", str(duration), "-i",
                 "anullsrc=channel_layout=stereo:sample_rate=48000"]
-    fc = build_filter(short, font, duration, cfg.get("handle", ""))
+    credit = short.get("credit", cfg.get("credit", ""))
+    if credit and not credit.lower().startswith(("via ", "clip:", "credit")):
+        credit = f"via {credit}"
+    fc = build_filter(short, font, duration, cfg.get("handle", ""), credit)
     fc += (f";[{0 if has_audio else 1}:a]loudnorm=I=-14:TP=-1.5:LRA=11,"
            f"afade=t=out:st={max(duration - 0.4, 0)}:d=0.4[a]")
     cmd += ["-filter_complex", fc, "-map", "[v]", "-map", "[a]",
@@ -126,6 +137,12 @@ def render(short, cfg, base_dir, out_dir):
             "-movflags", "+faststart", "-shortest", str(out)]
     subprocess.run(cmd, check=True)
     print(f"  -> {out}")
+    if credit:  # ready-to-paste description with the credit and source link
+        link = short.get("credit_url", cfg.get("credit_url", ""))
+        desc = f"{short['title']} #GTA6 #Shorts\n\nClip from {credit[4:] if credit.startswith('via ') else credit}"
+        desc += f": {link}\n" if link else "\n"
+        out.with_suffix(".txt").write_text(desc)
+        print(f"  -> {out.with_suffix('.txt')}")
     return True
 
 

@@ -11,6 +11,8 @@ Usage:
     python3 auto_clip.py footage/session1.mp4 -n 8   # top 8 moments
     python3 auto_clip.py --url https://youtu.be/ID   # download first (yt-dlp)
     python3 auto_clip.py footage/ --render           # find + render in one go
+    python3 auto_clip.py --url https://www.twitch.tv/videos/ID \
+        --section 2:10:00-2:40:00 --credit @streamer  # 30 min of a Twitch VOD
 
 Output: auto_shorts.json (edit the titles/captions, then
 `python3 make_short.py auto_shorts.json`). Requires ffmpeg; --url needs yt-dlp.
@@ -23,6 +25,9 @@ import re
 import shutil
 import subprocess
 import sys
+import tempfile
+import urllib.request
+from concurrent.futures import ThreadPoolExecutor
 from pathlib import Path
 
 VIDEO_EXT = {".mp4", ".mov", ".mkv", ".webm", ".m4v", ".avi"}
@@ -43,6 +48,96 @@ def download(url, dest):
     if out.returncode != 0:
         sys.exit(f"download failed:\n{out.stderr.strip()}")
     return Path(out.stdout.strip().splitlines()[-1])
+
+
+def hms(t):
+    """'1:02:03' / '62:03' / '3723' -> seconds."""
+    sec = 0.0
+    for part in str(t).split(":"):
+        sec = sec * 60 + float(part)
+    return sec
+
+
+def fetch(url, dest, tries=3):
+    for k in range(tries):
+        try:
+            with urllib.request.urlopen(url, timeout=60) as r:
+                dest.write_bytes(r.read())
+            return
+        except OSError:
+            if k == tries - 1:
+                raise
+
+
+def download_section(url, dest, section, height=1080):
+    """Fetch only the HLS segments covering START-END of a long VOD (e.g. Twitch).
+
+    Pulling a whole 10-hour stream takes hours; this grabs just the part you want,
+    8 segments at a time, and remuxes it into one mp4 without re-encoding.
+    """
+    if not shutil.which("yt-dlp"):
+        sys.exit("yt-dlp not found (install: uv tool install yt-dlp)")
+    a, b = (hms(x) for x in section.split("-", 1))
+    if b <= a:
+        sys.exit("--section must be START-END, e.g. 1:02:00-1:12:00")
+    meta = subprocess.run(
+        ["yt-dlp", "--no-playlist", "-f", f"best[height<={height}]/best",
+         "--print", "%(id)s", "--print", "urls", url],
+        capture_output=True, text=True)
+    lines = meta.stdout.strip().splitlines()
+    if meta.returncode != 0 or len(lines) < 2:
+        sys.exit(f"could not read the stream:\n{meta.stderr.strip()}")
+    vid, m3u8 = lines[0], lines[-1]
+    with urllib.request.urlopen(m3u8, timeout=60) as r:
+        playlist = r.read().decode()
+    base = m3u8.rsplit("/", 1)[0] + "/"
+    t, init, segs = 0.0, None, []          # segs: (init_uri, seg_uri)
+    dur = 0.0
+    for line in playlist.splitlines():
+        if line.startswith("#EXT-X-MAP:"):
+            init = line.split('URI="', 1)[1].split('"', 1)[0]
+        elif line.startswith("#EXTINF:"):
+            dur = float(line[8:].split(",", 1)[0])
+        elif line and not line.startswith("#"):
+            if t + dur > a and t < b:
+                segs.append((init, line, t))
+            t += dur
+    if not segs:
+        sys.exit(f"section {section} is outside the video (length {ts(t)})")
+    offset = a - segs[0][2]                # trim to the exact start
+    print(f"Fetching {len(segs)} segments ({ts(a)}-{ts(min(b, t))}) of {vid} ...", flush=True)
+    dest.mkdir(parents=True, exist_ok=True)
+    out = dest / f"{vid}_{int(a)}-{int(b)}.mp4"
+    with tempfile.TemporaryDirectory() as tmp:
+        tmp = Path(tmp)
+        jobs = {}
+        for i, (ini, seg, _) in enumerate(segs):
+            jobs[tmp / f"s{i:05d}"] = base + seg if "://" not in seg else seg
+        for ini in {s[0] for s in segs if s[0]}:
+            jobs[tmp / ("init_" + Path(ini).name)] = base + ini if "://" not in ini else ini
+        with ThreadPoolExecutor(8) as pool:
+            list(pool.map(lambda kv: fetch(kv[1], kv[0]), jobs.items()))
+        # glue each run of segments onto its init header, then join the runs
+        parts, cur, fh = [], None, None
+        for i, (ini, _, _) in enumerate(segs):
+            if ini != cur or fh is None:
+                if fh:
+                    fh.close()
+                cur = ini
+                part = tmp / f"part{len(parts):03d}.mp4"
+                parts.append(part)
+                fh = open(part, "wb")
+                if ini:
+                    fh.write((tmp / ("init_" + Path(ini).name)).read_bytes())
+            fh.write((tmp / f"s{i:05d}").read_bytes())
+        fh.close()
+        lst = tmp / "list.txt"
+        lst.write_text("".join(f"file '{p}'\n" for p in parts))
+        subprocess.run(["ffmpeg", "-v", "error", "-y", "-f", "concat", "-safe", "0",
+                        "-i", str(lst), "-ss", f"{offset:.2f}", "-t", f"{min(b, t) - a:.2f}",
+                        "-c", "copy", "-movflags", "+faststart", str(out)], check=True)
+    print(f"  -> {out}")
+    return out
 
 
 def duration_of(path):
@@ -140,6 +235,8 @@ def main():
     ap.add_argument("inputs", nargs="*", help="video files or folders")
     ap.add_argument("--url", action="append", default=[],
                     help="download a video with yt-dlp first (repeatable)")
+    ap.add_argument("--section", metavar="START-END",
+                    help="with --url: grab only this part of a long VOD, e.g. 2:10:00-2:40:00")
     ap.add_argument("-n", "--count", type=int, default=5,
                     help="moments to keep across all inputs (default 5)")
     ap.add_argument("--length", type=float, default=25, help="clip seconds (default 25)")
@@ -152,13 +249,17 @@ def main():
                     help="drop moments scoring below this (default 0.5; 0 = average)")
     ap.add_argument("-o", "--out", default="auto_shorts.json")
     ap.add_argument("--handle", default="@ViceCityClips")
+    ap.add_argument("--credit", default="",
+                    help='footage owner shown on screen, e.g. "@streamer"')
+    ap.add_argument("--credit-url", default="", help="source link for the description")
     ap.add_argument("--render", action="store_true", help="render with make_short.py")
     args = ap.parse_args()
 
     if not shutil.which("ffmpeg"):
         sys.exit("ffmpeg not found on PATH")
     here = Path(__file__).resolve().parent
-    files = [download(u, here / "footage") for u in args.url]
+    files = [download_section(u, here / "footage", args.section) if args.section
+             else download(u, here / "footage") for u in args.url]
     for inp in args.inputs:
         p = Path(inp)
         files += sorted(f for f in p.rglob("*") if f.suffix.lower() in VIDEO_EXT) \
@@ -198,7 +299,10 @@ def main():
         })
         print(f"  #{i}  {f.name}  {ts(start)}-{ts(end)}  score {sc:.2f}", flush=True)
 
-    out_path.write_text(json.dumps({"handle": args.handle, "shorts": shorts}, indent=2) + "\n")
+    cfg = {"handle": args.handle, "shorts": shorts}
+    if args.credit:
+        cfg.update(credit=args.credit, credit_url=args.credit_url or (args.url[0] if args.url else ""))
+    out_path.write_text(json.dumps(cfg, indent=2) + "\n")
     print(f"\nWrote {len(shorts)} moments to {out_path}", flush=True)
     if args.render and shorts:
         subprocess.run([sys.executable, str(here / "make_short.py"), str(out_path),

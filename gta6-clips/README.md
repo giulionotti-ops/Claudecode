@@ -42,4 +42,20 @@ uploads or streams, never other creators' videos or leaks (see `CHANNEL.md`).
 Tune with `--length 30`, `--lead 10` (build-up before the peak) and
 `--min-score 1` (stricter).
 
+## Clip a Twitch stream
+
+Only clip streamers who've given permission (a clipping program, or a written
+yes). Pull just the part you want from a long VOD, find the moments, and credit
+the streamer:
+
+```bash
+python3 auto_clip.py --url https://www.twitch.tv/videos/<id> \
+    --section 2:10:00-2:40:00 --credit @streamer -n 4
+python3 make_short.py auto_shorts.json
+```
+
+`--credit` puts "via @streamer" on screen and writes a ready-to-paste
+description (`out/*.txt`) with the source link. The credit also works without
+`--url`: add `"credit": "@name"` (and `"credit_url"`) to any config.
+
 `footage/` and `out/` are git-ignored, so videos never get committed.
