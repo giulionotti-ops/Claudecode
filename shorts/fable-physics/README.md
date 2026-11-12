@@ -15,3 +15,4 @@ Creature-science shorts: one mythical creature per short, worked out with real b
 |---|---|---|
 | 1 | `../dragon-eggs` | dragon (eggs in a volcano) |
 | 2 | `../dragon-flight` | dragon (how it flies) |
+| 3 | `../kraken` | kraken (giant squid: buoyancy, oxygen, eyes) |
