@@ -42,6 +42,19 @@ uploads or streams, never other creators' videos or leaks (see `CHANNEL.md`).
 Tune with `--length 30`, `--lead 10` (build-up before the peak) and
 `--min-score 1` (stricter).
 
+## Find the viral moments first
+
+`viral_moments.py` transcribes a stream locally (faster-whisper, free) and lines
+every spoken line up with how loud and hectic that moment is, in 12-minute
+windows. The `viral-moments` skill then scores the sheet (hook, reaction,
+payoff, shareability, 0-25 each), reranks across the video and checks frames
+before anything is rendered:
+
+```bash
+python3 viral_moments.py --url https://www.twitch.tv/videos/<id> --section 1:00:00-1:30:00
+# read analysis/<name>.moments.md
+```
+
 ## Clip a Twitch stream
 
 Only clip streamers who've given permission (a clipping program, or a written

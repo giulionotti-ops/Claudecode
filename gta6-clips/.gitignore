@@ -1,3 +1,5 @@
 footage/*
 !footage/.gitkeep
 out/
+analysis/
+__pycache__/

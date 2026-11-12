@@ -48,6 +48,11 @@ if ! command -v yt-dlp >/dev/null 2>&1; then
   uv tool install yt-dlp
 fi
 
+# faster-whisper: local transcription for gta6-clips/viral_moments.py
+if ! python3 -c "import faster_whisper" >/dev/null 2>&1; then
+  uv pip install --system --break-system-packages -q faster-whisper
+fi
+
 # Make sure the claude-mem launcher is on PATH for the session
 if [ -n "${CLAUDE_ENV_FILE:-}" ]; then
   echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$CLAUDE_ENV_FILE"
