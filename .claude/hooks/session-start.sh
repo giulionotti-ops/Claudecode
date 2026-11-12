@@ -43,7 +43,16 @@ if ! command -v skillspector >/dev/null 2>&1; then
   uv tool install git+https://github.com/NVIDIA/skillspector.git
 fi
 
-# Make sure the claude-mem launcher is on PATH for the session
+# Rokit + Rojo (Roblox build tools, pinned in rokit.toml)
+if [ ! -x "$HOME/.rokit/bin/rokit" ]; then
+  curl -sSfL https://raw.githubusercontent.com/rojo-rbx/rokit/main/scripts/install.sh | bash
+fi
+if [ -f rokit.toml ]; then
+  "$HOME/.rokit/bin/rokit" trust rojo-rbx/rojo || true
+  "$HOME/.rokit/bin/rokit" install
+fi
+
+# Make sure the claude-mem launcher and Rokit tools are on PATH for the session
 if [ -n "${CLAUDE_ENV_FILE:-}" ]; then
-  echo 'export PATH="$HOME/.local/bin:$PATH"' >> "$CLAUDE_ENV_FILE"
+  echo 'export PATH="$HOME/.local/bin:$HOME/.rokit/bin:$PATH"' >> "$CLAUDE_ENV_FILE"
 fi
