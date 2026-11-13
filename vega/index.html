@@ -2,12 +2,13 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#02070d">
 <title>Neesmo</title>
 <style>
   :root { --c: #3dff8f; --c2: #c6ff4a; --bg: #02070d; --dim: rgba(61,255,143,.35); --err: #ff5f6d; }
   * { box-sizing: border-box; }
-  html, body { margin: 0; height: 100%; background: radial-gradient(ellipse at center, #06331a 0%, var(--bg) 70%); color: var(--c);
+  html, body { margin: 0; height: 100%; background: var(--bg) radial-gradient(ellipse at center, #06331a 0%, var(--bg) 70%);  /* solid colour under the gradient: phones paint the toolbar/home-bar strip with it, not white */ color: var(--c);
     font: 14px/1.4 ui-monospace, "SF Mono", Menlo, Consolas, monospace; overflow: hidden; }
   body::after { content: ""; position: fixed; inset: 0; pointer-events: none;
     background: repeating-linear-gradient(0deg, rgba(61,255,143,.03) 0 1px, transparent 1px 3px); }
@@ -22,7 +23,7 @@
     display: flex; flex-direction: column; gap: 6px; mask-image: linear-gradient(transparent, #000 30%); padding-top: 24px; }
   #log p { margin: 0; padding: 6px 10px; border-left: 2px solid var(--dim); background: rgba(61,255,143,.05); }
   #log p.you { border-color: var(--c2); color: var(--c2); }
-  form { position: fixed; left: 16px; right: 16px; bottom: 16px; display: flex; gap: 8px; max-width: 720px; margin: 0 auto; }
+  form { position: fixed; left: 16px; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); display: flex; gap: 8px; max-width: 720px; margin: 0 auto; }
   input, select, button { font: inherit; color: var(--c); background: rgba(2,20,30,.8); border: 1px solid var(--dim); border-radius: 4px; }
   input { flex: 1; min-width: 0; padding: 12px; outline: none; }
   input:focus, select:focus, button:focus-visible { border-color: var(--c); box-shadow: 0 0 10px var(--dim); outline: none; }
