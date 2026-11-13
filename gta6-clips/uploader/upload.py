@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Vice City Clips uploader: posts approved shorts to YouTube and sets the channel's branding.
+"""Clip Rush uploader: posts approved shorts to YouTube and sets the channel's branding.
 
   python3 upload.py auth                    sign in once with the CLIPS channel's Google account
   python3 upload.py auth "<landing URL>"    (headless server) finish signing in

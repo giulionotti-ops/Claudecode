@@ -1,8 +1,9 @@
 #!/usr/bin/env python3
-"""Draw the channel's profile picture and banner (Vice City Clips).
+"""Draw the channel's profile picture and banner (Clip Rush).
 
-Original art only: a synthwave sunset, palm silhouettes and a "VC" monogram in
-the channel colours from CHANNEL.md. No GTA or Rockstar logos or key art.
+Original art only: a synthwave sunset, neon mountains and a "CR" monogram with
+a play arrow, in the channel colours from CHANNEL.md. No game or publisher
+logos or key art.
 
     python3 make_branding.py          # writes avatar.png (800x800) and banner.png (2560x1440)
 """
@@ -94,6 +95,29 @@ def palm(d, base_x, base_y, height, lean, color=(8, 2, 16)):
         d.polygon(poly_top + poly_bot[::-1], fill=color)
 
 
+def mountains(img, horizon, peaks, color=(48, 14, 74), edge=CYAN):
+    """Neon-edged mountain range sitting on the horizon."""
+    w, _ = img.size
+    pts = [(0, horizon)] + [(int(x * w), int(horizon - h * img.size[1])) for x, h in peaks] + [(w, horizon)]
+    layer = Image.new("RGBA", img.size, (0, 0, 0, 0))
+    d = ImageDraw.Draw(layer)
+    d.polygon(pts, fill=color + (255,))
+    d.line(pts, fill=edge + (255,), width=max(3, w // 500), joint="curve")
+    g = layer.filter(ImageFilter.GaussianBlur(w // 260))
+    img.paste(g, (0, 0), g)
+    img.paste(layer, (0, 0), layer)
+
+
+def play_icon(img, cx, cy, size, fill=YELLOW):
+    layer = Image.new("RGBA", img.size, (0, 0, 0, 0))
+    d = ImageDraw.Draw(layer)
+    tri = [(cx - size * 0.4, cy - size * 0.5), (cx - size * 0.4, cy + size * 0.5), (cx + size * 0.5, cy)]
+    d.polygon(tri, fill=fill + (255,))
+    g = layer.filter(ImageFilter.GaussianBlur(size * 0.15))
+    img.paste(g, (0, 0), g)
+    img.paste(layer, (0, 0), layer)
+
+
 def glow_text(img, xy, text, size, fill, outline=None, anchor="mm", blur=18):
     font = ImageFont.truetype(BLACK, size)
     layer = Image.new("RGBA", img.size, (0, 0, 0, 0))
@@ -107,30 +131,29 @@ def glow_text(img, xy, text, size, fill, outline=None, anchor="mm", blur=18):
 
 
 def avatar(path, s=800):
-    horizon = int(s * 0.66)
+    horizon = int(s * 0.70)
     img = sky(s, s, horizon)
+    mountains(img, horizon, [(0.0, 0.14), (0.1, 0.24), (0.2, 0.13), (0.3, 0.05), (0.36, 0.0),
+                             (0.64, 0.0), (0.72, 0.07), (0.82, 0.19), (0.92, 0.12), (1.0, 0.22)])
     sun(img, s // 2, horizon + int(s * 0.06), int(s * 0.30), horizon)
     grid(img, horizon)
-    d = ImageDraw.Draw(img)
-    palm(d, int(s * 0.16), s + 10, int(s * 0.80), 0.18)
-    palm(d, int(s * 0.86), s + 10, int(s * 0.62), -0.22)
-    glow_text(img, (s // 2, int(s * 0.47)), "VC", int(s * 0.36), (255, 255, 255), PINK, blur=22)
-    # circular-crop safe: YouTube shows a circle, keep the monogram central
+    glow_text(img, (s // 2, int(s * 0.44)), "CR", int(s * 0.36), (255, 255, 255), PINK, blur=22)
+    play_icon(img, int(s * 0.5), int(s * 0.80), int(s * 0.11))
     img.save(path)
 
 
 def banner(path, w=2560, h=1440):
-    horizon = int(h * 0.66)
+    horizon = int(h * 0.68)
     img = sky(w, h, horizon)
+    mountains(img, horizon, [(0.0, 0.22), (0.07, 0.31), (0.15, 0.17), (0.23, 0.26), (0.31, 0.10),
+                             (0.37, 0.0), (0.63, 0.0), (0.69, 0.11), (0.77, 0.27), (0.85, 0.16),
+                             (0.93, 0.32), (1.0, 0.21)])
     sun(img, w // 2, horizon + int(h * 0.05), int(h * 0.30), horizon)
     grid(img, horizon)
-    d = ImageDraw.Draw(img)
-    for x, ht, lean in [(250, 1250, 0.2), (520, 980, 0.12), (2330, 1250, -0.2), (2060, 960, -0.12)]:
-        palm(d, x, h + 20, ht, lean)
     # everything readable stays inside YouTube's 1546x423 safe area (centred)
     cy = h // 2
-    glow_text(img, (w // 2, cy - 40), "VICE CITY CLIPS", 150, (255, 255, 255), PINK, blur=26)
-    glow_text(img, (w // 2, cy + 105), "DAILY GAMING CLIPS  •  BEST STREAM MOMENTS  •  GTA 6",
+    glow_text(img, (w // 2, cy - 40), "CLIP RUSH", 170, (255, 255, 255), PINK, blur=26)
+    glow_text(img, (w // 2, cy + 110), "THE BEST GAMING STREAM MOMENTS  •  NEW CLIPS DAILY",
               46, CYAN, None, blur=10)
     img.save(path)
 
