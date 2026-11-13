@@ -20,6 +20,7 @@ AGENTS = [  # id, fallback name, folder, short role
     ("physics", "Fable physics", HOME / "physics-channel", "Physics shorts"),
     ("roblox", "Roblox games", HOME / "roblox", "Roblox games"),
 ]
+HIDDEN = {"setup"}  # not shown as a card (the user asked); its report still works
 TAIL_BYTES = 6 * 1024 * 1024   # enough for today's activity without reading whole multi-MB logs
 _cache: dict[str, tuple[float, dict]] = {}
 
@@ -203,6 +204,8 @@ def overview() -> list[dict]:
     keep = ("id", "name", "role", "online", "status", "last_active_ago", "last_reply", "model", "today", "git")
     out = []
     for a in AGENTS:
+        if a[0] in HIDDEN:
+            continue
         r = report(a[0]) or {}
         card = {k: r.get(k) for k in keep}
         card["last_reply"] = (card.get("last_reply") or "")[:160]

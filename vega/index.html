@@ -50,6 +50,7 @@
   .agent:hover, .agent:focus-visible { border-color: var(--c); box-shadow: 0 0 12px var(--dim); outline: none; }
   .agent b { font-size: 14px !important; letter-spacing: .04em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .agent .st { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .agent .st .ago { display: inline; }
   .st.working { color: var(--c2); text-shadow: 0 0 8px var(--c2); } .st.idle { color: var(--c); } .st.offline { color: var(--err); }
   .st.working::before { content: "● "; animation: pulse 1.2s infinite; } .st.idle::before { content: "● "; } .st.offline::before { content: "○ "; }
   @keyframes pulse { 50% { opacity: .2; } }
@@ -80,11 +81,15 @@
   .bar i::after { content: ""; display: block; height: 100%; width: var(--w); background: var(--c2); }
   .actions { display: flex; justify-content: flex-end; } .actions button { padding: 10px 16px; }
   @media (max-width: 700px) { .grid { grid-template-columns: 1fr; } .rp { padding: 14px; } .kpis { grid-template-columns: repeat(3, 1fr); gap: 6px; }
-    .kpi { padding: 8px; } .kpi b { font-size: 16px; } .kpi span { font-size: 9px; } .agent .ago { display: none; } .agent .st { font-size: 10px; } }
+    .kpi { padding: 8px; } .kpi b { font-size: 16px; } .kpi span { font-size: 9px; } .agent .st .ago { display: none; } .agent .st { font-size: 10px; } }
   @media (max-width: 900px) {  /* phones and narrow windows: two scrolling strips under the clock */
     .cards { flex-direction: row; transform: none; left: 16px; right: 16px; width: auto; overflow-x: auto; gap: 8px; }
-    .cards.l { top: calc(122px + env(safe-area-inset-top)); left: 16px; } .cards.r { top: calc(184px + env(safe-area-inset-top)); right: 16px; }
-    .card { min-width: 118px; padding: 6px 10px; } .card b { font-size: 16px; } .card small { display: none; }
+    /* phones: the circle moves up, agent cards sit below it in two rows above the input */
+    .cards { top: auto; overflow: visible; }
+    .cards.l { bottom: calc(138px + env(safe-area-inset-bottom)); } .cards.r { bottom: calc(76px + env(safe-area-inset-bottom)); }
+    .card { flex: 1 1 0; min-width: 0; padding: 6px 10px; } .card b { font-size: 15px; } .card small { display: none; }
+    #status { top: calc(40% + min(26vmin, 210px)); }
+    #log { bottom: calc(204px + env(safe-area-inset-bottom)); max-height: 16vh; }
   }
 </style>
 </head>
@@ -321,7 +326,7 @@ function frame(t) {
   else level *= .9;
   const R = Math.min(cv.width, cv.height) * .22, hot = mode === 'listening' ? '#c6ff4a' : '#3dff8f';
   g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, cv.width, cv.height);
-  g.translate(cv.width / 2, cv.height / 2 - R * .15);
+  g.translate(cv.width / 2, cv.height * (innerWidth <= 900 ? .4 : .5) - R * .15);   // phones: higher, cards go below
   // core glow
   const core = g.createRadialGradient(0, 0, 0, 0, 0, R * (.45 + level * .25));
   core.addColorStop(0, '#eaffef'); core.addColorStop(.25, hot); core.addColorStop(1, 'transparent');
