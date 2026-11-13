@@ -34,3 +34,5 @@ for run in 1 2; do   # at most 2 new shorts per job
 done
 
 (cd "$HERE/uploader" && python3 upload.py auto) || echo "upload failed ($?)"
+# phone notification (Neesmo) for shorts newly waiting for approval
+/root/Claudecode/vega/.venv/bin/python "$HERE/notify.py" --pending || echo "notify failed ($?)"

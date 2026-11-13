@@ -1,3 +1,4 @@
 logs/
 PAUSE
 .daily.lock
+.notified.json
