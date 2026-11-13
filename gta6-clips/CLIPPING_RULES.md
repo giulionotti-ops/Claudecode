@@ -17,6 +17,9 @@ Follow these for every clip unless the owner says otherwise.
    `auto_clip.py` scores as a shortlist, check frames, and present the picks
    with timestamps and why each could go viral.
 6. **Daily automation.** A scheduled task scans yesterday's most-watched
-   gaming clips every day and follows `DAILY.md`. Every short needs the
-   owner's approval until `approvals.json` has `"auto_post": true`, which only
-   the owner can turn on.
+   gaming clips every day and follows `DAILY.md`. Auto-posting is ON (owner,
+   2026-11-13): the best picks of approved streamers go up on their own, max
+   1 a day (2 a day in GTA 6 launch week). Unapproved streamers are never
+   posted.
+7. **Channel scope.** A general gaming clipping channel, focused on GTA 6
+   once it launches (Nov 19) because it'll be the hot topic.

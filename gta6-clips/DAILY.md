@@ -14,12 +14,19 @@ Run by the daily scheduled task (a fresh cloud session each day). Follow
    `facecam`, `credit`, `credit_url` = clip URL, `title` = hook idea for the
    description) and run `python3 make_short.py daily/<date>/shorts.json
    --out daily/<date>/out`. Never render or post a NEEDS PERMISSION clip.
-4. **Ask for approval.** Send the owner each rendered short with its
-   description (SendUserFile, status proactive) and a short list: streamer,
-   views, score, why it could go viral. Also list the best NEEDS PERMISSION
-   moments by streamer, so the owner knows who to ask. Then wait.
-5. **Record the answer** in `approvals.json` (one entry per short: date,
-   streamer, clip URL, score, approved true/false, owner's note), commit and
-   push. Approved shorts are posted by the owner during the approval phase.
-6. **Posting mode.** `approvals.json` → `"auto_post"`. While false, never
-   post. It turns true only when the owner says so (asked after one week).
+4. **Post or ask.** Read `approvals.json`.
+   - `"auto_post": true` (on since 2026-11-13): add the top picks to
+     `approvals.json` as approved (`date`, `streamer`, `file` = the rendered
+     mp4 path relative to gta6-clips, `title`, `youtube_title`, `score`,
+     `approved: true`, `by: "auto"`), max 1 per day (2 a day Nov 19-25),
+     then run `python3 uploader/upload.py post <date>`. Send the owner a
+     short report: what was posted (links), what was skipped and why.
+   - `"auto_post": false`: send the owner each rendered short with its
+     description (SendUserFile, status proactive) and wait for approval.
+   Either way, list the best NEEDS PERMISSION moments by streamer, so the
+   owner knows who to ask.
+5. **Record** every decision in `approvals.json` (and uploads land in
+   `posted.json`), commit and push.
+6. **Titles.** `youtube_title`: the hook, 40-70 characters, plus `#Shorts`;
+   name the streamer and game when known (e.g. "xQc can't believe this GTA
+   crash #Shorts"). Never clickbait beyond what the clip shows.

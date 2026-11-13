@@ -1,5 +1,7 @@
 {
-  "auto_post": false,
+  "auto_post": true,
   "approval_phase_started": "2026-11-13",
-  "shorts": []
+  "shorts": [],
+  "auto_post_enabled": "2026-11-13",
+  "auto_post_note": "Owner chose auto-posting on 2026-11-13, skipping the week of approvals. Only approved streamers are ever posted."
 }
