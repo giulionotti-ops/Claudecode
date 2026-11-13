@@ -8,8 +8,8 @@ and scores their energy, and writes one sheet for the viral-moments skill to
 pick from.
 
 Where the clips come from:
-  * With TWITCH_CLIENT_ID and TWITCH_CLIENT_SECRET set (a free app from
-    dev.twitch.tv): yesterday's top clips across the top gaming categories,
+  * With TWITCH_CLIENT_ID and TWITCH_CLIENT_SECRET set, in the environment or
+    in ~/.config/gta6-clips/twitch.env (a free app from dev.twitch.tv): yesterday's top clips across the top gaming categories,
     so the most-watched streams are found automatically.
   * Without them: the channels listed in streamers.json.
 
@@ -35,6 +35,17 @@ from pathlib import Path
 import viral_moments as vm
 
 HERE = Path(__file__).resolve().parent
+KEYFILE = Path.home() / ".config" / "gta6-clips" / "twitch.env"
+
+
+def load_keys():
+    """TWITCH_CLIENT_ID / TWITCH_CLIENT_SECRET from the environment, else from
+    ~/.config/gta6-clips/twitch.env (KEY=value lines, outside the repo)."""
+    if KEYFILE.exists():
+        for line in KEYFILE.read_text().splitlines():
+            k, _, v = line.strip().partition("=")
+            if k in ("TWITCH_CLIENT_ID", "TWITCH_CLIENT_SECRET") and v:
+                os.environ.setdefault(k, v.strip().strip('"'))
 NON_GAMING = {"just chatting", "music", "irl", "talk shows & podcasts", "art",
               "asmr", "sports", "travel & outdoors", "pools, hot tubs, and beaches",
               "special events", "science & technology", "food & drink",
@@ -124,6 +135,7 @@ def main():
     ap.add_argument("--config", default=str(HERE / "streamers.json"))
     args = ap.parse_args()
 
+    load_keys()
     day = (dt.date.fromisoformat(args.date) if args.date
            else dt.datetime.now(dt.timezone.utc).date() - dt.timedelta(days=1))
     cfg = json.loads(Path(args.config).read_text())
