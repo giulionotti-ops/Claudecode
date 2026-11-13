@@ -55,6 +55,8 @@
   .agent b { font-size: 14px !important; letter-spacing: .04em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .agent .st { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .agent .st .ago { display: inline; }
+  .agent.dev { opacity: .5; filter: grayscale(1); } .agent.dev:hover, .agent.dev:focus-visible { opacity: .8; }
+  .st.dev { color: #7d8a83; } .st.dev::before { content: "◌ "; }
   .st.working { color: var(--c2); text-shadow: 0 0 8px var(--c2); } .st.idle { color: var(--c); } .st.offline { color: var(--err); }
   .st.working::before { content: "● "; animation: pulse 1.2s infinite; } .st.idle::before { content: "● "; } .st.offline::before { content: "○ "; }
   @keyframes pulse { 50% { opacity: .2; } }
@@ -235,16 +237,17 @@ addEventListener('keydown', e => { if (e.code === 'Space' && e.target === docume
 addEventListener('keyup', e => { if (e.code === 'Space' && e.target === document.body) stopRec(); });
 
 // ── agent cards + report ──
-const AGENT_SHORT = { setup: 'Setup', glazier: 'Glazier', comics: 'Comics', gta6: 'Clips', physics: 'Physics', roblox: 'Roblox' };  // one word per card
-const AGENT_COLORS = { setup: '#3dff8f', glazier: '#ffd166', comics: '#ff6b6b', gta6: '#ff7ac6', physics: '#5cc8ff', roblox: '#b388ff' };
+const AGENT_SHORT = { setup: 'Setup', glazier: 'YouTube', comics: 'Comics', gta6: 'Clips', physics: 'Physics', roblox: 'Roblox' };  // one word per card
+const AGENT_DEV = new Set(['glazier']);   // still in development: shown greyed out
+const AGENT_COLORS = { setup: '#3dff8f', glazier: '#7d8a83', comics: '#ff6b6b', gta6: '#ff7ac6', physics: '#5cc8ff', roblox: '#b388ff' };
 const fmt = n => n == null ? '—' : Number(n).toLocaleString();
 const kfmt = n => !n ? '0' : n >= 1e6 ? (n / 1e6).toFixed(1) + 'M' : n >= 1e3 ? Math.round(n / 1e3) + 'k' : String(n);
 const esc = t => String(t ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 async function loadAgents() {
   try {
     const { agents } = await (await api('/api/agents')).json(), half = Math.ceil(agents.length / 2);
-    const card = a => `<button type="button" class="card agent" style="--a:${AGENT_COLORS[a.id] || '#3dff8f'}" data-id="${esc(a.id)}" aria-label="${esc(a.name)} report">
-      <span class="st ${esc(a.status)}">${esc(a.status)}<span class="ago"> · ${esc(a.last_active_ago || '—')}</span></span><b>${esc(AGENT_SHORT[a.id] || a.name)}</b>
+    const card = a => `<button type="button" class="card agent${AGENT_DEV.has(a.id) ? ' dev' : ''}" style="--a:${AGENT_COLORS[a.id] || '#3dff8f'}" data-id="${esc(a.id)}" aria-label="${esc(a.name)} report">
+      <span class="st ${AGENT_DEV.has(a.id) ? 'dev' : esc(a.status)}">${AGENT_DEV.has(a.id) ? 'in dev' : esc(a.status)}<span class="ago"> · ${esc(a.last_active_ago || '—')}</span></span><b>${esc(AGENT_SHORT[a.id] || a.name)}</b>
       <small>${esc(a.last_reply || a.role)}</small></button>`;
     $('#agents-l').innerHTML = agents.slice(0, half).map(card).join('');
     $('#agents-r').innerHTML = agents.slice(half).map(card).join('');
@@ -259,7 +262,7 @@ async function openReport(id) {
     const r = await (await api('/api/agents/' + encodeURIComponent(id))).json(); if (reportFor !== id) return;
     const t = r.today || {}, g = r.git || {}, ctxPct = Math.min(100, Math.round((r.context_tokens || 0) / 1e6 * 100));
     $('#report').style.setProperty('--a', AGENT_COLORS[r.id] || '#3dff8f');
-    $('#r-name').textContent = r.name;
+    $('#r-name').textContent = AGENT_DEV.has(r.id) ? `${AGENT_SHORT[r.id]} (in development)` : r.name;
     $('#r-sub').innerHTML = `<span class="st ${esc(r.status)}">${esc(r.status)}</span> · ${esc(r.role)} · last active ${esc(r.last_active_ago || '—')} · ${esc(r.model || '')}`;
     const kpi = (label, val, w) => `<div class="kpi"><span>${label}</span><b>${val}</b>${w != null ? `<i style="--w:${w}%"></i>` : ''}</div>`;
     $('#r-kpis').innerHTML = kpi('Requests today', fmt(t.requests || 0)) + kpi('Tool calls today', fmt(t.tool_calls || 0))
