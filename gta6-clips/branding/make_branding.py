@@ -159,6 +159,6 @@ def banner(path, w=2560, h=1440):
 
 
 if __name__ == "__main__":
-    avatar(HERE / "avatar.png")
-    banner(HERE / "banner.png")
-    print("wrote avatar.png and banner.png")
+    avatar(HERE / "avatar-synthwave.png")
+    banner(HERE / "banner-synthwave.png")
+    print("wrote avatar-synthwave.png and banner-synthwave.png (old art; the live art comes from fit_banner.py)")
