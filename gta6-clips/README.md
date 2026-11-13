@@ -1,4 +1,4 @@
-# Clip Rush: gaming clips Shorts channel kit
+# Stream Peaks: gaming clips Shorts channel kit
 
 GTA 6 launches **November 19, 2026**. This folder has everything needed to run a
 GTA 6 clips channel on YouTube Shorts, TikTok and Instagram Reels from day one.

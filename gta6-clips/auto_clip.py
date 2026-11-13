@@ -248,7 +248,7 @@ def main():
     ap.add_argument("--min-score", type=float, default=0.5,
                     help="drop moments scoring below this (default 0.5; 0 = average)")
     ap.add_argument("-o", "--out", default="auto_shorts.json")
-    ap.add_argument("--handle", default="@ClipRush")
+    ap.add_argument("--handle", default="@StreamPeaks")
     ap.add_argument("--credit", default="",
                     help='footage owner shown on screen, e.g. "@streamer"')
     ap.add_argument("--credit-url", default="", help="source link for the description")

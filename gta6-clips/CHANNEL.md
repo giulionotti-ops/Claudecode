@@ -1,10 +1,10 @@
-# Channel plan: Clip Rush
+# Channel plan: Stream Peaks
 
 ## Identity
-- **Name:** Clip Rush: a general gaming clips channel (the best Twitch stream
+- **Name:** Stream Peaks: a general gaming clips channel (the best Twitch stream
   moments), focused on GTA 6 from its launch on Nov 19 because it'll be the
   hot topic.
-- **Handle:** `@ClipRush` (backups: `@ClipRushTV`, `@ClipRushGG`). Check
+- **Handle:** `@StreamPeaks` (backups: `@StreamPeaksTV`, `@StreamPeaksGG`). Check
   availability on YouTube, TikTok and Instagram before you commit, and use the
   same handle everywhere.
 - **Don't** put game or publisher names or logos (GTA, Rockstar, Twitch) in
@@ -17,7 +17,7 @@
 ## Look
 - Colors: sunset pink `#FF4FA3`, cyan `#4DE1FF`, caption yellow `#FFE14D` on black
 - Font: a heavy sans (Inter Black / Arial Black). Titles in ALL CAPS, 2 lines max
-- Avatar and banner: synthwave sunset, neon mountains, "CR" monogram
+- Avatar and banner: synthwave sunset, neon mountains, "SP" monogram
   (branding/, drawn by make_branding.py)
 
 ## Content pillars

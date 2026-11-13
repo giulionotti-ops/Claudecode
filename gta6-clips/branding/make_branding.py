@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
-"""Draw the channel's profile picture and banner (Clip Rush).
+"""Draw the channel's profile picture and banner (Stream Peaks).
 
-Original art only: a synthwave sunset, neon mountains and a "CR" monogram with
+Original art only: a synthwave sunset, neon mountains and an "SP" monogram with
 a play arrow, in the channel colours from CHANNEL.md. No game or publisher
 logos or key art.
 
@@ -137,7 +137,7 @@ def avatar(path, s=800):
                              (0.64, 0.0), (0.72, 0.07), (0.82, 0.19), (0.92, 0.12), (1.0, 0.22)])
     sun(img, s // 2, horizon + int(s * 0.06), int(s * 0.30), horizon)
     grid(img, horizon)
-    glow_text(img, (s // 2, int(s * 0.44)), "CR", int(s * 0.36), (255, 255, 255), PINK, blur=22)
+    glow_text(img, (s // 2, int(s * 0.44)), "SP", int(s * 0.36), (255, 255, 255), PINK, blur=22)
     play_icon(img, int(s * 0.5), int(s * 0.80), int(s * 0.11))
     img.save(path)
 
@@ -152,7 +152,7 @@ def banner(path, w=2560, h=1440):
     grid(img, horizon)
     # everything readable stays inside YouTube's 1546x423 safe area (centred)
     cy = h // 2
-    glow_text(img, (w // 2, cy - 40), "CLIP RUSH", 170, (255, 255, 255), PINK, blur=26)
+    glow_text(img, (w // 2, cy - 40), "STREAM PEAKS", 160, (255, 255, 255), PINK, blur=26)
     glow_text(img, (w // 2, cy + 110), "THE BEST GAMING STREAM MOMENTS  •  NEW CLIPS DAILY",
               46, CYAN, None, blur=10)
     img.save(path)
