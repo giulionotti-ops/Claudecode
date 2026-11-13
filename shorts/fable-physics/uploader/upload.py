@@ -126,10 +126,10 @@ def upload(entry, when, dry=False):
 def auto(dry=False):
     queue, done = load(QUEUE, []), load(LOG, {})
     todo = [e for e in queue if e['name'] not in done]
-    held = [e['name'] for e in todo if e.get('approved') is False]
-    if os.path.exists(os.path.join(HERE, '..', 'AUTO_APPROVE')): held = []   # owner switched to fully automatic
-    if held: print('Waiting for approval:', ', '.join(held))
-    else: todo = [e for e in todo if e.get('approved') is not False]   # in order: an unapproved short does not block later approved ones
+    if not os.path.exists(os.path.join(HERE, '..', 'AUTO_APPROVE')):   # AUTO_APPROVE = owner switched to fully automatic
+        held = [e['name'] for e in todo if e.get('approved') is False]
+        if held: print('Waiting for approval:', ', '.join(held))
+        todo = [e for e in todo if e.get('approved') is not False]   # an unapproved short does not block later approved ones
     if not todo: print('Nothing new to upload.'); return
     sim = dict(done)
     for e in todo:
