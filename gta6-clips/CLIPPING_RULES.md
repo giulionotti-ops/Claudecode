@@ -16,3 +16,7 @@ Follow these for every clip unless the owner says otherwise.
    moments in the VOD (big reactions, chaos, funny fails, clutch plays). Use the
    `auto_clip.py` scores as a shortlist, check frames, and present the picks
    with timestamps and why each could go viral.
+6. **Daily automation.** A scheduled task scans yesterday's most-watched
+   gaming clips every day and follows `DAILY.md`. Every short needs the
+   owner's approval until `approvals.json` has `"auto_post": true`, which only
+   the owner can turn on.

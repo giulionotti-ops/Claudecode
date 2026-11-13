@@ -3,3 +3,4 @@ footage/*
 out/
 analysis/
 __pycache__/
+daily/
