@@ -27,5 +27,7 @@ if [ "$WAITING" -lt 2 ]; then
     --output-format text </dev/null || echo "claude run failed ($?)"
 fi
 
-cd "$HERE/uploader" && python3 upload.py upload --all || echo "upload: nothing new or failed"
+(cd "$HERE/uploader" && python3 upload.py upload --all) || echo "upload: nothing new or failed"
+BR=$(git -C "$HERE" rev-parse --abbrev-ref HEAD)
+git -C "$HERE" push -q origin "$BR" || echo "push failed"
 echo "=== done $(date) ==="
