@@ -129,7 +129,7 @@
   "name": "Kappa",
   "culture": "Japan",
   "familiar": false,
-  "intro": null,
+  "intro": "kappa-intro",
   "physics": []
  },
  {
