@@ -1,5 +1,8 @@
 // Blocky 3D kit: characters, props and canvas textures. Everything is plain boxes with flat colours.
 import * as THREE from 'three';
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js';
+// Soft toy look: every box gets bevelled edges (thin slabs stay sharp).
+export const geo = (w, h, d) => { const m = Math.min(w, h, d); return m < .12 ? new THREE.BoxGeometry(w, h, d) : new RoundedBoxGeometry(w, h, d, 3, Math.min(.22, m * .2)); };
 
 export const clamp = (x, a = 0, b = 1) => Math.min(b, Math.max(a, x));
 export const seg = (t, a, b) => clamp((t - a) / (b - a));
@@ -15,7 +18,7 @@ export const mat = (color, opts = {}) => {
   return matCache.get(k);
 };
 export function box(w, h, d, color, x = 0, y = 0, z = 0, parent) {
-  const m = new THREE.Mesh(new THREE.BoxGeometry(w, h, d), typeof color === 'string' || typeof color === 'number' ? mat(color) : color);
+  const m = new THREE.Mesh(geo(w, h, d), typeof color === 'string' || typeof color === 'number' ? mat(color) : color);
   m.position.set(x, y, z); m.castShadow = true; m.receiveShadow = true;
   if (parent) parent.add(m);
   return m;
@@ -68,6 +71,10 @@ function drawFace(g, W, H, kind, skin) {
   } else if (kind === 'bored') {
     eye(L, Y, 22); eye(R, Y, 22); brow(L, 94, 0); brow(R, 94, 0);
     g.strokeStyle = '#4a2418'; g.lineWidth = 8; g.beginPath(); g.moveTo(108, 186); g.lineTo(150, 186); g.stroke();
+  } else if (kind === 'stars') {
+    const star = (x, y) => { g.fillStyle = '#ffd23f'; g.strokeStyle = '#8a5a00'; g.lineWidth = 4; g.beginPath(); for (let i = 0; i < 10; i++) { const r = i % 2 ? 11 : 26, a = -Math.PI / 2 + i * Math.PI / 5; g.lineTo(x + Math.cos(a) * r, y + Math.sin(a) * r); } g.closePath(); g.fill(); g.stroke(); };
+    star(L, Y); star(R, Y); brow(L, 82, -.15); brow(R, 82, .15); blush();
+    g.fillStyle = '#5a1f1f'; g.beginPath(); g.moveTo(96, 174); g.quadraticCurveTo(128, 230, 160, 174); g.closePath(); g.fill();
   } else { // neutral
     eye(L, Y); eye(R, Y); brow(L, 86, -.05); brow(R, 86, .05);
     g.strokeStyle = '#4a2418'; g.lineWidth = 8; g.beginPath(); g.moveTo(108, 182); g.quadraticCurveTo(128, 192, 148, 182); g.stroke();
@@ -93,7 +100,7 @@ export function person(o = {}) {
   const head = new THREE.Group(); head.position.y = .62; neck.add(head);
   const skinM = mat(P.skin);
   const faceM = new THREE.MeshLambertMaterial({ map: faceTex('neutral', P.skin) });
-  const hm = new THREE.Mesh(new THREE.BoxGeometry(1.25, 1.2, 1.15), [skinM, skinM, skinM, skinM, faceM, skinM]);
+  const hm = new THREE.Mesh(geo(1.25, 1.2, 1.15), [skinM, skinM, skinM, skinM, faceM, skinM]);
   hm.castShadow = hm.receiveShadow = true; head.add(hm);
   if (P.cap) { box(1.32, .32, 1.22, P.cap, 0, .7, 0, head); box(1.0, .1, .5, P.cap, 0, .58, .78, head); }
   else if (P.hair) {

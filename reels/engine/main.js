@@ -62,6 +62,9 @@ built.forEach((b, i) => {
   if (b.p.panel?.checkAt != null) SFX.push({ t: b.p.panel.checkAt, kind: 'ding' });
   if (b.p.calendar) b.p.calendar.slice(1).forEach(c => SFX.push({ t: c.at, kind: 'flip' }));
   if (b.end) SFX.push({ t: b.t0 + .05, kind: 'ding' });
+  (b.p.cuts || []).forEach(c => SFX.push({ t: c, kind: 'click' }));
+  for (const k of ['buyAt', 'billAt', 'rainAt', 'notifyAt']) if (b.p[k] != null) SFX.push({ t: b.p[k], kind: k === 'notifyAt' ? 'ding' : k === 'rainAt' ? 'coin' : 'pop' });
+  (b.p.panel?.msgs || b.p.form?.msgs || []).forEach(x => SFX.push({ t: x.at, kind: 'pop' }));
 });
 
 // ---- renderer ----
@@ -76,7 +79,8 @@ window.render = t => {
   const b = built.find(x => t >= x.t0 && t < x.t1) || built[built.length - 1];
   b.update(t);
   // punch-in on each cut
-  const k = seg(t, b.t0, b.t0 + .22); b.camera.zoom = 1 + .06 * (1 - k) ** 2; b.camera.updateProjectionMatrix();
+  const k = seg(t, b.t0, b.t0 + .22); const jc = (b.p.cuts || []).filter(c => t >= c).length;   // jump cuts: alternate wide/tight framing
+  b.camera.zoom = (jc % 2 ? (b.p.cutZoom || 1.35) : 1) * (1 + .06 * (1 - k) ** 2); b.camera.updateProjectionMatrix();
   gl.render(b.scene, b.camera);
   g.clearRect(0, 0, 1080, 1920); g.drawImage(gl.domElement, 0, 0);
   // brief white flash on cuts

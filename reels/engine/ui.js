@@ -78,4 +78,22 @@ export function drawPitch(g, W, H, t, p) {
   g.fillStyle = '#ffd23f'; rrect(g, 380, 40, 120, 70, 14); g.fill(); g.fillStyle = '#1d1d1d'; g.fillText(p.clock || "88'", 440, 77);
 }
 
-export const PANELS = { pitch: drawPitch, form: drawPhoneForm, store: drawStore, paid: drawPaid, billboard: drawBillboard, poster: drawPoster };
+// Chat screen. p: {name, msgs:[{from:'them'|'me', text, at, code?}]}
+export function drawChat(g, W, H, t, p) {
+  g.fillStyle = '#ece5dd'; g.fillRect(0, 0, W, H);
+  g.fillStyle = '#1f8f6a'; g.fillRect(0, 0, W, 110); g.fillStyle = '#fff'; g.beginPath(); g.arc(70, 55, 32, 0, 7); g.fill();
+  g.fillStyle = '#1f8f6a'; g.font = '900 34px Nunito'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText((p.name || 'A')[0], 70, 57);
+  g.fillStyle = '#fff'; g.textAlign = 'left'; g.font = '900 36px Nunito'; g.fillText(p.name || 'Amico', 120, 45); g.font = '700 24px Nunito'; g.fillText('online', 120, 80);
+  let y = 150;
+  for (const m of p.msgs || []) {
+    const k = clamp((t - (m.at ?? 1e9)) / .2); if (k <= 0) continue;
+    const me = m.from === 'me'; g.font = m.code ? '900 38px Nunito' : '800 34px Nunito';
+    const tw = Math.min(W - 160, g.measureText(m.text).width + 50), h = m.code ? 120 : 76, x = me ? W - 30 - tw : 30;
+    g.globalAlpha = k; g.fillStyle = me ? '#d9fdd3' : '#fff'; rrect(g, x, y + (1 - k) * 20, tw, h, 22); g.fill();
+    g.fillStyle = '#1d2340'; g.textBaseline = 'middle'; g.fillText(m.text, x + 25, y + (m.code ? 40 : h / 2) + (1 - k) * 20);
+    if (m.code) { g.fillStyle = '#1f8f6a'; rrect(g, x + 25, y + 70, 130, 38, 19); g.fill(); g.fillStyle = '#fff'; g.font = '900 22px Nunito'; g.fillText('COPIA', x + 52, y + 90); }
+    g.globalAlpha = 1; y += h + 22;
+  }
+}
+
+export const PANELS = { chat: drawChat, pitch: drawPitch, form: drawPhoneForm, store: drawStore, paid: drawPaid, billboard: drawBillboard, poster: drawPoster };

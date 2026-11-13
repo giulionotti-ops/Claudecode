@@ -151,7 +151,7 @@ function phone(p, ctx) {
   const scene = new THREE.Scene(); scene.background = new THREE.Color(p.bg || '#7ee35a');
   K.lights(scene, { hemi: 1.8, sunI: 1.2, dir: [2, 6, 10] });
   box(40, .2, 40, p.ground || '#e9d7a1', 0, -6, -6, scene);
-  const sT = K.canvasTex(600, 680, (g, W, H, t = 0) => PANELS.form(g, W, H, t, { ...p.form, code: p.form?.code ?? ctx.brand.code }));
+  const sT = K.canvasTex(600, 680, (g, W, H, t = 0) => p.chat ? PANELS.chat(g, W, H, t, p.chat) : PANELS.form(g, W, H, t, { ...p.form, code: p.form?.code ?? ctx.brand.code }));
   const ph = K.phoneMesh(sT, 3.0, 3.6); ph.position.set(0, 1.0, 0); scene.add(ph);
   const sleeve = ctx.cast.hero.shirt || '#22a597', skin = ctx.cast.hero.skin || '#f2c39b';
   for (const s of [-1, 1]) { const a = new THREE.Group(); box(1.1, 6, 1.1, sleeve, 0, -3, 0, a); box(1.0, 1.1, .9, skin, 0, .4, .1, a); a.position.set(s * 1.25, -1.2, .4); a.rotation.z = s * .5; a.rotation.x = .3; scene.add(a); }
@@ -371,6 +371,103 @@ function money(p, ctx) {
   };
 }
 
+// game box prop with a cover label
+function gameBox(label = 'GTA 6', col = '#1d1d1d') {
+  const t = K.canvasTex(128, 160, (g, W, H) => { g.fillStyle = col; g.fillRect(0, 0, W, H); g.fillStyle = '#ff3d8b'; g.fillRect(0, H * .62, W, H * .2); g.fillStyle = '#fff'; g.textAlign = 'center'; g.textBaseline = 'middle'; K.fitText(g, label, 110, 44, 900); g.fillText(label, W / 2, H * .35); g.font = '800 18px Nunito'; g.fillText('19 · 11', W / 2, H * .72); });
+  const m = new THREE.Mesh(new THREE.BoxGeometry(.8, 1.0, .12), [K.mat('#111'), K.mat('#111'), K.mat('#111'), K.mat('#111'), new THREE.MeshLambertMaterial({ map: t }), K.mat('#111')]); m.castShadow = true; return m;
+}
+function bill(label = '10€') {
+  const t = K.canvasTex(256, 128, (g, W, H) => { g.fillStyle = '#7bd389'; g.fillRect(0, 0, W, H); g.strokeStyle = '#2f8f46'; g.lineWidth = 10; g.strokeRect(8, 8, W - 16, H - 16); g.fillStyle = '#1f6b34'; g.font = '900 70px Nunito'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(label, W / 2, H / 2 + 4); });
+  return new THREE.Mesh(new THREE.PlaneGeometry(1.5, .75), new THREE.MeshLambertMaterial({ map: t, side: THREE.DoubleSide }));
+}
+const walk = (P, t, k = 1) => { const a = Math.sin(t * 7) * .55 * k; P.legL.s.rotation.x = a; P.legR.s.rotation.x = -a; P.armL.s.rotation.x = -a * .8; P.armR.s.rotation.x = a * .8; P.hips.position.y = 1.2 + Math.abs(Math.cos(t * 7)) * .08 * k; };
+
+// ---------------- street: hero walks toward camera between pastel buildings; friends carry game boxes ----------------
+function street(p, ctx) {
+  const scene = new THREE.Scene(); scene.background = new THREE.Color(p.sky || '#9fd8ff');
+  K.lights(scene, { hemi: 1.7, sunI: 1.5, dir: [6, 12, 6] });
+  box(6, .2, 400, '#b9b4c9', 0, -.1, -150, scene); box(4, .25, 400, '#e7e3ef', -5, -.05, -150, scene); box(4, .25, 400, '#e7e3ef', 5, -.05, -150, scene);
+  const world = new THREE.Group(); scene.add(world);
+  const cols = p.cols || ['#ff8fb1', '#ffb3c7', '#ffd1dc', '#c9b6ff'];
+  for (let i = 0; i < 24; i++) for (const s of [-1, 1]) {
+    const h = 8 + ((i * 5 + (s > 0 ? 2 : 0)) % 4) * 3, z = 6 - i * 7;
+    box(6, h, 6.5, cols[(i + (s > 0 ? 1 : 0)) % cols.length], s * 10, h / 2, z, world);
+    for (let r = 0; r < Math.floor(h / 2.5); r++) box(.1, 1.1, 1.4, '#7fb2ff', s * 6.95, 2 + r * 2.4, z - 1.5, world), box(.1, 1.1, 1.4, '#7fb2ff', s * 6.95, 2 + r * 2.4, z + 1.5, world);
+    if (i % 3 === 0) { const tr = K.tree(2.5, '#5ccf55'); tr.position.set(s * 6.2, 0, z + 3); world.add(tr); }
+  }
+  const H = hero(ctx); scene.add(H.root);
+  const others = (p.friends ?? 2) ? [friend(ctx), K.person({ skin: '#f2c39b', hair: '#d9a066', shirt: '#9b5de5', pants: '#22223b' })].slice(0, p.friends ?? 2) : [];
+  others.forEach((o, i) => { o.root.position.set(i ? -2.0 : 2.0, 0, -2.2 - i * .6); scene.add(o.root); const gb = gameBox(); o.armR.hand.add(gb); gb.position.set(0, -.3, .35); });
+  const b = bill(p.billLabel || '10€'); b.visible = false; scene.add(b);
+  const camera = cam(40);
+  return {
+    scene, camera, update(t) {
+      const tl = t - p._t0; lookCam(camera, [.6 + Math.sin(tl * .8) * .3, 3.9, 10.2], [0, 3.1, -.6]);
+      world.position.z = (tl * 3.2) % 7;
+      H.reset(); walk(H, t); H.face(faceAt(p.faces, t, 'neutral'));
+      others.forEach((o, i) => { o.reset(); walk(o, t + i * .4); o.armR.s.rotation.x = -1.3; o.armR.el.rotation.x = -.4; o.face('happy'); o.head.rotation.y = i ? .3 : -.3; });
+      const sb = ease(seg(t, at(p.billAt), at(p.billAt) + .3));
+      b.visible = sb > 0; if (sb > 0) { H.armR.s.rotation.x = -2.6 * sb; H.armR.el.rotation.x = -.3; b.position.set(.9, 3.5 + sb * .6, .9); b.rotation.set(0, -.2, Math.sin(t * 6) * .08); }
+    },
+  };
+}
+
+// ---------------- sandwich kiosk: awning, sign, vendor; hero pays and gets a sandwich at buyAt ----------------
+function shop(p, ctx) {
+  const scene = new THREE.Scene(); scene.background = new THREE.Color(p.bg || '#b8a6ff');
+  K.lights(scene, { hemi: 1.7, sunI: 1.4, dir: [5, 10, 8] });
+  box(30, .3, 20, p.floor || '#e9e4ff', 0, -.15, 4, scene);
+  const k0 = new THREE.Group(); k0.position.set(-1.4, 0, -1.2); scene.add(k0);
+  box(4.4, 2.0, 1.6, '#ffffff', 0, 1.0, 0, k0); box(4.6, .2, 1.8, '#f4b183', 0, 2.05, 0, k0);
+  for (const x of [-2.1, 2.1]) box(.25, 3.6, .25, '#ffffff', x, 3.8, -.6, k0);
+  const aw = K.canvasTex(256, 64, g => { for (let i = 0; i < 8; i++) { g.fillStyle = i % 2 ? '#fff' : '#ff4d6d'; g.fillRect(i * 32, 0, 32, 64); } });
+  const awn = new THREE.Mesh(new THREE.BoxGeometry(4.8, .2, 2.2), new THREE.MeshLambertMaterial({ map: aw })); awn.position.set(0, 5.6, .2); awn.rotation.x = .25; k0.add(awn);
+  const signT = K.canvasTex(512, 160, (g, W, Hh) => { g.fillStyle = '#ffd23f'; K.rrect(g, 0, 0, W, Hh, 30); g.fill(); g.fillStyle = '#1d1d1d'; g.textAlign = 'center'; g.textBaseline = 'middle'; K.fitText(g, p.sign || 'PANINI', 460, 110, 900); g.fillText(p.sign || 'PANINI', W / 2, Hh / 2 + 6); });
+  const sign = new THREE.Mesh(new THREE.PlaneGeometry(3.4, 1.06), new THREE.MeshBasicMaterial({ map: signT, transparent: true })); sign.position.set(0, 6.6, .6); k0.add(sign);
+  for (let i = 0; i < 3; i++) { const sw = new THREE.Group(); box(.9, .2, .6, '#e2b36b', 0, 0, 0, sw); box(.95, .08, .62, '#5ccf55', 0, .13, 0, sw); box(.9, .2, .6, '#e2b36b', 0, .26, 0, sw); sw.position.set(-1.2 + i * 1.2, 2.3, .3); k0.add(sw); }
+  const V = friend(ctx); V.root.position.set(-1.4, .3, -2.2); scene.add(V.root);
+  const H = hero(ctx); H.root.position.set(2.1, 0, .8); H.root.rotation.y = -.9; scene.add(H.root);
+  const sand = new THREE.Group(); box(.8, .2, .55, '#e2b36b', 0, 0, 0, sand); box(.85, .08, .58, '#5ccf55', 0, .13, 0, sand); box(.8, .2, .55, '#e2b36b', 0, .26, 0, sand); sand.visible = false; H.armL.hand.add(sand); sand.position.set(0, -.25, .35);
+  const b = bill('10€'); b.scale.setScalar(.6); H.armR.hand.add(b); b.position.set(0, -.3, .4);
+  const camera = cam(40);
+  return {
+    scene, camera, update(t) {
+      const k = ease(seg(t, p._t0, p._t1)); lookCam(camera, lerp3([1.4, 4.8, 13.5], [1.1, 4.6, 12.5], k), [-.2, 3.8, -.8]);
+      H.reset(); idle(H, t); V.reset(); idle(V, t + 1, .6); V.face('happy');
+      const buy = at(p.buyAt), pay = ease(seg(t, buy - .5, buy - .2)), got = t >= buy;
+      b.visible = !got; H.armR.s.rotation.x = -1.3 * pay * (got ? 0 : 1);
+      sand.visible = got; H.armL.s.rotation.x = got ? -1.6 : 0;
+      const turn = ease(seg(t, at(p.turn, buy), at(p.turn, buy) + .3)); H.head.rotation.y = .9 * turn;
+      H.face(faceAt(p.faces, t, 'neutral'));
+    },
+  };
+}
+
+// ---------------- bank: hero walks up to a bank building; sign over the door ----------------
+function bank(p, ctx) {
+  const scene = new THREE.Scene(); scene.background = new THREE.Color(p.bg || '#a99bff');
+  K.lights(scene, { hemi: 1.8, sunI: 1.3, dir: [4, 10, 8] });
+  box(40, .3, 30, '#f5f2ff', 0, -.15, 0, scene);
+  const b = new THREE.Group(); b.position.set(1.2, 0, -3); scene.add(b);
+  box(7, .5, 4, '#e8e4f7', 0, .25, 0, b); box(6.4, 4.2, 3.4, '#ffffff', 0, 2.6, -.2, b);
+  for (let i = 0; i < 4; i++) box(.55, 4, .55, '#f0edfa', -2.4 + i * 1.6, 2.6, 1.6, b);
+  box(7.2, .6, 4, '#ffd36b', 0, 4.95, 0, b); box(5, 1.1, 3.6, '#ffd36b', 0, 5.7, 0, b);
+  const sT = K.canvasTex(512, 128, (g, W, Hh) => { g.fillStyle = '#ffd36b'; g.fillRect(0, 0, W, Hh); g.fillStyle = '#1d1d1d'; g.font = '900 96px Nunito'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText(p.sign || 'BANCA', W / 2, Hh / 2 + 6); });
+  const sg = new THREE.Mesh(new THREE.PlaneGeometry(4.2, 1.05), new THREE.MeshBasicMaterial({ map: sT })); sg.position.set(0, 5.72, 1.82); b.add(sg);
+  box(1.6, 2.6, .2, '#5b4bd6', 0, 1.8, 1.45, b);
+  const H = hero(ctx); scene.add(H.root);
+  const camera = cam(40);
+  return {
+    scene, camera, update(t) {
+      const k = ease(seg(t, p._t0, p._t1)); lookCam(camera, lerp3([0, 5, 17], [0, 4.6, 14.5], k), [.4, 3.2, -1]);
+      const arr = at(p.arriveAt, p._t0 + 1.2), w = seg(t, p._t0, arr);
+      H.reset(); H.root.position.set(-4 + w * 4.2, 0, .8); H.root.rotation.y = w < 1 ? 1.2 : 0;
+      if (w < 1) walk(H, t); else { idle(H, t); H.armR.s.rotation.z = t > at(p.waveAt) ? 2.4 + Math.sin(t * 9) * .25 : 0; }
+      H.face(faceAt(p.faces, t, 'happy'));
+    },
+  };
+}
+
 // ---------------- portrait for profile pictures: hero head-and-shoulders on a flat colour ----------------
 function portrait(p, ctx) {
   const scene = new THREE.Scene(); scene.background = new THREE.Color(p.bg || '#ffd23f');
@@ -383,4 +480,4 @@ function portrait(p, ctx) {
   return { scene, camera, update() { lookCam(camera, [.5, 3.4, 12.5], [.35, 3.2, 0]); } };
 }
 
-export const SCENES = { city, room, park, phone, screen, end, portrait, desk, bigcal, hook, cinema, money };
+export const SCENES = { city, room, park, phone, screen, end, portrait, desk, bigcal, hook, cinema, money, street, shop, bank };
