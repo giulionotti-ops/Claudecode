@@ -22,7 +22,7 @@ EOF
 )
 echo "waiting to publish: $WAITING"
 if [ "$WAITING" -lt 2 ]; then
-  timeout 3h claude -p "Follow shorts/comic/AUTO.md exactly: make today's short." \
+  timeout 3h claude -p "Follow comic/AUTO.md exactly (you are in shorts/): make today's short." \
     --permission-mode acceptEdits --allowedTools Bash Read Write Edit Glob Grep WebFetch WebSearch \
     --output-format text </dev/null || echo "claude run failed ($?)"
 fi
