@@ -104,5 +104,8 @@
         "repo": "forrestchang/andrej-karpathy-skills"
       }
     }
+  },
+  "env": {
+    "CLAUDE_CODE_SUBAGENT_MODEL": "sonnet"
   }
 }
