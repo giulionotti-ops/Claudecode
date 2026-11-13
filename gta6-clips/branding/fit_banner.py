@@ -21,7 +21,7 @@ LOGOS = [(1287, 206, 1395, 346), (962, 658, 1021, 734)]   # banner, avatar
 
 
 def play_badge(img, box):
-    """Red round badge with a thin purple ring and a white play arrow, sized to
+    """Red round badge with a white play arrow, sized to
     cover the old logo's whole footprint (it overlapped the lettering)."""
     x0, y0, x1, y1 = box
     cx, cy = (x0 + x1) / 2, (y0 + y1) / 2
@@ -31,12 +31,7 @@ def play_badge(img, box):
     o = S / 2
     layer = Image.new("RGBA", (S, S), (0, 0, 0, 0))
     d = ImageDraw.Draw(layer)
-    d.ellipse([o - r * 1.18 * k, o - r * 1.18 * k, o + r * 1.18 * k, o + r * 1.18 * k],
-              fill=(150, 70, 255, 120))                       # purple glow seed
-    layer = layer.filter(ImageFilter.GaussianBlur(r * 0.18 * k))
-    d = ImageDraw.Draw(layer)
-    d.ellipse([o - r * k, o - r * k, o + r * k, o + r * k], fill=(170, 100, 255, 255))   # ring
-    rr = r * 0.9
+    rr = r
     d.ellipse([o - rr * k, o - rr * k, o + rr * k, o + rr * k], fill=(255, 28, 38, 255))  # red badge
     t = r * 0.66                                                                          # arrow
     tri = [(o - t * 0.42 * k, o - t * 0.62 * k), (o - t * 0.42 * k, o + t * 0.62 * k),
