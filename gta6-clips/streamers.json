@@ -1,6 +1,7 @@
 {
-  "_help": "Set approved: true only for streamers who gave permission (clipping program or written yes); put the proof in 'permission'. facecam = x:y:w:h in the source video's pixels. With TWITCH_CLIENT_ID/SECRET set, the daily scan also finds top streamers on its own; this list then only decides who is approved. top_games = how many of the top gaming categories to scan; categories = fixed list instead (e.g. [\"Grand Theft Auto VI\"]).",
+  "_help": "Set approved: true only for streamers who gave permission (clipping program or written yes); put the proof in 'permission'. facecam = x:y:w:h in the source video's pixels. With TWITCH_CLIENT_ID/SECRET set, the daily scan also finds top streamers on its own; this list then only decides who is approved. top_games = how many of the top gaming categories to scan; categories = fixed list instead (e.g. [\"Grand Theft Auto VI\"]). languages = clip languages to keep ([] = all).",
   "top_games": 10,
+  "languages": ["en"],
   "categories": [],
   "streamers": [
     {"name": "summit1g", "approved": false, "permission": "", "credit": "@summit1g", "facecam": "0:512:512:308"},

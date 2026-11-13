@@ -28,6 +28,8 @@ import json
 import os
 import subprocess
 import sys
+import time
+import urllib.error
 import urllib.parse
 import urllib.request
 from pathlib import Path
@@ -59,11 +61,17 @@ def helix(path, token, client_id, **params):
     url = f"https://api.twitch.tv/helix/{path}?{urllib.parse.urlencode(params, doseq=True)}"
     req = urllib.request.Request(url, headers={"Client-Id": client_id,
                                                "Authorization": f"Bearer {token}"})
-    with urllib.request.urlopen(req, timeout=30) as r:
-        return json.load(r)
+    for k in range(4):   # this server's DNS drops out now and then
+        try:
+            with urllib.request.urlopen(req, timeout=30) as r:
+                return json.load(r)
+        except urllib.error.URLError as e:
+            if k == 3 or getattr(e, "code", None):
+                raise
+            time.sleep(2 ** (k + 1))
 
 
-def helix_clips(day, categories, games_n, per_game):
+def helix_clips(day, categories, games_n, per_game, languages=()):
     cid, secret = os.environ["TWITCH_CLIENT_ID"], os.environ["TWITCH_CLIENT_SECRET"]
     body = urllib.parse.urlencode({"client_id": cid, "client_secret": secret,
                                    "grant_type": "client_credentials"}).encode()
@@ -81,6 +89,8 @@ def helix_clips(day, categories, games_n, per_game):
                      started_at=start.isoformat().replace("+00:00", "Z"),
                      ended_at=(start + dt.timedelta(days=1)).isoformat().replace("+00:00", "Z"))
         for c in data["data"]:
+            if languages and c.get("language", "").split("-")[0] not in languages:
+                continue
             clips.append({"url": c["url"], "streamer": c["broadcaster_name"].lower(),
                           "title": c["title"], "views": c["view_count"],
                           "duration": c["duration"], "game": g["name"],
@@ -143,7 +153,8 @@ def main():
 
     if os.environ.get("TWITCH_CLIENT_ID") and os.environ.get("TWITCH_CLIENT_SECRET"):
         print(f"Source: Twitch API, top gaming clips of {day}", flush=True)
-        clips = helix_clips(day, cfg.get("categories", []), cfg.get("top_games", 10), 20)
+        clips = helix_clips(day, cfg.get("categories", []), cfg.get("top_games", 10), 50,
+                            cfg.get("languages", ["en"]))
     else:
         if not roster:
             sys.exit("No TWITCH_CLIENT_ID/SECRET and no streamers in streamers.json")
