@@ -1,0 +1,12 @@
+Meet the Kappa: third-party material
+
+Fonts
+- Lilita One and Fredoka, SIL Open Font License 1.1 (subsets from the Lemo-Opuscar library, core/fonts/OFL.md).
+
+Voice
+- ElevenLabs text-to-speech, voice "Liam", generated for this film.
+
+Tools
+- Lemo-Opuscar (MIT) by Lemomo: rendering, sound helpers. three.js (MIT).
+
+Everything else (the kappa, villager, horse, softshell turtle, cucumber, sign, valley, music, sound effects) was made in code for this film.
