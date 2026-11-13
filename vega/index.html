@@ -235,6 +235,7 @@ addEventListener('keydown', e => { if (e.code === 'Space' && e.target === docume
 addEventListener('keyup', e => { if (e.code === 'Space' && e.target === document.body) stopRec(); });
 
 // ── agent cards + report ──
+const AGENT_SHORT = { setup: 'Setup', glazier: 'Glazier', comics: 'Comics', gta6: 'Clips', physics: 'Physics', roblox: 'Roblox' };  // one word per card
 const AGENT_COLORS = { setup: '#3dff8f', glazier: '#ffd166', comics: '#ff6b6b', gta6: '#ff7ac6', physics: '#5cc8ff', roblox: '#b388ff' };
 const fmt = n => n == null ? '—' : Number(n).toLocaleString();
 const kfmt = n => !n ? '0' : n >= 1e6 ? (n / 1e6).toFixed(1) + 'M' : n >= 1e3 ? Math.round(n / 1e3) + 'k' : String(n);
@@ -243,7 +244,7 @@ async function loadAgents() {
   try {
     const { agents } = await (await api('/api/agents')).json(), half = Math.ceil(agents.length / 2);
     const card = a => `<button type="button" class="card agent" style="--a:${AGENT_COLORS[a.id] || '#3dff8f'}" data-id="${esc(a.id)}" aria-label="${esc(a.name)} report">
-      <span class="st ${esc(a.status)}">${esc(a.status)}<span class="ago"> · ${esc(a.last_active_ago || '—')}</span></span><b>${esc(a.name)}</b>
+      <span class="st ${esc(a.status)}">${esc(a.status)}<span class="ago"> · ${esc(a.last_active_ago || '—')}</span></span><b>${esc(AGENT_SHORT[a.id] || a.name)}</b>
       <small>${esc(a.last_reply || a.role)}</small></button>`;
     $('#agents-l').innerHTML = agents.slice(0, half).map(card).join('');
     $('#agents-r').innerHTML = agents.slice(half).map(card).join('');
