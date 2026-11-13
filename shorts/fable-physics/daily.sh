@@ -29,7 +29,7 @@ for run in 1 2; do   # at most 2 new shorts per job
   [ "$W" -ge 4 ] && break
   [ -f "$HERE/PAUSE" ] && break
   timeout 3h claude -p "Follow fable-physics/AUTO.md exactly (you are in shorts/): make the next short." \
-    --permission-mode acceptEdits --allowedTools Bash Read Write Edit Glob Grep WebFetch WebSearch \
+    --model sonnet --permission-mode acceptEdits --allowedTools Bash Read Write Edit Glob Grep WebFetch WebSearch \
     --output-format text </dev/null || { echo "claude run failed ($?)"; break; }
 done
 
