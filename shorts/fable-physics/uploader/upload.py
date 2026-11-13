@@ -6,6 +6,9 @@
   python3 upload.py auto [--dry-run]       upload every short in queue.json not yet uploaded, each into the next free slot
   python3 upload.py list                   show the queue and what is uploaded or scheduled
   python3 upload.py mark <name> <id>       record a short as already posted (by hand: use id "manual")
+  python3 upload.py approve <name>...      allow queued shorts to be posted (entries with "approved": false wait for this)
+  python3 upload.py reject <name>          take a short out of the queue (kept in rejected.json)
+  python3 upload.py pending                list shorts waiting for approval
 
 queue.json lists the shorts in posting order; video and caption paths are relative to the shorts/ folder.
 Videos go up private with publishAt, so YouTube publishes them at the slot. Until Google audits the API project,
@@ -123,6 +126,10 @@ def upload(entry, when, dry=False):
 def auto(dry=False):
     queue, done = load(QUEUE, []), load(LOG, {})
     todo = [e for e in queue if e['name'] not in done]
+    held = [e['name'] for e in todo if e.get('approved') is False]
+    if os.path.exists(os.path.join(HERE, '..', 'AUTO_APPROVE')): held = []   # owner switched to fully automatic
+    if held: print('Waiting for approval:', ', '.join(held))
+    else: todo = [e for e in todo if e.get('approved') is not False]   # in order: an unapproved short does not block later approved ones
     if not todo: print('Nothing new to upload.'); return
     sim = dict(done)
     for e in todo:
@@ -147,6 +154,16 @@ def main():
     if cmd == 'check': return check()
     if cmd == 'auto': return auto(dry)
     if cmd == 'list': return show()
+    if cmd == 'pending': return print('\n'.join(e['name'] for e in load(QUEUE, []) if e.get('approved') is False) or 'none')
+    if cmd == 'approve' and len(a) >= 2:
+        q = load(QUEUE, []); hit = [e for e in q if e['name'] in a[1:]]
+        for e in hit: e['approved'] = True
+        save(QUEUE, q); return print('approved:', ', '.join(e['name'] for e in hit) or 'nothing matched')
+    if cmd == 'reject' and len(a) == 2:
+        q = load(QUEUE, []); out = [e for e in q if e['name'] == a[1]]
+        if not out: sys.exit('not in queue: ' + a[1])
+        rej = load(os.path.join(HERE, 'rejected.json'), []); rej += out; save(os.path.join(HERE, 'rejected.json'), rej)
+        save(QUEUE, [e for e in q if e['name'] != a[1]]); return print('rejected:', a[1])
     if cmd == 'mark' and len(a) == 3:
         done = load(LOG, {}); done[a[1]] = {'id': a[2], 'publish': None}; save(LOG, done); return print(f'{a[1]} marked as posted ({a[2]})')
     sys.exit(__doc__)

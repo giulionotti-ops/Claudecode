@@ -1,7 +1,7 @@
 # Daily auto job: make one Fable Physics short
 
 `daily.sh` runs this with `claude -p` (cron, twice a day) whenever fewer than 4 shorts are waiting to post.
-After Claude finishes, `daily.sh` runs the uploader, which puts every new `uploader/queue.json` entry into the
+After Claude finishes, `daily.sh` runs the uploader, which puts every approved `uploader/queue.json` entry into the
 next free slot (13:30 or 21:30 Rome). Stop at once if `fable-physics/PAUSE` exists.
 
 ## Your task (Claude, headless run). Work from `shorts/`.
@@ -38,7 +38,8 @@ Fix and re-render at most twice.
 
 ### 6. Queue it
 Append to `fable-physics/uploader/queue.json`:
-`{"name": slug, "video": "<slug>/<slug>.mp4", "captions": "<slug>/<slug>.srt", "title", "description", "tags": [6–8], "pinned"}`
+`{"name": slug, "video": "<slug>/<slug>.mp4", "captions": "<slug>/<slug>.srt", "title", "description", "tags": [6–8], "pinned", "approved": false}`
+Always `"approved": false`: the owner approves each short before it is posted (`upload.py approve <slug>`), unless the file `fable-physics/AUTO_APPROVE` exists.
 - Title: under 70 characters, one CAPS word, one emoji, ends with `#shorts` (see the existing entries).
 - Description: 2–3 sentences, then a question for comments, then hashtags. Intro shorts also name the culture.
 Set the creature's `"intro"` or `"physics"` in `creatures.json`. Add a row to the table in `fable-physics/README.md`.
