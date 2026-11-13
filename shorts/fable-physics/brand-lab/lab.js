@@ -2,11 +2,11 @@
 const W = innerWidth, H = innerHeight, c = document.getElementById('c'); c.width = W; c.height = H; const x = c.getContext('2d');
 const O = new URLSearchParams(location.search).get('o') || 'b1';
 const img = n => new Promise(r => { const i = new Image(); i.onload = () => r(i); i.src = 'src/' + n + '-0.jpg'; });
-const S = Object.fromEntries(await Promise.all(['k-eye', 'k-ship', 'k-wide', 'd-head', 'd-soar', 'phoenix', 'phoenix-close', 'yeti', 'yeti-close', 'hydra', 'hydra-close'].map(async n => [n, await img(n)])));
+const S = Object.fromEntries(await Promise.all(['k-eye', 'k-ship', 'k-wide', 'd-head', 'd-soar', 'phoenix', 'phoenix-close', 'yeti', 'yeti-close', 'hydra', 'hydra-close', 'phoenix-low', 'yeti-low', 'hydra-low'].map(async n => [n, await img(n)])));
 await document.fonts.load("100px 'Lilita One'"); await document.fonts.load("700 40px 'Fredoka'");
 
-function cover(i, dx = 0, dy = 0, dw = W, dh = H, fx = .5, fy = .5) {   // draw image filling a box, focus point fx/fy
-  const s = Math.max(dw / i.width, dh / i.height), w = i.width * s, h = i.height * s;
+function cover(i, dx = 0, dy = 0, dw = W, dh = H, fx = .5, fy = .5, zoom = 1) {   // draw image filling a box, focus point fx/fy
+  const s = Math.max(dw / i.width, dh / i.height) * zoom, w = i.width * s, h = i.height * s;
   x.drawImage(i, dx + (dw - w) * fx, dy + (dh - h) * fy, w, h);
 }
 function title(cx, cy, size, sub) {   // the shorts' caption look: white Lilita One, thick dark outline; gold subtitle
@@ -31,8 +31,8 @@ function seam(left, right, slant = .12) {   // two scenes split by a wavy diagon
 function panels(list, slant = .06) {   // N scenes side by side, split by slanted wavy gold seams (the B3 look, generalised)
   const N = list.length, edge = i => { const pts = []; for (let k = 0; k <= 30; k++) { const t = k / 30; pts.push([W * i / N + W * slant * (1 - 2 * t) + Math.sin(t * 9 + i) * W * .006, H * t]); } return pts; };
   const E = []; for (let i = 0; i <= N; i++) E.push(i === 0 ? [[-W, 0], [-W, H]] : i === N ? [[2 * W, 0], [2 * W, H]] : edge(i));
-  list.forEach(([im, fx], i) => { x.save(); x.beginPath(); E[i].forEach(([px, py], k) => k ? x.lineTo(px, py) : x.moveTo(px, py)); [...E[i + 1]].reverse().forEach(([px, py]) => x.lineTo(px, py)); x.closePath(); x.clip();
-    const x0 = Math.max(0, W * i / N - W * slant * 1.5), x1 = Math.min(W, W * (i + 1) / N + W * slant * 1.5); cover(im, x0, 0, x1 - x0, H, fx ?? .5); x.restore(); });
+  list.forEach(([im, fx, fy, zoom], i) => { x.save(); x.beginPath(); E[i].forEach(([px, py], k) => k ? x.lineTo(px, py) : x.moveTo(px, py)); [...E[i + 1]].reverse().forEach(([px, py]) => x.lineTo(px, py)); x.closePath(); x.clip();
+    const x0 = Math.max(0, W * i / N - W * slant * 1.5), x1 = Math.min(W, W * (i + 1) / N + W * slant * 1.5); cover(im, x0, 0, x1 - x0, H, fx ?? .5, fy ?? .5, zoom ?? 1); x.restore(); });
   for (let i = 1; i < N; i++) { x.save(); x.beginPath(); E[i].forEach(([px, py], k) => k ? x.lineTo(px, py) : x.moveTo(px, py)); x.lineWidth = Math.max(6, W * .004); x.strokeStyle = '#e9b949'; x.stroke(); x.restore(); }
 }
 function quads(list) {   // four creatures in an X, for a round profile picture
@@ -61,6 +61,9 @@ window.render = () => {
   else if (O === 'b6') { panels([[S['yeti'], .55], [S['d-soar'], .5]], .12); vignette(.3); title(W / 2, H * .47, H * .12, SUB); }
   else if (O === 'b7') { panels([[S['d-soar'], .5], [S['hydra'], .5], [S['k-wide'], .62]], .07); vignette(.3); title(W / 2, H * .47, H * .12, SUB); }
   else if (O === 'b8') { panels([[S['phoenix'], .5], [S['yeti'], .55], [S['hydra'], .5], [S['k-wide'], .62]], .05); vignette(.3); title(W / 2, H * .47, H * .12, SUB); }
+  else if (O === 'b8f') { panels([[S['phoenix-low'], .5], [S['yeti-low'], .55], [S['hydra-low'], .5], [S['k-wide'], .62]], .05); vignette(.3);
+    const g = x.createLinearGradient(0, H * .3, 0, H * .56); g.addColorStop(0, 'rgba(0,0,0,0)'); g.addColorStop(.5, 'rgba(0,0,0,.28)'); g.addColorStop(1, 'rgba(0,0,0,0)'); x.fillStyle = g; x.fillRect(0, H * .3, W, H * .26);
+    title(W / 2, H * .41, H * .1, SUB); }
   else if (O === 'b1') { cover(S['k-wide']); vignette(.35); title(W / 2, H * .47, H * .12, SUB); }
   else if (O === 'b2') { cover(S['d-soar'], 0, 0, W, H, .5, .5); vignette(.35); title(W / 2, H * .47, H * .12, SUB); }
   else if (O === 'b3') { seam(S['d-soar'], S['k-wide']); vignette(.3); title(W / 2, H * .47, H * .12, SUB); }

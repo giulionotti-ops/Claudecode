@@ -111,7 +111,7 @@ function hydra() {
 }
 
 // ---------------------------------------------------------------- scenes
-const close = Q.endsWith('-close'), kind = Q.replace('-close', '');
+const close = Q.endsWith('-close'), low = Q.endsWith('-low'), kind = Q.replace('-close', '').replace('-low', '');
 if (kind === 'phoenix') {
   sky(0x2a1e3e, 0xff9a5a, 0x5a2a1a); scene.fog = new THREE.Fog(0xe08a5a, 60, 420);
   lights(0xffc89a, 0x40243a, 1.0, 0xffd0a0, 1.8, V(-30, 40, 30));
@@ -121,7 +121,7 @@ if (kind === 'phoenix') {
   const glow = new THREE.PointLight(0xffa040, 80, 40, 1.4); glow.position.set(0, 1, 2); scene.add(glow);
   sprites(70, 0xffa030, (s, i) => { const t = r(); s.position.set((r() - .5) * 2 + Math.sin(i) * t * 4, -1 - t * 5, -2 - t * 8); s.scale.setScalar(.3 + r() * .8); s.material.opacity = .6 * (1 - t); });
   sprites(40, 0xffe080, (s) => { s.position.set((r() - .5) * 14, (r() - .5) * 8, (r() - .5) * 10); s.scale.setScalar(.08 + r() * .12); });
-  if (close) cam(V(1.8, .2, 8.5), V(0, 1.2, 1.2), 40); else cam(V(5, -7, 24), V(0, 1.5, -1), 42);
+  if (close) cam(V(1.8, .2, 8.5), V(0, 1.2, 1.2), 40); else if (low) cam(V(5, -5, 26), V(0, 6.5, -1), 42); else cam(V(5, -7, 24), V(0, 1.5, -1), 42);
 } else if (kind === 'yeti') {
   sky(0x5f8fc4, 0xdfeaf4, 0xbfd0e0); scene.fog = new THREE.Fog(0xd6e4f0, 40, 300);
   lights(0xdfeaf6, 0x6a7f98, .75, 0xfff4e8, 1.5, V(20, 30, 25));
@@ -133,7 +133,7 @@ if (kind === 'phoenix') {
     t.scale.setScalar(1.4 + r()); t.position.set(x, n2(x, z) * 2.5 + Math.max(0, -z - 15) * .35, z); scene.add(t); }
   const y = yeti(); y.rotation.y = -.35; scene.add(y);
   sprites(220, 0xffffff, (s) => { s.position.set((r() - .5) * 60, r() * 25, (r() - .5) * 40 + 5); s.scale.setScalar(.08 + r() * .15); }, false, .9);
-  if (close) cam(V(.6, 5.7, 7.2), V(0, 5.3, 1), 40); else cam(V(5, 4, 15), V(0, 3.6, 0), 46);
+  if (close) cam(V(.6, 5.7, 7.2), V(0, 5.3, 1), 40); else if (low) cam(V(4, 4.5, 19), V(0, 8.2, 0), 46); else cam(V(5, 4, 15), V(0, 3.6, 0), 46);
 } else {
   sky(0x2c3e3a, 0x8fb09a, 0x1c2a22); scene.fog = new THREE.Fog(0x7e9c88, 20, 160);
   lights(0xcfe8d6, 0x1a2a1e, 1.0, 0xe8f0d0, 1.6, V(-20, 30, 20));
@@ -145,7 +145,7 @@ if (kind === 'phoenix') {
   const h = hydra(); h.rotation.y = .1; scene.add(h);
   sprites(60, 0xdfeee4, (s) => { s.position.set((r() - .5) * 80, 1 + r() * 3, (r() - .5) * 60 - 10); s.scale.setScalar(6 + r() * 10); }, false, .14);
   sprites(30, 0xd8ff7a, (s) => { s.position.set((r() - .5) * 30, 1 + r() * 8, (r() - .5) * 20); s.scale.setScalar(.12 + r() * .1); });
-  if (close) cam(V(2, 8.4, 9), V(0, 8, 1.5), 38); else cam(V(4, 5.5, 26), V(0, 5, 0), 44);
+  if (close) cam(V(2, 8.4, 9), V(0, 8, 1.5), 38); else if (low) cam(V(4, 6, 30), V(0, 11.5, 0), 44); else cam(V(4, 5.5, 26), V(0, 5, 0), 44);
 }
 window.render = () => renderer.render(scene, camera);
 window.DUR = 1; window.EV = []; window.READY = true;
