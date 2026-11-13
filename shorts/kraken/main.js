@@ -229,6 +229,32 @@ window.render = (t) => {
   if (w) { O.caption(ov, w.w.replace(/[.,:?!]/g, '').toUpperCase(), t - w.t0); texts.push({ id: 'cap', text: w.w, x0: 0, y0: H * .64, x1: W, y1: H * .76, pass: true }); }
 };
 
+// ---------------------------------------------------------------- channel art: ?brand=k-eye | k-ship | k-wide (no text; text is added in fable-physics/brand-lab)
+const BRAND = new URLSearchParams(location.search).get('brand');
+if (BRAND) window.render = () => {
+  O.clear(ov); hideAll(); clip.constant = 1e4; squid.setCells(0); whale.group.visible = false;
+  sea.surfM.uniforms.time.value = 2; sea.surfM.uniforms.op.value = .95; sea.surfM.uniforms.tint.value.set(0x9fe6ee);
+  hemi.color.set(0xbfefff); sun.color.set(0xdff6ff); rim.intensity = 0; key.intensity = 0;
+  if (BRAND === 'k-eye') {
+    water(0x03101c, 4, 30); sea.surface.visible = false; sea.rays.visible = false; ship.visible = false;
+    hemi.intensity = .25; sun.intensity = 0; rim.intensity = 1.2; rim.target.position.set(0, -40, 0);
+    placeSquid(V(0, -40, 0), -Math.PI / 2, 1, 0); squid.pose(1.3, 'trail', .4); squid.eyeScale(2.1);
+    const e = eyeWorld(); key.position.copy(e).add(V(1.2, 1.6, 3)); key.intensity = 24;
+    cam(e.clone().add(V(1.7, .3, 5.4)), e.clone().add(V(1.1, 0, 0)), 40);
+    for (let i = 0; i < 60; i++) { const g = GLOW[i], s = glow[i]; s.visible = true; s.position.set(e.x - 3 + g.dx * 4, e.y + g.dy * 3, e.z - 4 + g.dz * 2); s.scale.setScalar(.15 + g.k * .2); s.material.opacity = .5 * g.k; }
+  } else if (BRAND === 'k-ship') {
+    water(0x1f6f86, 12, 110); ship.visible = true; ship.position.set(0, 0, 0); ship.rotation.y = .5;
+    placeSquid(V(0, -15, 0), Math.PI, 2.2, .3); squid.pose(.6, 'reach', 1);
+    cam(V(4, -27, 30), V(0, -8, 0), 58); marineSnow(V(0, -14, 10), 1, .3);
+  } else {   // k-wide: banner scene, ship left of centre, kraken reaching up on the right
+    water(0x1c6a82, 14, 130); ship.visible = true; ship.position.set(-16, 0, -8); ship.rotation.y = .25;
+    placeSquid(V(13, -17, 0), Math.PI * .93, 3.0, .5); squid.pose(.9, 'reach', 1);
+    cam(V(0, -13, 40), V(0, -8, 0), 44); marineSnow(V(0, -12, 12), 1, .3, 40);
+  }
+  sea.surface.position.set(camera.position.x, 0, camera.position.z);
+  for (const m of sea.rays.children) { m.material.color.set(0xc8f4ff); m.material.opacity = .22; m.rotation.y = Math.atan2(camera.position.x - m.position.x, camera.position.z - m.position.z); }
+  renderer.render(scene, camera);
+};
 window.TEXTS = () => texts.slice();
 const EV = [{ t: S.a + .1, type: 'rumble' }, { t: T.sinks, type: 'thud' }, { t: T.ammonia + .1, type: 'bubbles' }, { t: T.float, type: 'ding' },
   { t: T.terrible, type: 'buzz' }, { t: S.d, type: 'dive' }, { t: T.better, type: 'ding' }, { t: T.pitch, type: 'drone' },

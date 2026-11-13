@@ -247,7 +247,16 @@ window.render = (t) => {
 const BRAND = new URLSearchParams(location.search).get('brand');
 if (BRAND) window.render = () => {
   O.clear(ov); hideAll(); useSet('slope');
-  if (BRAND === 'pfp') {
+  if (BRAND === 'd-head') {   // close on the head, crater glow behind
+    mother.holder.position.set(0, groundH(0, 0), 0); mother.holder.rotation.set(0, .9, 0); pose(mother, 'Idle', .3);
+    mother.root.updateMatrixWorld(true); const hp = mother.bones.head.getWorldPosition(V(0, 0, 0)), dir = V(Math.sin(.9), 0, Math.cos(.9));
+    cam(hp.clone().addScaledVector(dir, 6.6).add(V(-1.6, .2, 1.2)), hp.clone().add(V(0, -1.0, 0)), 34);
+  } else if (BRAND === 'd-soar') {   // soaring over the crater, wide
+    const ang = 2.2, pos = CR.clone().add(V(Math.cos(ang) * 17, 14, Math.sin(ang) * 17));
+    aim(mother, pos, V(-Math.sin(ang), .12, Math.cos(ang)), .35); pose(mother, 'Idle', 0); flap(mother, -.045, 1, 7);
+    cam(pos.clone().add(V(8, 2.5, 22)), pos.clone().add(V(-1, -2.5, 0)), 42);
+    plume(steam, CR, 3, 6, 30, 14, 5, .3); plume(sparks, CR.clone().add(V(0, 2, 0)), 2, 8, 24, 18, .5, .7);
+  } else if (BRAND === 'pfp') {
     mother.holder.position.set(0, groundH(0, 0), 0); mother.holder.rotation.set(0, .45, 0); pose(mother, 'Idle', .3);
     cam(V(3.6, 5.4, 7.2), V(.3, 4.3, 0), 40);
   } else {
