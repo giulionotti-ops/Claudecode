@@ -1,0 +1,5 @@
+client_secret*.json
+token.json
+uploaded.json
+.auth-pending.json
+__pycache__/
