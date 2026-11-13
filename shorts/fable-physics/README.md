@@ -8,7 +8,7 @@ Creature-science shorts: one mythical creature per short, worked out with real b
 - **Sources that work from the cloud session:** GitHub-hosted copies of CC0 packs (raw.githubusercontent.com), Khronos glTF sample models, three.js example models (MIT), Poly Haven. poly.pizza sits behind a bot check: don't try to get around it; find a GitHub copy or ask the user to download the file.
 - **Every fact anchored on a real animal**, listed in the short's `TREATMENT.md`.
 - Same look: one-word captions (Lilita One), gold-outlined label chips, arrows, cutaways, Liam voice (ElevenLabs).
-- Posting: two shorts per day, 13:30 and 21:30 Rome. The upload page is https://claude.ai/artifact/VuPz6mKvGiaifhQsbrnTsa
+- Posting: two shorts per day, 13:30 and 21:30 Rome, done by `uploader/upload.py` from cron (`daily.sh`, 09:23 and 17:23). A new short goes live by adding it to `uploader/queue.json`. Pause with `touch PAUSE` in this folder. The upload page is https://claude.ai/artifact/VuPz6mKvGiaifhQsbrnTsa
 
 ## Shorts
 | # | Folder | Creature |

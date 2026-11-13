@@ -1,0 +1,5 @@
+# OAuth secrets and run state: never commit
+client_secret.json
+token.json
+auth-state.json
+uploaded.json
