@@ -354,7 +354,7 @@ function frame(t) {
   g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, cv.width, cv.height);
   g.translate(cv.width / 2, hud.cy * dpr);
   // NEESMO lettered along the top of the outer ring, breathing softly
-  g.save(); g.font = `600 ${Math.round(R * .15)}px ui-monospace, "SF Mono", Menlo, monospace`; g.textAlign = 'center'; g.textBaseline = 'middle';
+  g.save(); g.font = `italic 700 ${Math.round(R * .17)}px "Avenir Next", "Futura", "Helvetica Neue", system-ui, sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle';
   g.fillStyle = `rgba(61,255,143,${.28 + .1 * Math.sin(t * .8)})`; g.shadowColor = '#3dff8f'; g.shadowBlur = R * .08;
   const word = 'NEESMO', span = .62, rr = R * 1.56;
   for (let i = 0; i < word.length; i++) { const a = -Math.PI / 2 + (i - (word.length - 1) / 2) * span / (word.length - 1) * 1.6;
