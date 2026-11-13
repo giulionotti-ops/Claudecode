@@ -15,7 +15,8 @@
 <style>
   :root { --c: #3dff8f; --c2: #c6ff4a; --bg: #02070d; --dim: rgba(61,255,143,.35); --err: #ff5f6d; }
   * { box-sizing: border-box; }
-  html, body { margin: 0; height: 100%; background: radial-gradient(ellipse at center, #06331a 0%, var(--bg) 70%); color: var(--c);
+  html { background-color: #02070d; min-height: 100lvh; }  /* iPhone home-screen app paints the area under the page with this */
+  html, body { margin: 0; height: 100%; background: var(--bg) radial-gradient(ellipse at center, #06331a 0%, var(--bg) 70%) no-repeat fixed; color: var(--c);
     font: 14px/1.4 ui-monospace, "SF Mono", Menlo, Consolas, monospace; overflow: hidden; }
   body::after { content: ""; position: fixed; inset: 0; pointer-events: none;
     background: repeating-linear-gradient(0deg, rgba(61,255,143,.03) 0 1px, transparent 1px 3px); }
