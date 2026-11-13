@@ -17,6 +17,15 @@ the machine (user/global scope) is lost when the session ends.
 - **Tools that must be installed or started each session** (e.g. OmniRoute,
   the claude-mem worker) go in `.claude/hooks/session-start.sh`.
 
+## Use the cheapest model that can do the job
+
+Main thread (Opus): planning, judgment, creative writing, hard debugging, talking to the user.
+Delegate the rest to the helpers in `.claude/agents`: `cavecrew-investigator` (Haiku, find/read),
+`runner` (Haiku, run builds/renders/checks), `copywriter` (Haiku, titles/descriptions/captions),
+`cavecrew-builder` (Sonnet, known 1-2 file edits), `cavecrew-reviewer` (Sonnet, diff review).
+Other subagents default to Sonnet. On the server, `free-llm` sends plain text jobs to free models
+(see `~/.claude/CLAUDE.md` there); never send secrets or private data to it.
+
 ## graphify
 
 This project has a knowledge graph at graphify-out/ with god nodes, community structure, and cross-file relationships.
