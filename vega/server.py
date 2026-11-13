@@ -26,6 +26,20 @@ VS_URL = os.environ.get("VOICESTUDIO_URL", "http://localhost:3900").rstrip("/")
 VS_KEY = os.environ.get("VOICESTUDIO_API_KEY", "")
 DEFAULT_VOICE = os.environ.get("VEGA_VOICE", "alloy")
 MODEL = os.environ.get("VEGA_MODEL", "claude-opus-5-5")
+# Optional: run Neesmo's chat through a local OmniRoute gateway (free models) instead of the Claude login.
+# VEGA_BASE_URL=http://127.0.0.1:20128  VEGA_MODEL=neesmo-free  key read from VEGA_GATEWAY_KEY_FILE.
+BASE_URL = os.environ.get("VEGA_BASE_URL", "")
+GATEWAY_KEY_FILE = os.environ.get("VEGA_GATEWAY_KEY_FILE", str(Path.home() / ".config" / "omniroute" / "api.key"))
+
+
+def _gateway_env() -> dict:
+    """Env for the Claude CLI subprocess when a gateway is configured; empty means the normal Claude login."""
+    if not BASE_URL:
+        return {}
+    key = Path(GATEWAY_KEY_FILE).read_text().strip()
+    return {"ANTHROPIC_BASE_URL": BASE_URL, "ANTHROPIC_API_KEY": key,
+            "ANTHROPIC_DEFAULT_HAIKU_MODEL": MODEL, "ANTHROPIC_SMALL_FAST_MODEL": MODEL,
+            "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1"}
 HERE = Path(__file__).parent
 UPLOADER = HERE.parent / "shorts" / "uploader"   # its token.json is the channel login
 # The server's project folders (one git worktree per channel), as set up in ~/start-claude.sh
@@ -258,6 +272,7 @@ async def chat(body: ChatIn):
                                "mcp__neesmo__run_channel", "mcp__neesmo__channel_jobs"],
                 setting_sources=[],    # don't load this repo's plugins/hooks
                 effort="low",          # snappy replies for voice
+                env=_gateway_env(),
             ))
             await _client.connect()
             asyncio.create_task(_pump(_client))
