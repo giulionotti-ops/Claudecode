@@ -4,6 +4,8 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Neesmo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="apple-touch-icon" href="/static/icon-180.png">
 <link rel="icon" type="image/png" href="/static/icon-192.png">
@@ -21,6 +23,13 @@
   body::after { content: ""; position: fixed; inset: 0; pointer-events: none;
     background: repeating-linear-gradient(0deg, rgba(61,255,143,.03) 0 1px, transparent 1px 3px); }
   canvas { position: fixed; inset: 0; width: 100%; height: 100%; }
+  /* Big faded wordmark far behind the ring: heavy condensed italic, tight letters, soft blur for depth */
+  #wordmark { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%) skewX(-11deg); pointer-events: none; white-space: nowrap;
+    font: 400 min(26vw, 380px)/.78 "Anton", Impact, "Arial Narrow", sans-serif; letter-spacing: -.045em; padding-right: .06em;
+    background: linear-gradient(180deg, rgba(61,255,143,.26), rgba(61,255,143,.05) 85%); -webkit-background-clip: text; background-clip: text; color: transparent;
+    filter: blur(1.6px); animation: drift 9s ease-in-out infinite alternate; }
+  @keyframes drift { to { transform: translate(-50%, -50%) skewX(-11deg) scale(1.03); filter: blur(2.2px); } }
+  @media (prefers-reduced-motion: reduce) { #wordmark { animation: none; } }
   .corner { position: fixed; padding: 16px; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); }
   .tl { top: env(safe-area-inset-top); left: env(safe-area-inset-left); } .tr { top: env(safe-area-inset-top); right: env(safe-area-inset-right); text-align: right; }
   .corner b { color: var(--c); font-weight: 600; }
@@ -101,6 +110,7 @@
 </style>
 </head>
 <body>
+<div id="wordmark" aria-hidden="true">NEESMO</div>
 <canvas id="hud" aria-hidden="true"></canvas>
 <div class="corner tl">Neesmo // online<br><b id="clock">--:--:--</b><br><span id="date"></span></div>
 <div class="corner tr"><label for="voice">Voice</label><br><select id="voice"><option>loading…</option></select><br><span id="vs">voice: …</span><br><button type="button" id="bell" hidden>🔔 Notifications</button></div>
@@ -344,6 +354,7 @@ function layoutHud() {
   hud.R = Math.max(40, Math.min(Math.min(innerWidth, innerHeight) * .22, avail / 3.4, innerWidth / 3.6));
   hud.cy = top + avail / 2;
   statusEl.style.top = `${hud.cy + hud.R * 1.45}px`;
+  $('#wordmark').style.top = `${hud.cy}px`;
 }
 addEventListener('resize', layoutHud); setInterval(layoutHud, 1000); layoutHud();
 function frame(t) {
@@ -353,13 +364,6 @@ function frame(t) {
   const dpr = devicePixelRatio, R = hud.R * dpr, hot = mode === 'listening' ? '#c6ff4a' : '#3dff8f';
   g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, cv.width, cv.height);
   g.translate(cv.width / 2, hud.cy * dpr);
-  // NEESMO lettered along the top of the outer ring, breathing softly
-  g.save(); g.font = `italic 700 ${Math.round(R * .17)}px "Avenir Next", "Futura", "Helvetica Neue", system-ui, sans-serif`; g.textAlign = 'center'; g.textBaseline = 'middle';
-  g.fillStyle = `rgba(61,255,143,${.28 + .1 * Math.sin(t * .8)})`; g.shadowColor = '#3dff8f'; g.shadowBlur = R * .08;
-  const word = 'NEESMO', span = .62, rr = R * 1.56;
-  for (let i = 0; i < word.length; i++) { const a = -Math.PI / 2 + (i - (word.length - 1) / 2) * span / (word.length - 1) * 1.6;
-    g.save(); g.rotate(a + Math.PI / 2); g.fillText(word[i], 0, -rr); g.restore(); }
-  g.restore();
   // core glow
   const core = g.createRadialGradient(0, 0, 0, 0, 0, R * (.45 + level * .25));
   core.addColorStop(0, '#eaffef'); core.addColorStop(.25, hot); core.addColorStop(1, 'transparent');
