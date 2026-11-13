@@ -96,7 +96,6 @@
     .cards { top: auto; overflow: visible; }
     .cards.l { bottom: calc(138px + env(safe-area-inset-bottom)); } .cards.r { bottom: calc(76px + env(safe-area-inset-bottom)); }
     .card { flex: 1 1 0; min-width: 0; padding: 6px 10px; } .card b { font-size: 15px; } .card small { display: none; }
-    #status { top: calc(40% + min(26vmin, 210px)); }
     #log { bottom: calc(204px + env(safe-area-inset-bottom)); max-height: 16vh; }
   }
 </style>
@@ -150,7 +149,7 @@ function audio() {
     const { voices } = await (await api('/api/voices')).json();
     voiceSel.innerHTML = '';
     for (const v of voices) voiceSel.add(new Option(`${v.name}${v.type === 'profile' ? '' : ' (alias)'}`, v.id));
-    voiceSel.value = localStorage.getItem('neesmo-voice') || cfg.voice;
+    voiceSel.value = localStorage.getItem('neesmo-voice-v2') || cfg.voice;
     if (!voiceSel.value) voiceSel.selectedIndex = 0;
     $('#vs').textContent = 'voice: linked';
   } catch (e) {
@@ -159,7 +158,7 @@ function audio() {
     setStatus('Voice offline — text only', true);
   }
 })();
-voiceSel.onchange = () => { try { localStorage.setItem('neesmo-voice', voiceSel.value); } catch {} };
+voiceSel.onchange = () => { try { localStorage.setItem('neesmo-voice-v2', voiceSel.value); } catch {} };
 
 // ── conversation ──
 async function ask(text) {
@@ -251,6 +250,7 @@ async function loadAgents() {
       <small>${esc(a.last_reply || a.role)}</small></button>`;
     $('#agents-l').innerHTML = agents.slice(0, half).map(card).join('');
     $('#agents-r').innerHTML = agents.slice(half).map(card).join('');
+    layoutHud();
   } catch (e) { $('#agents-l').innerHTML = '<div class="card"><span>Agents</span><small>offline</small></div>'; }
 }
 document.addEventListener('click', e => { const b = e.target.closest('.agent'); if (b) openReport(b.dataset.id); });
@@ -332,13 +332,34 @@ const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
 function resize() { cv.width = innerWidth * devicePixelRatio; cv.height = innerHeight * devicePixelRatio; }
 addEventListener('resize', resize); resize();
 function arc(r, a0, a1, w, color, blur) { g.beginPath(); g.arc(0, 0, r, a0, a1); g.lineWidth = w; g.strokeStyle = color; g.shadowBlur = blur || 0; g.shadowColor = color; g.stroke(); }
+// Ring placement: centred in the free space (between the header and the cards on phones,
+// above the input on desktop), sized so the ring, its NEESMO lettering and the status line fit.
+const hud = { cy: innerHeight / 2, R: 100 };
+function layoutHud() {
+  const narrow = innerWidth <= 900, gap = 34;   // room for the status line under the ring
+  const top = narrow ? $('.corner.tr').getBoundingClientRect().bottom + 6 : 0;
+  const cards = $('#agents-l'), cardTop = cards.children.length ? cards.getBoundingClientRect().top : innerHeight - 160;
+  const bottom = (narrow ? cardTop : $('#f').getBoundingClientRect().top) - 6;
+  const avail = Math.max(120, bottom - top - gap);
+  hud.R = Math.max(40, Math.min(Math.min(innerWidth, innerHeight) * .22, avail / 3.4, innerWidth / 3.6));
+  hud.cy = top + avail / 2;
+  statusEl.style.top = `${hud.cy + hud.R * 1.45}px`;
+}
+addEventListener('resize', layoutHud); setInterval(layoutHud, 1000); layoutHud();
 function frame(t) {
   t = reduce ? 0 : t / 1000;
   if (analyser && mode !== 'idle' && mode !== 'thinking') { analyser.getByteFrequencyData(data); level += (data.reduce((a, b) => a + b, 0) / data.length / 255 * 2.2 - level) * .3; }
   else level *= .9;
-  const R = Math.min(cv.width, cv.height) * .22, hot = mode === 'listening' ? '#c6ff4a' : '#3dff8f';
+  const dpr = devicePixelRatio, R = hud.R * dpr, hot = mode === 'listening' ? '#c6ff4a' : '#3dff8f';
   g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, cv.width, cv.height);
-  g.translate(cv.width / 2, cv.height * (innerWidth <= 900 ? .4 : .5) - R * .15);   // phones: higher, cards go below
+  g.translate(cv.width / 2, hud.cy * dpr);
+  // NEESMO lettered along the top of the outer ring, breathing softly
+  g.save(); g.font = `600 ${Math.round(R * .15)}px ui-monospace, "SF Mono", Menlo, monospace`; g.textAlign = 'center'; g.textBaseline = 'middle';
+  g.fillStyle = `rgba(61,255,143,${.28 + .1 * Math.sin(t * .8)})`; g.shadowColor = '#3dff8f'; g.shadowBlur = R * .08;
+  const word = 'NEESMO', span = .62, rr = R * 1.56;
+  for (let i = 0; i < word.length; i++) { const a = -Math.PI / 2 + (i - (word.length - 1) / 2) * span / (word.length - 1) * 1.6;
+    g.save(); g.rotate(a + Math.PI / 2); g.fillText(word[i], 0, -rr); g.restore(); }
+  g.restore();
   // core glow
   const core = g.createRadialGradient(0, 0, 0, 0, 0, R * (.45 + level * .25));
   core.addColorStop(0, '#eaffef'); core.addColorStop(.25, hot); core.addColorStop(1, 'transparent');

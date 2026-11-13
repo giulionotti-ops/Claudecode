@@ -26,7 +26,7 @@ import push
 
 VS_URL = os.environ.get("VOICESTUDIO_URL", "http://localhost:3900").rstrip("/")
 VS_KEY = os.environ.get("VOICESTUDIO_API_KEY", "")
-DEFAULT_VOICE = os.environ.get("VEGA_VOICE", "alloy")
+DEFAULT_VOICE = os.environ.get("VEGA_VOICE", "expr-voice-3-m")  # KittenTTS deep male (~106 Hz)
 MODEL = os.environ.get("VEGA_MODEL", "claude-opus-5-5")
 # Optional: run Neesmo's chat through a local OmniRoute gateway (free models) instead of the Claude login.
 # VEGA_BASE_URL=http://127.0.0.1:20128  VEGA_MODEL=neesmo-free  key read from VEGA_GATEWAY_KEY_FILE.
@@ -217,6 +217,11 @@ async def _vs(method: str, path: str, **kw) -> httpx.Response:
     return r
 
 
+KITTEN_VOICES = [("expr-voice-3-m", "Male · deep"), ("expr-voice-2-m", "Male · warm"), ("expr-voice-4-m", "Male · bright"),
+                 ("expr-voice-5-m", "Male · light"), ("expr-voice-2-f", "Female · 2"), ("expr-voice-3-f", "Female · 3"),
+                 ("expr-voice-4-f", "Female · 4"), ("expr-voice-5-f", "Female · 5")]
+
+
 class ChatIn(BaseModel):
     text: str
 
@@ -274,7 +279,10 @@ def config():
 
 @app.get("/api/voices")
 async def voices():
-    return (await _vs("GET", "/v1/audio/voices")).json()
+    """The engine's real preset voices. VoiceStudio's OpenAI aliases (alloy, onyx, ...) all fall back to
+    KittenTTS's one default female voice, so they are not offered."""
+    await _vs("GET", "/v1/audio/voices")  # still checks VoiceStudio is reachable
+    return {"voices": [{"id": v, "name": n, "type": "profile"} for v, n in KITTEN_VOICES]}
 
 
 @app.post("/api/chat")
