@@ -121,20 +121,47 @@ async function ask(text) {
   } catch (e) { setStatus(e.message, true); }
   finally { if (mode !== 'idle') { mode = 'idle'; if (!statusEl.classList.contains('err')) setStatus('Standby'); } }
 }
+// Split into sentences (tiny ones joined to the next) so the first one plays while the rest are made.
+function sentences(text) {
+  const raw = text.match(/[^.!?…]+[.!?…]+["')\]]*\s*|[^.!?…]+$/g) || [text], out = [];
+  for (const r of raw.map(t => t.trim()).filter(Boolean)) {
+    if (out.length && out[out.length - 1].length < 25) out[out.length - 1] += ' ' + r; else out.push(r);
+  }
+  return out;
+}
 async function speak(text) {
+  const tts = t => api('/api/speak', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: t, voice: voiceSel.value }) }).then(r => r.arrayBuffer());
+  const jobs = sentences(text).map(tts);   // all requested at once; played in order as each one is ready
+  jobs.forEach(j => j.catch(() => {}));
   try {
-    const buf = await (await api('/api/speak', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text, voice: voiceSel.value }) })).arrayBuffer();
-    const ctx = audio(), src = ctx.createBufferSource();
-    src.buffer = await ctx.decodeAudioData(buf);
-    src.connect(analyser); analyser.connect(ctx.destination);
-    mode = 'speaking'; setStatus('Speaking');
-    await new Promise(res => { src.onended = res; src.start(); });
-    analyser.disconnect();
+    for (const job of jobs) {
+      const ctx = audio(), src = ctx.createBufferSource();
+      src.buffer = await ctx.decodeAudioData(await job);
+      src.connect(analyser); analyser.connect(ctx.destination);
+      mode = 'speaking'; setStatus('Speaking');
+      await new Promise(res => { src.onended = res; src.start(); });
+      analyser.disconnect();
+    }
   } catch (e) { setStatus('Voice: ' + e.message, true); }
 }
 $('#f').onsubmit = e => { e.preventDefault(); ask($('#q').value); $('#q').value = ''; };
 
 // ── microphone ──
+// Prefer the browser's own speech recognition (instant on iPhone); fall back to the server's Whisper.
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+let sr = null, useServerSTT = !SR;
+function startBrowserRec() {
+  if (sr || mode === 'thinking') return;
+  sr = new SR(); sr.lang = navigator.language || 'en-US'; sr.interimResults = false; sr.maxAlternatives = 1;
+  let heard = '';
+  sr.onresult = e => { heard = Array.from(e.results).map(r => r[0].transcript).join(' ').trim(); };
+  sr.onerror = e => {
+    if (e.error === 'not-allowed' || e.error === 'service-not-allowed' || e.error === 'network') useServerSTT = true;
+    if (e.error !== 'no-speech' && e.error !== 'aborted') setStatus('Switching to server listening', true);
+  };
+  sr.onend = () => { sr = null; $('#mic').classList.remove('on'); mode = 'idle'; heard ? ask(heard) : (statusEl.classList.contains('err') || setStatus('Heard nothing')); };
+  sr.start(); mode = 'listening'; setStatus('Listening'); $('#mic').classList.add('on');
+}
 async function startRec() {
   if (rec?.state === 'recording' || mode === 'thinking') return;
   try { micStream = await navigator.mediaDevices.getUserMedia({ audio: true }); }
@@ -151,9 +178,11 @@ async function startRec() {
   };
   rec.start(); mode = 'listening'; setStatus('Listening'); $('#mic').classList.add('on');
 }
-const stopRec = () => rec?.state === 'recording' && rec.stop();
-$('#mic').onclick = () => rec?.state === 'recording' ? stopRec() : startRec();
-addEventListener('keydown', e => { if (e.code === 'Space' && e.target === document.body && !e.repeat) { e.preventDefault(); startRec(); } });
+const recording = () => !!sr || rec?.state === 'recording';
+const stopRec = () => { if (sr) sr.stop(); else if (rec?.state === 'recording') rec.stop(); };
+const listen = () => useServerSTT ? startRec() : startBrowserRec();
+$('#mic').onclick = () => recording() ? stopRec() : listen();
+addEventListener('keydown', e => { if (e.code === 'Space' && e.target === document.body && !e.repeat) { e.preventDefault(); listen(); } });
 addEventListener('keyup', e => { if (e.code === 'Space' && e.target === document.body) stopRec(); });
 
 // ── stat cards ──

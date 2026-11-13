@@ -12,6 +12,7 @@ import itertools
 import json
 import shutil
 import sys
+import time
 
 from claude_agent_sdk import (AssistantMessage, ClaudeAgentOptions, ClaudeSDKClient, ResultMessage, TextBlock,
                               create_sdk_mcp_server, tool)
@@ -97,7 +98,7 @@ def _channel_stats() -> dict:
 @tool("channel_stats", "Glazier of Terra YouTube channel: subscribers, views, last 28 days analytics and the latest videos", {})
 async def channel_stats(_args):
     try:
-        data = await asyncio.to_thread(_channel_stats)
+        data = await _cached_stats()  # same 10-minute copy as the side cards: no YouTube call per question
     except (Exception, SystemExit) as e:  # missing token (uploader exits), expired login, API error: tell the model instead of crashing the chat
         return {"content": [{"type": "text", "text": f"Could not read the channel: {e}"}], "is_error": True}
     return {"content": [{"type": "text", "text": json.dumps(data)}]}
@@ -230,19 +231,25 @@ def index():
 
 
 _stats_cache: dict = {"at": 0.0, "data": None}
+_last_chat = [0.0]
+IDLE_RESET_S = float(os.environ.get("VEGA_IDLE_RESET_S", 2 * 3600))
+
+
+async def _cached_stats() -> dict:
+    """Channel snapshot, cached 10 minutes to spare the YouTube quota (side cards and the stats tool share it)."""
+    loop = asyncio.get_running_loop()
+    if _stats_cache["data"] is None or loop.time() - _stats_cache["at"] > 600:
+        _stats_cache["data"] = await asyncio.to_thread(_channel_stats)
+        _stats_cache["at"] = loop.time()
+    return _stats_cache["data"]
 
 
 @app.get("/api/stats")
 async def stats():
-    """Numbers for the side cards; cached 10 minutes to spare the YouTube quota."""
-    loop = asyncio.get_running_loop()
-    if _stats_cache["data"] is None or loop.time() - _stats_cache["at"] > 600:
-        try:
-            _stats_cache["data"] = await asyncio.to_thread(_channel_stats)
-        except (Exception, SystemExit) as e:
-            raise HTTPException(503, f"Could not read the channel: {e}")
-        _stats_cache["at"] = loop.time()
-    return _stats_cache["data"]
+    try:
+        return await _cached_stats()
+    except (Exception, SystemExit) as e:
+        raise HTTPException(503, f"Could not read the channel: {e}")
 
 
 @app.get("/api/config")
@@ -262,6 +269,12 @@ async def chat(body: ChatIn):
     if not text:
         raise HTTPException(400, "empty message")
     async with _lock:
+        if _client is not None and time.monotonic() - _last_chat[0] > IDLE_RESET_S:
+            old, _client = _client, None  # long pause: start a fresh, small conversation (faster, cheaper)
+            try:
+                await old.disconnect()
+            except Exception as e:
+                print(f"disconnect: {e}", flush=True)
         if _client is None:
             _client = ClaudeSDKClient(ClaudeAgentOptions(
                 model=MODEL,
@@ -290,6 +303,7 @@ async def chat(body: ChatIn):
                     parts.extend(b.text for b in m.content if isinstance(b, TextBlock))
         finally:
             _turn = None
+    _last_chat[0] = time.monotonic()
     return {"reply": " ".join(parts).strip()}
 
 
