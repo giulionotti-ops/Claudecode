@@ -52,6 +52,21 @@ if [ -f rokit.toml ]; then
   "$HOME/.rokit/bin/rokit" install
 fi
 
+# Blender 4.5 LTS (headless, for the roblox-3d-model / roblox-animation skills)
+BLENDER_VERSION=4.5.16
+if [ ! -x "/opt/blender-$BLENDER_VERSION-linux-x64/blender" ]; then
+  tmp="$(mktemp -d)"
+  base="https://download.blender.org/release/Blender4.5"
+  curl -sSfL "$base/blender-$BLENDER_VERSION-linux-x64.tar.xz" -o "$tmp/b.tar.xz"
+  curl -sSfL "$base/blender-$BLENDER_VERSION.sha256" -o "$tmp/sums"
+  want="$(grep "blender-$BLENDER_VERSION-linux-x64.tar.xz" "$tmp/sums" | cut -d' ' -f1)"
+  echo "$want  $tmp/b.tar.xz" | sha256sum -c -
+  tar -xJf "$tmp/b.tar.xz" -C /opt
+  rm -rf "$tmp"
+fi
+ln -sfn "/opt/blender-$BLENDER_VERSION-linux-x64" /opt/blender
+ln -sf /opt/blender/blender /usr/local/bin/blender
+
 # Make sure the claude-mem launcher and Rokit tools are on PATH for the session
 if [ -n "${CLAUDE_ENV_FILE:-}" ]; then
   echo 'export PATH="$HOME/.local/bin:$HOME/.rokit/bin:$PATH"' >> "$CLAUDE_ENV_FILE"
