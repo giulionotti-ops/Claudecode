@@ -1,0 +1,287 @@
+{
+ "title": "10 mesi di Netflix gratis",
+ "brand": {
+  "disclaimer": "Netflix e Spotify sono marchi dei rispettivi proprietari · nessuna affiliazione"
+ },
+ "cast": {
+  "hero": {
+   "shirt": "#ff8a3d",
+   "hair": "#3b2416",
+   "pants": "#22223b"
+  },
+  "friend": {
+   "shirt": "#22a597",
+   "cap": "#1d1d1d"
+  }
+ },
+ "tail": 3.2,
+ "lines": [
+  {
+   "text": "Dieci mesi di Netflix gratis.",
+   "scene": {
+    "type": "hook",
+    "bg": "#ff3b5c",
+    "ray1": "#ff6b81",
+    "ray2": "#ff3b5c",
+    "captionY": -999,
+    "shake": "@gratis",
+    "title": [
+     {
+      "text": "10 MESI",
+      "at": "@dieci"
+     },
+     {
+      "text": "DI NETFLIX",
+      "at": "@netflix"
+     },
+     {
+      "text": "GRATIS!",
+      "at": "@gratis",
+      "big": true,
+      "color": "#ffd23f"
+     }
+    ]
+   }
+  },
+  {
+   "text": "Sì, hai sentito bene."
+  },
+  {
+   "text": "Netflix ha appena aumentato i prezzi:",
+   "scene": {
+    "type": "cinema",
+    "turn": "@aumentato",
+    "faces": [
+     {
+      "at": 0,
+      "face": "bored"
+     },
+     {
+      "at": "@prezzi",
+      "face": "surprised"
+     }
+    ],
+    "panel": {
+     "kind": "store",
+     "title": "NETFLIX",
+     "price": "7,99€ AL MESE",
+     "button": "CON PUBBLICITÀ"
+    },
+    "badges": [
+     {
+      "text": "+1€",
+      "kind": "red",
+      "at": "@aumentato",
+      "pos": [
+       830,
+       640
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "text": "il piano con pubblicità costa 7,99€ al mese.",
+   "say": "il piano con pubblicità costa sette e novantanove al mese."
+  },
+  {
+   "text": "Dieci mesi fanno 79,90€. La banca te ne regala 80.",
+   "say": "Dieci mesi fanno settantanove e novanta. La banca te ne regala ottanta.",
+   "scene": {
+    "type": "money",
+    "bg": "#12a150",
+    "floor": "#0e7a3d",
+    "rainAt": "@regala",
+    "badges": [
+     {
+      "text": "−79,90€",
+      "kind": "red",
+      "at": "@fanno",
+      "out": "@regala",
+      "pos": [
+       300,
+       470
+      ]
+     },
+     {
+      "text": "+80€",
+      "kind": "yellow",
+      "at": "@80",
+      "pos": [
+       540,
+       470
+      ],
+      "scale": 1.3
+     }
+    ]
+   }
+  },
+  {
+   "text": "Apri il conto Buddy con un codice invito entro il 16 novembre.",
+   "say": "Apri il conto Buddy con un codice invito entro il sedici novembre.",
+   "scene": {
+    "type": "phone",
+    "bg": "#ff8a3d",
+    "ground": "#22223b",
+    "form": {
+     "dark": true,
+     "accent": "#ff3b5c",
+     "title": "Apri il conto",
+     "sub": "Conto Buddy",
+     "chip": "entro il 16/11",
+     "chipAt": "@entro",
+     "field": "CODICE INVITO",
+     "typeAt": "@codice",
+     "typeDur": 1.0,
+     "pressAt": "@novembre"
+    }
+   }
+  },
+  {
+   "text": "Spendi almeno 10€ con la carta entro 30 giorni,",
+   "say": "Spendi almeno dieci euro con la carta entro trenta giorni,",
+   "scene": {
+    "type": "cinema",
+    "wall": "#0d1f2d",
+    "rug": "#22a597",
+    "bag": "#ff3b5c",
+    "glow": "#33c26b",
+    "cardAt": "@carta",
+    "turn": "@spendi",
+    "faces": [
+     {
+      "at": 0,
+      "face": "happy"
+     }
+    ],
+    "panel": {
+     "kind": "paid",
+     "title": "PAGATO 7,99€",
+     "checks": [
+      "almeno 10€ con la carta",
+      "entro 30 giorni"
+     ],
+     "checkAt": "@spendi"
+    }
+   }
+  },
+  {
+   "text": "e ti arrivano 80€: 50 di bonus più 30 extra.",
+   "say": "e ti arrivano ottanta euro: cinquanta di bonus più trenta extra.",
+   "scene": {
+    "type": "money",
+    "bg": "#3a6cff",
+    "floor": "#2a4fbf",
+    "rainAt": "@arrivano",
+    "note": "Solo maggiorenni residenti in Italia e nuovi clienti: nessun rapporto con UniCredit dal 2020",
+    "badges": [
+     {
+      "text": "+50€",
+      "kind": "green",
+      "at": "@50",
+      "pos": [
+       300,
+       470
+      ]
+     },
+     {
+      "text": "+30€",
+      "kind": "green",
+      "at": "@30",
+      "pos": [
+       780,
+       470
+      ]
+     }
+    ]
+   }
+  },
+  {
+   "text": "Preferisci la musica? Sono 6 mesi di Spotify Premium.",
+   "say": "Preferisci la musica? Sono sei mesi di Spotify Premium.",
+   "scene": {
+    "type": "cinema",
+    "wall": "#0b2b1a",
+    "rug": "#ffd23f",
+    "bag": "#33c26b",
+    "glow": "#33c26b",
+    "turn": "@musica",
+    "faces": [
+     {
+      "at": 0,
+      "face": "surprised"
+     },
+     {
+      "at": "@mesi",
+      "face": "happy"
+     }
+    ],
+    "panel": {
+     "kind": "store",
+     "title": "SPOTIFY PREMIUM",
+     "price": "6 MESI",
+     "button": "11,99€ AL MESE"
+    }
+   }
+  },
+  {
+   "text": "Ma solo fino al 16: poi il bonus scende a 50€.",
+   "say": "Ma solo fino al sedici: poi il bonus scende a cinquanta euro.",
+   "scene": {
+    "type": "bigcal",
+    "wall": "#ff3b5c",
+    "pages": [
+     {
+      "day": "16",
+      "month": "NOVEMBRE",
+      "label": "ULTIMO GIORNO",
+      "color": "#1d1d1d",
+      "markAt": "@16"
+     },
+     {
+      "day": "50€",
+      "month": "DAL 17",
+      "label": "BONUS RIDOTTO",
+      "color": "#888888",
+      "at": "@scende"
+     }
+    ]
+   }
+  },
+  {
+   "text": "Il codice è qui: copialo adesso.",
+   "scene": {
+    "type": "end",
+    "title": "CODICE INVITO",
+    "sub": "conto Buddy · UniCredit",
+    "card": "#ff3b5c",
+    "ink": "#ffffff",
+    "sky0": "#1a0610",
+    "sky1": "#6b1030",
+    "seed": 21,
+    "lines": [
+     "Tu ricevi 80€ di bonus",
+     "Solo fino al 16/11/26"
+    ]
+   }
+  }
+ ],
+ "post": [
+  "🔑 Codice invito: {code}",
+  "🍿 Netflix ha appena aumentato i prezzi: Standard con pubblicità 7,99€/mese. 10 mesi = 79,90€.",
+  "💸 Con il bonus Buddy ricevi 80€ (50€ + 30€ extra) se apri il conto entro il 16/11 ⏳",
+  "🎵 Preferisci la musica? 80€ = 6 mesi di Spotify Premium (11,99€/mese)",
+  "1️⃣ Scarica l'app buddy UniCredit e apri il conto Genius buddy (canone zero)",
+  "2️⃣ Inserisci il codice {code} quando apri il conto",
+  "3️⃣ Entro 30 giorni spendi almeno 10€ con la carta (bonifici e ricariche non contano)",
+  "💸 Il bonus arriva entro 90 giorni lavorativi.",
+  "🔞 Solo maggiorenni residenti in Italia e nuovi clienti (nessun rapporto con UniCredit dal 2020).",
+  "ℹ️ Codice personale: se lo usi ricevo anch'io un bonus. Prezzi di listino a novembre 2026. Condizioni complete sul sito buddy UniCredit."
+ ],
+ "hashtags": [
+  "#netflix",
+  "#spotify",
+  "#gratis",
+  "#risparmio"
+ ]
+}

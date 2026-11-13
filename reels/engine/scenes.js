@@ -276,6 +276,101 @@ function bigcal(p, ctx) {
   };
 }
 
+// ---------------- hook: spinning rays, orbiting coins, hero jumps; huge stacked title in 2D ----------------
+// p.title: [{text, at, color}] — each line slams in at its time; p.shake = time of the big word
+function hook(p, ctx) {
+  const scene = new THREE.Scene(); scene.background = new THREE.Color(p.bg || '#ff3b5c');
+  K.lights(scene, { hemi: 1.8, sunI: 1.3, dir: [3, 8, 10] });
+  const rays = K.canvasTex(1024, 1024, (g, W) => { const n = 18; for (let i = 0; i < n; i++) { g.fillStyle = i % 2 ? (p.ray1 || '#ff6b81') : (p.ray2 || '#ff3b5c'); g.beginPath(); g.moveTo(W / 2, W / 2); g.arc(W / 2, W / 2, W, i / n * 6.283, (i + 1) / n * 6.283); g.fill(); } });
+  const rp = new THREE.Mesh(new THREE.PlaneGeometry(40, 40), new THREE.MeshBasicMaterial({ map: rays })); rp.position.set(0, 3, -6); scene.add(rp);
+  const H = hero(ctx); H.root.position.set(0, 0, 0); scene.add(H.root);
+  const floor = new THREE.Mesh(new THREE.CircleGeometry(3.2, 40), new THREE.MeshBasicMaterial({ color: '#000', transparent: true, opacity: .18 })); floor.rotation.x = -Math.PI / 2; floor.position.y = .01; scene.add(floor);
+  const coins = Array.from({ length: 8 }, (_, i) => { const c = K.coin('€', -Math.PI / 2); c.scale.setScalar(.55); scene.add(c); return c; });
+  const lastAt = Math.max(...(p.title || []).map(l => at(l.at, 0)));
+  const camera = cam(40);
+  return {
+    scene, camera, update(t) {
+      const sh = at(p.shake, lastAt), q = Math.max(0, 1 - (t - sh) / .35) * (t > sh ? 1 : 0);
+      lookCam(camera, [Math.sin(t * 50) * .12 * q, 3.2 + Math.cos(t * 43) * .1 * q, 13], [0, 3.4, 0]);
+      rp.rotation.z = t * .35;
+      H.reset();
+      let j = 0; for (const l of p.title || []) { const d = t - at(l.at, 1e9); if (d > 0 && d < .45) j = Math.max(j, Math.sin(d / .45 * Math.PI)); }
+      H.root.position.y = j * .9; H.legL.s.rotation.x = -.3 * j; H.legR.s.rotation.x = .3 * j;
+      const up = ease(seg(t, sh - .1, sh + .15)); H.armL.s.rotation.z = -2.6 * up - .2; H.armR.s.rotation.z = 2.6 * up + .2;
+      H.face(t >= sh ? 'happy' : faceAt(p.faces, t, 'surprised')); idle(H, t);
+      coins.forEach((c, i) => { const a = i / coins.length * 6.283 + t * 1.4; c.position.set(Math.cos(a) * 3.4, 3.4 + Math.sin(a * 2 + t) * 1.2, Math.sin(a) * 1.5); c.rotation.y = t * 3 + i; c.visible = t > (p._t0 + .1); });
+    },
+    overlay2d(g, t) {
+      let y = p.y || 260;
+      for (const l of p.title || []) {
+        const big = !!l.big, k = pop(seg(t, at(l.at, 1e9), at(l.at, 1e9) + .25)); const size = big ? 300 : 170;
+        if (k > 0) {
+          g.save(); g.translate(540, y + size / 2); g.rotate(big ? -.06 + Math.sin(t * 6) * .015 : -.03); const pulse = big ? 1 + .04 * Math.sin(t * 8) : 1; g.scale(k * pulse, k * pulse);
+          const s = K.fitText(g, l.text, 980, size, 800, 'Baloo'); g.font = `800 ${s}px Baloo`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.lineJoin = 'round';
+          g.shadowColor = 'rgba(0,0,0,.45)'; g.shadowBlur = 24; g.shadowOffsetY = 10; g.strokeStyle = '#1d0b0b'; g.lineWidth = s * .2; g.strokeText(l.text, 0, 0); g.shadowColor = 'transparent';
+          g.fillStyle = l.color || '#ffffff'; g.fillText(l.text, 0, 0); g.restore();
+        }
+        y += (big ? 300 : 170) * .9;
+      }
+    },
+  };
+}
+
+// ---------------- home cinema: beanbag, popcorn, fairy lights, big screen with a panel ----------------
+function cinema(p, ctx) {
+  const scene = new THREE.Scene(); scene.background = new THREE.Color(p.wall || '#160d2e');
+  K.lights(scene, { sky: '#d9d0ff', ground: '#2a1d4a', hemi: 1.2, sunI: .9, dir: [6, 9, 8] });
+  box(30, 20, .5, p.wall || '#160d2e', 0, 10, -3, scene); box(30, .3, 20, p.floor || '#2a1d4a', 0, -.15, 6, scene);
+  const rug = new THREE.Mesh(new THREE.CircleGeometry(3, 40), K.mat(p.rug || '#ff3b5c')); rug.rotation.x = -Math.PI / 2; rug.position.set(2.2, .02, .8); scene.add(rug);
+  const bulbs = Array.from({ length: 16 }, (_, i) => { const b = new THREE.Mesh(new THREE.SphereGeometry(.13, 10, 8), new THREE.MeshBasicMaterial({ color: '#ffd23f' })); b.position.set(-7 + i * .95, 8.3 - Math.sin(i / 15 * Math.PI) * .7, -2.6); scene.add(b); return b; });
+  const panel = p.panel || { kind: 'poster', text: '' };
+  const sT = K.canvasTex(1024, 576, (g, W, H, t = 0) => PANELS[panel.kind](g, W, H, t, panel));
+  box(6.6, 3.9, .15, '#0b0b12', -.8, 5.0, -2.75, scene);
+  const scr = new THREE.Mesh(new THREE.PlaneGeometry(6.4, 3.6), new THREE.MeshBasicMaterial({ map: sT })); scr.position.set(-.8, 5.0, -2.66); scene.add(scr);
+  const glow = new THREE.Mesh(new THREE.CircleGeometry(4.5, 40), new THREE.MeshBasicMaterial({ color: p.glow || '#7a6bff', transparent: true, opacity: .12 })); glow.rotation.x = -Math.PI / 2; glow.position.set(-.8, .03, -.5); scene.add(glow);
+  const bag = new THREE.Mesh(new THREE.SphereGeometry(1.3, 24, 16), K.mat(p.bag || '#ffd23f')); bag.scale.set(1.1, .6, 1.1); bag.position.set(2.4, .7, .7); bag.castShadow = bag.receiveShadow = true; scene.add(bag);
+  const H = hero(ctx).sit(); H.root.position.set(2.4, .15, .7); H.root.rotation.y = -1.25; scene.add(H.root);
+  const pc = new THREE.Group(); const stripe = K.canvasTex(128, 64, g => { for (let i = 0; i < 8; i++) { g.fillStyle = i % 2 ? '#fff' : '#e8384f'; g.fillRect(i * 16, 0, 16, 64); } });
+  const cup = new THREE.Mesh(new THREE.CylinderGeometry(.42, .3, .9, 16, 1, true), new THREE.MeshLambertMaterial({ map: stripe, side: THREE.DoubleSide })); cup.position.y = .45; pc.add(cup);
+  for (let i = 0; i < 14; i++) box(.16, .16, .16, '#fff6d5', Math.sin(i * 2.3) * .28, .95 + (i % 3) * .1, Math.cos(i * 1.7) * .28, pc);
+  pc.position.set(3.9, 0, 1.4); scene.add(pc);
+  const cd = p.cardAt != null ? K.card('#141414', '#ffd23f') : null; if (cd) { cd.position.set(1.4, 3.0, 2.2); scene.add(cd); }
+  const camera = cam(40);
+  return {
+    scene, camera, update(t) {
+      const k = ease(seg(t, p._t0, p._t1)); lookCam(camera, lerp3([4.6, 5.0, 13.4], [4.0, 4.8, 12.2], k), [.5, 4.0, -.8]);
+      H.reset(); H.sit(); idle(H, t, .6); sT.redraw(t);
+      const turn = ease(seg(t, at(p.turn, p._t0 + .4), at(p.turn, p._t0 + .4) + .3)); H.head.rotation.y = .3 + 1.0 * turn; H.torso.rotation.y = .3 * turn;
+      H.face(faceAt(p.faces, t, p.face || 'neutral'));
+      H.armR.s.rotation.x = -.9; H.armR.el.rotation.x = -.6;
+      bulbs.forEach((b, i) => b.material.color.setHSL(((i * .07 + t * .2) % 1), .9, .62));
+      if (cd) { const c = ease(seg(t, p.cardAt, p.cardAt + .4)); cd.visible = c > 0; cd.position.y = 2.6 + c * 1.4; cd.rotation.y = -.5; }
+    },
+  };
+}
+
+// ---------------- money rain: banknotes fall on a cheering hero from p.rainAt ----------------
+function money(p, ctx) {
+  const scene = new THREE.Scene(); scene.background = new THREE.Color(p.bg || '#12a150');
+  K.lights(scene, { hemi: 1.7, sunI: 1.3, dir: [3, 9, 8] });
+  box(30, 20, .5, p.bg || '#12a150', 0, 10, -3, scene); box(30, .3, 20, p.floor || '#0e7a3d', 0, -.15, 6, scene);
+  const H = hero(ctx); scene.add(H.root);
+  const billT = K.canvasTex(256, 128, (g, W, Hh) => { g.fillStyle = '#7bd389'; g.fillRect(0, 0, W, Hh); g.strokeStyle = '#2f8f46'; g.lineWidth = 8; g.strokeRect(8, 8, W - 16, Hh - 16); g.fillStyle = '#2f8f46'; g.beginPath(); g.arc(W / 2, Hh / 2, 34, 0, 7); g.fill(); g.fillStyle = '#7bd389'; g.font = '900 52px Nunito'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('€', W / 2, Hh / 2 + 3); });
+  const bm = new THREE.MeshLambertMaterial({ map: billT, side: THREE.DoubleSide });
+  const bills = Array.from({ length: 46 }, (_, i) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(1.0, .5), bm); m.userData = { x: ((i * 37) % 100) / 100 * 9 - 4.5, z: ((i * 53) % 100) / 100 * 3 - 1.5, d: (i * 0.071) % 1.6, sp: 2.2 + (i % 5) * .35, r: i }; scene.add(m); return m; });
+  const camera = cam(40);
+  return {
+    scene, camera, update(t) {
+      const k = ease(seg(t, p._t0, p._t1)); lookCam(camera, [0, 3.5, 9.6 - k * 1.0], [0, 3.1, 0]);
+      H.reset(); idle(H, t);
+      const r0 = at(p.rainAt), up = ease(seg(t, r0 - .1, r0 + .2));
+      H.armL.s.rotation.z = -2.5 * up - .15; H.armR.s.rotation.z = 2.5 * up + .15; H.root.position.y = up * Math.abs(Math.sin((t - r0) * 7)) * .35;
+      H.face(t >= r0 ? 'happy' : faceAt(p.faces, t, 'neutral'));
+      bills.forEach(b => { const u = b.userData, d = t - r0 - u.d; b.visible = d > 0; if (d <= 0) return; const y = 11 - d * u.sp; b.position.set(u.x + Math.sin(d * 2 + u.r) * .6, Math.max(.05, y), u.z); b.rotation.set(y > .05 ? d * 2 + u.r : -Math.PI / 2, d * 1.3 + u.r, y > .05 ? Math.sin(d * 3) : 0); });
+    },
+  };
+}
+
 // ---------------- portrait for profile pictures: hero head-and-shoulders on a flat colour ----------------
 function portrait(p, ctx) {
   const scene = new THREE.Scene(); scene.background = new THREE.Color(p.bg || '#ffd23f');
@@ -288,4 +383,4 @@ function portrait(p, ctx) {
   return { scene, camera, update() { lookCam(camera, [.5, 3.4, 12.5], [.35, 3.2, 0]); } };
 }
 
-export const SCENES = { city, room, park, phone, screen, end, portrait, desk, bigcal };
+export const SCENES = { city, room, park, phone, screen, end, portrait, desk, bigcal, hook, cinema, money };
