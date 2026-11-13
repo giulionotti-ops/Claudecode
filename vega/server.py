@@ -21,6 +21,7 @@ from fastapi.responses import FileResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
+import agents
 import push
 
 VS_URL = os.environ.get("VOICESTUDIO_URL", "http://localhost:3900").rstrip("/")
@@ -250,6 +251,20 @@ async def stats():
         return await _cached_stats()
     except (Exception, SystemExit) as e:
         raise HTTPException(503, f"Could not read the channel: {e}")
+
+
+@app.get("/api/agents")
+async def agents_overview():
+    """One card per server agent: name, status, last activity, latest reply."""
+    return {"agents": await asyncio.to_thread(agents.overview)}
+
+
+@app.get("/api/agents/{aid}")
+async def agent_report(aid: str):
+    rep = await asyncio.to_thread(agents.report, aid)
+    if rep is None:
+        raise HTTPException(404, "unknown agent")
+    return rep
 
 
 @app.get("/api/config")
