@@ -206,60 +206,69 @@
    }
   },
   {
-   "text": "E io prendo 50€ per l'invito: conviene a tutti e due.",
-   "say": "E io prendo cinquanta euro per l'invito: conviene a tutti e due.",
+   "text": "Dopo il 16 il bonus scende a 50€: non aspettare.",
+   "say": "Dopo il sedici il bonus scende a cinquanta euro: non aspettare.",
    "scene": {
     "type": "room",
     "day": true,
     "wall": "#33c26b",
-    "floor": "#e6c79c",
+    "floor": "#c98b5e",
     "sofa": "#e8384f",
-    "cam": "duo",
-    "friend": true,
-    "lookAtFriend": "@conviene",
+    "cam": "wide",
+    "camTo": "close",
+    "hold": "phone",
+    "calendar": [
+     {
+      "label": "16",
+      "year": "NOVEMBRE"
+     }
+    ],
     "faces": [
      {
       "at": 0,
-      "face": "happy"
-     }
-    ],
-    "friendFaces": [
-     {
-      "at": 0,
-      "face": "happy"
+      "face": "surprised"
      },
      {
-      "at": "@conviene",
-      "face": "wink"
+      "at": "@aspettare",
+      "face": "smug"
      }
     ],
     "badges": [
      {
-      "text": "+80€",
+      "text": "80€",
       "kind": "green",
-      "at": "@conviene",
+      "at": "@dopo",
+      "out": "@scende",
       "pos": [
-       290,
+       300,
        520
-      ],
-      "scale": 0.85
+      ]
      },
      {
-      "text": "+50€",
-      "kind": "green",
-      "at": "@50",
+      "text": "50€",
+      "kind": "red",
+      "at": "@scende",
       "pos": [
-       790,
+       300,
+       520
+      ]
+     },
+     {
+      "text": "ADESSO",
+      "kind": "yellow",
+      "at": "@aspettare",
+      "pos": [
+       760,
        520
       ],
-      "scale": 0.85
+      "scale": 0.8
      }
     ]
    }
   },
   {
-   "text": "Il codice è qui. Vale solo fino al 16!",
-   "say": "Il codice è qui. Vale solo fino al sedici!",
+   "text": "Il codice è qui: copialo adesso.",
+   "say": "Il codice è qui: copialo adesso.",
    "scene": {
     "type": "end",
     "title": "CODICE INVITO",
@@ -270,7 +279,7 @@
     "sky1": "#8a2a6a",
     "seed": 5,
     "lines": [
-     "Tu ricevi 80€ · io ricevo 50€",
+     "Tu ricevi 80€ di bonus",
      "Solo fino al 16/11/26"
     ]
    }
@@ -286,7 +295,7 @@
   "3️⃣ Entro 30 giorni spendi almeno 10€ con la carta (bonifici e ricariche non contano)",
   "💸 Il bonus arriva entro 90 giorni lavorativi.",
   "🔞 Solo maggiorenni residenti in Italia e nuovi clienti (nessun rapporto con UniCredit dal 2020).",
-  "ℹ️ Codice personale: se lo usi ricevo anch'io 50€. Prezzi di listino a novembre 2026. Condizioni complete sul sito buddy UniCredit."
+  "ℹ️ Codice personale: se lo usi ricevo anch'io un bonus. Prezzi di listino a novembre 2026. Condizioni complete sul sito buddy UniCredit."
  ],
  "hashtags": [
   "#psplus",
