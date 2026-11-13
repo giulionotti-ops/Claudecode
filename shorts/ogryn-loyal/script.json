@@ -1,0 +1,171 @@
+{
+ "layout": {
+  "page1": [
+   [
+    0.33,
+    [
+     1
+    ]
+   ],
+   [
+    0.31,
+    [
+     0.45,
+     0.55
+    ]
+   ],
+   [
+    0.36,
+    [
+     0.6,
+     0.4
+    ]
+   ]
+  ],
+  "page2": [
+   [
+    0.3,
+    [
+     1
+    ]
+   ],
+   [
+    0.34,
+    [
+     0.5,
+     0.5
+    ]
+   ],
+   [
+    0.36,
+    [
+     1
+    ]
+   ]
+  ]
+ },
+ "voices": {
+  "rookie": "TX3LPaxmHKxFdv7VOQHJ",
+  "sarge": "M5E055lOUxMi0kJpGyE9",
+  "commissar": "onwK4e9ZLuTAKqWW03F9",
+  "ogryn": "nPczCjzI2devNBz1zQrb"
+ },
+ "voice_fx": {
+  "ogryn": "asetrate=44100*0.84,aresample=48000,atempo=1.08"
+ },
+ "lines": [
+  {
+   "id": "l01",
+   "who": "rookie",
+   "say": "[panicked, screaming] SARGE! Why is the Ogryn CARRYING me?!",
+   "text": "SARGE! WHY IS THE OGRYN CARRYING ME?!"
+  },
+  {
+   "id": "l02",
+   "who": "sarge",
+   "say": "[deadpan] Orders. You're his job now, son.",
+   "text": "ORDERS. YOU'RE HIS JOB NOW, SON."
+  },
+  {
+   "id": "l03",
+   "who": "ogryn",
+   "say": "[slow, dopey, proud] Sarge say protect little 'un. So Grunk protect!",
+   "text": "SARGE SAY PROTEKT LITTLE 'UN. SO GRUNK PROTEKT!"
+  },
+  {
+   "id": "l04",
+   "who": "commissar",
+   "say": "[coldly] Ogryns can barely count. But they never, ever break.",
+   "text": "OGRYNS CAN BARELY COUNT. BUT THEY NEVER, EVER BREAK."
+  },
+  {
+   "id": "l05",
+   "who": "rookie",
+   "say": "[nervous] Grunk... how many Orks are coming?",
+   "text": "GRUNK... HOW MANY ORKS ARE COMING?"
+  },
+  {
+   "id": "l06",
+   "who": "ogryn",
+   "say": "[counting slowly, confused] One... two... um... LOTS!",
+   "text": "ONE... TWO... UM... LOTS!"
+  },
+  {
+   "id": "l07",
+   "who": "ogryn",
+   "say": "[roaring battle cry] FOR DA EMPRAH!",
+   "text": "FOR DA EMPRAH!!"
+  },
+  {
+   "id": "l08",
+   "who": "sarge",
+   "say": "[softly, tired] Fight's over, big lad. You can rest now.",
+   "text": "FIGHT'S OVER, BIG LAD. YOU CAN REST NOW."
+  },
+  {
+   "id": "l09",
+   "who": "ogryn",
+   "say": "[quiet, stubborn, tired] Not till little 'un wakes up.",
+   "text": "NOT TILL LITTLE 'UN WAKES UP."
+  },
+  {
+   "id": "l10",
+   "who": "rookie",
+   "say": "[moved, soft] You stayed up all night? Grunk... you're the best soldier in the Guard.",
+   "text": "YOU STAYED UP ALL NIGHT? GRUNK... YOU'RE THE BEST SOLDIER IN THE GUARD."
+  },
+  {
+   "id": "l11",
+   "who": "ogryn",
+   "say": "[happy, confused] ...Wot's a Guard?",
+   "text": "...WOT'S A GUARD?"
+  }
+ ],
+ "sfx": {
+  "boom": [
+   "Big artillery explosion, dirt raining down, war",
+   2.0
+  ],
+  "stomp": [
+   "Giant heavy footsteps running, ground thudding, gear rattling",
+   2.0
+  ],
+  "puff": [
+   "Man exhales a long puff of cigar smoke, slow breath",
+   1.5
+  ],
+  "ping": [
+   "Bullets and laser shots ricocheting off a thick metal shield, ping pang clang",
+   2.0
+  ],
+  "crash": [
+   "Huge brute smashing into a crowd of monsters, bodies flying, crunch and thud, comedic",
+   2.0
+  ],
+  "roar": [
+   "Crowd of brutish monsters screaming WAAAGH charging",
+   2.5
+  ],
+  "rain": [
+   "Steady night rain on metal and mud, distant thunder",
+   3.0
+  ],
+  "birds": [
+   "Quiet dawn morning, a few birds chirping, gentle wind",
+   3.0
+  ],
+  "page": [
+   "Comic book page turning quickly, paper whoosh",
+   1.0
+  ],
+  "whoosh": [
+   "Quick soft camera whoosh swipe transition",
+   0.6
+  ],
+  "boing": [
+   "Cartoon spring boing, comedic",
+   0.8
+  ]
+ },
+ "music": "Heartwarming comedic military march turning gentle and emotional, snare drum, tuba, then soft strings and warm piano, instrumental, no vocals, 100 bpm"
+}

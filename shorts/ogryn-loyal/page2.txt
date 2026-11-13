@@ -1,0 +1,10 @@
+Image 1 is the exact PAGE LAYOUT: draw a comic page with exactly these 4 panels, in exactly these positions and sizes, thick black panel borders, white gutters. Do not draw the numbers.
+Image 2 is the previous page of the same comic: keep the identical drawing style and the identical characters (GRUNK the gentle giant with tiny head, huge shoulders, dopey grin, small olive flak vest and giant metal slab shield; the skinny rookie with huge eyes and oversized olive helmet; the big grizzled sergeant with cigar; the commissar with black peaked cap, black greatcoat and red sash; the green tusked alien brutes).
+
+Style: flat cartoon webcomic, thick uniform black outlines, flat colours with one shadow tone, grimdark sci-fi drawn funny. Every panel keeps EMPTY plain sky or plain background in its TOP 30% for speech bubbles added later.
+ABSOLUTELY NO text, letters, numbers, speech bubbles, sound effects or logos anywhere.
+
+Panel 1 (top, full width, warm orange sky): Grunk charging head-first into a mob of green tusked alien brutes, shield forward, brutes flying through the air in every direction, dust and speed lines, Grunk's mouth wide open roaring.
+Panel 2 (middle left, NIGHT, dark blue sky, rain): Grunk sitting on the muddy ground, battered and bandaged, holding his giant shield over the small rookie, who sleeps curled up under it; the sergeant stands nearby in the rain with a hand raised, speaking gently.
+Panel 3 (middle right, NIGHT, rain): close-up of Grunk's tired, bruised face, rain dripping off him, small stubborn eyes, still holding the shield up.
+Panel 4 (bottom, full width, DAWN, soft pink-gold sky): morning after the battle; a pile of knocked-out alien brutes in the background; Grunk still sitting upright, bandaged, holding the shield, with a big tired happy grin; the rookie awake beside him looking up at him with teary, grateful eyes; the sergeant and the commissar standing on the far right watching.
