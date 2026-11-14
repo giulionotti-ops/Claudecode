@@ -28,8 +28,10 @@ for run in 1 2; do   # at most 2 new shorts per job
   W=$(waiting); echo "waiting to post: $W"
   [ "$W" -ge 4 ] && break
   [ -f "$HERE/PAUSE" ] && break
-  timeout 3h claude -p "Follow fable-physics/AUTO.md exactly (you are in shorts/): make the next short." \
-    --model sonnet --permission-mode acceptEdits --allowedTools Bash Read Write Edit Glob Grep WebFetch WebSearch \
+  # Long Bash timeouts so the 8-10 min render is one call, not a polling loop (each poll re-reads the whole run).
+  BASH_DEFAULT_TIMEOUT_MS=1200000 BASH_MAX_TIMEOUT_MS=1800000 \
+  timeout 3h claude -p "Follow /root/physics-channel/shorts/fable-physics/AUTO.md exactly. Your working folder is /root/physics-channel/shorts. Make the next short." \
+    --model sonnet --permission-mode acceptEdits --allowedTools Bash Read Write Edit Glob Grep WebFetch WebSearch Agent \
     --output-format text </dev/null || { echo "claude run failed ($?)"; break; }
 done
 

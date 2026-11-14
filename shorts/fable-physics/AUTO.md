@@ -4,7 +4,13 @@
 After Claude finishes, `daily.sh` runs the uploader, which puts every approved `uploader/queue.json` entry into the
 next free slot (13:30 or 21:30 Rome). Stop at once if `fable-physics/PAUSE` exists.
 
-## Your task (Claude, headless run). Work from `shorts/`.
+## Your task (Claude, headless run). Work from `/root/physics-channel/shorts/` (all paths below are relative to it).
+
+### Keep the run lean (every step re-reads the whole run, so fewer and smaller steps cost less)
+- Don't search the disk for files: the paths here are exact.
+- Copy engine files with `cp`; don't print them. Read only what you will change: find it with `grep -n`, then read just those lines (`sed -n 'A,Bp'`). Never `cat` a whole `main.js`, `world.js` or `creatures.js`.
+- Run long commands (`build.sh`, `voice_ts.py`, stills) once in the foreground with a long timeout (up to 30 min is allowed). Don't background them and don't poll with sleep loops.
+- Batch related shell commands into one call.
 Make the next short, add it to the queue, commit and push. One short per run.
 
 ### 1. Pick what to make
@@ -20,7 +26,7 @@ Read `fable-physics/README.md` (channel rules), `fable-physics/creatures.json` (
 - Hook in the first 2 s. About 140–160 words. Plain spoken English.
 
 ### 3. Check the facts
-Every claim (biology, physics, legend) needs a source. Search the web; prefer encyclopedias, museums, university pages, papers. List the sources and the real-animal anchors in `shorts/<slug>/TREATMENT.md`. If you can't source a claim, cut it.
+Every claim (biology, physics, legend) needs a source. Don't search the web yourself: hand the research to one cheap helper with the Agent tool (`model: "haiku"`, `subagent_type: "general-purpose"`). Give it the creature, its culture and your list of claims, and ask for: the legend's key facts with sources, 4–5 real-animal anchors, and for each claim a URL and a one-line quote, or "no source". Prefer encyclopedias, museums, university pages, papers. Check its answer makes sense; fetch a page yourself only to settle a doubtful claim. List the sources and the real-animal anchors in `shorts/<slug>/TREATMENT.md`. If you can't source a claim, cut it.
 
 ### 4. Build it in a new folder `shorts/<slug>/`
 Slug: `<creature>` for a physics short, `<creature>-intro` for an intro. Copy the engine from `kraken/`: `index.html`, `overlay.js`, `mix.py`, `master.sh`, `build.sh`, `export_srt.py`, `voice_ts.py`, `fonts/`, `.gitignore`; rename the output in `build.sh` and `export_srt.py`.
