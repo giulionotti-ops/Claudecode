@@ -483,7 +483,7 @@ function pizza(p, ctx) {
   const mouth = new THREE.Mesh(new THREE.CircleGeometry(.6, 20, 0, Math.PI), new THREE.MeshBasicMaterial({ color: '#ff9d2e' })); mouth.position.set(0, 2.25, 1.3); ov.add(mouth);
   box(.5, 1.6, .5, '#8a8a8a', .6, 3.6, -.3, ov);
   const signT = K.canvasTex(512, 160, (g, W, Hh) => { g.fillStyle = '#1f8f4a'; K.rrect(g, 0, 0, W, Hh, 30); g.fill(); g.fillStyle = '#fff'; g.textAlign = 'center'; g.textBaseline = 'middle'; K.fitText(g, p.sign || 'PIZZERIA', 460, 100, 900); g.fillText(p.sign || 'PIZZERIA', W / 2, Hh / 2 + 6); });
-  const sign = new THREE.Mesh(new THREE.PlaneGeometry(3.6, 1.12), new THREE.MeshBasicMaterial({ map: signT, transparent: true })); sign.position.set(1.8, 7.0, -2.9); scene.add(sign);
+  const sign = new THREE.Mesh(new THREE.PlaneGeometry(3.6, 1.12), new THREE.MeshBasicMaterial({ map: signT, transparent: true })); sign.position.set(.9, 6.3, -2.9); scene.add(sign);
   // table + hero
   const cloth = K.canvasTex(256, 256, (g, W) => { for (let i = 0; i < 8; i++) for (let j = 0; j < 8; j++) { g.fillStyle = (i + j) % 2 ? '#ffffff' : '#e8384f'; g.fillRect(i * 32, j * 32, 32, 32); } });
   const top = new THREE.Mesh(K.geo(4.2, .2, 2.4), new THREE.MeshLambertMaterial({ map: cloth })); top.position.set(.6, 2.1, 1.2); top.receiveShadow = top.castShadow = true; scene.add(top);
@@ -498,7 +498,7 @@ function pizza(p, ctx) {
   const camera = cam(40);
   return {
     scene, camera, update(t) {
-      const k = ease(seg(t, p._t0, p._t1)); lookCam(camera, lerp3([1.2, 5.6, 11.5], [.9, 5.2, 10.2], k), [.2, 3.6, 0]);
+      const k = ease(seg(t, p._t0, p._t1)); lookCam(camera, lerp3([1.0, 5.6, 12.8], [.8, 5.3, 11.6], k), [.3, 4.0, 0]);
       H.reset(); H.sit(); idle(H, t); H.face(faceAt(p.faces, t, 'happy'));
       mouth.material.color.setHSL(.07 + Math.sin(t * 9) * .01, 1, .55 + Math.sin(t * 13) * .05);
       const c0 = at(p.cardAt), c = ease(seg(t, c0, c0 + .35)); pos.visible = cd.visible = c > 0;
