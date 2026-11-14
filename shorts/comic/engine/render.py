@@ -9,6 +9,7 @@ from PIL import Image, ImageDraw, ImageFont
 import shots as _shots
 SHOTS = _shots.SHOTS
 ENDING = getattr(_shots, 'ENDING', {'boom_after': 'whistle', 'delay': 2.0})
+HOOK = getattr(_shots, 'HOOK', None)         # optional frame-1 hook text: {'text': '3-5 WORDS', 'until': 2.5, 'y': 0.27}
 FPS, OW, OH, K = 30, 1080, 1920, 2           # K: working scale over page pixels
 A = OW / OH
 FONT = f'{HERE}/../fonts/ComicNeue-Bold.ttf'; BANG = f'{HERE}/../fonts/Bangers-Regular.ttf'
@@ -212,6 +213,25 @@ def render_view(pg, view, t, dx, dy):
     sc = vw * K / OW
     return crop.transform((OW, OH), Image.AFFINE, (sc, 0, x0 - ix0, 0, sc, y0 - iy0), resample=Image.BICUBIC)
 end_mark = None
+hook_img = None
+def hook_overlay(out, t):
+    """Big on-screen hook text for the first seconds (reads on mute). Kept out of the top 20% of the frame."""
+    global hook_img
+    until = HOOK.get('until', 2.5)
+    if t >= until: return out
+    if hook_img is None:
+        S = 2; f = ImageFont.truetype(BANG, 118 * S)
+        im = Image.new('RGBA', (OW * S, 520 * S), (0, 0, 0, 0)); d = ImageDraw.Draw(im)
+        lines = wrap(d, HOOK['text'].upper(), f, (OW - 120) * S)
+        lh = 128 * S; y = 260 * S - lh * (len(lines) - 1) / 2
+        for ln in lines:
+            d.text((OW * S / 2, y), ln, font=f, fill=(255, 214, 64), stroke_width=12 * S, stroke_fill=INK, anchor='mm'); y += lh
+        hook_img = im.rotate(-3, resample=Image.BICUBIC).resize((OW, 520), Image.LANCZOS)
+    s = scale_pop(t, 'pop'); fade = min(1, (until - t) / 0.25)
+    m = hook_img.resize((max(1, int(OW * s)), max(1, int(520 * s))))
+    if fade < 1: m.putalpha(m.getchannel('A').point(lambda a: int(a * fade)))
+    out.paste(m, (int((OW - m.width) / 2), int(OH * HOOK.get('y', 0.27) - m.height / 2)), m)
+    return out
 def frame(t):
     global end_mark
     dx, dy = shake(t)
@@ -233,11 +253,12 @@ def frame(t):
             end_mark = im.rotate(-6, resample=Image.BICUBIC).resize((OW, 600), Image.LANCZOS)
         s = scale_pop(p, 'slam'); m = end_mark.resize((int(OW * s), int(600 * s)))
         out.paste(m, (int((OW - m.width) / 2 + dx), int(OH / 2 - m.height / 2 + dy)), m)
+    if HOOK: out = hook_overlay(out, t)
     return out
 
 # ---------- outputs ----------
 if '--sheet' in sys.argv:
-    ts = [sh['end'] - 0.05 for sh in tl] + [min(BOOM_T + 0.3, T_END - 0.05)]
+    ts = ([0.6] if HOOK else []) + [sh['end'] - 0.05 for sh in tl] + [min(BOOM_T + 0.3, T_END - 0.05)]
     th = [frame(x).resize((270, 480)) for x in ts]
     sheet = Image.new('RGB', (270 * 7, 480 * 2), 'white')
     for k, im in enumerate(th): sheet.paste(im, ((k % 7) * 270, (k // 7) * 480))

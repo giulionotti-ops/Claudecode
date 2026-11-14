@@ -10,6 +10,7 @@ Look: flat cartoon webcomic. Thick black outlines, flat colours with one shadow 
 
 ## Short format (same rules as the other films)
 - 45–60 s vertical, 4–6 panels revealed one by one with camera push-ins, voiced dialogue, music + SFX.
+- **On-screen hook text** (3–5 words, `HOOK` in `shots.py`) on frame 1; viral checklists in `comic/AUTO.md` step 3.
 - **Hook in panel 1, first 2 s:** a question or shock line ("FIFTEEN HOURS. That's how long a Guardsman lasts.").
 - **Retention:** each panel ends on a beat that needs the next one; the punchline lands in the last 3 s and loops back to the first panel.
 - Topics that win (see `../research-40k-shorts.md`): Guardsmen, Krieg, Ogryns, Orks, Commissars, the Emperor. Mix funny with sad.
