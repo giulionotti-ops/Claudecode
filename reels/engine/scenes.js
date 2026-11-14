@@ -291,14 +291,19 @@ function hook(p, ctx) {
   return {
     scene, camera, update(t) {
       const sh = at(p.shake, lastAt), q = Math.max(0, 1 - (t - sh) / .35) * (t > sh ? 1 : 0);
-      lookCam(camera, [Math.sin(t * 50) * .12 * q, 3.2 + Math.cos(t * 43) * .1 * q, 13], [0, 3.4, 0]);
+      const lift = p.camLift || 0; lookCam(camera, [Math.sin(t * 50) * .12 * q, 3.2 + lift + Math.cos(t * 43) * .1 * q, 13], [0, 3.4 + lift, 0]);
       rp.rotation.z = t * .35;
       H.reset();
       let j = 0; for (const l of p.title || []) { const d = t - at(l.at, 1e9); if (d > 0 && d < .45) j = Math.max(j, Math.sin(d / .45 * Math.PI)); }
-      H.root.position.y = j * .9; H.legL.s.rotation.x = -.3 * j; H.legR.s.rotation.x = .3 * j;
-      const up = ease(seg(t, sh - .1, sh + .15)); H.armL.s.rotation.z = -2.6 * up - .2; H.armR.s.rotation.z = 2.6 * up + .2;
-      H.face(t >= sh ? 'happy' : faceAt(p.faces, t, 'surprised')); idle(H, t);
-      coins.forEach((c, i) => { const a = i / coins.length * 6.283 + t * 1.4; c.position.set(Math.cos(a) * 3.4, 3.4 + Math.sin(a * 2 + t) * 1.2, Math.sin(a) * 1.5); c.rotation.y = t * 3 + i; c.visible = t > (p._t0 + .1); });
+      if (p.react === 'shock' && t >= sh) j = 0; H.root.position.y = j * .9; H.legL.s.rotation.x = -.3 * j; H.legR.s.rotation.x = .3 * j;
+      const up = ease(seg(t, sh - .1, sh + .15));
+      if (p.react === 'shock') { H.armL.s.rotation.x = H.armR.s.rotation.x = -2.9 * up; H.armL.s.rotation.z = -.5 * up; H.armR.s.rotation.z = .5 * up; H.armL.el.rotation.x = H.armR.el.rotation.x = -.9 * up; }   // hands on head
+      else { H.armL.s.rotation.z = -2.6 * up - .2; H.armR.s.rotation.z = 2.6 * up + .2; }
+      H.face(t >= sh ? (p.react === 'shock' ? 'surprised' : 'happy') : faceAt(p.faces, t, 'surprised')); idle(H, t);
+      coins.forEach((c, i) => { const a = i / coins.length * 6.283 + t * 1.4; c.position.set(Math.cos(a) * 3.4, 3.4 + Math.sin(a * 2 + t) * 1.2, Math.sin(a) * 1.5);
+        if (p.react === 'shock' && t >= sh) { const d = t - sh; c.position.set(Math.cos(i * .8) * 3.6, Math.max(.3, 3.4 + Math.sin(i * 2) - d * d * 14), Math.sin(i * .8) * 1.5); c.rotation.set(d > .4 ? Math.PI / 2 : 0, 0, 0); }   // coins drop: the bonus shrinks
+        else c.rotation.y = t * 3 + i;
+        c.visible = t > (p._t0 + .1); });
     },
     overlay2d(g, t) {
       let y = p.y || 260;

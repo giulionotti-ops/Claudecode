@@ -27,10 +27,10 @@
     "ray2": "#3a1d8f",
     "captionY": -999,
     "shake": "@diventano",
-    "y": 300,
+    "y": 430,
     "title": [
      {
-      "text": "TRA 2 GIORNI",
+      "text": "BONUS BANCA",
       "at": 0
      },
      {
@@ -41,11 +41,13 @@
       "strikeAt": "@diventano"
      },
      {
-      "text": "DIVENTANO 50€",
+      "text": "TRA 2 GIORNI: 50€",
       "at": "@diventano",
       "color": "#ff6b6b"
      }
-    ]
+    ],
+    "react": "shock",
+    "camLift": 1.6
    }
   },
   {
