@@ -15,18 +15,18 @@
 <meta name="apple-mobile-web-app-title" content="Neesmo">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <style>
-  :root { --c: #3dff8f; --c2: #c6ff4a; --bg: #02070d; --dim: rgba(61,255,143,.35); --err: #ff5f6d; }
+  :root { --rgb: 61,255,143; --c: rgb(var(--rgb)); --c2: #c6ff4a; --bg: #02070d; --dim: rgba(var(--rgb),.35); --err: #ff5f6d; --fs: 14px; }
   * { box-sizing: border-box; }
   html { background-color: #02070d; min-height: 100lvh; }  /* iPhone home-screen app paints the area under the page with this */
-  html, body { margin: 0; height: 100%; background: var(--bg) radial-gradient(ellipse at center, #06331a 0%, var(--bg) 70%) no-repeat fixed; color: var(--c);
-    font: 14px/1.4 ui-monospace, "SF Mono", Menlo, Consolas, monospace; overflow: hidden; }
+  html, body { margin: 0; height: 100%; background: var(--bg) radial-gradient(ellipse at center, rgba(var(--rgb),.13) 0%, var(--bg) 70%) no-repeat fixed; color: var(--c);
+    font: var(--fs)/1.4 ui-monospace, "SF Mono", Menlo, Consolas, monospace; overflow: hidden; }
   body::after { content: ""; position: fixed; inset: 0; pointer-events: none;
-    background: repeating-linear-gradient(0deg, rgba(61,255,143,.03) 0 1px, transparent 1px 3px); }
+    background: repeating-linear-gradient(0deg, rgba(var(--rgb),.03) 0 1px, transparent 1px 3px); }
   canvas { position: fixed; inset: 0; width: 100%; height: 100%; }
   /* Big faded wordmark far behind the ring: heavy condensed italic, tight letters, soft blur for depth */
   #wordmark { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%) skewX(-11deg); pointer-events: none; white-space: nowrap;
     font: 400 min(26vw, 380px)/.78 "Anton", Impact, "Arial Narrow", sans-serif; letter-spacing: -.045em;
-    background: linear-gradient(180deg, rgba(61,255,143,.26), rgba(61,255,143,.05) 85%); -webkit-background-clip: text; background-clip: text; color: transparent;
+    background: linear-gradient(180deg, rgba(var(--rgb),.26), rgba(var(--rgb),.05) 85%); -webkit-background-clip: text; background-clip: text; color: transparent;
     filter: blur(1.6px); animation: drift 9s ease-in-out infinite alternate; }
   @keyframes drift { to { transform: translate(-50%, -50%) skewX(-11deg) scale(1.03); filter: blur(2.2px); } }
   @media (prefers-reduced-motion: reduce) { #wordmark { animation: none; } }
@@ -38,7 +38,7 @@
   #status.err { color: var(--err); text-shadow: 0 0 8px var(--err); letter-spacing: .1em; }
   #log { position: fixed; left: 16px; bottom: calc(84px + env(safe-area-inset-bottom)); width: min(420px, calc(100% - 32px)); max-height: 30vh; overflow-y: auto;
     display: flex; flex-direction: column; gap: 6px; mask-image: linear-gradient(transparent, #000 30%); padding-top: 24px; }
-  #log p { margin: 0; padding: 6px 10px; border-left: 2px solid var(--dim); background: rgba(61,255,143,.05); }
+  #log p { margin: 0; padding: 6px 10px; border-left: 2px solid var(--dim); background: rgba(var(--rgb),.05); }
   #log p.you { border-color: var(--c2); color: var(--c2); }
   form { position: fixed; left: 16px; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); display: flex; gap: 8px; max-width: 720px; margin: 0 auto; }
   input, select, button { font: inherit; color: var(--c); background: rgba(2,20,30,.8); border: 1px solid var(--dim); border-radius: 4px; }
@@ -48,8 +48,38 @@
   #mic { width: 48px; padding: 0; font-size: 18px; }
   #mic.on { color: var(--bg); background: var(--c2); border-color: var(--c2); box-shadow: 0 0 16px var(--c2); }
   select { padding: 4px; max-width: 180px; }
-  #bell { margin-top: 6px; padding: 3px 8px; font-size: 11px; }
-  #bell[hidden] { display: none; }
+  html.no-scan body::after, html.no-mark #wordmark { display: none; }
+  .icons { display: flex; gap: 8px; justify-content: flex-end; }
+  .ic { position: relative; width: 40px; height: 40px; padding: 0; display: grid; place-items: center; }
+  .ic svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .badge { position: absolute; top: -6px; right: -6px; min-width: 18px; height: 18px; padding: 0 4px; border-radius: 9px; background: var(--err);
+    color: #fff; font-size: 11px; line-height: 18px; letter-spacing: 0; }
+  .badge[hidden] { display: none; }
+  .pop { position: fixed; top: calc(64px + env(safe-area-inset-top)); right: calc(16px + env(safe-area-inset-right)); width: min(360px, calc(100vw - 32px));
+    max-height: calc(100dvh - 160px); overflow: auto; z-index: 20; padding: 14px; border: 1px solid var(--dim); border-radius: 10px;
+    background: rgba(2,14,10,.97); box-shadow: 0 0 30px rgba(var(--rgb),.15); text-transform: none; letter-spacing: normal; text-align: left; }
+  .pop[hidden] { display: none; }
+  .pop h3 { margin: 0 0 10px; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); }
+  .pop .row { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 8px 0; border-top: 1px solid rgba(var(--rgb),.12); }
+  .pop .row:first-of-type { border-top: 0; } .pop label { color: var(--c); } .pop small { color: var(--dim); }
+  .swatches { display: flex; gap: 6px; } .sw { width: 26px; height: 26px; padding: 0; border-radius: 50%; background: var(--s); border: 2px solid transparent; }
+  .sw[aria-pressed="true"] { border-color: #fff; box-shadow: 0 0 10px var(--s); }
+  .tog { width: 44px; height: 24px; padding: 2px; border-radius: 12px; position: relative; flex: none; }
+  .tog::after { content: ""; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: var(--dim); transition: transform .15s; }
+  .tog[aria-checked="true"] { background: rgba(var(--rgb),.25); border-color: var(--c); } .tog[aria-checked="true"]::after { transform: translateX(20px); background: var(--c); }
+  .tog:disabled { opacity: .4; }
+  .nlist { list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+  .nlist button { width: 100%; text-align: left; padding: 8px 10px; display: block; letter-spacing: normal; border-left: 3px solid var(--a, var(--dim)); }
+  .nlist b { display: block; font-weight: 600; } .nlist span { display: block; color: var(--dim); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .chip { float: right; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; padding: 1px 6px; border-radius: 8px; border: 1px solid currentColor; }
+  .chip.pending { color: var(--c2); } .chip.approved { color: var(--c); } .chip.denied, .chip.expired { color: #7d8a83; }
+  .nlist .unread b::before { content: "● "; color: var(--c2); }
+  dialog#ap { --a: var(--c); width: min(720px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); padding: 0; border: 1px solid var(--dim);
+    border-top: 3px solid var(--a); border-radius: 10px; background: rgba(2,14,10,.98); color: var(--c); }
+  dialog#ap::backdrop { background: rgba(0,0,0,.7); backdrop-filter: blur(3px); }
+  #ap .rp h2 { color: var(--a); } #ap .what { font-size: 16px; } #ap .pre { max-height: 45dvh; border: 1px solid rgba(var(--rgb),.2); border-radius: 6px; padding: 10px; background: rgba(0,0,0,.35); font-size: 12px; }
+  #ap .btns { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; } #ap .btns button { padding: 12px 20px; }
+  #ap-yes { background: var(--c); color: var(--bg); border-color: var(--c); font-weight: 600; } #ap-no { border-color: var(--err); color: var(--err); }
   .cards { position: fixed; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 10px; width: 190px; }
   .cards.l { left: 16px; } .cards.r { right: 16px; }
   .card { padding: 10px 12px; border: 1px solid var(--dim); border-radius: 6px; background: rgba(2,26,14,.6); }
@@ -71,7 +101,7 @@
   @keyframes pulse { 50% { opacity: .2; } }
   .agent small { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-top: 2px; }
   dialog#report { --a: var(--c); border-top: 3px solid var(--a) !important; width: min(1100px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); padding: 0; border: 1px solid var(--dim); border-radius: 10px;
-    background: rgba(2,14,10,.97); color: var(--c); box-shadow: 0 0 40px rgba(61,255,143,.15); }
+    background: rgba(2,14,10,.97); color: var(--c); box-shadow: 0 0 40px rgba(var(--rgb),.15); }
   dialog#report::backdrop { background: rgba(0,0,0,.7); backdrop-filter: blur(3px); }
   .rp { padding: 18px; display: flex; flex-direction: column; gap: 14px; }
   .rp header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
@@ -82,19 +112,19 @@
   .kpi { border: 1px solid var(--dim); border-radius: 6px; padding: 10px 12px; background: rgba(2,26,14,.6); }
   .kpi span { display: block; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); }
   .kpi b { display: block; font-size: 22px; font-variant-numeric: tabular-nums; text-shadow: 0 0 8px var(--dim); }
-  .kpi i { display: block; height: 4px; margin-top: 6px; background: rgba(61,255,143,.15); border-radius: 2px; overflow: hidden; }
+  .kpi i { display: block; height: 4px; margin-top: 6px; background: rgba(var(--rgb),.15); border-radius: 2px; overflow: hidden; }
   .kpi i::after { content: ""; display: block; height: 100%; width: var(--w, 0%); background: var(--a, var(--c)); }
   #report .kpi { border-color: color-mix(in srgb, var(--a) 40%, transparent); } #report .kpi b { color: var(--a); }
   #report .grid section { border-color: color-mix(in srgb, var(--a) 25%, transparent); } #report .list li { border-left-color: color-mix(in srgb, var(--a) 60%, transparent); }
   .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-  .grid section { border: 1px solid rgba(61,255,143,.2); border-radius: 6px; padding: 12px; background: rgba(2,20,12,.5); min-width: 0; }
+  .grid section { border: 1px solid rgba(var(--rgb),.2); border-radius: 6px; padding: 12px; background: rgba(2,20,12,.5); min-width: 0; }
   .grid .wide { grid-column: 1 / -1; }
   .pre { white-space: pre-wrap; margin: 0; max-height: 220px; overflow: auto; line-height: 1.5; }
   .list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; max-height: 220px; overflow: auto; }
   .list li { border-left: 2px solid var(--dim); padding: 2px 8px; overflow-wrap: anywhere; }
   .list li em { font-style: normal; color: var(--dim); margin-right: 6px; } .mono li { font-size: 12px; }
   .bar { display: grid; grid-template-columns: 90px 1fr 34px; gap: 8px; align-items: center; font-size: 12px; margin-bottom: 6px; }
-  .bar i { height: 8px; background: rgba(61,255,143,.15); border-radius: 4px; overflow: hidden; }
+  .bar i { height: 8px; background: rgba(var(--rgb),.15); border-radius: 4px; overflow: hidden; }
   .bar i::after { content: ""; display: block; height: 100%; width: var(--w); background: var(--a, var(--c2)); }
   .actions { display: flex; justify-content: flex-end; } .actions button { padding: 10px 16px; }
   @media (max-width: 700px) { .grid { grid-template-columns: 1fr; } .rp { padding: 14px; } .kpis { grid-template-columns: repeat(3, 1fr); gap: 6px; }
@@ -113,7 +143,34 @@
 <div id="wordmark" aria-hidden="true">NEESMO</div>
 <canvas id="hud" aria-hidden="true"></canvas>
 <div class="corner tl">Neesmo // online<br><b id="clock">--:--:--</b><br><span id="date"></span></div>
-<div class="corner tr"><label for="voice">Voice</label><br><select id="voice"><option>loading…</option></select><br><span id="vs">voice: …</span><br><button type="button" id="bell" hidden>🔔 Notifications</button></div>
+<div class="corner tr"><div class="icons">
+  <button type="button" class="ic" id="bell" aria-label="Notifications" aria-expanded="false" aria-controls="pop-n"><svg viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg><span class="badge" id="badge" hidden>0</span></button>
+  <button type="button" class="ic" id="gear" aria-label="Settings" aria-expanded="false" aria-controls="pop-s"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+</div></div>
+<div class="pop" id="pop-s" hidden role="dialog" aria-label="Settings">
+  <h3>Voice</h3>
+  <div class="row"><label for="voice">Voice</label><select id="voice"><option>loading…</option></select></div>
+  <div class="row"><small>Status</small><small id="vs">voice: …</small></div>
+  <h3 style="margin-top:14px">Appearance</h3>
+  <div class="row"><label>Colour</label><div class="swatches" id="swatches"></div></div>
+  <div class="row"><label for="fsize">Text size</label><select id="fsize"><option value="13px">Small</option><option value="14px">Medium</option><option value="16px">Large</option></select></div>
+  <div class="row"><label id="l-mark">NEESMO lettering</label><button type="button" class="tog" role="switch" id="t-mark" aria-labelledby="l-mark"></button></div>
+  <div class="row"><label id="l-scan">Scanlines</label><button type="button" class="tog" role="switch" id="t-scan" aria-labelledby="l-scan"></button></div>
+  <div class="row"><label id="l-calm">Calm animation</label><button type="button" class="tog" role="switch" id="t-calm" aria-labelledby="l-calm"></button></div>
+</div>
+<div class="pop" id="pop-n" hidden role="dialog" aria-label="Notifications">
+  <div class="row"><label id="l-push">Notifications</label><button type="button" class="tog" role="switch" id="t-push" aria-labelledby="l-push"></button></div>
+  <small id="push-note"></small>
+  <h3 style="margin-top:12px">History</h3>
+  <ul class="nlist" id="nlist"><li><small>Nothing yet</small></li></ul>
+</div>
+<dialog id="ap" aria-labelledby="ap-title"><div class="rp">
+  <header><div><h2 id="ap-title">Approval</h2><small id="ap-sub"></small></div><button type="button" id="ap-close" aria-label="Close">✕</button></header>
+  <p class="what" id="ap-what"></p>
+  <pre class="pre" id="ap-details"></pre>
+  <p id="ap-state"></p>
+  <div class="btns" id="ap-btns"><button type="button" id="ap-no">Deny</button><button type="button" id="ap-yes">Approve</button></div>
+</div></dialog>
 <div class="cards l" id="agents-l" aria-label="Agents"></div>
 <div class="cards r" id="agents-r" aria-label="Agents"></div>
 <dialog id="report" aria-labelledby="r-name"><div class="rp">
@@ -151,6 +208,29 @@ function audio() {
   if (!ac) { ac = new AudioContext(); analyser = ac.createAnalyser(); analyser.fftSize = 256; }
   return ac;
 }
+
+// ── appearance settings (this device only) ──
+const THEMES = { green: ['#3dff8f', '61,255,143', '#c6ff4a'], cyan: ['#3fe0ff', '63,224,255', '#ffb547'], amber: ['#ffb547', '255,181,71', '#ff6b3d'],
+  violet: ['#b388ff', '179,136,255', '#ff7ac6'], red: ['#ff5f6d', '255,95,109', '#ffd166'] };
+let PREFS = { theme: 'green', fs: '14px', mark: true, scan: true, calm: false };
+try { Object.assign(PREFS, JSON.parse(localStorage.getItem('neesmo-prefs') || '{}')); } catch {}
+const THEME = {};
+function applyPrefs() {
+  const [hex, rgb, c2] = THEMES[PREFS.theme] || THEMES.green, root = document.documentElement;
+  Object.assign(THEME, { hex, rgb, c2 });
+  root.style.setProperty('--rgb', rgb); root.style.setProperty('--c2', c2); root.style.setProperty('--fs', PREFS.fs);
+  root.classList.toggle('no-mark', !PREFS.mark); root.classList.toggle('no-scan', !PREFS.scan);
+  for (const [k, id] of [['mark', '#t-mark'], ['scan', '#t-scan'], ['calm', '#t-calm']]) $(id).setAttribute('aria-checked', String(!!PREFS[k]));
+  $('#fsize').value = PREFS.fs;
+  for (const b of document.querySelectorAll('.sw')) b.setAttribute('aria-pressed', String(b.dataset.t === PREFS.theme));
+  try { localStorage.setItem('neesmo-prefs', JSON.stringify(PREFS)); } catch {}
+  if (typeof reduce !== 'undefined') reduce = matchMedia('(prefers-reduced-motion: reduce)').matches || PREFS.calm;
+}
+$('#swatches').innerHTML = Object.entries(THEMES).map(([k, [hex]]) => `<button type="button" class="sw" data-t="${k}" style="--s:${hex}" aria-label="${k}"></button>`).join('');
+$('#swatches').onclick = e => { const b = e.target.closest('.sw'); if (b) { PREFS.theme = b.dataset.t; applyPrefs(); } };
+$('#fsize').onchange = e => { PREFS.fs = e.target.value; applyPrefs(); };
+for (const [k, id] of [['mark', '#t-mark'], ['scan', '#t-scan'], ['calm', '#t-calm']]) $(id).onclick = () => { PREFS[k] = !PREFS[k]; applyPrefs(); };
+applyPrefs();
 
 // ── voices ──
 (async () => {
@@ -297,27 +377,90 @@ loadAgents(); setInterval(() => { if (!document.hidden) { loadAgents(); if (repo
 // ── home-screen app: notifications + replies that arrive on their own ──
 const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
 const b64 = s => Uint8Array.from(atob((s + '='.repeat((4 - s.length % 4) % 4)).replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0));
-async function setupPush() {
-  if (!('serviceWorker' in navigator)) return;
-  const reg = await navigator.serviceWorker.register('/sw.js');
-  const bell = $('#bell');
+// Notifications on/off lives in the bell menu; history + approvals below.
+let swReg = null;
+async function pushState() {
+  const t = $('#t-push'), note = $('#push-note');
+  if (!('serviceWorker' in navigator)) { t.disabled = true; note.textContent = 'Not supported in this browser.'; return; }
+  swReg = swReg || await navigator.serviceWorker.register('/sw.js');
   if (!('PushManager' in window) || !('Notification' in window)) {   // iPhone: only inside the home-screen app
-    if (!standalone && /iPhone|iPad/.test(navigator.userAgent)) { bell.hidden = false; bell.textContent = '🔔 Add to Home Screen first'; bell.disabled = true; }
-    return;
+    t.disabled = true; note.textContent = /iPhone|iPad/.test(navigator.userAgent) && !standalone ? 'Add Neesmo to your Home Screen first.' : 'Not supported here.'; return;
   }
-  const on = Notification.permission === 'granted' && await reg.pushManager.getSubscription();
-  bell.hidden = false; bell.textContent = on ? '🔔 On' : '🔔 Turn on notifications';
-  bell.onclick = async () => {   // must run from a tap on iPhone
-    try {
-      if (await Notification.requestPermission() !== 'granted') return setStatus('Notifications blocked in Settings', true);
-      const { key } = await (await api('/api/push/key')).json();
-      const sub = await reg.pushManager.getSubscription() || await reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64(key) });
-      await api('/api/push/subscribe', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(sub) });
-      bell.textContent = '🔔 On';
-    } catch (e) { setStatus('Notifications: ' + e.message, true); }
-  };
+  const on = Notification.permission === 'granted' && !!(await swReg.pushManager.getSubscription());
+  t.setAttribute('aria-checked', on); note.textContent = Notification.permission === 'denied' ? 'Blocked in system settings.' : '';
 }
-setupPush().catch(() => {});
+$('#t-push').onclick = async () => {   // must run from a tap on iPhone
+  const t = $('#t-push');
+  try {
+    if (t.getAttribute('aria-checked') === 'true') {
+      const sub = await swReg.pushManager.getSubscription();
+      if (sub) { await api('/api/push/unsubscribe', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ endpoint: sub.endpoint }) }); await sub.unsubscribe(); }
+    } else {
+      if (await Notification.requestPermission() !== 'granted') { $('#push-note').textContent = 'Blocked in system settings.'; return; }
+      const { key } = await (await api('/api/push/key')).json();
+      const sub = await swReg.pushManager.getSubscription() || await swReg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64(key) });
+      await api('/api/push/subscribe', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(sub) });
+    }
+  } catch (e) { $('#push-note').textContent = e.message; }
+  pushState();
+};
+pushState().catch(() => {});
+
+// ── popups (settings, notifications) ──
+function togglePop(btn, pop, open = pop.hidden) {
+  for (const [b, p] of [[$('#gear'), $('#pop-s')], [$('#bell'), $('#pop-n')]]) { p.hidden = true; b.setAttribute('aria-expanded', 'false'); }
+  pop.hidden = !open; btn.setAttribute('aria-expanded', String(open));
+  if (open && pop.id === 'pop-n') { loadNotes(); pushState().catch(() => {}); }
+}
+$('#gear').onclick = () => togglePop($('#gear'), $('#pop-s'));
+$('#bell').onclick = () => togglePop($('#bell'), $('#pop-n'));
+document.addEventListener('click', e => { if (!e.target.closest('.pop, .ic, dialog')) { $('#pop-s').hidden = $('#pop-n').hidden = true; } });
+addEventListener('keydown', e => { if (e.key === 'Escape') { $('#pop-s').hidden = $('#pop-n').hidden = true; } });
+
+// ── notification history ──
+let notes = [], seenId = +(localStorage.getItem('neesmo-seen') || 0);
+const chipText = { pending: 'needs approval', approved: 'approved', denied: 'denied', expired: 'expired' };
+async function loadNotes() {
+  try { notes = (await (await api('/api/notifications')).json()).items; } catch { return; }
+  const pending = notes.filter(n => n.status === 'pending').length, unread = notes.filter(n => n.id > seenId).length;
+  const badge = $('#badge'); badge.hidden = !(pending || unread); badge.textContent = pending || unread;
+  $('#nlist').innerHTML = notes.map(n => `<li><button type="button" data-n="${n.id}" class="${n.id > seenId ? 'unread' : ''}" style="--a:${AGENT_COLORS[n.agent] || 'var(--dim)'}">
+    ${n.kind === 'approval' ? `<em class="chip ${esc(n.status)}">${chipText[n.status] || esc(n.status)}</em>` : ''}<b>${esc(n.title)}</b><span>${esc(n.at)} · ${esc(n.body)}</span></button></li>`).join('') || '<li><small>Nothing yet</small></li>';
+  if (!$('#pop-n').hidden && notes.length) { seenId = Math.max(seenId, notes[0].id); try { localStorage.setItem('neesmo-seen', seenId); } catch {} }
+}
+$('#nlist').addEventListener('click', e => { const b = e.target.closest('[data-n]'); if (b) openNote(+b.dataset.n); });
+loadNotes(); setInterval(() => { if (!document.hidden) loadNotes(); }, 10000);
+
+// ── approval / notification detail screen ──
+let apOpen = null;
+async function openNote(id) {
+  await loadNotes();
+  const n = notes.find(x => x.id === id); if (!n) return;
+  apOpen = id; const dlg = $('#ap');
+  dlg.style.setProperty('--a', AGENT_COLORS[n.agent] || 'var(--c)');
+  $('#ap-title').textContent = n.title;
+  $('#ap-sub').textContent = n.kind === 'approval' ? `${n.agent_name} · ${n.tool} · asked ${n.at}` : n.at;
+  $('#ap-what').textContent = n.kind === 'approval' ? `${n.agent_name} wants to ${n.action}:` : '';
+  $('#ap-details').textContent = n.kind === 'approval' ? n.details : n.body;
+  const pending = n.kind === 'approval' && n.status === 'pending';
+  $('#ap-btns').hidden = !pending;
+  $('#ap-state').textContent = n.kind !== 'approval' ? '' : pending ? 'Waiting for your answer.'
+    : n.status === 'expired' ? 'No longer waiting here: answer it in the Claude app if it still needs you.' : `You ${n.status} this${n.decided_at ? ' at ' + n.decided_at : ''}.`;
+  if (!dlg.open) dlg.showModal();
+}
+async function decide(d) {
+  try { await api('/api/approvals/' + apOpen, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ decision: d }) }); }
+  catch (e) { $('#ap-state').textContent = e.message; }
+  openNote(apOpen);
+}
+$('#ap-yes').onclick = () => decide('allow');
+$('#ap-no').onclick = () => decide('deny');
+$('#ap-close').onclick = () => $('#ap').close();
+$('#ap').addEventListener('click', e => { if (e.target.id === 'ap') e.target.close(); });
+// Opened from a push notification: /?n=<id>, or a message from the service worker when the app is already open.
+const openParam = +new URLSearchParams(location.search).get('n');
+if (openParam) { openNote(openParam); history.replaceState(null, '', '/'); }
+navigator.serviceWorker?.addEventListener('message', e => { if (e.data?.open) openNote(+e.data.open); });
 let inboxAfter = 0, inboxPrimed = false;
 async function pollInbox() {
   try {
@@ -338,7 +481,7 @@ setInterval(() => { const d = new Date(); $('#clock').textContent = d.toLocaleTi
 
 // ── HUD ──
 const cv = $('#hud'), g = cv.getContext('2d'), data = new Uint8Array(128);
-const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches || PREFS.calm;
 function resize() { cv.width = innerWidth * devicePixelRatio; cv.height = innerHeight * devicePixelRatio; }
 addEventListener('resize', resize); resize();
 function arc(r, a0, a1, w, color, blur) { g.beginPath(); g.arc(0, 0, r, a0, a1); g.lineWidth = w; g.strokeStyle = color; g.shadowBlur = blur || 0; g.shadowColor = color; g.stroke(); }
@@ -369,16 +512,16 @@ function frame(t) {
   t = reduce ? 0 : t / 1000;
   if (analyser && mode !== 'idle' && mode !== 'thinking') { analyser.getByteFrequencyData(data); level += (data.reduce((a, b) => a + b, 0) / data.length / 255 * 2.2 - level) * .3; }
   else level *= .9;
-  const dpr = devicePixelRatio, R = hud.R * dpr, hot = mode === 'listening' ? '#c6ff4a' : '#3dff8f';
+  const dpr = devicePixelRatio, R = hud.R * dpr, hot = mode === 'listening' ? THEME.c2 : THEME.hex;
   g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, cv.width, cv.height);
   g.translate(cv.width / 2, hud.cy * dpr);
   // core glow
   const core = g.createRadialGradient(0, 0, 0, 0, 0, R * (.45 + level * .25));
-  core.addColorStop(0, '#eaffef'); core.addColorStop(.25, hot); core.addColorStop(1, 'transparent');
+  core.addColorStop(0, '#f2fff6'); core.addColorStop(.25, hot); core.addColorStop(1, 'transparent');
   g.fillStyle = core; g.beginPath(); g.arc(0, 0, R * (.45 + level * .25), 0, 7); g.fill();
   // inner ring + spokes
   arc(R * .32, 0, 7, 2, hot, 20);
-  for (let i = 0; i < 12; i++) { const a = i / 12 * 6.283 + t * .4; arc(R * .4, a, a + .3, 6, 'rgba(61,255,143,.7)', 10); }
+  for (let i = 0; i < 12; i++) { const a = i / 12 * 6.283 + t * .4; arc(R * .4, a, a + .3, 6, `rgba(${THEME.rgb},.7)`, 10); }
   // audio-reactive bars
   g.save(); g.shadowBlur = 12; g.shadowColor = hot; g.strokeStyle = hot; g.lineWidth = 2;
   for (let i = 0; i < 96; i++) {
@@ -388,15 +531,15 @@ function frame(t) {
   }
   g.restore();
   // rotating segmented rings
-  for (let i = 0; i < 3; i++) { const a = t * -.25 + i * 2.094; arc(R * 1.02, a, a + 1.5, 3, 'rgba(61,255,143,.8)', 12); }
-  for (let i = 0; i < 4; i++) { const a = t * .15 + i * 1.571; arc(R * 1.15, a, a + 1.1, 1.5, 'rgba(61,255,143,.45)'); }
-  arc(R * 1.25, 0, 7, 1, 'rgba(61,255,143,.2)');
+  for (let i = 0; i < 3; i++) { const a = t * -.25 + i * 2.094; arc(R * 1.02, a, a + 1.5, 3, `rgba(${THEME.rgb},.8)`, 12); }
+  for (let i = 0; i < 4; i++) { const a = t * .15 + i * 1.571; arc(R * 1.15, a, a + 1.1, 1.5, `rgba(${THEME.rgb},.45)`); }
+  arc(R * 1.25, 0, 7, 1, `rgba(${THEME.rgb},.2)`);
   // tick marks
-  g.strokeStyle = 'rgba(61,255,143,.4)'; g.lineWidth = 1; g.shadowBlur = 0;
+  g.strokeStyle = `rgba(${THEME.rgb},.4)`; g.lineWidth = 1; g.shadowBlur = 0;
   for (let i = 0; i < 120; i++) { const a = i / 120 * 6.283 + t * .05, l = i % 10 ? 6 : 14, r = R * 1.32;
     g.beginPath(); g.moveTo(Math.cos(a) * r, Math.sin(a) * r); g.lineTo(Math.cos(a) * (r + l), Math.sin(a) * (r + l)); g.stroke(); }
   // thinking sweep
-  if (mode === 'thinking') { const a = t * 4; arc(R * .85, a, a + .8, 4, '#c6ff4a', 18); arc(R * .85, a + 3.14, a + 3.94, 4, '#c6ff4a', 18); }
+  if (mode === 'thinking') { const a = t * 4; arc(R * .85, a, a + .8, 4, THEME.c2, 18); arc(R * .85, a + 3.14, a + 3.94, 4, THEME.c2, 18); }
   requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);

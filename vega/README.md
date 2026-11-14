@@ -29,3 +29,24 @@ Open http://localhost:8080. Then:
 | `VEGA_MODEL` | `claude-opus-5-5` | Claude model |
 
 Claude runs through the Claude Agent SDK with your Claude Code login, so no API key is needed. Every built-in tool is turned off: Vega can only talk, not touch your files. If VoiceStudio is off, Vega still answers in text.
+
+## Approvals from Neesmo
+
+`approval_hook.py` is a Claude Code `PermissionRequest` hook. When a server session asks for permission, Neesmo shows it in the bell menu (and as a push notification). Open it to see exactly what the agent wants to do, then Approve or Deny. If nobody answers within 90 seconds (`NEESMO_APPROVAL_WAIT_S`), the normal prompt in the Claude app takes over.
+
+Install it once for every session on the server (adds the hook to `~/.claude/settings.json`):
+
+```bash
+python3 - <<'PY'
+import json, pathlib
+p = pathlib.Path.home() / ".claude" / "settings.json"
+s = json.loads(p.read_text()) if p.exists() else {}
+hook = {"type": "command", "command": "python3 ~/Claudecode/vega/approval_hook.py", "timeout": 120}
+groups = s.setdefault("hooks", {}).setdefault("PermissionRequest", [])
+if not any(h.get("command", "").endswith("approval_hook.py") for g in groups for h in g.get("hooks", [])):
+    groups.append({"matcher": "*", "hooks": [hook]})
+p.write_text(json.dumps(s, indent=2))
+PY
+```
+
+Sessions pick it up when they restart. The hook's secret lives in `~/.config/neesmo/hook_token`, created by Neesmo.

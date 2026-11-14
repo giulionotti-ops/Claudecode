@@ -10,18 +10,20 @@ import httpx
 import datetime
 import itertools
 import json
+import secrets
 import shutil
 import sys
 import time
 
 from claude_agent_sdk import (AssistantMessage, ClaudeAgentOptions, ClaudeSDKClient, ResultMessage, TextBlock,
                               create_sdk_mcp_server, tool)
-from fastapi import FastAPI, HTTPException, UploadFile
+from fastapi import FastAPI, Header, HTTPException, UploadFile
 from fastapi.responses import FileResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 import agents
+import notes
 import push
 
 VS_URL = os.environ.get("VOICESTUDIO_URL", "http://localhost:3900").rstrip("/")
@@ -137,11 +139,14 @@ async def _watch_job(jid: int) -> None:
                   j["task"][:150], tag=f"job-{jid}")
 
 
-async def _notify(title: str, body: str, tag: str | None = None) -> None:
+async def _notify(title: str, body: str, tag: str | None = None, kind: str = "info", **extra) -> dict:
+    """Record in the notification history, then push to every subscribed device."""
+    item = await asyncio.to_thread(notes.add, kind, title, body, **extra)
     try:
-        await asyncio.to_thread(push.send, title, body, tag)
+        await asyncio.to_thread(push.send, title, body, tag, f"/?n={item['id']}")
     except Exception as e:  # never let a push problem break a reply or a job
         print(f"push error: {e}", flush=True)
+    return item
 
 
 @tool("channel_jobs", "Status and latest output of the background jobs started with run_channel", {})
@@ -157,6 +162,7 @@ async def channel_jobs(_args):
 
 
 app = FastAPI()
+notes.hook_token()  # create the hook's secret at start, so approval_hook.py can read it
 app.mount("/static", StaticFiles(directory=HERE / "static"), name="static")
 _client: ClaudeSDKClient | None = None
 _lock = asyncio.Lock()  # one conversation, one turn at a time
@@ -184,7 +190,7 @@ async def _pump(client: ClaudeSDKClient) -> None:
                 if text:
                     _inbox.append({"id": next(_inbox_ids), "text": text, "at": datetime.datetime.now().strftime("%H:%M")})
                     del _inbox[:-50]
-                    await _notify("Neesmo", text, tag="reply")
+                    await _notify("Neesmo", text, tag="reply", kind="reply")
             else:
                 _side_active.set()
                 if isinstance(m, AssistantMessage):
@@ -359,6 +365,85 @@ async def push_subscribe(sub: dict):
         raise HTTPException(400, str(e))
     await _notify("Neesmo", "Notifications are on. You'll hear from me when a session replies.", tag="hello")
     return {"ok": True}
+
+
+@app.post("/api/push/unsubscribe")
+async def push_unsubscribe(sub: dict):
+    await asyncio.to_thread(push.unsubscribe, str(sub.get("endpoint", "")))
+    return {"ok": True}
+
+
+# ── notification history + approvals ──
+def _agent_for(cwd: str) -> tuple[str, str]:
+    for aid, name, folder, _role in agents.AGENTS:
+        if cwd == str(folder) or cwd.startswith(str(folder) + "/"):
+            return aid, name
+    return "other", Path(cwd).name or "A session"
+
+
+def _describe(tool: str, inp: dict) -> tuple[str, str]:
+    """Plain-words action and the details to show on the approval screen."""
+    if tool == "Bash":
+        return "run a command", (inp.get("description", "") + "\n\n$ " + inp.get("command", "")).strip()
+    if tool in ("Edit", "MultiEdit"):
+        edits = inp.get("edits") or [inp]
+        diff = "\n\n".join(f"- {e.get('old_string', '')}\n+ {e.get('new_string', '')}" for e in edits)
+        return "edit a file", f"{inp.get('file_path', '')}\n\n{diff}"
+    if tool == "Write":
+        return "write a file", f"{inp.get('file_path', '')}\n\n{inp.get('content', '')}"
+    if tool in ("WebFetch", "WebSearch"):
+        return "use the web", inp.get("url") or inp.get("query") or json.dumps(inp, indent=1)
+    return f"use {tool}", json.dumps(inp, indent=1)
+
+
+def _hook_only(token: str | None) -> None:
+    if not token or not secrets.compare_digest(token, notes.hook_token()):
+        raise HTTPException(403, "hook token required")
+
+
+@app.post("/api/approvals")
+async def approval_create(event: dict, x_neesmo_hook: str | None = Header(None)):
+    """Called by approval_hook.py when a server session asks for permission."""
+    _hook_only(x_neesmo_hook)
+    tool, inp = str(event.get("tool_name", "?")), event.get("tool_input") or {}
+    aid, name = _agent_for(str(event.get("cwd", "")))
+    action, details = _describe(tool, inp if isinstance(inp, dict) else {"input": inp})
+    item = await _notify(f"{name} needs approval", f"Wants to {action}", tag=f"approval-{aid}", kind="approval",
+                         status="pending", agent=aid, agent_name=name, tool=tool, action=action,
+                         details=details[:4000], expires_in=notes.WAIT_S)
+    return {"id": item["id"]}
+
+
+@app.get("/api/approvals/{nid}")
+def approval_status(nid: int):
+    item = notes.get(nid)
+    if item is None or item["kind"] != "approval":
+        raise HTTPException(404, "no such request")
+    return {"status": item["status"]}
+
+
+class DecisionIn(BaseModel):
+    decision: str
+
+
+@app.post("/api/approvals/{nid}")
+def approval_decide(nid: int, body: DecisionIn):
+    try:
+        return notes.decide(nid, body.decision)
+    except ValueError as e:
+        raise HTTPException(409, str(e))
+
+
+@app.post("/api/approvals/{nid}/expire")
+def approval_expire(nid: int, x_neesmo_hook: str | None = Header(None)):
+    _hook_only(x_neesmo_hook)
+    notes.expire(nid)
+    return {"ok": True}
+
+
+@app.get("/api/notifications")
+def notifications():
+    return {"items": notes.history()}
 
 
 @app.post("/api/speak")

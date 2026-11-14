@@ -57,10 +57,14 @@ def subscribe(sub: dict) -> None:
     _save(subs[-10:])  # a few devices at most
 
 
-def send(title: str, body: str, tag: str | None = None) -> int:
+def unsubscribe(endpoint: str) -> None:
+    _save([s for s in _load() if s.get("endpoint") != endpoint])
+
+
+def send(title: str, body: str, tag: str | None = None, url: str = "/") -> int:
     """Send to every subscribed device; drops ones the push service says are gone. Returns how many got it."""
     subs, keep, sent = _load(), [], 0
-    data = json.dumps({"title": title, "body": body[:300], "tag": tag})
+    data = json.dumps({"title": title, "body": body[:300], "tag": tag, "url": url})
     for s in subs:
         try:
             webpush(s, data, vapid_private_key=str(KEY), vapid_claims={"sub": CONTACT}, ttl=3600)
