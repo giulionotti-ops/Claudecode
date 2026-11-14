@@ -73,6 +73,10 @@
   .nlist b { display: block; font-weight: 600; } .nlist span { display: block; color: var(--dim); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .chip { float: right; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; padding: 1px 6px; border-radius: 8px; border: 1px solid currentColor; }
   .chip.pending { color: var(--c2); } .chip.approved { color: var(--c); } .chip.denied, .chip.expired { color: #7d8a83; }
+  .nlist li { position: relative; } .nlist .x { position: absolute; top: 4px; right: 4px; width: 26px; height: 26px; padding: 0; border: 0; border-left: 0; text-align: center; opacity: .6; }
+  .nlist li > button[data-n] { padding-right: 34px; } .nlist .chip { margin-right: 4px; }
+  .nhead { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; } .nhead h3 { margin: 0; }
+  #nclear { padding: 3px 10px; font-size: 11px; }
   .nlist .unread b::before { content: "● "; color: var(--c2); }
   dialog#ap { --a: var(--c); width: min(720px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); padding: 0; border: 1px solid var(--dim);
     border-top: 3px solid var(--a); border-radius: 10px; background: rgba(2,14,10,.98); color: var(--c); }
@@ -164,7 +168,7 @@
 <div class="pop" id="pop-n" hidden role="dialog" aria-label="Notifications">
   <div class="row"><label id="l-push">Notifications</label><button type="button" class="tog" role="switch" id="t-push" aria-labelledby="l-push"></button></div>
   <small id="push-note"></small>
-  <h3 style="margin-top:12px">History</h3>
+  <div class="nhead"><h3>History</h3><button type="button" id="nclear">Clear all</button></div>
   <ul class="nlist" id="nlist"><li><small>Nothing yet</small></li></ul>
 </div>
 <dialog id="ap" aria-labelledby="ap-title"><div class="rp">
@@ -429,10 +433,15 @@ async function loadNotes() {
   const pending = notes.filter(n => n.status === 'pending').length, unread = notes.filter(n => n.id > seenId).length;
   const badge = $('#badge'); badge.hidden = !(pending || unread); badge.textContent = pending || unread;
   $('#nlist').innerHTML = notes.map(n => `<li><button type="button" data-n="${n.id}" class="${n.id > seenId ? 'unread' : ''}" style="--a:${AGENT_COLORS[n.agent] || 'var(--dim)'}">
-    ${n.kind === 'approval' ? `<em class="chip ${esc(n.status)}">${chipText[n.status] || esc(n.status)}</em>` : ''}<b>${esc(n.title)}</b><span>${esc(n.at)} · ${esc(n.body)}</span></button></li>`).join('') || '<li><small>Nothing yet</small></li>';
+    ${n.kind === 'approval' ? `<em class="chip ${esc(n.status)}">${chipText[n.status] || esc(n.status)}</em>` : ''}<b>${esc(n.title)}</b><span>${esc(n.at)} · ${esc(n.body)}</span></button>${n.status === 'pending' ? '' : `<button type="button" class="x" data-del="${n.id}" aria-label="Delete">✕</button>`}</li>`).join('') || '<li><small>Nothing yet</small></li>';
   if (!$('#pop-n').hidden && notes.length) { seenId = Math.max(seenId, notes[0].id); try { localStorage.setItem('neesmo-seen', seenId); } catch {} }
 }
-$('#nlist').addEventListener('click', e => { const b = e.target.closest('[data-n]'); if (b) openNote(+b.dataset.n); });
+$('#nlist').addEventListener('click', async e => {
+  const d = e.target.closest('[data-del]');
+  if (d) { await api('/api/notifications/' + d.dataset.del, { method: 'DELETE' }).catch(() => {}); return loadNotes(); }
+  const b = e.target.closest('[data-n]'); if (b) openNote(+b.dataset.n);
+});
+$('#nclear').onclick = async () => { await api('/api/notifications', { method: 'DELETE' }).catch(() => {}); loadNotes(); };  // pending approvals stay
 loadNotes(); setInterval(() => { if (!document.hidden) loadNotes(); }, 10000);
 
 // ── approval / notification detail screen ──

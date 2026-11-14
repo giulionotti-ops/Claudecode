@@ -113,6 +113,18 @@ def expire(nid: int) -> None:
                 _save()
 
 
+def remove(nid: int | None = None) -> int:
+    """Delete one notification, or all of them (nid None). A still-pending approval is kept: its chat is waiting on it."""
+    with _lock:
+        _load()
+        _expire_old()
+        keep = [i for i in _items if i.get("status") == "pending" or (nid is not None and i["id"] != nid)]
+        gone = len(_items) - len(keep)
+        _items[:] = keep
+        _save()
+        return gone
+
+
 if __name__ == "__main__":  # self-check: python3 notes.py
     import tempfile
     DIR = Path(tempfile.mkdtemp()); FILE = DIR / "n.json"; TOKEN = DIR / "t"
@@ -126,4 +138,7 @@ if __name__ == "__main__":  # self-check: python3 notes.py
     b = add("approval", "x", "y", status="pending"); b["ts"] -= WAIT_S + 60
     assert get(b["id"])["status"] == "expired"
     assert history()[0]["id"] == b["id"] and len(hook_token()) > 20
+    c = add("info", "hi", "x"); p = add("approval", "a", "b", status="pending")
+    assert remove(c["id"]) == 1 and get(c["id"]) is None
+    remove(); assert [i["id"] for i in history()] == [p["id"]]
     print("ok")

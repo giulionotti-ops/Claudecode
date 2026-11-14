@@ -482,6 +482,16 @@ def notifications():
     return {"items": notes.history()}
 
 
+@app.delete("/api/notifications/{nid}")
+def notification_delete(nid: int):
+    return {"removed": notes.remove(nid)}
+
+
+@app.delete("/api/notifications")
+def notifications_clear():
+    return {"removed": notes.remove()}
+
+
 @app.post("/api/speak")
 async def speak(body: SpeakIn):
     r = await _vs("POST", "/v1/audio/speech", json={
