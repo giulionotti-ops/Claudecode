@@ -468,6 +468,47 @@ function bank(p, ctx) {
   };
 }
 
+// ---------------- pizzeria: brick wall, glowing oven, checked table, margherita; card/POS at cardAt ----------------
+function pizza(p, ctx) {
+  const scene = new THREE.Scene(); scene.background = new THREE.Color(p.wall || '#c8553d');
+  K.lights(scene, { sky: '#fff1dc', ground: '#8a3b2a', hemi: 1.5, sunI: 1.3, dir: [4, 10, 9] });
+  const brick = K.canvasTex(512, 512, (g, W) => { g.fillStyle = '#d9c3a5'; g.fillRect(0, 0, W, W); for (let r = 0; r < 16; r++) for (let c = 0; c < 5; c++) { g.fillStyle = ['#c8553d', '#b84a34', '#d4644a'][(r * 3 + c) % 3]; g.fillRect(c * 104 + (r % 2 ? 52 : 0) - 52 + 4, r * 32 + 4, 96, 26); } });
+  brick.wrapS = brick.wrapT = THREE.RepeatWrapping; brick.repeat.set(4, 3);
+  const wall = new THREE.Mesh(new THREE.PlaneGeometry(30, 20), new THREE.MeshLambertMaterial({ map: brick })); wall.position.set(0, 9, -3); scene.add(wall);
+  box(30, .3, 20, '#6b3e26', 0, -.15, 6, scene);
+  // oven
+  const ov = new THREE.Group(); ov.position.set(-2.6, 0, -1.8); scene.add(ov);
+  box(3.4, 2.2, 2.4, '#8a8a8a', 0, 1.1, 0, ov);
+  const dome = new THREE.Mesh(new THREE.SphereGeometry(1.7, 24, 16, 0, Math.PI * 2, 0, Math.PI / 2), K.mat('#e8d5b9')); dome.position.y = 2.2; dome.scale.set(1, .8, .75); dome.castShadow = true; ov.add(dome);
+  const mouth = new THREE.Mesh(new THREE.CircleGeometry(.6, 20, 0, Math.PI), new THREE.MeshBasicMaterial({ color: '#ff9d2e' })); mouth.position.set(0, 2.25, 1.3); ov.add(mouth);
+  box(.5, 1.6, .5, '#8a8a8a', .6, 3.6, -.3, ov);
+  const signT = K.canvasTex(512, 160, (g, W, Hh) => { g.fillStyle = '#1f8f4a'; K.rrect(g, 0, 0, W, Hh, 30); g.fill(); g.fillStyle = '#fff'; g.textAlign = 'center'; g.textBaseline = 'middle'; K.fitText(g, p.sign || 'PIZZERIA', 460, 100, 900); g.fillText(p.sign || 'PIZZERIA', W / 2, Hh / 2 + 6); });
+  const sign = new THREE.Mesh(new THREE.PlaneGeometry(3.6, 1.12), new THREE.MeshBasicMaterial({ map: signT, transparent: true })); sign.position.set(1.8, 7.0, -2.9); scene.add(sign);
+  // table + hero
+  const cloth = K.canvasTex(256, 256, (g, W) => { for (let i = 0; i < 8; i++) for (let j = 0; j < 8; j++) { g.fillStyle = (i + j) % 2 ? '#ffffff' : '#e8384f'; g.fillRect(i * 32, j * 32, 32, 32); } });
+  const top = new THREE.Mesh(K.geo(4.2, .2, 2.4), new THREE.MeshLambertMaterial({ map: cloth })); top.position.set(.6, 2.1, 1.2); top.receiveShadow = top.castShadow = true; scene.add(top);
+  box(.25, 2, .25, '#5a3a24', -1.2, 1, 1.2, scene); box(.25, 2, .25, '#5a3a24', 2.4, 1, 1.2, scene);
+  const H = hero(ctx).sit(); H.root.position.set(.6, .1, -.3); scene.add(H.root); box(1.6, .3, 1.4, '#5a3a24', .6, 1.05, -.4, scene);
+  const pzT = K.canvasTex(256, 256, (g, W) => { g.fillStyle = '#e2a65b'; g.beginPath(); g.arc(128, 128, 126, 0, 7); g.fill(); g.fillStyle = '#d63b2a'; g.beginPath(); g.arc(128, 128, 104, 0, 7); g.fill();
+    g.fillStyle = '#fff6e0'; for (let i = 0; i < 9; i++) { g.beginPath(); g.arc(128 + Math.cos(i * 2.4) * 60 * (i % 3 ? 1 : .4), 128 + Math.sin(i * 2.4) * 60 * (i % 3 ? 1 : .4), 20, 0, 7); g.fill(); }
+    g.fillStyle = '#2f9e44'; for (let i = 0; i < 5; i++) { g.beginPath(); g.ellipse(128 + Math.cos(i * 1.3 + 1) * 45, 128 + Math.sin(i * 1.3 + 1) * 45, 12, 7, i, 0, 7); g.fill(); } });
+  const pz = new THREE.Mesh(new THREE.CylinderGeometry(1.0, 1.0, .08, 40), [K.mat('#e2a65b'), new THREE.MeshLambertMaterial({ map: pzT }), K.mat('#e2a65b')]); pz.position.set(.6, 2.26, 1.4); pz.castShadow = true; scene.add(pz);
+  const pos = new THREE.Group(); box(.7, .25, 1.0, '#222', 0, 0, 0, pos); const scr = box(.55, .05, .4, '#33c26b', 0, .14, -.2, pos); pos.position.set(2.0, 2.35, 1.6); pos.rotation.y = -.4; pos.visible = false; scene.add(pos);
+  const cd = K.card('#141414', '#ffd23f'); cd.visible = false; scene.add(cd);
+  const camera = cam(40);
+  return {
+    scene, camera, update(t) {
+      const k = ease(seg(t, p._t0, p._t1)); lookCam(camera, lerp3([1.2, 5.6, 11.5], [.9, 5.2, 10.2], k), [.2, 3.6, 0]);
+      H.reset(); H.sit(); idle(H, t); H.face(faceAt(p.faces, t, 'happy'));
+      mouth.material.color.setHSL(.07 + Math.sin(t * 9) * .01, 1, .55 + Math.sin(t * 13) * .05);
+      const c0 = at(p.cardAt), c = ease(seg(t, c0, c0 + .35)); pos.visible = cd.visible = c > 0;
+      if (c > 0) { H.armR.s.rotation.x = -1.3 * c; cd.position.set(1.6 + c * .3, 2.7 + (1 - c) * .5, 1.6); cd.rotation.set(-1.2, -.4, 0); scr.material = K.mat(t > c0 + .5 ? '#33c26b' : '#ffd23f'); }
+      const bite = at(p.biteAt); if (t > bite) { const b = Math.sin((t - bite) * 5) * .5 + .5; H.armL.s.rotation.x = -1.6 - b * .4; }
+      pz.rotation.y = t * .1;
+    },
+  };
+}
+
 // ---------------- portrait for profile pictures: hero head-and-shoulders on a flat colour ----------------
 function portrait(p, ctx) {
   const scene = new THREE.Scene(); scene.background = new THREE.Color(p.bg || '#ffd23f');
@@ -480,4 +521,4 @@ function portrait(p, ctx) {
   return { scene, camera, update() { lookCam(camera, [.5, 3.4, 12.5], [.35, 3.2, 0]); } };
 }
 
-export const SCENES = { city, room, park, phone, screen, end, portrait, desk, bigcal, hook, cinema, money, street, shop, bank };
+export const SCENES = { city, room, park, phone, screen, end, portrait, desk, bigcal, hook, cinema, money, street, shop, bank, pizza };
