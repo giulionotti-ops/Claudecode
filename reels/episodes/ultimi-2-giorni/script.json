@@ -1,0 +1,241 @@
+{
+ "title": "80€ che tra 2 giorni diventano 50€",
+ "brand": {
+  "disclaimer": "Marchi dei rispettivi proprietari · nessuna affiliazione",
+  "hashtags": []
+ },
+ "cast": {
+  "hero": {
+   "shirt": "#ffd23f",
+   "hair": "#2b1a10",
+   "pants": "#22223b"
+  },
+  "friend": {
+   "shirt": "#3a6cff",
+   "cap": "#ff3b5c"
+  }
+ },
+ "tail": 3.0,
+ "lines": [
+  {
+   "text": "80€. Tra 2 giorni diventano 50€.",
+   "say": "Ottanta euro. Tra due giorni diventano cinquanta.",
+   "scene": {
+    "type": "hook",
+    "bg": "#3a1d8f",
+    "ray1": "#4b2ab0",
+    "ray2": "#3a1d8f",
+    "captionY": -999,
+    "shake": "@diventano",
+    "y": 300,
+    "title": [
+     {
+      "text": "TRA 2 GIORNI",
+      "at": 0
+     },
+     {
+      "text": "80€",
+      "at": 0,
+      "big": true,
+      "color": "#ffd23f",
+      "strikeAt": "@diventano"
+     },
+     {
+      "text": "DIVENTANO 50€",
+      "at": "@diventano",
+      "color": "#ff6b6b"
+     }
+    ]
+   }
+  },
+  {
+   "text": "È il bonus Buddy per chi apre il conto con un codice invito.",
+   "scene": {
+    "type": "bank",
+    "arriveAt": "@conto",
+    "waveAt": "@codice",
+    "cuts": [
+     "@codice"
+    ],
+    "badges": [
+     {
+      "text": "+80€ fino al 16/11",
+      "kind": "green",
+      "at": "@bonus",
+      "pos": [
+       540,
+       470
+      ],
+      "scale": 0.8
+     }
+    ]
+   }
+  },
+  {
+   "text": "Con 80€ ti prendi GTA 6, un anno di PlayStation Plus, 10 mesi di Netflix o 8 pizze.",
+   "say": "Con ottanta euro ti prendi GTA sei, un anno di PlayStation Plus, dieci mesi di Netflix o otto pizze.",
+   "scene": {
+    "type": "cinema",
+    "wall": "#1a0f3a",
+    "rug": "#ffd23f",
+    "bag": "#3a6cff",
+    "turn": "@ti",
+    "faces": [
+     {
+      "at": 0,
+      "face": "happy"
+     },
+     {
+      "at": "@pizze",
+      "face": "stars"
+     }
+    ],
+    "cuts": [
+     "@playstation",
+     "@netflix",
+     "@pizze"
+    ],
+    "cutZoom": 1.25,
+    "panel": {
+     "kind": "list",
+     "head": "CON 80€",
+     "items": [
+      {
+       "title": "GTA 6",
+       "sub": "79,99€",
+       "at": "@gta"
+      },
+      {
+       "title": "PS PLUS",
+       "sub": "12 mesi · 71,99€",
+       "at": "@playstation"
+      },
+      {
+       "title": "NETFLIX",
+       "sub": "10 mesi · 79,90€",
+       "at": "@netflix"
+      },
+      {
+       "title": "8 PIZZE",
+       "sub": "da 10€",
+       "at": "@pizze"
+      }
+     ]
+    }
+   }
+  },
+  {
+   "text": "Inserisci il codice quando apri il conto, entro il 16 novembre,",
+   "say": "Inserisci il codice quando apri il conto, entro il sedici novembre,",
+   "scene": {
+    "type": "phone",
+    "bg": "#ffd23f",
+    "ground": "#3a1d8f",
+    "form": {
+     "dark": true,
+     "accent": "#ffd23f",
+     "title": "Apri il conto",
+     "sub": "Conto Buddy",
+     "chip": "entro il 16/11",
+     "chipAt": "@entro",
+     "field": "CODICE INVITO",
+     "typeAt": "@codice",
+     "typeDur": 0.9,
+     "pressAt": "@novembre"
+    }
+   }
+  },
+  {
+   "text": "e spendi 10€ con la carta entro 30 giorni.",
+   "say": "e spendi dieci euro con la carta entro trenta giorni.",
+   "scene": {
+    "type": "pizza",
+    "cardAt": "@carta",
+    "faces": [
+     {
+      "at": 0,
+      "face": "happy"
+     }
+    ],
+    "badges": [
+     {
+      "text": "≥ 10€",
+      "kind": "white",
+      "at": "@10",
+      "pos": [
+       300,
+       520
+      ]
+     },
+     {
+      "text": "30 giorni",
+      "kind": "white",
+      "at": "@30",
+      "pos": [
+       780,
+       520
+      ],
+      "scale": 0.8
+     }
+    ]
+   }
+  },
+  {
+   "text": "Il bonus arriva entro 90 giorni lavorativi.",
+   "say": "Il bonus arriva entro novanta giorni lavorativi.",
+   "scene": {
+    "type": "money",
+    "bg": "#1f8f4a",
+    "floor": "#17703a",
+    "rainAt": "@arriva",
+    "note": "Solo maggiorenni residenti in Italia e nuovi clienti: nessun rapporto con UniCredit dal 2020",
+    "badges": [
+     {
+      "text": "+80€",
+      "kind": "yellow",
+      "at": "@bonus",
+      "pos": [
+       540,
+       480
+      ],
+      "scale": 1.3
+     }
+    ]
+   }
+  },
+  {
+   "text": "Mandalo all'amico che sta aspettando GTA 6. Il codice è nel link in bio.",
+   "say": "Mandalo all'amico che sta aspettando GTA sei. Il codice è nel link in bio.",
+   "scene": {
+    "type": "end",
+    "title": "CODICE INVITO",
+    "sub": "conto Buddy · UniCredit",
+    "card": "#ffd23f",
+    "sky0": "#1a0f3a",
+    "sky1": "#4b2ab0",
+    "seed": 41,
+    "lines": [
+     "Mandalo a chi aspetta GTA 6",
+     "80€ solo fino al 16/11/26"
+    ]
+   }
+  }
+ ],
+ "post": [
+  "Bonus Buddy 80€: ultimi 2 giorni ⏳ Codice invito: {code}",
+  "Dal 17/11 il bonus per chi apre il conto scende da 80€ a 50€.",
+  "1️⃣ Apri il conto Genius buddy (canone zero) dall'app buddy UniCredit",
+  "2️⃣ Inserisci il codice {code} durante l'apertura, entro il 16/11",
+  "3️⃣ Entro 30 giorni spendi almeno 10€ con la carta (bonifici e ricariche non contano)",
+  "💸 Bonus entro 90 giorni lavorativi. Solo maggiorenni residenti in Italia e nuovi clienti (nessun rapporto con UniCredit dal 2020).",
+  "📩 Mandalo all'amico che sta aspettando GTA 6.",
+  "ℹ️ Codice personale: se lo usi ricevo anch'io un bonus. Condizioni complete sul sito buddy UniCredit."
+ ],
+ "hashtags": [
+  "#codiceinvito",
+  "#bonus",
+  "#buddy",
+  "#gta6",
+  "#risparmio"
+ ]
+}

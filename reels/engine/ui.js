@@ -96,4 +96,15 @@ export function drawChat(g, W, H, t, p) {
   }
 }
 
-export const PANELS = { chat: drawChat, pitch: drawPitch, form: drawPhoneForm, store: drawStore, paid: drawPaid, billboard: drawBillboard, poster: drawPoster };
+// Cycling list: the latest item whose time has come fills the screen. p: {items:[{title, sub, at}], head}
+export function drawList(g, W, H, t, p) {
+  const gr = g.createLinearGradient(0, 0, 0, H); gr.addColorStop(0, '#1b1d4f'); gr.addColorStop(1, '#4b2a8f'); g.fillStyle = gr; g.fillRect(0, 0, W, H); center(g);
+  if (p.head) { g.fillStyle = '#ffd23f'; g.font = '900 54px Nunito'; g.fillText(p.head, W / 2, 70); }
+  let it = null, i0 = -1; (p.items || []).forEach((x, i) => { if (t >= (x.at ?? 1e9)) { it = x; i0 = i; } }); if (!it) return;
+  const k = clamp((t - it.at) / .18), sc = .7 + .3 * k; g.save(); g.translate(W / 2, H * .5); g.scale(sc, sc); g.globalAlpha = k;
+  g.fillStyle = '#fff'; fitText(g, it.title, W - 100, 130, 900); g.fillText(it.title, 0, -30);
+  if (it.sub) { g.fillStyle = '#33c26b'; fitText(g, it.sub, W - 140, 64, 900); g.fillText(it.sub, 0, 80); }
+  g.restore(); g.fillStyle = 'rgba(255,255,255,.5)'; for (let i = 0; i < p.items.length; i++) { g.beginPath(); g.arc(W / 2 + (i - (p.items.length - 1) / 2) * 34, H - 40, i === i0 ? 10 : 7, 0, 7); g.fill(); }
+}
+
+export const PANELS = { list: drawList, chat: drawChat, pitch: drawPitch, form: drawPhoneForm, store: drawStore, paid: drawPaid, billboard: drawBillboard, poster: drawPoster };

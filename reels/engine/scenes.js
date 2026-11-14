@@ -308,7 +308,10 @@ function hook(p, ctx) {
           g.save(); g.translate(540, y + size / 2); g.rotate(big ? -.06 + Math.sin(t * 6) * .015 : -.03); const pulse = big ? 1 + .04 * Math.sin(t * 8) : 1; g.scale(k * pulse, k * pulse);
           const s = K.fitText(g, l.text, 980, size, 800, 'Baloo'); g.font = `800 ${s}px Baloo`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.lineJoin = 'round';
           g.shadowColor = 'rgba(0,0,0,.45)'; g.shadowBlur = 24; g.shadowOffsetY = 10; g.strokeStyle = '#1d0b0b'; g.lineWidth = s * .2; g.strokeText(l.text, 0, 0); g.shadowColor = 'transparent';
-          g.fillStyle = l.color || '#ffffff'; g.fillText(l.text, 0, 0); g.restore();
+          g.fillStyle = l.color || '#ffffff'; g.fillText(l.text, 0, 0);
+          const st = seg(t, at(l.strikeAt), at(l.strikeAt) + .25);   // red strike-through, e.g. 80€ → 50€
+          if (st > 0) { const w = g.measureText(l.text).width / 2 + 20; g.strokeStyle = '#ff2d2d'; g.lineCap = 'round'; g.lineWidth = s * .12; g.beginPath(); g.moveTo(-w, s * .18); g.lineTo(-w + 2 * w * st, -s * .18); g.stroke(); }
+          g.restore();
         }
         y += (big ? 300 : 170) * .9;
       }
@@ -325,8 +328,8 @@ function cinema(p, ctx) {
   const bulbs = Array.from({ length: 16 }, (_, i) => { const b = new THREE.Mesh(new THREE.SphereGeometry(.13, 10, 8), new THREE.MeshBasicMaterial({ color: '#ffd23f' })); b.position.set(-7 + i * .95, 8.3 - Math.sin(i / 15 * Math.PI) * .7, -2.6); scene.add(b); return b; });
   const panel = p.panel || { kind: 'poster', text: '' };
   const sT = K.canvasTex(1024, 576, (g, W, H, t = 0) => PANELS[panel.kind](g, W, H, t, panel));
-  box(6.6, 3.9, .15, '#0b0b12', -.8, 5.0, -2.75, scene);
-  const scr = new THREE.Mesh(new THREE.PlaneGeometry(6.4, 3.6), new THREE.MeshBasicMaterial({ map: sT })); scr.position.set(-.8, 5.0, -2.66); scene.add(scr);
+  box(6.6, 3.9, .15, '#0b0b12', -.3, 5.0, -2.75, scene);
+  const scr = new THREE.Mesh(new THREE.PlaneGeometry(6.4, 3.6), new THREE.MeshBasicMaterial({ map: sT })); scr.position.set(-.3, 5.0, -2.66); scene.add(scr);
   const glow = new THREE.Mesh(new THREE.CircleGeometry(4.5, 40), new THREE.MeshBasicMaterial({ color: p.glow || '#7a6bff', transparent: true, opacity: .12 })); glow.rotation.x = -Math.PI / 2; glow.position.set(-.8, .03, -.5); scene.add(glow);
   const bag = new THREE.Mesh(new THREE.SphereGeometry(1.3, 24, 16), K.mat(p.bag || '#ffd23f')); bag.scale.set(1.1, .6, 1.1); bag.position.set(2.4, .7, .7); bag.castShadow = bag.receiveShadow = true; scene.add(bag);
   const H = hero(ctx).sit(); H.root.position.set(2.4, .15, .7); H.root.rotation.y = -1.25; scene.add(H.root);
