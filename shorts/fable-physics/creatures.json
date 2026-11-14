@@ -1,423 +1,425 @@
 [
- {
-  "slug": "dragon",
-  "name": "Dragon",
-  "culture": "Europe / worldwide",
-  "familiar": true,
-  "intro": null,
-  "physics": [
-   "dragon-eggs",
-   "dragon-flight"
-  ]
- },
- {
-  "slug": "kraken",
-  "name": "Kraken",
-  "culture": "Norway (Norse sea lore)",
-  "familiar": true,
-  "intro": null,
-  "physics": [
-   "kraken"
-  ]
- },
- {
-  "slug": "yeti",
-  "name": "Yeti",
-  "culture": "Himalaya (Sherpa and Tibetan lore)",
-  "familiar": true,
-  "intro": null,
-  "physics": []
- },
- {
-  "slug": "phoenix",
-  "name": "Phoenix",
-  "culture": "Ancient Greece / Egypt",
-  "familiar": true,
-  "intro": null,
-  "physics": []
- },
- {
-  "slug": "unicorn",
-  "name": "Unicorn",
-  "culture": "Europe / Persia / India",
-  "familiar": true,
-  "intro": null,
-  "physics": []
- },
- {
-  "slug": "mermaid",
-  "name": "Mermaid",
-  "culture": "worldwide",
-  "familiar": true,
-  "intro": null,
-  "physics": []
- },
- {
-  "slug": "werewolf",
-  "name": "Werewolf",
-  "culture": "Europe",
-  "familiar": true,
-  "intro": null,
-  "physics": []
- },
- {
-  "slug": "griffin",
-  "name": "Griffin",
-  "culture": "Ancient Greece / Persia",
-  "familiar": true,
-  "intro": null,
-  "physics": []
- },
- {
-  "slug": "hydra",
-  "name": "Hydra",
-  "culture": "Ancient Greece",
-  "familiar": true,
-  "intro": null,
-  "physics": []
- },
- {
-  "slug": "pegasus",
-  "name": "Pegasus",
-  "culture": "Ancient Greece",
-  "familiar": true,
-  "intro": null,
-  "physics": []
- },
- {
-  "slug": "cerberus",
-  "name": "Cerberus",
-  "culture": "Ancient Greece",
-  "familiar": true,
-  "intro": null,
-  "physics": []
- },
- {
-  "slug": "giant-spider",
-  "name": "Giant spider",
-  "culture": "worldwide",
-  "familiar": true,
-  "intro": null,
-  "physics": []
- },
- {
-  "slug": "basilisk",
-  "name": "Basilisk",
-  "culture": "Europe",
-  "familiar": true,
-  "intro": null,
-  "physics": []
- },
- {
-  "slug": "cyclops",
-  "name": "Cyclops",
-  "culture": "Ancient Greece",
-  "familiar": true,
-  "intro": null,
-  "physics": []
- },
- {
-  "slug": "sea-serpent",
-  "name": "Sea serpent",
-  "culture": "worldwide",
-  "familiar": true,
-  "intro": null,
-  "physics": []
- },
- {
-  "slug": "kappa",
-  "name": "Kappa",
-  "culture": "Japan",
-  "familiar": false,
-  "intro": "kappa-intro",
-  "physics": []
- },
- {
-  "slug": "kitsune",
-  "name": "Kitsune",
-  "culture": "Japan",
-  "familiar": false,
-  "intro": null,
-  "physics": []
- },
- {
-  "slug": "tengu",
-  "name": "Tengu",
-  "culture": "Japan",
-  "familiar": false,
-  "intro": null,
-  "physics": []
- },
- {
-  "slug": "baku",
-  "name": "Baku",
-  "culture": "Japan / China",
-  "familiar": false,
-  "intro": null,
-  "physics": []
- },
- {
-  "slug": "qilin",
-  "name": "Qilin",
-  "culture": "China",
-  "familiar": false,
-  "intro": null,
-  "physics": []
- },
- {
-  "slug": "jiangshi",
-  "name": "Jiangshi",
-  "culture": "China",
-  "familiar": false,
-  "intro": null,
-  "physics": []
- },
- {
-  "slug": "bakunawa",
-  "name": "Bakunawa",
-  "culture": "Philippines",
-  "familiar": false,
-  "intro": null,
-  "physics": []
- },
- {
-  "slug": "manananggal",
-  "name": "Manananggal",
-  "culture": "Philippines",
-  "familiar": false,
-  "intro": null,
-  "physics": []
- },
- {
-  "slug": "garuda",
-  "name": "Garuda",
-  "culture": "India / Southeast Asia",
-  "familiar": false,
-  "intro": null,
-  "physics": []
- },
- {
-  "slug": "makara",
-  "name": "Makara",
-  "culture": "India",
-  "familiar": false,
-  "intro": null,
-  "physics": []
- },
- {
-  "slug": "simurgh",
-  "name": "Simurgh",
-  "culture": "Persia",
-  "familiar": false,
-  "intro": null,
-  "physics": []
- },
- {
-  "slug": "manticore",
-  "name": "Manticore",
-  "culture": "Persia",
-  "familiar": false,
-  "intro": null,
-  "physics": []
- },
- {
-  "slug": "roc",
-  "name": "Roc",
-  "culture": "Arabia / Persia",
-  "familiar": false,
-  "intro": null,
-  "physics": []
- },
- {
-  "slug": "lamassu",
-  "name": "Lamassu",
-  "culture": "Mesopotamia",
-  "familiar": false,
-  "intro": null,
-  "physics": []
- },
- {
-  "slug": "bunyip",
-  "name": "Bunyip",
-  "culture": "Australia (Aboriginal lore)",
-  "familiar": false,
-  "intro": null,
-  "physics": []
- },
- {
-  "slug": "taniwha",
-  "name": "Taniwha",
-  "culture": "New Zealand (Maori lore)",
-  "familiar": false,
-  "intro": null,
-  "physics": []
- },
- {
-  "slug": "mokele-mbembe",
-  "name": "Mokele-mbembe",
-  "culture": "Congo Basin",
-  "familiar": false,
-  "intro": null,
-  "physics": []
- },
- {
-  "slug": "inkanyamba",
-  "name": "Inkanyamba",
-  "culture": "South Africa (Zulu lore)",
-  "familiar": false,
-  "intro": null,
-  "physics": []
- },
- {
-  "slug": "grootslang",
-  "name": "Grootslang",
-  "culture": "South Africa",
-  "familiar": false,
-  "intro": null,
-  "physics": []
- },
- {
-  "slug": "ninki-nanka",
-  "name": "Ninki Nanka",
-  "culture": "West Africa (Gambia)",
-  "familiar": false,
-  "intro": null,
-  "physics": []
- },
- {
-  "slug": "kelpie",
-  "name": "Kelpie",
-  "culture": "Scotland",
-  "familiar": false,
-  "intro": null,
-  "physics": []
- },
- {
-  "slug": "selkie",
-  "name": "Selkie",
-  "culture": "Scotland / Ireland / Faroe",
-  "familiar": false,
-  "intro": null,
-  "physics": []
- },
- {
-  "slug": "zmey",
-  "name": "Zmey Gorynych",
-  "culture": "Slavic lands",
-  "familiar": false,
-  "intro": null,
-  "physics": []
- },
- {
-  "slug": "leshy",
-  "name": "Leshy",
-  "culture": "Slavic lands",
-  "familiar": false,
-  "intro": null,
-  "physics": []
- },
- {
-  "slug": "jormungandr",
-  "name": "Jormungandr",
-  "culture": "Norse",
-  "familiar": false,
-  "intro": null,
-  "physics": []
- },
- {
-  "slug": "sleipnir",
-  "name": "Sleipnir",
-  "culture": "Norse",
-  "familiar": false,
-  "intro": null,
-  "physics": []
- },
- {
-  "slug": "fossegrim",
-  "name": "Fossegrim",
-  "culture": "Norway / Sweden",
-  "familiar": false,
-  "intro": null,
-  "physics": []
- },
- {
-  "slug": "mapinguari",
-  "name": "Mapinguari",
-  "culture": "Brazil (Amazon)",
-  "familiar": false,
-  "intro": null,
-  "physics": []
- },
- {
-  "slug": "boitata",
-  "name": "Boitata",
-  "culture": "Brazil",
-  "familiar": false,
-  "intro": null,
-  "physics": []
- },
- {
-  "slug": "chupacabra",
-  "name": "Chupacabra",
-  "culture": "Puerto Rico / Latin America",
-  "familiar": false,
-  "intro": null,
-  "physics": []
- },
- {
-  "slug": "ahuizotl",
-  "name": "Ahuizotl",
-  "culture": "Aztec Mexico",
-  "familiar": false,
-  "intro": null,
-  "physics": []
- },
- {
-  "slug": "qalupalik",
-  "name": "Qalupalik",
-  "culture": "Inuit (Arctic)",
-  "familiar": false,
-  "intro": null,
-  "physics": []
- },
- {
-  "slug": "bake-kujira",
-  "name": "Bake-kujira",
-  "culture": "Japan",
-  "familiar": false,
-  "intro": null,
-  "physics": []
- },
- {
-  "slug": "encantado",
-  "name": "Encantado",
-  "culture": "Amazon (Brazil, Peru)",
-  "familiar": false,
-  "intro": null,
-  "physics": []
- },
- {
-  "slug": "tikbalang",
-  "name": "Tikbalang",
-  "culture": "Philippines",
-  "familiar": false,
-  "intro": null,
-  "physics": []
- },
- {
-  "slug": "aspidochelone",
-  "name": "Aspidochelone",
-  "culture": "Medieval Europe",
-  "familiar": false,
-  "intro": null,
-  "physics": []
- },
- {
-  "slug": "bahamut",
-  "name": "Bahamut",
-  "culture": "Arabia",
-  "familiar": false,
-  "intro": null,
-  "physics": []
- }
+  {
+    "slug": "dragon",
+    "name": "Dragon",
+    "culture": "Europe / worldwide",
+    "familiar": true,
+    "intro": null,
+    "physics": [
+      "dragon-eggs",
+      "dragon-flight"
+    ]
+  },
+  {
+    "slug": "kraken",
+    "name": "Kraken",
+    "culture": "Norway (Norse sea lore)",
+    "familiar": true,
+    "intro": null,
+    "physics": [
+      "kraken"
+    ]
+  },
+  {
+    "slug": "yeti",
+    "name": "Yeti",
+    "culture": "Himalaya (Sherpa and Tibetan lore)",
+    "familiar": true,
+    "intro": null,
+    "physics": []
+  },
+  {
+    "slug": "phoenix",
+    "name": "Phoenix",
+    "culture": "Ancient Greece / Egypt",
+    "familiar": true,
+    "intro": null,
+    "physics": []
+  },
+  {
+    "slug": "unicorn",
+    "name": "Unicorn",
+    "culture": "Europe / Persia / India",
+    "familiar": true,
+    "intro": null,
+    "physics": []
+  },
+  {
+    "slug": "mermaid",
+    "name": "Mermaid",
+    "culture": "worldwide",
+    "familiar": true,
+    "intro": null,
+    "physics": []
+  },
+  {
+    "slug": "werewolf",
+    "name": "Werewolf",
+    "culture": "Europe",
+    "familiar": true,
+    "intro": null,
+    "physics": []
+  },
+  {
+    "slug": "griffin",
+    "name": "Griffin",
+    "culture": "Ancient Greece / Persia",
+    "familiar": true,
+    "intro": null,
+    "physics": []
+  },
+  {
+    "slug": "hydra",
+    "name": "Hydra",
+    "culture": "Ancient Greece",
+    "familiar": true,
+    "intro": null,
+    "physics": []
+  },
+  {
+    "slug": "pegasus",
+    "name": "Pegasus",
+    "culture": "Ancient Greece",
+    "familiar": true,
+    "intro": null,
+    "physics": []
+  },
+  {
+    "slug": "cerberus",
+    "name": "Cerberus",
+    "culture": "Ancient Greece",
+    "familiar": true,
+    "intro": null,
+    "physics": []
+  },
+  {
+    "slug": "giant-spider",
+    "name": "Giant spider",
+    "culture": "worldwide",
+    "familiar": true,
+    "intro": null,
+    "physics": []
+  },
+  {
+    "slug": "basilisk",
+    "name": "Basilisk",
+    "culture": "Europe",
+    "familiar": true,
+    "intro": null,
+    "physics": []
+  },
+  {
+    "slug": "cyclops",
+    "name": "Cyclops",
+    "culture": "Ancient Greece",
+    "familiar": true,
+    "intro": null,
+    "physics": []
+  },
+  {
+    "slug": "sea-serpent",
+    "name": "Sea serpent",
+    "culture": "worldwide",
+    "familiar": true,
+    "intro": null,
+    "physics": []
+  },
+  {
+    "slug": "kappa",
+    "name": "Kappa",
+    "culture": "Japan",
+    "familiar": false,
+    "intro": "kappa-intro",
+    "physics": [
+      "kappa"
+    ]
+  },
+  {
+    "slug": "kitsune",
+    "name": "Kitsune",
+    "culture": "Japan",
+    "familiar": false,
+    "intro": null,
+    "physics": []
+  },
+  {
+    "slug": "tengu",
+    "name": "Tengu",
+    "culture": "Japan",
+    "familiar": false,
+    "intro": null,
+    "physics": []
+  },
+  {
+    "slug": "baku",
+    "name": "Baku",
+    "culture": "Japan / China",
+    "familiar": false,
+    "intro": null,
+    "physics": []
+  },
+  {
+    "slug": "qilin",
+    "name": "Qilin",
+    "culture": "China",
+    "familiar": false,
+    "intro": null,
+    "physics": []
+  },
+  {
+    "slug": "jiangshi",
+    "name": "Jiangshi",
+    "culture": "China",
+    "familiar": false,
+    "intro": null,
+    "physics": []
+  },
+  {
+    "slug": "bakunawa",
+    "name": "Bakunawa",
+    "culture": "Philippines",
+    "familiar": false,
+    "intro": null,
+    "physics": []
+  },
+  {
+    "slug": "manananggal",
+    "name": "Manananggal",
+    "culture": "Philippines",
+    "familiar": false,
+    "intro": null,
+    "physics": []
+  },
+  {
+    "slug": "garuda",
+    "name": "Garuda",
+    "culture": "India / Southeast Asia",
+    "familiar": false,
+    "intro": null,
+    "physics": []
+  },
+  {
+    "slug": "makara",
+    "name": "Makara",
+    "culture": "India",
+    "familiar": false,
+    "intro": null,
+    "physics": []
+  },
+  {
+    "slug": "simurgh",
+    "name": "Simurgh",
+    "culture": "Persia",
+    "familiar": false,
+    "intro": null,
+    "physics": []
+  },
+  {
+    "slug": "manticore",
+    "name": "Manticore",
+    "culture": "Persia",
+    "familiar": false,
+    "intro": null,
+    "physics": []
+  },
+  {
+    "slug": "roc",
+    "name": "Roc",
+    "culture": "Arabia / Persia",
+    "familiar": false,
+    "intro": null,
+    "physics": []
+  },
+  {
+    "slug": "lamassu",
+    "name": "Lamassu",
+    "culture": "Mesopotamia",
+    "familiar": false,
+    "intro": null,
+    "physics": []
+  },
+  {
+    "slug": "bunyip",
+    "name": "Bunyip",
+    "culture": "Australia (Aboriginal lore)",
+    "familiar": false,
+    "intro": null,
+    "physics": []
+  },
+  {
+    "slug": "taniwha",
+    "name": "Taniwha",
+    "culture": "New Zealand (Maori lore)",
+    "familiar": false,
+    "intro": null,
+    "physics": []
+  },
+  {
+    "slug": "mokele-mbembe",
+    "name": "Mokele-mbembe",
+    "culture": "Congo Basin",
+    "familiar": false,
+    "intro": null,
+    "physics": []
+  },
+  {
+    "slug": "inkanyamba",
+    "name": "Inkanyamba",
+    "culture": "South Africa (Zulu lore)",
+    "familiar": false,
+    "intro": null,
+    "physics": []
+  },
+  {
+    "slug": "grootslang",
+    "name": "Grootslang",
+    "culture": "South Africa",
+    "familiar": false,
+    "intro": null,
+    "physics": []
+  },
+  {
+    "slug": "ninki-nanka",
+    "name": "Ninki Nanka",
+    "culture": "West Africa (Gambia)",
+    "familiar": false,
+    "intro": null,
+    "physics": []
+  },
+  {
+    "slug": "kelpie",
+    "name": "Kelpie",
+    "culture": "Scotland",
+    "familiar": false,
+    "intro": null,
+    "physics": []
+  },
+  {
+    "slug": "selkie",
+    "name": "Selkie",
+    "culture": "Scotland / Ireland / Faroe",
+    "familiar": false,
+    "intro": null,
+    "physics": []
+  },
+  {
+    "slug": "zmey",
+    "name": "Zmey Gorynych",
+    "culture": "Slavic lands",
+    "familiar": false,
+    "intro": null,
+    "physics": []
+  },
+  {
+    "slug": "leshy",
+    "name": "Leshy",
+    "culture": "Slavic lands",
+    "familiar": false,
+    "intro": null,
+    "physics": []
+  },
+  {
+    "slug": "jormungandr",
+    "name": "Jormungandr",
+    "culture": "Norse",
+    "familiar": false,
+    "intro": null,
+    "physics": []
+  },
+  {
+    "slug": "sleipnir",
+    "name": "Sleipnir",
+    "culture": "Norse",
+    "familiar": false,
+    "intro": null,
+    "physics": []
+  },
+  {
+    "slug": "fossegrim",
+    "name": "Fossegrim",
+    "culture": "Norway / Sweden",
+    "familiar": false,
+    "intro": null,
+    "physics": []
+  },
+  {
+    "slug": "mapinguari",
+    "name": "Mapinguari",
+    "culture": "Brazil (Amazon)",
+    "familiar": false,
+    "intro": null,
+    "physics": []
+  },
+  {
+    "slug": "boitata",
+    "name": "Boitata",
+    "culture": "Brazil",
+    "familiar": false,
+    "intro": null,
+    "physics": []
+  },
+  {
+    "slug": "chupacabra",
+    "name": "Chupacabra",
+    "culture": "Puerto Rico / Latin America",
+    "familiar": false,
+    "intro": null,
+    "physics": []
+  },
+  {
+    "slug": "ahuizotl",
+    "name": "Ahuizotl",
+    "culture": "Aztec Mexico",
+    "familiar": false,
+    "intro": null,
+    "physics": []
+  },
+  {
+    "slug": "qalupalik",
+    "name": "Qalupalik",
+    "culture": "Inuit (Arctic)",
+    "familiar": false,
+    "intro": null,
+    "physics": []
+  },
+  {
+    "slug": "bake-kujira",
+    "name": "Bake-kujira",
+    "culture": "Japan",
+    "familiar": false,
+    "intro": null,
+    "physics": []
+  },
+  {
+    "slug": "encantado",
+    "name": "Encantado",
+    "culture": "Amazon (Brazil, Peru)",
+    "familiar": false,
+    "intro": null,
+    "physics": []
+  },
+  {
+    "slug": "tikbalang",
+    "name": "Tikbalang",
+    "culture": "Philippines",
+    "familiar": false,
+    "intro": null,
+    "physics": []
+  },
+  {
+    "slug": "aspidochelone",
+    "name": "Aspidochelone",
+    "culture": "Medieval Europe",
+    "familiar": false,
+    "intro": null,
+    "physics": []
+  },
+  {
+    "slug": "bahamut",
+    "name": "Bahamut",
+    "culture": "Arabia",
+    "familiar": false,
+    "intro": null,
+    "physics": []
+  }
 ]
