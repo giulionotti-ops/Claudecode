@@ -1,0 +1,2 @@
+    case "$(cat /proc/$k/comm 2>/dev/null)" in bash|sh|timeout) return 0;; esac
+    grep -q approval_hook /proc/$k/cmdline 2>/dev/null && return 0  
