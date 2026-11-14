@@ -3,5 +3,35 @@
   "approval_phase_started": "2026-11-13",
   "shorts": [],
   "auto_post_enabled": "2026-11-13",
-  "auto_post_note": "Owner chose auto-posting on 2026-11-13, skipping the week of approvals. Only approved streamers are ever posted."
+  "auto_post_note": "Owner chose auto-posting on 2026-11-13, skipping the week of approvals. Only approved streamers are ever posted.",
+  "daily_log": [
+    {
+      "date": "2026-11-13",
+      "posted": [],
+      "reason": "no streamer approved in streamers.json; nothing rendered or posted",
+      "needs_permission_top": [
+        {
+          "streamer": "ladydimaalt",
+          "clip": "https://www.twitch.tv/ladydimaalt/clip/AmusedArbitraryYakPMSTwin-u2Sq8GnpH8Ekj1xi",
+          "span": "00:23-00:41",
+          "score": 72,
+          "why": "GTA RP clowns vs Italians brawl, chaos + yelling"
+        },
+        {
+          "streamer": "garek",
+          "clip": "https://www.twitch.tv/garek/clip/SaltyPlainSandwichDeIlluminati-vjQJfypl2wSMXfbY",
+          "span": "00:04-00:33",
+          "score": 70,
+          "why": "GTA RP break-in, 'fat John Wick' roast"
+        },
+        {
+          "streamer": "caedrel",
+          "clip": "https://www.twitch.tv/caedrel/clip/SpookyRoundRaisinPicoMause-BVM2d-boC5QpPlyP",
+          "span": "00:08-00:21",
+          "score": 64,
+          "why": "LoL 'max win' scream"
+        }
+      ]
+    }
+  ]
 }
