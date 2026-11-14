@@ -501,8 +501,13 @@ setInterval(() => { const d = new Date(); $('#clock').textContent = d.toLocaleTi
 // ── HUD ──
 const cv = $('#hud'), g = cv.getContext('2d'), data = new Uint8Array(128);
 var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches || PREFS.calm;
-function resize() { cv.width = innerWidth * devicePixelRatio; cv.height = innerHeight * devicePixelRatio; }
-addEventListener('resize', resize); resize();
+// Buffer sized from the canvas's real on-screen box (not innerWidth/innerHeight, which differ from it
+// on iPhone with the toolbar or as a home-screen app), so the ring is never stretched.
+function resize() {
+  const r = cv.getBoundingClientRect(), w = Math.round(r.width * devicePixelRatio), h = Math.round(r.height * devicePixelRatio);
+  if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h; }
+}
+addEventListener('resize', resize); window.ResizeObserver && new ResizeObserver(resize).observe(cv); resize();
 function arc(r, a0, a1, w, color, blur) { g.beginPath(); g.arc(0, 0, r, a0, a1); g.lineWidth = w; g.strokeStyle = color; g.shadowBlur = blur || 0; g.shadowColor = color; g.stroke(); }
 // Ring placement: centred in the free space (between the header and the cards on phones,
 // above the input on desktop), sized so the ring, its NEESMO lettering and the status line fit.
@@ -533,7 +538,7 @@ function frame(t) {
   else level *= .9;
   const dpr = devicePixelRatio, R = hud.R * dpr, hot = mode === 'listening' ? THEME.c2 : THEME.hex;
   g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, cv.width, cv.height);
-  g.translate(cv.width / 2, hud.cy * dpr);
+  g.translate(cv.width / 2, (hud.cy - cv.getBoundingClientRect().top) * dpr);
   // core glow
   const core = g.createRadialGradient(0, 0, 0, 0, 0, R * (.45 + level * .25));
   core.addColorStop(0, '#f2fff6'); core.addColorStop(.25, hot); core.addColorStop(1, 'transparent');
