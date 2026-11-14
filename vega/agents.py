@@ -28,7 +28,11 @@ _cache: dict[str, tuple[float, dict]] = {}
 def _log_file(folder: Path) -> Path | None:
     d = HOME / ".claude" / "projects" / ("-" + str(folder).strip("/").replace("/", "-"))
     logs = sorted(d.glob("*.jsonl"), key=lambda p: p.stat().st_mtime, reverse=True) if d.exists() else []
-    return logs[0] if logs else None
+    for p in logs:  # skip the nightly chat-refresh helper's own chats
+        with open(p, "rb") as f:
+            if b"NIGHTLY-CHAT-REFRESH" not in f.read(30000):
+                return p
+    return None
 
 
 def _entries(path: Path) -> list[dict]:
