@@ -32,7 +32,7 @@ Claude runs through the Claude Agent SDK with your Claude Code login, so no API 
 
 ## Approvals from Neesmo
 
-`approval_hook.py` is a Claude Code `PermissionRequest` hook. When a server session asks for permission, Neesmo shows it in the bell menu (and as a push notification). Open it to see exactly what the agent wants to do, then Approve or Deny. If nobody answers within 90 seconds (`NEESMO_APPROVAL_WAIT_S`), the normal prompt in the Claude app takes over.
+`approval_hook.py` is a Claude Code `PermissionRequest` hook. When a server session asks for permission, Neesmo shows it in the bell menu (and as a push notification). Open it to see exactly what the agent wants to do, then Approve or Deny. It waits up to 2 days (`NEESMO_APPROVAL_WAIT_S`, default 172800), so you can answer the next day; after that, or if Neesmo is down, the normal prompt in the Claude app takes over. While it waits, that chat is paused on the request. If the request mentions a video or image file that exists (say a test render it wants to upload), the approval screen plays it above the details.
 
 Install it once for every session on the server (adds the hook to `~/.claude/settings.json`):
 
@@ -41,7 +41,7 @@ python3 - <<'PY'
 import json, pathlib
 p = pathlib.Path.home() / ".claude" / "settings.json"
 s = json.loads(p.read_text()) if p.exists() else {}
-hook = {"type": "command", "command": "python3 ~/Claudecode/vega/approval_hook.py", "timeout": 120}
+hook = {"type": "command", "command": "python3 ~/Claudecode/vega/approval_hook.py", "timeout": 172860}
 groups = s.setdefault("hooks", {}).setdefault("PermissionRequest", [])
 if not any(h.get("command", "").endswith("approval_hook.py") for g in groups for h in g.get("hooks", [])):
     groups.append({"matcher": "*", "hooks": [hook]})

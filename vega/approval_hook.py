@@ -13,7 +13,7 @@ import urllib.request
 from pathlib import Path
 
 URL = os.environ.get("NEESMO_URL", "http://127.0.0.1:8080")
-WAIT_S = int(os.environ.get("NEESMO_APPROVAL_WAIT_S", 90))
+WAIT_S = int(os.environ.get("NEESMO_APPROVAL_WAIT_S", 172800))  # 2 days: answerable the next day
 TOKEN_FILE = Path(os.environ.get("NEESMO_DIR", Path.home() / ".config" / "neesmo")) / "hook_token"
 
 
@@ -32,7 +32,7 @@ def main() -> None:
         return  # Neesmo not running: leave the prompt to the Claude app
     deadline = time.time() + WAIT_S
     while time.time() < deadline:
-        time.sleep(2)
+        time.sleep(2 if time.time() - deadline + WAIT_S < 600 else 15)  # poll slower after 10 min
         try:
             status = call("GET", f"/api/approvals/{nid}")["status"]
         except Exception:

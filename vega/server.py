@@ -10,6 +10,7 @@ import httpx
 import datetime
 import itertools
 import json
+import re
 import secrets
 import shutil
 import sys
@@ -396,6 +397,27 @@ def _describe(tool: str, inp: dict) -> tuple[str, str]:
     return f"use {tool}", json.dumps(inp, indent=1)
 
 
+MEDIA_EXT = r"(?:mp4|mov|m4v|webm|png|jpe?g|gif|webp)"
+_MEDIA_RE = re.compile(r"""(?:['"]([^'"\n]+\.%s)['"])|((?:~|\.{0,2}/)?[\w@%%+=:,./-]+\.%s)\b""" % (MEDIA_EXT, MEDIA_EXT), re.I)
+
+
+def _media(inp: dict, cwd: str) -> list[str]:
+    """Existing video/image files a request mentions (e.g. a test render it wants to upload), to preview."""
+    found: list[str] = []
+    for m in _MEDIA_RE.finditer(" ".join(str(v) for v in inp.values())):
+        raw = m.group(1) or m.group(2)
+        path = Path(os.path.expanduser(raw))
+        if not path.is_absolute():
+            path = Path(cwd or "/") / path
+        try:
+            path = path.resolve(strict=True)
+        except OSError:
+            continue
+        if path.is_file() and str(path) not in found:
+            found.append(str(path))
+    return found[:4]
+
+
 def _hook_only(token: str | None) -> None:
     if not token or not secrets.compare_digest(token, notes.hook_token()):
         raise HTTPException(403, "hook token required")
@@ -407,10 +429,14 @@ async def approval_create(event: dict, x_neesmo_hook: str | None = Header(None))
     _hook_only(x_neesmo_hook)
     tool, inp = str(event.get("tool_name", "?")), event.get("tool_input") or {}
     aid, name = _agent_for(str(event.get("cwd", "")))
-    action, details = _describe(tool, inp if isinstance(inp, dict) else {"input": inp})
+    inp = inp if isinstance(inp, dict) else {"input": inp}
+    action, details = _describe(tool, inp)
+    media = _media(inp, str(event.get("cwd", "")))
     item = await _notify(f"{name} needs approval", f"Wants to {action}", tag=f"approval-{aid}", kind="approval",
                          status="pending", agent=aid, agent_name=name, tool=tool, action=action,
-                         details=details[:4000], expires_in=notes.WAIT_S)
+                         details=details[:4000], expires_in=notes.WAIT_S,
+                         media=[{"name": Path(m).name, "video": not m.lower().endswith((".png", ".jpg", ".jpeg", ".gif", ".webp"))} for m in media],
+                         media_paths=media)
     return {"id": item["id"]}
 
 
@@ -432,6 +458,16 @@ def approval_decide(nid: int, body: DecisionIn):
         return notes.decide(nid, body.decision)
     except ValueError as e:
         raise HTTPException(409, str(e))
+
+
+@app.get("/api/approvals/{nid}/media/{i}")
+def approval_media(nid: int, i: int):
+    """Only files the hook itself attached to this request are served, never a path from the browser."""
+    item = notes.get(nid)
+    paths = (item or {}).get("media_paths") or []
+    if not 0 <= i < len(paths) or not Path(paths[i]).is_file():
+        raise HTTPException(404, "no such file")
+    return FileResponse(paths[i])
 
 
 @app.post("/api/approvals/{nid}/expire")

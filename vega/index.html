@@ -79,6 +79,9 @@
   dialog#ap::backdrop { background: rgba(0,0,0,.7); backdrop-filter: blur(3px); }
   #ap .rp h2 { color: var(--a); } #ap .what { font-size: 16px; } #ap .pre { max-height: 45dvh; border: 1px solid rgba(var(--rgb),.2); border-radius: 6px; padding: 10px; background: rgba(0,0,0,.35); font-size: 12px; }
   #ap .btns { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; } #ap .btns button { padding: 12px 20px; }
+  #ap-media video, #ap-media img { display: block; width: 100%; max-height: 60vh; object-fit: contain; background: #000; border-radius: 10px; margin: 0 0 10px; }
+  #ap-btns[hidden] { display: none; }
+  #ap-media small { display: block; margin: -4px 0 10px; opacity: .7; }
   #ap-yes { background: var(--c); color: var(--bg); border-color: var(--c); font-weight: 600; } #ap-no { border-color: var(--err); color: var(--err); }
   .cards { position: fixed; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 10px; width: 190px; }
   .cards.l { left: 16px; } .cards.r { right: 16px; }
@@ -167,6 +170,7 @@
 <dialog id="ap" aria-labelledby="ap-title"><div class="rp">
   <header><div><h2 id="ap-title">Approval</h2><small id="ap-sub"></small></div><button type="button" id="ap-close" aria-label="Close">✕</button></header>
   <p class="what" id="ap-what"></p>
+  <div id="ap-media"></div>
   <pre class="pre" id="ap-details"></pre>
   <p id="ap-state"></p>
   <div class="btns" id="ap-btns"><button type="button" id="ap-no">Deny</button><button type="button" id="ap-yes">Approve</button></div>
@@ -442,10 +446,15 @@ async function openNote(id) {
   $('#ap-sub').textContent = n.kind === 'approval' ? `${n.agent_name} · ${n.tool} · asked ${n.at}` : n.at;
   $('#ap-what').textContent = n.kind === 'approval' ? `${n.agent_name} wants to ${n.action}:` : '';
   $('#ap-details').textContent = n.kind === 'approval' ? n.details : n.body;
+  const media = $('#ap-media'), was = media.dataset.for; media.dataset.for = id;
+  if (was != id) media.innerHTML = (n.media || []).map((m, i) => {   // a test render it wants to upload etc.
+    const src = `/api/approvals/${id}/media/${i}`;
+    return (m.video ? `<video src="${src}" controls playsinline preload="metadata"></video>` : `<img src="${src}" alt="">`) + `<small>${esc(m.name)}</small>`;
+  }).join('');
   const pending = n.kind === 'approval' && n.status === 'pending';
   $('#ap-btns').hidden = !pending;
   $('#ap-state').textContent = n.kind !== 'approval' ? '' : pending ? 'Waiting for your answer.'
-    : n.status === 'expired' ? 'No longer waiting here: answer it in the Claude app if it still needs you.' : `You ${n.status} this${n.decided_at ? ' at ' + n.decided_at : ''}.`;
+    : n.status === 'expired' ? 'No longer waiting here (over 2 days, or the chat moved on): answer it in the Claude app if it still needs you.' : `You ${n.status} this${n.decided_at ? ' at ' + n.decided_at : ''}.`;
   if (!dlg.open) dlg.showModal();
 }
 async function decide(d) {
@@ -456,6 +465,7 @@ async function decide(d) {
 $('#ap-yes').onclick = () => decide('allow');
 $('#ap-no').onclick = () => decide('deny');
 $('#ap-close').onclick = () => $('#ap').close();
+$('#ap').addEventListener('close', () => { $('#ap-media').innerHTML = ''; delete $('#ap-media').dataset.for; });
 $('#ap').addEventListener('click', e => { if (e.target.id === 'ap') e.target.close(); });
 // Opened from a push notification: /?n=<id>, or a message from the service worker when the app is already open.
 const openParam = +new URLSearchParams(location.search).get('n');

@@ -15,7 +15,7 @@ from pathlib import Path
 DIR = Path(os.environ.get("NEESMO_DIR", Path.home() / ".config" / "neesmo"))
 FILE = DIR / "notifications.json"
 TOKEN = DIR / "hook_token"
-WAIT_S = int(os.environ.get("NEESMO_APPROVAL_WAIT_S", 90))  # how long the hook waits before the normal prompt takes over
+WAIT_S = int(os.environ.get("NEESMO_APPROVAL_WAIT_S", 172800))  # how long the hook waits (2 days, so it can be answered the next day)
 KEEP = 200
 _lock = threading.Lock()
 _items: list[dict] = []
