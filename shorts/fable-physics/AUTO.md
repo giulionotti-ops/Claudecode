@@ -24,6 +24,7 @@ Read `fable-physics/README.md` (channel rules), `fable-physics/creatures.json` (
 - **Physics short** (like `kraken/`, `dragon-flight/`): problem → fix → new problem, 4–5 links, every fix anchored on a real animal, ending on a twist that explains something about the legend. If the creature already had an intro short, the first line can say "Last time you met the X."
 - **Intro short** ("Meet the X"): who tells this story (country, people, era), what the creature looks like and does in the legend, the strangest detail, and one real animal that may have inspired it (only if a source says so). End with a teaser line such as "Could it actually work? Find out next." First chip: the place, e.g. `JAPAN · FOLKLORE`. Show the creature in its home landscape.
 - Hook in the first 2 s. About 140–160 words. Plain spoken English.
+- **Always use the marketing skills** (in `/root/physics-channel/.claude/skills/`; read only the SKILL.md you need): `viral-hooks` for the first line and the first on-screen word (write 3 hooks, keep the strongest), `viral-youtube-shorts` for retention (escalate every 8–10 s, pay off at the end), `viral-captions-and-ctas` for the title, description, question and pinned comment (no engagement bait). `remocn` and `video` are Remotion component libraries; our engine is three.js, so borrow their ideas for transitions and title cards, don't install Remotion.
 
 ### 3. Check the facts
 Every claim (biology, physics, legend) needs a source. Don't search the web yourself: hand the research to one cheap helper with the Agent tool (`model: "haiku"`, `subagent_type: "general-purpose"`). Give it the creature, its culture and your list of claims, and ask for: the legend's key facts with sources, 4–5 real-animal anchors, and for each claim a URL and a one-line quote, or "no source". Prefer encyclopedias, museums, university pages, papers. Check its answer makes sense; fetch a page yourself only to settle a doubtful claim. List the sources and the real-animal anchors in `shorts/<slug>/TREATMENT.md`. If you can't source a claim, cut it.
@@ -32,7 +33,7 @@ Every claim (biology, physics, legend) needs a source. Don't search the web your
 Slug: `<creature>` for a physics short, `<creature>-intro` for an intro. Copy the engine from `kraken/`: `index.html`, `overlay.js`, `mix.py`, `master.sh`, `build.sh`, `export_srt.py`, `voice_ts.py`, `fonts/`, `.gitignore`; rename the output in `build.sh` and `export_srt.py`.
 - **Voice:** write `script.txt`, then `set -a; . /root/.api-keys.env; set +a; python3 voice_ts.py` (ElevenLabs "Liam", one take, about 1,000 characters).
 - **Picture:** write `main.js` (+ a creatures/world file) with scenes timed on `voice/words.json`, exactly like `kraken/main.js`: one-word captions (Lilita One), gold-outlined label chips, arrows, check/cross marks, cutaways or gauges where they help. Build creatures in code in the low-poly style (`kraken/creatures.js`, `fable-physics/brand-lab/beasts/beasts.js` show how: icosahedrons, cones, tapered tubes, flat shading). A CC0/CC BY model is fine if you can fetch it (credit it in `CREDITS`); don't get around bot checks.
-- **Sound:** adapt `mix.py` (score mood to the creature's world, foley for the events in `window.EV`).
+- **Sound:** adapt `mix.py` (score mood to the creature's world, foley for the events in `window.EV`). Keep the music quiet under the voice: `music * .3`, duck `.6` (as in `kraken/mix.py`); never raise them.
 - **Test stills first:** `cd ~/lemo-opuscar && LEMO_ANGLE=swiftshader node core/render/still.mjs <folder> <t1> <t2> ... --size 540x960 --out <scratch>`; look at every scene and fix framing before the full render.
 - **Render:** `sh build.sh` (about 8–10 min). It writes `<slug>.mp4` and `<slug>.srt`. Also save `poster.jpg` (one strong frame).
 
@@ -45,7 +46,7 @@ Fix and re-render at most twice.
 ### 6. Queue it
 Append to `fable-physics/uploader/queue.json`:
 `{"name": slug, "video": "<slug>/<slug>.mp4", "captions": "<slug>/<slug>.srt", "title", "description", "tags": [6–8], "pinned", "approved": false}`
-Always `"approved": false`: the owner approves each short before it is posted (`upload.py approve <slug>`), unless the file `fable-physics/AUTO_APPROVE` exists.
+Always `"approved": false`: the owner approves each short before it is posted, unless the file `fable-physics/AUTO_APPROVE` exists. `notify.py` sends each short to the owner's phone (Neesmo) to watch; `review_watch.py` schedules it when they tap Approve, or runs a fix when they ask for changes. Never approve anything yourself.
 - Title: under 70 characters, one CAPS word, one emoji, ends with `#shorts` (see the existing entries).
 - Description: 2–3 sentences, then a question for comments, then hashtags. Intro shorts also name the culture.
 Set the creature's `"intro"` or `"physics"` in `creatures.json`. Add a row to the table in `fable-physics/README.md`.

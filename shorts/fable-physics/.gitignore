@@ -1,4 +1,6 @@
 logs/
 PAUSE
 .daily.lock
-.notified.json
+.reviews/
+.reviews.json
+.review_watch.lock

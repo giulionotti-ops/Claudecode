@@ -85,8 +85,8 @@ for e in ev['ev']:
     elif k == 'shimmer': add(fx, shimmer(2.5, 1), at, .6, .2)
 
 venv = np.abs(vo[:, 0]); k = int(.25 * SR); venv = np.convolve(venv, np.ones(k) / k, 'same')
-duck = 1 - .45 * np.clip(venv / (venv.max() * .25 + 1e-9), 0, 1)
-mix = vo * 1.0 + music * .55 * duck[:, None] + fx * .6
+duck = 1 - .6 * np.clip(venv / (venv.max() * .25 + 1e-9), 0, 1)
+mix = vo * 1.0 + music * .3 * duck[:, None] + fx * .6
 mix = sfx.limit(mix / (np.abs(mix).max() + 1e-9) * .9, .95)
 out = os.path.join(HERE, 'out', 'mix.wav')
 import soundfile as sf; sf.write(out, mix[:int(DUR * SR)], SR, subtype='PCM_24')
