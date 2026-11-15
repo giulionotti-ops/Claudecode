@@ -443,19 +443,50 @@ async def approval_create(event: dict, x_neesmo_hook: str | None = Header(None))
 @app.get("/api/approvals/{nid}")
 def approval_status(nid: int):
     item = notes.get(nid)
-    if item is None or item["kind"] != "approval":
+    if item is None or item["kind"] not in ("approval", "review"):
         raise HTTPException(404, "no such request")
     return {"status": item["status"]}
 
 
 class DecisionIn(BaseModel):
     decision: str
+    note: str = ""
+
+
+class ReviewIn(BaseModel):
+    title: str            # e.g. "Fable Physics: approve this short?"
+    name: str             # what is being reviewed, e.g. the short's title
+    details: str = ""     # description, pinned comment ... shown under the video
+    media: list[str] = [] # local video/image files to watch in the review
+    agent: str = ""       # folder of the project asking, to colour it like its agent
+
+
+@app.post("/api/reviews")
+async def review_create(r: ReviewIn, x_neesmo_hook: str | None = Header(None)):
+    """A local job asks the owner to watch something and approve it or ask for changes (no time limit)."""
+    _hook_only(x_neesmo_hook)
+    aid, agent_name = _agent_for(r.agent)
+    media = [str(Path(m).resolve()) for m in r.media if Path(m).is_file()][:4]
+    item = await _notify(r.title, r.name, tag=None, kind="review", status="pending", agent=aid, agent_name=agent_name,
+                         details=r.details[:4000],
+                         media=[{"name": Path(m).name, "video": not m.lower().endswith((".png", ".jpg", ".jpeg", ".gif", ".webp"))} for m in media],
+                         media_paths=media)
+    return {"id": item["id"]}
+
+
+@app.get("/api/reviews/{nid}")
+def review_status(nid: int, x_neesmo_hook: str | None = Header(None)):
+    _hook_only(x_neesmo_hook)
+    item = notes.get(nid)
+    if item is None or item["kind"] != "review":
+        raise HTTPException(404, "no such review")
+    return {"status": item["status"], "note": item.get("note", "")}
 
 
 @app.post("/api/approvals/{nid}")
 def approval_decide(nid: int, body: DecisionIn):
     try:
-        return notes.decide(nid, body.decision)
+        return notes.decide(nid, body.decision, body.note)
     except ValueError as e:
         raise HTTPException(409, str(e))
 
