@@ -77,7 +77,7 @@
   .nlist li { position: relative; } .nlist .x.ign { width: auto; padding: 0 8px; font-size: 11px; } .nlist .x { position: absolute; top: 4px; right: 4px; width: 26px; height: 26px; padding: 0; border: 0; border-left: 0; text-align: center; opacity: .6; }
   .nlist li > button[data-n] { padding-right: 34px; } .nlist li:has(.ign) > button[data-n] { padding-right: 70px; } .nlist .chip { margin-right: 4px; }
   .nhead { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; } .nhead h3 { margin: 0; }
-  #nclear { padding: 3px 10px; font-size: 11px; }
+  #nclear, #logout { padding: 3px 10px; font-size: 11px; }
   .nlist .unread b::before { content: "● "; color: var(--c2); }
   dialog#ap { --a: var(--c); width: min(720px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); padding: 0; border: 1px solid var(--dim);
     border-top: 3px solid var(--a); border-radius: 10px; background: rgba(2,14,10,.98); color: var(--c); }
@@ -173,6 +173,10 @@
   <div class="row"><label id="l-mark">NEESMO lettering</label><button type="button" class="tog" role="switch" id="t-mark" aria-labelledby="l-mark"></button></div>
   <div class="row"><label id="l-scan">Scanlines</label><button type="button" class="tog" role="switch" id="t-scan" aria-labelledby="l-scan"></button></div>
   <div class="row"><label id="l-calm">Calm animation</label><button type="button" class="tog" role="switch" id="t-calm" aria-labelledby="l-calm"></button></div>
+  <div id="acct" hidden>
+    <div class="nhead" style="margin-top:14px"><h3>Devices</h3><button type="button" id="logout">Sign out</button></div>
+    <ul class="nlist" id="devlist"></ul>
+  </div>
 </div>
 <div class="pop" id="pop-n" hidden role="dialog" aria-label="Notifications">
   <div class="row"><label id="l-push">Notifications</label><button type="button" class="tog" role="switch" id="t-push" aria-labelledby="l-push"></button></div>
@@ -219,6 +223,7 @@ function setStatus(t, err) { statusEl.textContent = t; statusEl.classList.toggle
 function say(text, who) { const p = document.createElement('p'); p.className = who; p.textContent = text; logEl.append(p); logEl.scrollTop = 1e9; }
 async function api(path, opts) {
   const r = await fetch(path, opts);
+  if (r.status === 401) { location.replace('/login'); throw new Error('login required'); }
   if (!r.ok) throw new Error((await r.json().catch(() => ({}))).detail || r.statusText);
   return r;
 }
@@ -430,7 +435,15 @@ function togglePop(btn, pop, open = pop.hidden) {
   pop.hidden = !open; btn.setAttribute('aria-expanded', String(open));
   if (open && pop.id === 'pop-n') { loadNotes(); pushState().catch(() => {}); }
 }
-$('#gear').onclick = () => togglePop($('#gear'), $('#pop-s'));
+$('#gear').onclick = () => { togglePop($('#gear'), $('#pop-s')); if (!$('#pop-s').hidden) loadDevices(); };
+// ── remembered devices (only when login is on) ──
+async function loadDevices() {
+  let d; try { d = await (await api('/api/devices')).json(); } catch { return; }
+  $('#acct').hidden = !d.enabled; if (!d.enabled) return;
+  $('#devlist').innerHTML = d.devices.map(x => `<li><button type="button" disabled><b>${esc(x.name)}${x.current ? ' · this one' : ''}</b><span>added ${esc(x.created)} · seen ${esc(x.seen)}</span></button>${x.current ? '' : `<button type="button" class="x" data-dev="${esc(x.id)}" aria-label="Sign out ${esc(x.name)}">✕</button>`}</li>`).join('');
+}
+$('#devlist').addEventListener('click', async e => { const b = e.target.closest('[data-dev]'); if (b) { await api('/api/devices/' + b.dataset.dev, { method: 'DELETE' }).catch(() => {}); loadDevices(); } });
+$('#logout').onclick = async () => { await api('/api/logout', { method: 'POST' }).catch(() => {}); location.replace('/login'); };
 $('#bell').onclick = () => togglePop($('#bell'), $('#pop-n'));
 document.addEventListener('click', e => { if (!e.target.closest('.pop, .ic, dialog')) { $('#pop-s').hidden = $('#pop-n').hidden = true; } });
 addEventListener('keydown', e => { if (e.key === 'Escape') { $('#pop-s').hidden = $('#pop-n').hidden = true; } });

@@ -15,7 +15,7 @@ DIR = Path(os.environ.get("NEESMO_DIR", Path.home() / ".config" / "neesmo"))
 KEY = DIR / "vapid_private.pem"
 SUBS = DIR / "push_subscriptions.json"
 # Apple requires a mailto: or https: contact in the token; use the app's own address, no personal email.
-CONTACT = os.environ.get("NEESMO_PUSH_CONTACT", "https://vmi3743434.tail90037e.ts.net")
+CONTACT = os.environ.get("NEESMO_PUSH_CONTACT", "mailto:owner@localhost")  # set to your HTTPS address
 
 
 def _vapid() -> Vapid:

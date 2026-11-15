@@ -18,12 +18,13 @@ import time
 
 from claude_agent_sdk import (AssistantMessage, ClaudeAgentOptions, ClaudeSDKClient, ResultMessage, TextBlock,
                               create_sdk_mcp_server, tool)
-from fastapi import FastAPI, Header, HTTPException, UploadFile
-from fastapi.responses import FileResponse, Response
+from fastapi import FastAPI, Header, HTTPException, Request, UploadFile
+from fastapi.responses import FileResponse, JSONResponse, RedirectResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
 import agents
+import auth
 import notes
 import push
 
@@ -166,6 +167,104 @@ async def channel_jobs(_args):
 app = FastAPI()
 notes.hook_token()  # create the hook's secret at start, so approval_hook.py can read it
 app.mount("/static", StaticFiles(directory=HERE / "static"), name="static")
+
+# ── login (product mode: NEESMO_AUTH=1) ──
+PUBLIC = {"/login", "/api/login", "/api/setup", "/api/auth/state", "/manifest.webmanifest", "/sw.js"}
+
+
+@app.middleware("http")
+async def require_login(request: Request, call_next):
+    if not auth.ENABLED or request.url.path in PUBLIC or request.url.path.startswith("/static/"):
+        return await call_next(request)
+    hook = request.headers.get("x-neesmo-hook")
+    if hook and secrets.compare_digest(hook, notes.hook_token()):
+        return await call_next(request)  # local hooks and jobs
+    dev = auth.device_for(request.cookies.get(auth.COOKIE))
+    if dev is None:
+        if request.url.path.startswith("/api/"):
+            return JSONResponse({"detail": "login required"}, status_code=401)
+        return RedirectResponse("/login")
+    request.state.device = dev
+    return await call_next(request)
+
+
+if auth.ENABLED and not auth.has_password():
+    print(f"\n  Neesmo setup code: {auth.SETUP_CODE}  (open Neesmo and enter it to set your password)\n", flush=True)
+
+
+class LoginIn(BaseModel):
+    password: str
+    device: str = ""
+    code: str = ""
+
+
+def _with_cookie(request: Request, tok: str) -> JSONResponse:
+    r = JSONResponse({"ok": True})
+    r.set_cookie(auth.COOKIE, tok, max_age=auth.DEVICE_DAYS * 86400, httponly=True, samesite="lax",
+                 secure=request.url.scheme == "https" or request.headers.get("x-forwarded-proto") == "https")
+    return r
+
+
+@app.get("/login")
+def login_page():
+    return FileResponse(HERE / "login.html")
+
+
+@app.get("/api/auth/state")
+def auth_state(request: Request):
+    return {"enabled": auth.ENABLED, "setup": auth.ENABLED and not auth.has_password(),
+            "signed_in": auth.device_for(request.cookies.get(auth.COOKIE)) is not None}
+
+
+@app.post("/api/setup")
+def auth_setup(body: LoginIn, request: Request):
+    try:
+        return _with_cookie(request, auth.setup(body.code, body.password, body.device))
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+
+
+@app.post("/api/login")
+def auth_login(body: LoginIn, request: Request):
+    try:
+        return _with_cookie(request, auth.login(request.client.host if request.client else "?", body.password, body.device))
+    except PermissionError as e:
+        raise HTTPException(429, str(e))
+    except ValueError as e:
+        raise HTTPException(401, str(e))
+
+
+@app.get("/api/devices")
+def devices_list(request: Request):
+    return {"enabled": auth.ENABLED, "devices": auth.devices(getattr(request.state, "device", None)) if auth.ENABLED else []}
+
+
+@app.delete("/api/devices/{dev_id}")
+def devices_forget(dev_id: str):
+    return {"removed": auth.forget(dev_id)}
+
+
+@app.post("/api/logout")
+def auth_logout(request: Request):
+    dev = getattr(request.state, "device", None)
+    if dev:
+        auth.forget(dev["id"])
+    r = JSONResponse({"ok": True}); r.delete_cookie(auth.COOKIE)
+    return r
+
+
+class PasswordIn(BaseModel):
+    old: str
+    new: str
+
+
+@app.post("/api/password")
+def auth_password(body: PasswordIn):
+    try:
+        auth.change_password(body.old, body.new)
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+    return {"ok": True}
 _client: ClaudeSDKClient | None = None
 _lock = asyncio.Lock()  # one conversation, one turn at a time
 

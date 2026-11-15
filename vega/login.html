@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Neesmo Login</title>
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/static/icon-180.png">
+<link rel="icon" type="image/png" href="/static/icon-192.png">
+<meta name="theme-color" content="#02070d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<style>
+  :root { --rgb: 61,255,143; --c: rgb(var(--rgb)); --c2: #c6ff4a; --bg: #02070d; --dim: rgba(var(--rgb),.35); --err: #ff5f6d; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; min-height: 100%; background: var(--bg) radial-gradient(ellipse at center, rgba(var(--rgb),.13) 0%, var(--bg) 70%) no-repeat fixed;
+    color: var(--c); font: 15px/1.4 ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+  main { min-height: 100dvh; display: grid; place-items: center; padding: 16px; }
+  form { width: min(360px, 100%); border: 1px solid var(--dim); padding: 24px 20px; background: rgba(2,7,13,.8); backdrop-filter: blur(6px);
+    animation: rise .6s cubic-bezier(.2,.8,.2,1) both; }
+  @keyframes rise { from { opacity: 0; transform: translateY(14px) scale(.98); } }
+  h1 { margin: 0 0 4px; font-size: 22px; letter-spacing: .3em; } p { margin: 0 0 18px; color: var(--dim); font-size: 12px; }
+  label { display: block; font-size: 11px; letter-spacing: .15em; text-transform: uppercase; margin: 12px 0 4px; color: var(--dim); }
+  input { width: 100%; padding: 11px 12px; background: transparent; border: 1px solid var(--dim); color: var(--c); font: inherit; font-size: 16px; }
+  input:focus { outline: none; border-color: var(--c); box-shadow: 0 0 12px rgba(var(--rgb),.3); }
+  button { margin-top: 18px; width: 100%; padding: 12px; background: var(--c); color: var(--bg); border: 0; font: inherit; font-weight: 700; letter-spacing: .2em; cursor: pointer; }
+  button:disabled { opacity: .5; }
+  #err { color: var(--err); min-height: 1.4em; margin-top: 10px; font-size: 13px; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<main>
+<form id="f">
+  <h1>NEESMO</h1>
+  <p id="sub">Sign in. This device will be remembered.</p>
+  <div id="setup-only" hidden>
+    <label for="code">Setup code (from the server log)</label>
+    <input id="code" autocomplete="one-time-code" autocapitalize="off">
+  </div>
+  <label for="pw">Password</label>
+  <input id="pw" type="password" autocomplete="current-password" required minlength="8">
+  <label for="dev">Device name</label>
+  <input id="dev" autocomplete="off" maxlength="60">
+  <button id="go" type="submit">SIGN IN</button>
+  <div id="err" role="alert"></div>
+</form>
+</main>
+<script>
+const $ = s => document.querySelector(s);
+const ua = navigator.userAgent;
+$('#dev').value = /iPhone/.test(ua) ? 'iPhone' : /iPad/.test(ua) ? 'iPad' : /Android/.test(ua) ? 'Android phone'
+  : /Mac/.test(ua) ? 'Mac' : /Windows/.test(ua) ? 'Windows PC' : 'Device';
+let setup = false;
+fetch('/api/auth/state').then(r => r.json()).then(s => {
+  if (!s.enabled || s.signed_in) return location.replace('/');
+  setup = s.setup;
+  if (setup) {
+    $('#setup-only').hidden = false; $('#code').required = true;
+    $('#sub').textContent = 'First start: choose the owner password (8+ characters).';
+    $('#pw').autocomplete = 'new-password'; $('#go').textContent = 'SET PASSWORD';
+  }
+});
+$('#f').onsubmit = async e => {
+  e.preventDefault(); $('#go').disabled = true; $('#err').textContent = '';
+  try {
+    const r = await fetch(setup ? '/api/setup' : '/api/login', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ password: $('#pw').value, device: $('#dev').value, code: $('#code').value }) });
+    if (r.ok) return location.replace('/');
+    $('#err').textContent = (await r.json()).detail || 'Could not sign in';
+  } catch { $('#err').textContent = 'Neesmo is not reachable'; }
+  $('#go').disabled = false;
+};
+</script>
+</body>
+</html>
