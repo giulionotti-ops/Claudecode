@@ -41,6 +41,13 @@ ask()  {  # ask "question" -> 0 for yes
 say "Checking requirements"
 have python3 || { warn "python3 is needed (3.10+)"; exit 1; }
 python3 -c 'import sys; sys.exit(sys.version_info < (3, 10))' || { warn "python 3.10+ is needed"; exit 1; }
+if ! have tmux; then
+  if have apt-get && ask "tmux runs the agent sessions. Install it now (apt-get install -y tmux)?"; then
+    run $([ "$(id -u)" = 0 ] || echo sudo) apt-get install -y tmux
+  else
+    warn "tmux is needed for agent chats: install it with your package manager"
+  fi
+fi
 have node || warn "node/npm not found: OmniRoute, claude-mem and the skill pack need Node 20+ (https://nodejs.org)"
 if ! have claude; then
   if have npm && ask "Claude Code is not installed. Install it now (npm install -g @anthropic-ai/claude-code)?"; then

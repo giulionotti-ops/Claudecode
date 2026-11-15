@@ -15,12 +15,15 @@
 <meta name="apple-mobile-web-app-title" content="Neesmo">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <style>
-  :root { --rgb: 61,255,143; --c: rgb(var(--rgb)); --c2: #c6ff4a; --bg: #02070d; --dim: rgba(var(--rgb),.35); --err: #ff5f6d; --fs: 14px; }
+  @font-face { font-family: "Geist"; src: url(/static/fonts/geist.woff2) format("woff2"); font-weight: 100 900; font-display: swap; }
+  @font-face { font-family: "Geist Mono"; src: url(/static/fonts/geist-mono.woff2) format("woff2"); font-weight: 100 900; font-display: swap; }
+  :root { --sans: "Geist", system-ui, -apple-system, "Segoe UI", sans-serif; --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace; --rgb: 61,255,143; --c: rgb(var(--rgb)); --c2: #c6ff4a; --bg: #02070d; --dim: rgba(var(--rgb),.35); --err: #ff5f6d; --fs: 14px; }
   * { box-sizing: border-box; }
   html { touch-action: manipulation; -webkit-text-size-adjust: 100%; }  /* no double-tap zoom */
   html { background-color: #02070d; min-height: 100lvh; }  /* iPhone home-screen app paints the area under the page with this */
   html, body { margin: 0; height: 100%; background: var(--bg) radial-gradient(ellipse at center, rgba(var(--rgb),.13) 0%, var(--bg) 70%) no-repeat fixed; color: var(--c);
-    font: var(--fs)/1.4 ui-monospace, "SF Mono", Menlo, Consolas, monospace; overflow: hidden; }
+    font: var(--fs)/1.45 var(--sans); overflow: hidden; -webkit-font-smoothing: antialiased; }
+  .corner, #status, .st, .chip, .mono, .kpi span, .card span, code, pre, kbd, #chathead h2 { font-family: var(--mono); }
   body::after { content: ""; position: fixed; inset: 0; pointer-events: none;
     background: repeating-linear-gradient(0deg, rgba(var(--rgb),.03) 0 1px, transparent 1px 3px); }
   canvas { position: fixed; inset: 0; width: 100%; height: 100%; }
@@ -43,10 +46,13 @@
   #log p.you { border-color: var(--c2); color: var(--c2); }
   form { position: fixed; left: 16px; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); display: flex; gap: 8px; max-width: 720px; margin: 0 auto; }
   input, select, button { font: inherit; color: var(--c); background: rgba(2,20,30,.8); border: 1px solid var(--dim); border-radius: 4px; }
-  input { flex: 1; min-width: 0; padding: 12px; outline: none; font-size: max(16px, 1em); }  /* 16px+: iOS zooms in on smaller inputs */
+  input { flex: 1; min-width: 0; padding: 12px; outline: none; font-size: max(16px, 1em); }
+  #f > * { border-radius: 12px; } #q { padding-inline: 16px; } ::placeholder { color: rgba(var(--rgb),.45); }
+  #q:focus { border-color: var(--c); box-shadow: 0 0 0 3px rgba(var(--rgb),.12), 0 0 18px rgba(var(--rgb),.18); }  /* 16px+: iOS zooms in on smaller inputs */
   input:focus, select:focus, button:focus-visible { border-color: var(--c); box-shadow: 0 0 10px var(--dim); outline: none; }
-  button { padding: 0 16px; cursor: pointer; letter-spacing: .1em; }
-  #mic { width: 48px; padding: 0; font-size: 18px; }
+  button { padding: 0 16px; cursor: pointer; letter-spacing: .02em; font-weight: 500; }
+  #mic { width: 48px; padding: 0; display: grid; place-items: center; }
+  #mic svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
   #mic.on { color: var(--bg); background: var(--c2); border-color: var(--c2); box-shadow: 0 0 16px var(--c2); }
   select { padding: 4px; max-width: 180px; }
   html.no-scan body::after, html.no-mark #wordmark { display: none; }
@@ -101,8 +107,8 @@
     background: linear-gradient(90deg, color-mix(in srgb, var(--a) 14%, transparent), rgba(2,26,14,.6) 70%); }
   .agent b { color: var(--a); text-shadow: 0 0 8px color-mix(in srgb, var(--a) 50%, transparent) !important; }
   .agent:hover, .agent:focus-visible { border-color: var(--a); box-shadow: 0 0 14px color-mix(in srgb, var(--a) 45%, transparent); outline: none; }
-  .agent b { font-size: 14px !important; letter-spacing: .04em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .agent .st { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .agent b { font-size: 15px !important; font-weight: 600; letter-spacing: -.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .agent .st { font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .agent .st .ago { display: inline; }
   .agent.dev { opacity: .5; filter: grayscale(1); } .agent.dev:hover, .agent.dev:focus-visible { opacity: .8; }
   .st.dev { color: #7d8a83; } .st.dev::before { content: "◌ "; }
@@ -236,6 +242,11 @@
   .ratts button { border: 0; background: none; padding: 0 6px; height: 20px; }
   .rfoot { display: flex; justify-content: space-between; gap: 8px; } .rfoot button { padding: 5px 12px; font-size: 11px; }
   #r-stop { color: var(--err); border-color: var(--err); }
+  .thread p.tool { align-self: flex-start; font: 11.5px/1.4 var(--mono); color: var(--dim); padding: 3px 9px; border-left: 2px solid rgba(var(--rgb),.3); }
+  .thread p.tool small { display: inline; margin-left: 6px; }
+  .thread .ask { border: 1px solid var(--a); border-radius: 12px; padding: 10px 12px; display: grid; gap: 8px; }
+  .thread .ask b { font-weight: 600; } .thread .ask button { text-align: left; padding: 8px 12px; font-size: 13px; border-radius: 10px; letter-spacing: 0; }
+  .rlink { font: 10.5px var(--mono); color: var(--dim); align-self: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .licf { display: flex; gap: 6px; margin: 6px 0 2px; position: static; max-width: none; } .licf input { flex: 1; min-width: 0; padding: 7px 8px; font-size: max(16px, 1em); }
   .licf button { padding: 6px 10px; } .licf[hidden] { display: none; } .licmsg { display: block; min-height: 1em; color: var(--err); }
   .links { display: flex; gap: 14px; margin-top: 4px; font-size: 12px; } .links a { color: var(--c2); }
@@ -340,26 +351,27 @@
   <form class="composer" id="r-form">
     <button type="button" id="r-attach" aria-label="Attach files" title="Attach files"><svg viewBox="0 0 24 24"><path d="M21 11.5 12.6 20a5.5 5.5 0 0 1-7.8-7.8l8.5-8.5a3.7 3.7 0 0 1 5.2 5.2l-8.5 8.5a1.8 1.8 0 0 1-2.6-2.6L15.2 7"/></svg></button>
     <input type="file" id="r-files" multiple hidden>
-    <textarea id="r-q" rows="1" placeholder="Message this agent…" aria-label="Message for this agent"></textarea>
+    <textarea id="r-q" rows="1" placeholder="Reply…" aria-label="Message for this agent"></textarea>
     <button type="submit" id="r-send">Send</button>
   </form>
-  <div class="rfoot"><button type="button" id="r-new">New thread</button><button type="button" id="r-stop" hidden>Stop</button></div>
+  <div class="rfoot"><button type="button" id="r-new">New thread</button><span class="rlink" id="r-link"></span><button type="button" id="r-stop" hidden>Stop</button></div>
 </div></dialog>
 <div id="status" role="status" aria-live="polite">Standby</div>
 <div id="chathead"><button type="button" id="chat-back" aria-label="Back to the home screen">← Back</button><h2>CHAT</h2><button type="button" id="chat-new">New chat</button></div>
 <div id="log" aria-live="polite"></div>
 <div id="atts" aria-label="Attached files"></div>
 <form id="f">
-  <button type="button" id="mic" title="Talk (or hold Space)" aria-label="Talk">●</button>
+  <button type="button" id="mic" title="Talk (or hold Space)" aria-label="Talk"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
   <button type="button" id="attach" aria-label="Attach files" title="Attach files"><svg viewBox="0 0 24 24"><path d="M21 11.5 12.6 20a5.5 5.5 0 0 1-7.8-7.8l8.5-8.5a3.7 3.7 0 0 1 5.2 5.2l-8.5 8.5a1.8 1.8 0 0 1-2.6-2.6L15.2 7"/></svg></button>
   <input type="file" id="files" multiple hidden>
-  <input id="q" autocomplete="off" placeholder="Speak or type a command…" aria-label="Message">
+  <input id="q" autocomplete="off" placeholder="Ask Neesmo anything" aria-label="Message">
   <button>Send</button>
 </form>
+<script src="/static/vendor/motion.js"></script>
 <script>
 const $ = s => document.querySelector(s);
 const statusEl = $('#status'), logEl = $('#log'), voiceSel = $('#voice');
-let ac, analyser, level = 0, mode = 'idle', rec, chunks = [], micStream;
+let ac, analyser, level = 0, mode = 'idle', rec, chunks = [], micStream, micSrc;
 
 function setStatus(t, err) { statusEl.textContent = t; statusEl.classList.toggle('err', !!err); }
 // Replies: a small, safe markdown subset (code, bold, links, lists). Everything is escaped first.
@@ -402,7 +414,7 @@ async function api(path, opts) {
   return r;
 }
 function audio() {
-  if (!ac) { ac = new AudioContext(); analyser = ac.createAnalyser(); analyser.fftSize = 256; }
+  if (!ac) { ac = new AudioContext(); analyser = ac.createAnalyser(); analyser.fftSize = 256; analyser.smoothingTimeConstant = .55; }
   return ac;
 }
 
@@ -474,7 +486,7 @@ function openChat() {
 }
 function closeChat() {
   if (!chatOpen()) return;
-  const go = () => { document.body.classList.remove('chat'); $('#q').placeholder = 'Speak or type a command…'; $('#q').blur(); layoutHud?.(); };
+  const go = () => { document.body.classList.remove('chat'); $('#q').placeholder = 'Ask Neesmo anything'; $('#q').blur(); layoutHud?.(); };
   document.startViewTransition && !reduce ? document.startViewTransition(go) : go();
 }
 $('#q').addEventListener('focus', openChat);
@@ -538,12 +550,21 @@ function startBrowserRec() {
   let heard = '';
   sr.onresult = e => { heard = Array.from(e.results).map(r => r[0].transcript).join(' ').trim(); };
   sr.onerror = e => {
-    if (e.error === 'not-allowed' || e.error === 'service-not-allowed' || e.error === 'network') useServerSTT = true;
+    if (['not-allowed', 'service-not-allowed', 'network', 'audio-capture'].includes(e.error)) useServerSTT = true;
     if (e.error !== 'no-speech' && e.error !== 'aborted') setStatus('Switching to server listening', true);
   };
-  sr.onend = () => { sr = null; $('#mic').classList.remove('on'); mode = 'idle'; heard ? ask(heard) : (statusEl.classList.contains('err') || setStatus('Heard nothing')); };
-  sr.start(); mode = 'listening'; setStatus('Listening'); $('#mic').classList.add('on');
+  sr.onend = () => { sr = null; meterOff(); $('#mic').classList.remove('on'); mode = 'idle'; heard ? ask(heard) : (statusEl.classList.contains('err') || setStatus('Heard nothing')); };
+  sr.start(); mode = 'listening'; setStatus('Listening'); $('#mic').classList.add('on'); meterOn();
 }
+// Mic level for the ring while the browser listens (its speech recognition gives no audio of its own).
+async function meterOn() {
+  try {
+    micStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
+    if (!sr) return meterOff();   // already stopped
+    micSrc = audio().createMediaStreamSource(micStream); micSrc.connect(analyser);
+  } catch { /* no meter: the ring keeps its idle pulse */ }
+}
+function meterOff() { try { micSrc?.disconnect(); } catch {} micSrc = null; micStream?.getTracks().forEach(t => t.stop()); micStream = null; }
 async function startRec() {
   if (rec?.state === 'recording' || mode === 'thinking') return;
   try { micStream = await navigator.mediaDevices.getUserMedia({ audio: true }); }
@@ -562,7 +583,7 @@ async function startRec() {
 }
 const recording = () => !!sr || rec?.state === 'recording';
 const stopRec = () => { if (sr) sr.stop(); else if (rec?.state === 'recording') rec.stop(); };
-const listen = () => useServerSTT ? startRec() : startBrowserRec();
+const listen = () => { audio().resume?.(); return useServerSTT ? startRec() : startBrowserRec(); };
 $('#mic').onclick = () => recording() ? stopRec() : listen();
 addEventListener('keydown', e => { if (e.code === 'Space' && e.target === document.body && !e.repeat) { e.preventDefault(); listen(); } });
 addEventListener('keyup', e => { if (e.code === 'Space' && e.target === document.body) stopRec(); });
@@ -640,21 +661,30 @@ async function openReport(id) {
     $('#r-commits').innerHTML = (g.commits || []).map(c => `<li><em>${esc(c.ago)}</em>${esc(c.subject)}</li>`).join('') || '<li>None</li>';
   } catch (e) { $('#r-strip').textContent = 'Could not load: ' + e.message; }
 }
-// chat with the agent: each message is a turn of its own Claude Code conversation (it remembers the thread)
-let rPending = [], rBusy = false, rPoll = null, rSeen = '';
+// chat with the agent: the box is the agent's real Claude Code session (a tmux pane on the server)
+const rq = $('#r-q'); let rPending = [], rBusy = false, rPoll = null, rSeen = '';
+const rkey = k => api(`/api/agents/${encodeURIComponent(reportFor)}/chat/key`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: k }) })
+  .then(() => setTimeout(() => reportFor && loadThread(reportFor, true), 600)).catch(e => alert(e.message));
 async function loadThread(id, force) {
   try {
     const d = await (await api(`/api/agents/${encodeURIComponent(id)}/chat`)).json(); if (reportFor !== id) return;
-    const key = d.messages.length + ':' + d.busy;
-    rBusy = d.busy; $('#r-stop').hidden = !d.busy; $('#r-send').disabled = d.busy;
-    clearTimeout(rPoll); if (d.busy) rPoll = setTimeout(() => reportFor === id && loadThread(id), 3000);
+    const app = d.mode === 'app' || d.mode === 'terminal', key = JSON.stringify([d.messages.length, d.messages.at(-1)?.text?.length, d.busy, d.ask, d.mode]);
+    rBusy = d.busy; $('#r-stop').hidden = !d.busy; $('#r-send').disabled = app; rq.disabled = app; $('#r-new').disabled = app;
+    $('#r-link').textContent = d.attach ? 'terminal: ' + d.attach : d.mode === 'app' ? 'run from the Claude app' : d.mode === 'terminal' ? 'open in a terminal' : '';
+    $('#r-link').title = d.attach || '';
+    clearTimeout(rPoll); rPoll = setTimeout(() => reportFor === id && loadThread(id), d.busy || d.ask ? 2000 : 6000);
     if (key === rSeen && !force) return; rSeen = key;
-    const th = $('#r-thread');
-    th.innerHTML = d.messages.map(m => `<p class="${m.who === 'you' ? 'you' : 'agent'}${m.error ? ' err' : ''}">${m.who === 'you' ? esc(m.text) : md(m.text)}<small>${esc(m.at || '')}</small></p>`).join('')
-      + (d.busy ? '<div class="typing"><i></i><i></i><i></i> working… you can close this, Neesmo will notify you</div>' : '')
-      || `<div class="empty">Chat with this agent directly. It works in its own folder with its own memory of this thread, and keeps going if you close the box.</div>`;
-    th.scrollTop = th.scrollHeight;
-  } catch (e) { $('#r-thread').innerHTML = `<div class="empty">Could not load the chat: ${esc(e.message)}</div>`; }
+    const th = $('#r-thread'), near = th.scrollHeight - th.scrollTop - th.clientHeight < 80;
+    th.innerHTML = d.messages.map(m => m.who === 'tool'
+        ? `<p class="tool">▸ ${esc(m.text)}${m.steps > 1 ? ` <small>+${m.steps - 1} steps</small>` : ''}</p>`
+        : `<p class="${m.who === 'you' ? 'you' : 'agent'}">${m.who === 'you' ? esc(m.text) : md(m.text)}<small>${esc(m.at || '')}</small></p>`).join('')
+      + (d.ask ? `<div class="ask"><b>${esc(d.ask.question || 'Claude is asking')}</b>${d.ask.options.map(o => `<button type="button" data-k="${esc(o.key)}">${esc(o.key)}. ${esc(o.label)}</button>`).join('')}</div>`
+        : d.busy ? '<div class="typing"><i></i><i></i><i></i> working… you can close this, Neesmo will notify you</div>' : '')
+      + (d.mode === 'app' ? '<div class="empty">This session is run from the Claude app. You can read it here; reply in the app.</div>' : d.mode === 'terminal' ? '<div class="empty">This session is open in a terminal outside tmux. You can read it here; run it inside tmux to type from Neesmo.</div>' : '')
+      || `<div class="empty">This is the agent's own Claude Code session on your server, the same one you'd get in a terminal in its folder. Type to talk to it.</div>`;
+    th.querySelectorAll('.ask button').forEach(b => b.onclick = () => rkey(b.dataset.k));
+    if (near || force) th.scrollTop = th.scrollHeight;
+  } catch (e) { $('#r-thread').innerHTML = `<div class="empty">Could not load the chat: ${esc(e.message)}</div>`; clearTimeout(rPoll); rPoll = setTimeout(() => reportFor === id && loadThread(id), 6000); }
 }
 function renderRAtts() {
   $('#r-atts').innerHTML = rPending.map((f, i) => `<span>${esc(f.name)}<button type="button" data-i="${i}" aria-label="Remove ${esc(f.name)}">✕</button></span>`).join('');
@@ -662,12 +692,12 @@ function renderRAtts() {
 $('#r-atts').onclick = e => { const b = e.target.closest('button'); if (b) { rPending.splice(+b.dataset.i, 1); renderRAtts(); } };
 $('#r-attach').onclick = () => $('#r-files').click();
 $('#r-files').onchange = e => { for (const f of e.target.files) f.size > 50e6 ? alert(`${f.name} is over 50 MB`) : rPending.push(f); e.target.value = ''; renderRAtts(); };
-const rq = $('#r-q'), grow = () => { rq.style.height = 'auto'; rq.style.height = rq.scrollHeight + 'px'; };
+const grow = () => { rq.style.height = 'auto'; rq.style.height = rq.scrollHeight + 'px'; };
 rq.addEventListener('input', grow);
 rq.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey && !matchMedia('(pointer: coarse)').matches) { e.preventDefault(); $('#r-form').requestSubmit(); } });
 $('#r-form').onsubmit = async e => {
   e.preventDefault(); const id = reportFor, text = rq.value.trim();
-  if (!id || rBusy || (!text && !rPending.length)) return;
+  if (!id || rq.disabled || (!text && !rPending.length)) return;
   $('#r-send').disabled = true;
   try {
     const files = [];
@@ -679,7 +709,7 @@ $('#r-form').onsubmit = async e => {
 };
 $('#r-stop').onclick = () => reportFor && api(`/api/agents/${encodeURIComponent(reportFor)}/chat/stop`, { method: 'POST' }).then(() => loadThread(reportFor, true));
 $('#r-new').onclick = async () => {
-  if (!reportFor || !confirm('Start a new thread? The agent forgets this conversation.')) return;
+  if (!reportFor || !confirm('Clear this session (/clear)? Claude forgets this conversation.')) return;
   try { await api(`/api/agents/${encodeURIComponent(reportFor)}/chat/reset`, { method: 'POST' }); } catch (err) { alert(err.message); }
   loadThread(reportFor, true);
 };
@@ -880,6 +910,40 @@ async function pollInbox() {
 pollInbox(); setInterval(pollInbox, 10000);
 document.addEventListener('visibilitychange', () => { if (!document.hidden) { pollInbox(); loadAgents(); } });
 
+// ── motion: the Motion library (motion.dev, MIT) adds spring physics on top of the CSS entrances ──
+// presses give under the finger, new chat lines spring in, the cards spring back when the chat closes.
+if (window.Motion) {
+  const { animate, stagger, spring } = window.Motion, still = () => reduce || PREFS.calm;
+  const press = '.agent, #f button, .composer button, .rfoot button, #chathead button, .corner.tr button';
+  addEventListener('pointerdown', e => {
+    const el = e.target.closest(press); if (!el || still()) return;
+    animate(el, { scale: .94 }, { type: spring, stiffness: 700, damping: 32 });
+    const up = () => { animate(el, { scale: 1 }, { type: spring, stiffness: 520, damping: 13 }); removeEventListener('pointerup', up); removeEventListener('pointercancel', up); };
+    addEventListener('pointerup', up); addEventListener('pointercancel', up);
+  });
+  const springIn = el => animate(el, { opacity: [0, 1], y: [16, 0], scale: [.96, 1] }, { type: spring, stiffness: 360, damping: 24 });
+  for (const box of [$('#log'), $('#r-thread')]) {
+    let seen = box.children.length;
+    new MutationObserver(() => {   // a whole re-render or one new line: only the newest line springs in
+      const n = box.children.length, last = box.lastElementChild;
+      if (n > seen && last && !still()) springIn(last);
+      seen = n;
+    }).observe(box, { childList: true });
+  }
+  let wasChat = false;
+  new MutationObserver(() => {
+    const now = document.body.classList.contains('chat');
+    if (wasChat && !now && !still()) document.querySelectorAll('.cards').forEach(c => {
+      const dir = c.classList.contains('r') ? 40 : -40;
+      animate(c.querySelectorAll('.agent'), { opacity: [0, 1], x: [dir, 0], scale: [.9, 1] }, { delay: stagger(.05, { startDelay: .08 }), type: spring, stiffness: 300, damping: 22 });
+    });
+    wasChat = now;
+  }).observe(document.body, { attributes: true, attributeFilter: ['class'] });
+  // the status word under the ring pops when it changes
+  new MutationObserver(() => still() || animate(statusEl, { opacity: [.2, 1], y: [6, 0] }, { duration: .4, ease: [.2, .8, .2, 1] }))
+    .observe(statusEl, { childList: true, characterData: true, subtree: true });
+}
+
 // ── clock ──
 setInterval(() => { const d = new Date(); $('#clock').textContent = d.toLocaleTimeString(); $('#date').textContent = d.toDateString(); }, 1000);
 
@@ -924,7 +988,7 @@ function frame(t) {
   t = reduce ? 0 : t / 1000;
   if (analyser && mode !== 'idle' && mode !== 'thinking') { analyser.getByteFrequencyData(data); level += (data.reduce((a, b) => a + b, 0) / data.length / 255 * 2.2 - level) * .3; }
   else level *= .9;
-  const dpr = devicePixelRatio, R = hud.R * dpr, hot = mode === 'listening' ? THEME.c2 : THEME.hex;
+  const dpr = devicePixelRatio, R = hud.R * dpr * (1 + Math.min(level, 1.5) * .09), hot = mode === 'listening' ? THEME.c2 : THEME.hex;
   g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, cv.width, cv.height);
   g.translate(cv.width / 2, (hud.cy - cv.getBoundingClientRect().top) * dpr);
   // core glow
@@ -938,12 +1002,19 @@ function frame(t) {
   g.save(); g.shadowBlur = 12; g.shadowColor = hot; g.strokeStyle = hot; g.lineWidth = 2;
   for (let i = 0; i < 96; i++) {
     const a = i / 96 * 6.283 - t * .1, v = analyser && level > .02 ? data[i % 64] / 255 : (Math.sin(t * 2 + i * .5) + 1) * .04;
-    const r0 = R * .58, r1 = r0 + R * (.04 + v * .35);
+    const r0 = R * .58, r1 = r0 + R * (.04 + v * .5);
     g.beginPath(); g.moveTo(Math.cos(a) * r0, Math.sin(a) * r0); g.lineTo(Math.cos(a) * r1, Math.sin(a) * r1); g.stroke();
   }
   g.restore();
+  if (mode === 'listening' && analyser) {   // the voice itself, drawn round the core
+    const wav = new Uint8Array(analyser.fftSize); analyser.getByteTimeDomainData(wav);
+    g.beginPath();
+    for (let i = 0; i <= 128; i++) { const a = i / 128 * 6.283, v = (wav[(i * 2) % wav.length] - 128) / 128, r = R * (.8 + v * .35);
+      i ? g.lineTo(Math.cos(a) * r, Math.sin(a) * r) : g.moveTo(Math.cos(a) * r, Math.sin(a) * r); }
+    g.closePath(); g.lineWidth = 2; g.strokeStyle = THEME.c2; g.shadowBlur = 16; g.shadowColor = THEME.c2; g.stroke(); g.shadowBlur = 0;
+  }
   // rotating segmented rings
-  for (let i = 0; i < 3; i++) { const a = t * -.25 + i * 2.094; arc(R * 1.02, a, a + 1.5, 3, `rgba(${THEME.rgb},.8)`, 12); }
+  for (let i = 0; i < 3; i++) { const a = t * -(.25 + level * .6) + i * 2.094; arc(R * 1.02, a, a + 1.5, 3, `rgba(${THEME.rgb},.8)`, 12); }
   for (let i = 0; i < 4; i++) { const a = t * .15 + i * 1.571; arc(R * 1.15, a, a + 1.1, 1.5, `rgba(${THEME.rgb},.45)`); }
   arc(R * 1.25, 0, 7, 1, `rgba(${THEME.rgb},.2)`);
   // tick marks

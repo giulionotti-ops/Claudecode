@@ -3912,9 +3912,9 @@
     "semantic_hash": ""
   },
   "vega/server.py": {
-    "mtime": 1794759232.1622834,
-    "seen": 1794759608.2722762,
-    "ast_hash": "0ef9c90de97c48233939859780957fe9",
+    "mtime": 1794768087.6659052,
+    "seen": 1794768453.005643,
+    "ast_hash": "6bf0e62afadc6cf98cacfd6385fb0830",
     "semantic_hash": ""
   },
   "vega/static/sw.js": {
@@ -8586,15 +8586,15 @@
     "semantic_hash": ""
   },
   "vega/index.html": {
-    "mtime": 1794759495.7724755,
-    "seen": 1794759608.2739327,
-    "ast_hash": "e6a1165f46fc68f1e424785f95819b23",
+    "mtime": 1794768329.6792297,
+    "seen": 1794768453.007525,
+    "ast_hash": "3a85a427d0ce1da38a4ee89087e32a67",
     "semantic_hash": ""
   },
   "vega/requirements.txt": {
-    "mtime": 1794748725.7686014,
-    "seen": 1794759608.273938,
-    "ast_hash": "fd2fb81e2baa1f55d94904516e06cb21",
+    "mtime": 1794768087.6659052,
+    "seen": 1794768453.00753,
+    "ast_hash": "ebd050f1ed4e36afa464470bef6172a7",
     "semantic_hash": ""
   },
   ".claude/skills/design-taste-frontend/assets/components/fx-photo/meeting-room.jpg": {
@@ -16038,9 +16038,9 @@
     "semantic_hash": ""
   },
   "vega/THIRD_PARTY_NOTICES.md": {
-    "mtime": 1794758381.4354186,
-    "seen": 1794759608.2739305,
-    "ast_hash": "df80f73f5ab0d46bcc5beedf29a32f7d",
+    "mtime": 1794768094.944885,
+    "seen": 1794768453.0075216,
+    "ast_hash": "07fb751062f8db9f0851b6c3e393b3ab",
     "semantic_hash": ""
   },
   "vega/login.html": {
@@ -16053,6 +16053,30 @@
     "mtime": 1794759021.3939629,
     "seen": 1794759608.2739396,
     "ast_hash": "cce5072ccb96f443f67836872396370f",
+    "semantic_hash": ""
+  },
+  "vega/agent_chat.py": {
+    "mtime": 1794759646.8820262,
+    "seen": 1794759928.132795,
+    "ast_hash": "b9099d8cb5bb778053d9d0d8400190a5",
+    "semantic_hash": ""
+  },
+  "vega/license.py": {
+    "mtime": 1794768075.0989404,
+    "seen": 1794768453.0056338,
+    "ast_hash": "ad68e59da3c721112462618c58286607",
+    "semantic_hash": ""
+  },
+  "vega/static/guide.html": {
+    "mtime": 1794768157.3827112,
+    "seen": 1794768453.0075352,
+    "ast_hash": "dbd2e3a69ce9778f4df2b5b6edf2cc32",
+    "semantic_hash": ""
+  },
+  "vega/static/landing.html": {
+    "mtime": 1794768404.1499243,
+    "seen": 1794768453.0075383,
+    "ast_hash": "8164910cd998960eee87c95c8937ed5d",
     "semantic_hash": ""
   }
 }
