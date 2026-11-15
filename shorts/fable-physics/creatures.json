@@ -301,7 +301,7 @@
     "name": "Selkie",
     "culture": "Scotland / Ireland / Faroe",
     "familiar": false,
-    "intro": null,
+    "intro": "selkie-intro",
     "physics": []
   },
   {
