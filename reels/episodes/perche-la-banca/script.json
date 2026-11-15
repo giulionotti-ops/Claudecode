@@ -1,0 +1,253 @@
+{
+ "title": "Perché una banca ti regala 50€?",
+ "captionStyle": "top",
+ "loop": true,
+ "music": 0.55,
+ "bpm": 88,
+ "voice_settings": {
+  "stability": 0.5,
+  "style": 0.3
+ },
+ "keywords": [
+  "banca",
+  "regalo",
+  "pubblicità",
+  "nessuno",
+  "codice",
+  "convinto",
+  "Backbase",
+  "dollari",
+  "conto",
+  "niente",
+  "carta"
+ ],
+ "brand": {
+  "hashtags": []
+ },
+ "cast": {
+  "hero": {
+   "shirt": "#2f6bff",
+   "hair": "#3b2416",
+   "pants": "#1d1d2c"
+  },
+  "friend": {
+   "shirt": "#ffc83d",
+   "cap": "#1d1d2c"
+  }
+ },
+ "tail": 0.25,
+ "lines": [
+  {
+   "text": "Una banca ti dà 50€ per aprire un conto che non costa niente.",
+   "say": "Una banca ti dà cinquanta euro per aprire un conto che non costa niente.",
+   "scene": {
+    "type": "explain",
+    "show": "paradox",
+    "flowAt": "@50",
+    "tagText": "CONTO: 0€",
+    "gainText": "+50€",
+    "gestures": [
+     {
+      "at": 0,
+      "g": "point"
+     },
+     {
+      "at": "@niente",
+      "g": "shrug"
+     }
+    ]
+   }
+  },
+  {
+   "text": "Sembra un errore. Quindi chi ci perde?"
+  },
+  {
+   "text": "Nessuno. Perché quei soldi non sono un regalo: sono pubblicità.",
+   "scene": {
+    "type": "explain",
+    "show": "ads",
+    "adsAt": "@pubblicità",
+    "gestures": [
+     {
+      "at": 0,
+      "g": "think"
+     },
+     {
+      "at": "@pubblicità",
+      "g": "point"
+     }
+    ]
+   }
+  },
+  {
+   "text": "Per trovare un cliente nuovo, una banca paga spot in TV, cartelloni e annunci online."
+  },
+  {
+   "text": "Secondo Backbase, una banca tradizionale spende tra 200 e 400 dollari per ogni nuovo conto.",
+   "say": "Secondo Backbase, una banca tradizionale spende tra duecento e quattrocento dollari per ogni nuovo conto.",
+   "scene": {
+    "type": "explain",
+    "show": "ads",
+    "adsAt": 0,
+    "count": 400,
+    "countFrom": 200,
+    "countAt": "@200",
+    "suffix": " $",
+    "countLabel": "per ogni nuovo conto (banche tradizionali)",
+    "source": "Fonte: Backbase",
+    "gestures": [
+     {
+      "at": 0,
+      "g": "point"
+     },
+     {
+      "at": "@400",
+      "g": "shrug"
+     }
+    ]
+   }
+  },
+  {
+   "text": "Ma se un amico ti passa il suo codice, arrivi già convinto.",
+   "scene": {
+    "type": "explain",
+    "show": "referral",
+    "linkAt": "@codice",
+    "crossAt": "@pubblicità",
+    "flowAt": "@paga",
+    "aText": "TU: +50€",
+    "bText": "CHI TI INVITA: BONUS",
+    "gestures": [
+     {
+      "at": 0,
+      "g": "point"
+     },
+     {
+      "at": "@paga",
+      "g": "cheer"
+     }
+    ]
+   }
+  },
+  {
+   "text": "Così la banca sposta quei soldi: invece della pubblicità, paga voi due."
+  },
+  {
+   "text": "Con Buddy di UniCredit: inserisci il codice quando apri il conto, e spendi 10€ con la carta entro 30 giorni.",
+   "say": "Con Buddy di UniCredit: inserisci il codice quando apri il conto, e spendi dieci euro con la carta entro trenta giorni.",
+   "scene": {
+    "type": "explain",
+    "show": "steps",
+    "steps": [
+     {
+      "text": "Apri il conto Buddy",
+      "sub": "dall'app buddy UniCredit",
+      "at": "@apri"
+     },
+     {
+      "text": "Inserisci il codice",
+      "sub": "durante l'apertura",
+      "at": "@inserisci"
+     },
+     {
+      "text": "Spendi 10€ con la carta",
+      "sub": "entro 30 giorni",
+      "at": "@spendi"
+     }
+    ],
+    "gestures": [
+     {
+      "at": 0,
+      "g": "wave"
+     }
+    ]
+   }
+  },
+  {
+   "text": "Il bonus arriva entro 90 giorni lavorativi: 50€, o 80€ se apri entro il 16 novembre.",
+   "say": "Il bonus arriva entro novanta giorni lavorativi: cinquanta euro, o ottanta se apri entro il sedici novembre.",
+   "scene": {
+    "type": "explain",
+    "show": "timeline",
+    "barAt": "@arriva",
+    "note": "Solo maggiorenni residenti in Italia e nuovi clienti: nessun rapporto con UniCredit dal 2020",
+    "chips": [
+     {
+      "text": "+50€",
+      "at": "@50"
+     },
+     {
+      "text": "80€ fino al 16/11",
+      "at": "@80",
+      "color": "#ff8a3d"
+     }
+    ],
+    "gestures": [
+     {
+      "at": 0,
+      "g": "think"
+     },
+     {
+      "at": "@50",
+      "g": "cheer"
+     }
+    ]
+   }
+  },
+  {
+   "text": "Quindi la banca non ti regala niente: ti paga al posto della pubblicità.",
+   "scene": {
+    "type": "explain",
+    "show": "referral",
+    "linkAt": 0,
+    "crossAt": "@posto",
+    "flowAt": "@paga",
+    "aText": "TU",
+    "bText": "CHI TI INVITA",
+    "gestures": [
+     {
+      "at": 0,
+      "g": "point"
+     }
+    ]
+   }
+  },
+  {
+   "text": "Mandalo all'amico che dice che le banche non regalano mai niente.",
+   "scene": {
+    "type": "end",
+    "title": "CODICE INVITO",
+    "sub": "conto Buddy · UniCredit",
+    "card": "#ffc83d",
+    "sky0": "#0b0b14",
+    "sky1": "#1d1d3a",
+    "seed": 71,
+    "lines": [
+     "Mandalo all'amico scettico",
+     "Codice anche nel link in bio"
+    ]
+   }
+  },
+  {
+   "text": "Il codice è nel link in bio. Perché",
+   "say": "Il codice è nel link in bio. Perché"
+  }
+ ],
+ "post": [
+  "Perché una banca ti regala 50€ per aprire un conto gratis? Codice invito Buddy: {code}",
+  "Non è un regalo: è il budget della pubblicità. Secondo Backbase una banca tradizionale spende in media 200-400 $ per ogni nuovo conto (backbase.com, \"reducing customer acquisition cost in banking\"). Con i programmi invita-un-amico quei soldi vanno a chi apre il conto e a chi lo invita.",
+  "1️⃣ Apri il conto Genius buddy (canone zero) dall'app buddy UniCredit",
+  "2️⃣ Inserisci il codice {code} durante l'apertura",
+  "3️⃣ Entro 30 giorni spendi almeno 10€ con la carta (bonifici e ricariche non contano)",
+  "💸 Bonus 50€ entro 90 giorni lavorativi, 80€ (50+30 extra) se diventi cliente entro il 16/11/26. Solo maggiorenni residenti in Italia e nuovi clienti (nessun rapporto con UniCredit dal 2020).",
+  "📩 Mandalo all'amico che dice che le banche non regalano mai niente.",
+  "ℹ️ Codice personale: se lo usi ricevo anch'io un bonus. Condizioni complete sul sito buddy UniCredit."
+ ],
+ "hashtags": [
+  "#banca",
+  "#codiceinvito",
+  "#soldi",
+  "#buddy",
+  "#educazionefinanziaria"
+ ]
+}

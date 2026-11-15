@@ -97,3 +97,20 @@ export function drawBadges(g, list = [], t) {
     g.restore();
   });
 }
+
+// Top captions (explainer style): 1-3 words, small, near the top; keywords get a highlight box.
+export function drawCaptionTop(g, groups, t, keys = [], y = 330) {
+  const c = groups.find(q => t >= q.s - .02 && t < q.t1); if (!c) return;
+  const words = clean(c.text).split(' '), k = seg(t, c.s - .02, c.s + .12);
+  const norm = w => w.toLowerCase().replace(/[^\p{L}\d€,]/gu, '');
+  const isKey = w => /\d/.test(w) || keys.some(x => norm(w).startsWith(norm(x)));
+  g.save(); g.globalAlpha = k; g.font = '900 66px Nunito'; g.textBaseline = 'middle';
+  const sp = 22, ws = words.map(w => g.measureText(w).width), total = ws.reduce((a, b) => a + b, 0) + sp * (words.length - 1);
+  let x = 540 - total / 2; const yy = y + (1 - k) * 12;
+  words.forEach((w, i) => {
+    if (isKey(w)) { g.fillStyle = '#2f6bff'; rrect(g, x - 14, yy - 44, ws[i] + 28, 88, 16); g.fill(); g.fillStyle = '#fff'; }
+    else { g.shadowColor = 'rgba(0,0,0,.8)'; g.shadowBlur = 12; g.fillStyle = '#e9e7f5'; }
+    g.fillText(w, x, yy + 3); g.shadowColor = 'transparent'; x += ws[i] + sp;
+  });
+  g.restore();
+}

@@ -665,6 +665,96 @@ function vault(p, ctx) {
   };
 }
 
+// ---------------- explain: dark stage, gold accent, diagram modes, live labels/numbers, small reacting mascot ----------------
+// p.show: 'paradox' | 'ads' | 'referral' | 'steps' | 'timeline'
+// p.gestures: [{at, g: 'point'|'think'|'shrug'|'cheer'|'wave'}]; labels drawn crisp in 2D, anchored to 3D points
+function explain(p, ctx) {
+  const GOLD = '#ffc83d', scene = new THREE.Scene(); scene.background = new THREE.Color(p.bg || '#0b0b14');
+  K.lights(scene, { sky: '#d9d4ff', ground: '#1a1a2a', hemi: 1.4, sunI: 1.0, dir: [3, 10, 8] });
+  box(40, .2, 40, '#12121c', 0, -.1, 0, scene);
+  for (let i = -6; i <= 6; i++) { box(.02, .01, 30, '#2a2a3a', i * 2, .01, -4, scene); box(30, .01, .02, '#2a2a3a', 0, .01, i * 2 - 4, scene); }
+  const glowM = c => new THREE.MeshBasicMaterial({ color: c });
+  const anchors = {}, labels = [];
+  const coinStream = (from, to, t0, n = 12) => { const cs = Array.from({ length: n }, () => { const c = K.coin('€', -Math.PI / 2); c.scale.setScalar(.32); c.visible = false; scene.add(c); return c; });
+    return t => cs.forEach((c, i) => { const d = (t - t0 - i * .12); const u = d > 0 ? (d % 1.4) / 1.4 : -1; c.visible = u >= 0 && t0 < 1e8; if (!c.visible) return;
+      c.position.set(from[0] + (to[0] - from[0]) * u, from[1] + (to[1] - from[1]) * u + Math.sin(u * Math.PI) * 1.6, from[2] + (to[2] - from[2]) * u); c.rotation.y = t * 6 + i; }); };
+  const bank = (x, y, z, sc = 1) => { const g = new THREE.Group(); g.position.set(x, y, z); g.scale.setScalar(sc); scene.add(g);
+    box(3, .3, 2, '#1d1d2c', 0, .15, 0, g); for (let i = 0; i < 4; i++) box(.3, 2, .3, '#2a2a40', -1.1 + i * .73, 1.3, .7, g);
+    box(3.3, .35, 2.2, '#1d1d2c', 0, 2.45, 0, g); const roof = new THREE.Mesh(new THREE.ConeGeometry(2.1, 1, 4), K.mat('#1d1d2c')); roof.rotation.y = Math.PI / 4; roof.scale.set(1, 1, .6); roof.position.y = 3.1; g.add(roof);
+    const edge = new THREE.Mesh(new THREE.BoxGeometry(3.34, .06, 2.24), glowM(GOLD)); edge.position.y = 2.64; g.add(edge); return g; };
+  const updaters = [];
+  if (p.show === 'paradox') {
+    bank(-1.0, 0, -1, .72); anchors.tag = [-1.0, 3.4, -1]; labels.push({ at: 'tag', text: p.tagText || 'CONTO: 0€', from: p._t0 + .2 });
+    const ph = new THREE.Group(); box(1.1, 2, .12, '#1d1d2c', 0, 0, 0, ph); const scr = new THREE.Mesh(new THREE.PlaneGeometry(.95, 1.8), glowM('#1a1a28')); scr.position.z = .07; ph.add(scr); ph.position.set(1.35, 2.0, 0); ph.rotation.y = -.3; scene.add(ph);
+    anchors.phone = [1.35, 3.4, 0]; labels.push({ at: 'phone', text: p.gainText || '+50€', from: at(p.flowAt), color: '#33c26b', big: true });
+    updaters.push(coinStream([-1.0, 2.0, -1], [1.35, 2.0, 0], at(p.flowAt)), t => { scr.material.color.set(t > at(p.flowAt) + .6 ? '#1f8f4a' : '#1a1a28'); });
+  }
+  if (p.show === 'ads') {
+    bank(0, 0, -2.6, .62);
+    const ads = [[-1.55, 0, .4, 'TV'], [0, 0, 1.4, 'CARTELLONI'], [1.55, 0, .4, 'SOCIAL']].map(([x, y, z, name], i) => {
+      const g = new THREE.Group(); g.position.set(x, y, z); g.scale.setScalar(.75); scene.add(g);
+      if (i === 0) { box(1.6, 1.1, .2, '#1d1d2c', 0, 1.6, 0, g); box(.2, 1, .2, '#2a2a40', 0, .5, 0, g); const s2 = new THREE.Mesh(new THREE.PlaneGeometry(1.4, .9), glowM('#2f6bff')); s2.position.set(0, 1.6, .11); g.add(s2); }
+      if (i === 1) { box(2, 1.2, .15, '#1d1d2c', 0, 2.2, 0, g); box(.15, 1.6, .15, '#2a2a40', -.6, .8, 0, g); box(.15, 1.6, .15, '#2a2a40', .6, .8, 0, g); const s2 = new THREE.Mesh(new THREE.PlaneGeometry(1.8, 1.0), glowM('#ff3d8b')); s2.position.set(0, 2.2, .09); g.add(s2); }
+      if (i === 2) { box(.9, 1.6, .12, '#1d1d2c', 0, 1.2, 0, g); const s2 = new THREE.Mesh(new THREE.PlaneGeometry(.78, 1.4), glowM('#ffc83d')); s2.position.set(0, 1.2, .07); g.add(s2); }
+      anchors['ad' + i] = [x, i === 1 ? 2.6 : 2.1, z]; labels.push({ at: 'ad' + i, text: name, from: at(p.adsAt, p._t0) + i * .4, small: true });
+      updaters.push(coinStream([0, 2, -2.6], [x, 1.6, z], at(p.adsAt, p._t0) + i * .4, 6)); return g; });
+  }
+  if (p.show === 'referral') {
+    bank(0, 0, -3, .7);
+    const A = hero(ctx), B = friend(ctx); A.root.position.set(-1.1, 0, .8); B.root.position.set(1.1, 0, .8); A.root.scale.setScalar(.72); B.root.scale.setScalar(.72); A.root.rotation.y = .3; B.root.rotation.y = -.3; scene.add(A.root, B.root);
+    const link = new THREE.Mesh(new THREE.CylinderGeometry(.05, .05, 3.2, 8), glowM(GOLD)); link.rotation.z = Math.PI / 2; link.position.set(0, 2.0, .8); link.scale.x = .7; scene.add(link);
+    const bb = new THREE.Group(); box(1.8, 1.1, .15, '#1d1d2c', 0, 0, 0, bb); const bs = new THREE.Mesh(new THREE.PlaneGeometry(1.6, .9), glowM('#ff3d8b')); bs.position.z = .09; bb.add(bs); bb.position.set(-1.2, 5.0, -1.5); bb.scale.setScalar(.8); scene.add(bb);
+    const xA = new THREE.Mesh(new THREE.BoxGeometry(2.0, .14, .05), glowM('#ff2d2d')), xB = xA.clone(); xA.rotation.z = .5; xB.rotation.z = -.5; xA.position.set(-1.2, 5.0, -1.35); xA.scale.y = .8; xB.position.copy(xA.position); scene.add(xA, xB);
+    anchors.a = [-1.1, 3.0, .8]; anchors.b = [1.1, 3.0, .8]; anchors.bb = [-1.2, 5.8, -1.5];
+    labels.push({ at: 'bb', text: 'PUBBLICITÀ', from: p._t0 + .1, small: true }, { at: 'a', text: p.aText || 'TU', from: at(p.flowAt), color: '#33c26b' }, { at: 'b', text: p.bText || 'CHI TI INVITA', from: at(p.flowAt) + .3, color: '#33c26b' });
+    const s1 = coinStream([0, 2, -3], [-1.1, 2.0, .8], at(p.flowAt), 6), s2 = coinStream([0, 2, -3], [1.1, 2.0, .8], at(p.flowAt) + .3, 6);
+    updaters.push(s1, s2, t => { const l = ease(seg(t, at(p.linkAt), at(p.linkAt) + .4)); link.scale.set(1, Math.max(.001, l), 1); const c = seg(t, at(p.crossAt), at(p.crossAt) + .3); xA.scale.set(Math.max(.001, c), 1, 1); xB.scale.set(Math.max(.001, c), 1, 1);
+      A.reset(); B.reset(); idle(A, t); idle(B, t + 1); A.face(t > at(p.flowAt) ? 'happy' : 'neutral'); B.face(t > at(p.flowAt) ? 'wink' : 'neutral'); });
+  }
+  if (p.show === 'steps' || p.show === 'timeline') {
+    const cd = new THREE.Group(); const cm = new THREE.Mesh(K.geo(3.2, 2, .12), K.mat('#1d1d2c')); cd.add(cm); const chip = new THREE.Mesh(new THREE.BoxGeometry(.5, .38, .05), glowM(GOLD)); chip.position.set(-.9, .25, .08); cd.add(chip);
+    const st = new THREE.Mesh(new THREE.BoxGeometry(3.2, .3, .05), glowM('#2f6bff')); st.position.set(0, -.55, .08); cd.add(st); cd.position.set(0, p.show === 'steps' ? .9 : 4.6, -1); cd.scale.setScalar(.8); scene.add(cd);
+    updaters.push(t => { cd.rotation.y = Math.sin(t * .8) * .5; cd.rotation.x = -.15; });
+  }
+  // mascot: small, bottom-right corner, reacting
+  const camera = cam(40); scene.add(camera);
+  const M = hero(ctx); M.root.scale.setScalar(.2); M.root.position.set(.74, -1.62, -5); M.root.rotation.y = -.5; camera.add(M.root);   // rides with the camera: always bottom-right
+  const proj = a => { const v = new THREE.Vector3(...a).project(camera); return [(v.x + 1) / 2 * 1080, (1 - v.y) / 2 * 1920]; };
+  return {
+    scene, camera, update(t) {
+      const k = ease(seg(t, p._t0, p._t1)); lookCam(camera, [Math.sin((t - p._t0) * .4) * .3, 4.4, 11.5 - k * 1.0], [0, 3.0, 0]);
+      updaters.forEach(f => f(t));
+      M.reset(); idle(M, t); let gst = null; for (const x of p.gestures || []) if (t >= at(x.at, -1)) gst = x.g;
+      if (gst === 'point') { M.armR.s.rotation.x = -1.5; M.armR.s.rotation.z = -.6; M.face('neutral'); }
+      else if (gst === 'think') { M.armR.s.rotation.x = -2.2; M.armR.el.rotation.x = -1.6; M.face('bored'); M.head.rotation.z = .12; }
+      else if (gst === 'shrug') { M.armL.s.rotation.z = -.8; M.armR.s.rotation.z = .8; M.armL.el.rotation.x = M.armR.el.rotation.x = -1.2; M.face('surprised'); }
+      else if (gst === 'cheer') { M.armL.s.rotation.z = -2.5; M.armR.s.rotation.z = 2.5; M.face('stars'); }
+      else if (gst === 'wave') { M.armR.s.rotation.z = 2.4 + Math.sin(t * 9) * .3; M.face('happy'); }
+      else M.face('neutral');
+    },
+    overlay2d(g, t) {
+      g.save(); g.textAlign = 'center'; g.textBaseline = 'middle';
+      for (const L of labels) { const a = seg(t, at(L.from), at(L.from) + .25); if (a <= 0) continue; const [x, y] = proj(anchors[L.at]); g.globalAlpha = a;
+        g.font = `900 ${L.big ? 84 : L.small ? 34 : 50}px Nunito`; const w = g.measureText(L.text).width + 34, h = L.big ? 104 : L.small ? 50 : 70;
+        g.fillStyle = 'rgba(10,10,20,.85)'; rrect2(g, x - w / 2, y - h / 2, w, h, 14); g.fill(); g.strokeStyle = L.color || GOLD; g.lineWidth = 3; g.stroke(); g.fillStyle = L.color || GOLD; g.fillText(L.text, x, y + 3); }
+      if (p.show === 'ads' && p.count) { const c0 = at(p.countAt), u = ease(seg(t, c0, c0 + 1.6)); if (t >= c0) { g.globalAlpha = 1; const v = Math.round((p.countFrom || 0) + (p.count - (p.countFrom || 0)) * u);
+        g.font = '900 150px Nunito'; g.fillStyle = GOLD; g.fillText(`${p.prefix || ''}${v}${p.suffix || ''}`, 540, 560); g.font = '800 40px Nunito'; g.fillStyle = '#e9e7f5'; g.fillText(p.countLabel || '', 540, 665);
+        if (p.source) { g.font = '700 28px Nunito'; g.fillStyle = '#8a87a8'; g.fillText(p.source, 540, 720); } } }
+      if (p.show === 'steps') (p.steps || []).forEach((s, i) => { const a = seg(t, at(s.at), at(s.at) + .25); if (a <= 0) return; g.globalAlpha = a; const y = 560 + i * 130;
+        g.fillStyle = 'rgba(20,20,34,.92)'; rrect2(g, 120, y - 50, 840, 100, 20); g.fill(); g.strokeStyle = GOLD; g.lineWidth = 3; g.stroke();
+        g.fillStyle = GOLD; g.beginPath(); g.arc(180, y, 30, 0, 7); g.fill(); g.fillStyle = '#0b0b14'; g.font = '900 34px Nunito'; g.fillText(String(i + 1), 180, y + 2);
+        g.textAlign = 'left'; g.fillStyle = '#fff'; g.font = '900 40px Nunito'; g.fillText(s.text, 235, y - (s.sub ? 14 : 0)); if (s.sub) { g.fillStyle = '#a9a6c8'; g.font = '800 28px Nunito'; g.fillText(s.sub, 235, y + 26); } g.textAlign = 'center'; });
+      if (p.show === 'timeline') { const a0 = at(p.barAt, p._t0), u = ease(seg(t, a0, a0 + 2)); g.globalAlpha = 1;
+        g.fillStyle = 'rgba(255,255,255,.12)'; rrect2(g, 140, 1000, 800, 40, 20); g.fill(); g.fillStyle = GOLD; rrect2(g, 140, 1000, 800 * u, 40, 20); g.fill();
+        g.font = '800 34px Nunito'; g.fillStyle = '#e9e7f5'; g.fillText('oggi', 160, 1080); g.fillText(p.barEnd || '90 giorni lavorativi', 820, 1080);
+        (p.chips || []).forEach((c, i) => { const a = seg(t, at(c.at), at(c.at) + .25); if (a <= 0) return; g.globalAlpha = a; g.font = '900 52px Nunito'; const w = g.measureText(c.text).width + 50, x = 540 + (i - ((p.chips.length - 1) / 2)) * 430;
+          g.fillStyle = c.color || '#33c26b'; rrect2(g, x - w / 2, 1150, w, 96, 48); g.fill(); g.fillStyle = '#fff'; g.fillText(c.text, x, 1200); }); }
+      g.restore();
+    },
+  };
+}
+function rrect2(g, x, y, w, h, r) { g.beginPath(); g.moveTo(x + r, y); g.arcTo(x + w, y, x + w, y + h, r); g.arcTo(x + w, y + h, x, y + h, r); g.arcTo(x, y + h, x, y, r); g.arcTo(x, y, x + w, y, r); g.closePath(); }
+
 // ---------------- portrait for profile pictures: hero head-and-shoulders on a flat colour ----------------
 function portrait(p, ctx) {
   const scene = new THREE.Scene(); scene.background = new THREE.Color(p.bg || '#ffd23f');
@@ -677,4 +767,4 @@ function portrait(p, ctx) {
   return { scene, camera, update() { lookCam(camera, [.5, 3.4, 12.5], [.35, 3.2, 0]); } };
 }
 
-export const SCENES = { city, room, park, phone, screen, end, portrait, desk, bigcal, hook, cinema, money, street, shop, bank, pizza, mystery, guess, checklist, vault };
+export const SCENES = { city, room, park, phone, screen, end, portrait, desk, bigcal, hook, cinema, money, street, shop, bank, pizza, mystery, guess, checklist, vault, explain };

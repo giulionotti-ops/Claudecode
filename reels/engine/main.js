@@ -1,7 +1,7 @@
 // Loads an episode (script.json + build/timeline.json + brand.json) and exposes window.render(t) for the renderer.
 import * as THREE from 'three';
 import { SCENES } from './scenes.js';
-import { captionGroups, drawCaption, drawTopBar, drawNote, makeEndCard, drawBadges } from './overlay.js';
+import { captionGroups, drawCaption, drawCaptionTop, drawTopBar, drawNote, makeEndCard, drawBadges } from './overlay.js';
 import { seg } from './kit.js';
 
 const Q = new URLSearchParams(location.search);
@@ -93,8 +93,9 @@ window.render = t => {
   if (Q.has('clean')) return;   // bare picture (profile pics, thumbnails)
   drawTopBar(g, B);
   if (b.p.note) drawNote(g, b.p.note, seg(t, b.t0, b.t0 + .2));
-  drawCaption(g, groups, t, b.p.captionY || (b.end ? 1560 : b.p.type === 'phone' ? 1640 : 1340));
-  const fo = seg(t, DUR - .35, DUR); if (fo > 0) { g.fillStyle = `rgba(0,0,0,${fo})`; g.fillRect(0, 0, 1080, 1920); }
+  if (script.captionStyle === 'top' && !b.end) drawCaptionTop(g, groups, t, script.keywords, b.p.captionY || 330);
+  else drawCaption(g, groups, t, b.p.captionY || (b.end ? 1560 : b.p.type === 'phone' ? 1640 : 1340));
+  const fo = script.loop ? 0 : seg(t, DUR - .35, DUR); if (fo > 0) { g.fillStyle = `rgba(0,0,0,${fo})`; g.fillRect(0, 0, 1080, 1920); }   // loop reels cut straight back to frame 1
 };
 window.frameJPEG = q => out.toDataURL('image/jpeg', q || .93);
 Object.assign(window, { DUR, SFX, TL, READY: true });
