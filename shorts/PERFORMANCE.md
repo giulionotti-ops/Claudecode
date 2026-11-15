@@ -28,3 +28,15 @@ Public numbers from the channel feed (live, but only views and likes):
 
 ## Next ideas in the same vein
 Primarchs and their tragedies first (Ferrus Manus, Konrad Curze, Magnus, Lion & Luther, Vulkan, Corax, Mortarion, Lorgar, Perturabo, Guilliman), then famous doomed heroes (Ollanius Pius, the Last Krieger, Bjorn), with a little-known canon Chapter story every few days.
+
+## Lessons from viral explainers (relayed 15 Nov from the Instagram-reels session; full notes: docs/viral-explainer-lessons.md on branch claude/serene-cori-6asevb)
+Keyframes' two biggest explainers (17.6M and 10.5M views, ~85 s) share one formula:
+1. Open with a paradox (two true facts that seem to clash), then a question at once.
+2. Correct a wrong belief.
+3. A vivid scene ("imagine...").
+4. Step by step; the picture changes every 1–2 s, with labels and numbers on screen.
+5. Exact sourced facts (for lore, name the source).
+6. A payoff that flips the opening, then a named-persona CTA: "send this to someone who...".
+7. A seamless loop: the last sentence runs into the first, so replays add watch time.
+Style: dark background, one accent colour, small captions at the TOP with the key word highlighted, a calm narrator.
+Not yet applied to the Glazier shorts; try it on the next ones (captions currently sit at the bottom on a banderole).
