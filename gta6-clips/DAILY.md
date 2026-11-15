@@ -23,8 +23,11 @@ Run by the daily scheduled task (a fresh cloud session each day). Follow
      short report: what was posted (links), what was skipped and why.
    - `"auto_post": false`: send the owner each rendered short with its
      description (SendUserFile, status proactive) and wait for approval.
-   Either way, list the best NEEDS PERMISSION moments by streamer, so the
-   owner knows who to ask.
+   Either way, **ask the owner to approve any new streamer**: list each
+   NEEDS PERMISSION streamer in the top picks (name, game, clip views, best
+   moment, clip link) and ask "approve?". When the owner says yes, set
+   `approved: true` and `permission` in streamers.json; the clip can post
+   in the next run. Never post a streamer before that yes.
 5. **Record** every decision in `approvals.json` (and uploads land in
    `posted.json`), commit and push.
 6. **Titles.** `youtube_title`: the hook, 40-70 characters, plus `#Shorts`;

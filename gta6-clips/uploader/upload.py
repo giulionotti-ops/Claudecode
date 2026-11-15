@@ -11,8 +11,8 @@
 
 Uses the same Google Cloud OAuth app as the other channels, with its own login
 (token) for this channel. Keys live in ~/.config/gta6-clips/ (client_secret.json,
-youtube-token.json), never in the repo. Until Google audits the OAuth app, YouTube
-keeps every API upload private.
+youtube-token.json), never in the repo. Google approved the OAuth app (2026-11-15),
+so scheduled uploads go public at their publish time.
 """
 import datetime as dt
 import json
