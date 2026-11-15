@@ -6,3 +6,4 @@ claude-agent-sdk>=0.2.168
 google-api-python-client>=2.100
 google-auth-oauthlib>=1.2
 pywebpush
+cryptography

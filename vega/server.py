@@ -18,12 +18,15 @@ import time
 
 from claude_agent_sdk import (AssistantMessage, ClaudeAgentOptions, ClaudeSDKClient, ResultMessage, TextBlock,
                               create_sdk_mcp_server, tool)
-from fastapi import FastAPI, Header, HTTPException, UploadFile
-from fastapi.responses import FileResponse, Response
+from fastapi import FastAPI, Header, HTTPException, Request, UploadFile
+from fastapi.responses import FileResponse, JSONResponse, RedirectResponse, Response
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
+import agent_chat
 import agents
+import auth
+import license
 import notes
 import push
 
@@ -47,16 +50,6 @@ def _gateway_env() -> dict:
             "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1"}
 HERE = Path(__file__).parent
 UPLOADER = HERE.parent / "shorts" / "uploader"   # its token.json is the channel login
-# The server's project folders (one git worktree per channel), as set up in ~/start-claude.sh
-CHANNELS = {
-    "setup": Path.home() / "Claudecode",          # uploader, skills, Neesmo itself
-    "glazier": Path.home() / "glazier-40k",       # Glazier of Terra, 40k lore shorts
-    "comics": Path.home() / "comics-40k",         # Warhammer 40K comics
-    "gta6": Path.home() / "gta6",                 # GTA 6 clips and shorts
-    "physics": Path.home() / "physics-channel",   # Fable Physics
-    "roblox": Path.home() / "roblox",             # Roblox games (Luau + Rojo)
-    "product": Path.home() / "neesmo-product",    # turning Neesmo into a product to sell
-}
 JOB_LOGS = Path.home() / "neesmo-jobs"
 
 SYSTEM_PROMPT = (
@@ -109,6 +102,27 @@ async def channel_stats(_args):
     return {"content": [{"type": "text", "text": json.dumps(data)}]}
 
 
+
+
+def system_prompt() -> str:
+    """Private install (no agents.json): the original prompt. Product install: built from the configured agents."""
+    if not agents.configured():
+        return SYSTEM_PROMPT
+    items = [a for a in agents.load()]
+    roster = "; ".join(f"{a['id']} = {a['name']} ({a.get('role') or 'general'})" for a in items)
+    yt = ("For questions about the owner's YouTube channel, call the channel_stats tool and answer from its numbers only. "
+          if (UPLOADER / "token.json").exists() else "")
+    return (
+        "You are Neesmo, a calm, witty assistant speaking through a voice interface. "
+        "Your replies are read aloud, so answer in one to three short spoken sentences: no markdown, lists, code, emoji or URLs. "
+        + yt +
+        f"The owner has dedicated agents, each with its own folder: {roster}. "
+        "To give one a job, call run_channel with its id and a clear, complete instruction; it works in the background "
+        "and finishes the job on its own. Use channel_jobs when asked how jobs are going. "
+        "Before starting anything that changes, uploads or deletes something, repeat the task back in one sentence and wait for a yes."
+    )
+
+
 _jobs: dict[int, dict] = {}
 _job_ids = itertools.count(1)
 
@@ -116,16 +130,18 @@ _job_ids = itertools.count(1)
 @tool("run_channel", "Start a background Claude Code agent in one of the server's project folders to do a task",
       {"channel": str, "task": str})
 async def run_channel(args):
-    folder = CHANNELS.get(str(args.get("channel", "")).lower())
+    aid = str(args.get("channel", "")).lower()
+    folder = agents.folders().get(aid)
     task = str(args.get("task", "")).strip()
     if not folder or not task:
-        return {"content": [{"type": "text", "text": f"Need a task and one of: {', '.join(CHANNELS)}"}], "is_error": True}
+        return {"content": [{"type": "text", "text": f"Need a task and one of: {', '.join(agents.folders())}"}], "is_error": True}
+    brief = ["--append-system-prompt", agents.instructions(agents._get(aid))] if agents.configured() else []
     claude = shutil.which("claude") or str(Path.home() / ".local/bin/claude")
     JOB_LOGS.mkdir(exist_ok=True)
     jid = next(_job_ids)
     log = JOB_LOGS / f"{jid}-{args['channel']}.log"
     with open(log, "wb") as out:  # the child keeps its own copy of the file handle
-        proc = await asyncio.create_subprocess_exec(claude, "-p", task, "--permission-mode", "auto",
+        proc = await asyncio.create_subprocess_exec(claude, "-p", task, "--permission-mode", "auto", *brief,
                                                     cwd=folder, stdout=out, stderr=asyncio.subprocess.STDOUT)
     _jobs[jid] = {"channel": args["channel"], "task": task, "proc": proc, "log": log,
                   "started": datetime.datetime.now().strftime("%H:%M")}
@@ -166,6 +182,136 @@ async def channel_jobs(_args):
 app = FastAPI()
 notes.hook_token()  # create the hook's secret at start, so approval_hook.py can read it
 app.mount("/static", StaticFiles(directory=HERE / "static"), name="static")
+
+# ── login (product mode: NEESMO_AUTH=1) ──
+PUBLIC = {"/welcome", "/login", "/api/login", "/api/setup", "/api/auth/state", "/manifest.webmanifest", "/sw.js"}
+
+
+@app.middleware("http")
+async def require_login(request: Request, call_next):
+    if not auth.ENABLED or request.url.path in PUBLIC or request.url.path.startswith("/static/"):
+        return await call_next(request)
+    hook = request.headers.get("x-neesmo-hook")
+    if hook and secrets.compare_digest(hook, notes.hook_token()):
+        return await call_next(request)  # local hooks and jobs
+    dev = auth.device_for(request.cookies.get(auth.COOKIE))
+    if dev is None:
+        if request.url.path.startswith("/api/"):
+            return JSONResponse({"detail": "login required"}, status_code=401)
+        return RedirectResponse("/login")
+    request.state.device = dev
+    return await call_next(request)
+
+
+if auth.ENABLED and not auth.has_password():
+    print(f"\n  Neesmo setup code: {auth.SETUP_CODE}  (open Neesmo and enter it to set your password)\n", flush=True)
+
+
+class LoginIn(BaseModel):
+    password: str
+    device: str = ""
+    code: str = ""
+
+
+def _with_cookie(request: Request, tok: str) -> JSONResponse:
+    r = JSONResponse({"ok": True})
+    r.set_cookie(auth.COOKIE, tok, max_age=auth.DEVICE_DAYS * 86400, httponly=True, samesite="lax",
+                 secure=request.url.scheme == "https" or request.headers.get("x-forwarded-proto") == "https")
+    return r
+
+
+@app.get("/login")
+def login_page():
+    return FileResponse(HERE / "login.html")
+
+
+@app.get("/api/auth/state")
+def auth_state(request: Request):
+    return {"enabled": auth.ENABLED, "setup": auth.ENABLED and not auth.has_password(),
+            "signed_in": auth.device_for(request.cookies.get(auth.COOKIE)) is not None}
+
+
+@app.post("/api/setup")
+def auth_setup(body: LoginIn, request: Request):
+    try:
+        return _with_cookie(request, auth.setup(body.code, body.password, body.device))
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+
+
+@app.post("/api/login")
+def auth_login(body: LoginIn, request: Request):
+    try:
+        return _with_cookie(request, auth.login(request.client.host if request.client else "?", body.password, body.device))
+    except PermissionError as e:
+        raise HTTPException(429, str(e))
+    except ValueError as e:
+        raise HTTPException(401, str(e))
+
+
+class LicenseIn(BaseModel):
+    key: str
+
+
+@app.get("/api/license")
+def license_get():
+    return license.status()
+
+
+@app.post("/api/license")
+def license_set(body: LicenseIn):
+    try:
+        return license.activate(body.key)
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+
+
+@app.delete("/api/license")
+def license_del():
+    return license.remove()
+
+
+@app.get("/guide")
+def guide():
+    return FileResponse(Path(__file__).parent / "static" / "guide.html")
+
+
+@app.get("/welcome")
+def welcome():
+    return FileResponse(Path(__file__).parent / "static" / "landing.html")
+
+
+@app.get("/api/devices")
+def devices_list(request: Request):
+    return {"enabled": auth.ENABLED, "devices": auth.devices(getattr(request.state, "device", None)) if auth.ENABLED else []}
+
+
+@app.delete("/api/devices/{dev_id}")
+def devices_forget(dev_id: str):
+    return {"removed": auth.forget(dev_id)}
+
+
+@app.post("/api/logout")
+def auth_logout(request: Request):
+    dev = getattr(request.state, "device", None)
+    if dev:
+        auth.forget(dev["id"])
+    r = JSONResponse({"ok": True}); r.delete_cookie(auth.COOKIE)
+    return r
+
+
+class PasswordIn(BaseModel):
+    old: str
+    new: str
+
+
+@app.post("/api/password")
+def auth_password(body: PasswordIn):
+    try:
+        auth.change_password(body.old, body.new)
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+    return {"ok": True}
 _client: ClaudeSDKClient | None = None
 _lock = asyncio.Lock()  # one conversation, one turn at a time
 
@@ -232,6 +378,8 @@ KITTEN_VOICES = [("expr-voice-3-m", "Male · deep"), ("expr-voice-2-m", "Male ·
 
 class ChatIn(BaseModel):
     text: str
+    typed: bool = False          # sent from the chat screen, not by voice: replies may be longer and use markdown
+    files: list[str] = []        # paths returned by /api/upload
 
 
 class SpeakIn(BaseModel):
@@ -272,12 +420,86 @@ async def agents_overview():
     return {"agents": await asyncio.to_thread(agents.overview)}
 
 
+@app.get("/api/agents-config")
+def agents_config():
+    return {"configured": agents.configured(), "agents": agents.load(), "colors": agents.COLORS,
+            "default_instructions": {a["id"]: agents.instructions({**a, "instructions": ""}) for a in agents.load()}}
+
+
+@app.put("/api/agents-config")
+async def agents_config_save(items: list[dict]):
+    global _client
+    try:
+        saved = agents.save(items)
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+    old, _client = _client, None  # next chat starts with the new roster in its prompt
+    if old is not None:
+        asyncio.create_task(old.disconnect())
+    return {"agents": saved}
+
+
 @app.get("/api/agents/{aid}")
 async def agent_report(aid: str):
     rep = await asyncio.to_thread(agents.report, aid)
     if rep is None:
         raise HTTPException(404, "unknown agent")
     return rep
+
+
+class AgentMsg(BaseModel):
+    text: str = ""
+    files: list[str] = []
+
+
+def _agent_or_404(aid: str) -> dict:
+    a = next((x for x in agents.load() if x["id"] == aid), None)
+    if a is None or aid not in agents.folders():
+        raise HTTPException(404, "no such agent")
+    return a
+
+
+@app.get("/api/agents/{aid}/chat")
+def agent_thread(aid: str):
+    _agent_or_404(aid)
+    return agent_chat.thread(aid)
+
+
+@app.post("/api/agents/{aid}/chat")
+async def agent_send(aid: str, body: AgentMsg):
+    """A message for this agent's own conversation; it answers in the background (poll the GET)."""
+    a = _agent_or_404(aid)
+    files = [f for f in body.files if Path(f).resolve().is_relative_to(UPLOADS.resolve()) and Path(f).is_file()]
+    text = body.text.strip()
+    if files:
+        text += "\n\nAttached files (read them from these paths):\n" + "\n".join(files)
+    if not text:
+        raise HTTPException(400, "empty message")
+    brief = agents.instructions(a) if agents.configured() else None
+
+    async def done(reply: str):
+        await _notify(f"{a['name']} replied", reply[:150], tag=f"agent-{aid}", kind="reply")
+    try:
+        await agent_chat.send(aid, agents.folders()[aid], text, brief, done)
+    except RuntimeError as e:
+        raise HTTPException(409, str(e))
+    return agent_chat.thread(aid)
+
+
+@app.post("/api/agents/{aid}/chat/stop")
+def agent_stop(aid: str):
+    _agent_or_404(aid)
+    return {"stopped": agent_chat.stop(aid)}
+
+
+@app.post("/api/agents/{aid}/chat/reset")
+def agent_reset(aid: str):
+    _agent_or_404(aid)
+    try:
+        agent_chat.reset(aid)
+    except RuntimeError as e:
+        raise HTTPException(409, str(e))
+    return {"ok": True}
 
 
 @app.get("/api/config")
@@ -297,8 +519,15 @@ async def voices():
 async def chat(body: ChatIn):
     global _client
     text = body.text.strip()
-    if not text:
+    files = [f for f in body.files if Path(f).resolve().is_relative_to(UPLOADS.resolve()) and Path(f).is_file()]
+    if not text and not files:
         raise HTTPException(400, "empty message")
+    if files:
+        text += ("\n\n[Attached files, saved on the server. You cannot open them yourself: pass these paths to the agent "
+                 "that should use them.]\n" + "\n".join(files))
+    if body.typed:
+        text = ("[Typed in the chat screen, not spoken: you may answer in more detail and use short markdown "
+                "(lists, bold, code), still concise.]\n" + text)
     async with _lock:
         if _client is not None and time.monotonic() - _last_chat[0] > IDLE_RESET_S:
             old, _client = _client, None  # long pause: start a fresh, small conversation (faster, cheaper)
@@ -309,7 +538,7 @@ async def chat(body: ChatIn):
         if _client is None:
             _client = ClaudeSDKClient(ClaudeAgentOptions(
                 model=MODEL,
-                system_prompt=SYSTEM_PROMPT,
+                system_prompt=system_prompt(),
                 tools=["ListAgents", "SendMessage"],  # talk to the local project sessions; still no file or shell tools
                 mcp_servers={"neesmo": create_sdk_mcp_server("neesmo", tools=[channel_stats, run_channel, channel_jobs])},
                 allowed_tools=["ListAgents", "SendMessage", "mcp__neesmo__channel_stats",
@@ -336,6 +565,41 @@ async def chat(body: ChatIn):
             _turn = None
     _last_chat[0] = time.monotonic()
     return {"reply": " ".join(parts).strip()}
+
+
+UPLOADS = auth.DIR / "uploads"
+MAX_UPLOAD = 50 * 1024 * 1024
+
+
+@app.post("/api/upload")
+async def upload(file: UploadFile):
+    """A file attached in the chat. Saved on the server so Neesmo can hand its path to an agent."""
+    name = re.sub(r"[^\w.\- ]", "_", Path(file.filename or "file").name).strip(". ") or "file"
+    UPLOADS.mkdir(parents=True, exist_ok=True)
+    dest = UPLOADS / f"{datetime.datetime.now():%Y%m%d-%H%M%S}-{secrets.token_hex(2)}-{name[-80:]}"
+    size = 0
+    with dest.open("wb") as f:
+        while chunk := await file.read(1 << 20):
+            size += len(chunk)
+            if size > MAX_UPLOAD:
+                f.close(); dest.unlink(missing_ok=True)
+                raise HTTPException(413, "files up to 50 MB")
+            f.write(chunk)
+    return {"path": str(dest), "name": name, "size": size}
+
+
+@app.post("/api/chat/reset")
+async def chat_reset():
+    """New chat: drop the current conversation; the next message starts a fresh one."""
+    global _client
+    async with _lock:
+        old, _client = _client, None
+    if old is not None:
+        try:
+            await old.disconnect()
+        except Exception as e:
+            print(f"disconnect: {e}", flush=True)
+    return {"ok": True}
 
 
 @app.get("/api/inbox")
@@ -377,9 +641,9 @@ async def push_unsubscribe(sub: dict):
 
 # ── notification history + approvals ──
 def _agent_for(cwd: str) -> tuple[str, str]:
-    for aid, name, folder, _role in agents.AGENTS:
-        if cwd == str(folder) or cwd.startswith(str(folder) + "/"):
-            return aid, name
+    for a in agents.load():
+        if cwd == a["folder"] or cwd.startswith(a["folder"] + "/"):
+            return a["id"], a["name"]
     return "other", Path(cwd).name or "A session"
 
 

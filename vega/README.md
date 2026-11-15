@@ -4,6 +4,19 @@ A voice-assistant HUD. Claude does the thinking, and [VoiceStudio](https://githu
 
 You speak, then VoiceStudio transcribes what you said and Claude (Opus 5.5) replies. VoiceStudio reads the reply aloud in the voice you picked, and the rings react to the audio.
 
+
+## Install (product bundle)
+
+```bash
+./install.sh            # asks before each optional part
+./install.sh --all      # everything: app, login, approval hook, OmniRoute, graphify, claude-mem, skill pack
+./install.sh --dry-run  # show what it would do
+```
+
+It sets up a Python venv, writes `~/.config/neesmo/neesmo.env` (login on), adds the approval hook,
+and runs Neesmo as a systemd service on 127.0.0.1:8080. The skill pack list is `skills.txt`
+(licenses in `THIRD_PARTY_NOTICES.md`).
+
 ## Run it (on the laptop/server where VoiceStudio runs)
 
 Needs: Python 3.11+, [uv](https://docs.astral.sh/uv/), Claude Code signed in (`claude` → log in), VoiceStudio running.
@@ -50,3 +63,20 @@ PY
 ```
 
 Sessions pick it up when they restart. The hook's secret lives in `~/.config/neesmo/hook_token`, created by Neesmo.
+
+## Login and access from anywhere (product mode)
+
+Set `NEESMO_AUTH=1` to require a password. On the first start the server log prints a one-time setup code:
+open Neesmo, enter the code and choose the owner password. Each phone or computer then signs in once and is
+remembered for a year (`NEESMO_DEVICE_DAYS`). Settings → Devices lists them; tap ✕ to sign one out.
+Wrong passwords are limited to 5 per 10 minutes. Local hooks keep using the hook token, not the password.
+
+No Tailscale needed. To open Neesmo from your phone anywhere, put it behind HTTPS, either:
+
+- **Cloudflare Tunnel** (free, no open ports): `cloudflared tunnel --url http://localhost:8080` for a quick
+  test URL, or a named tunnel on your own domain for a fixed address (needed for the home-screen app and push).
+- **Caddy** on a server with a domain: `caddy reverse-proxy --from neesmo.example.com --to localhost:8080`
+  (gets HTTPS certificates by itself).
+
+Keep Neesmo itself on `127.0.0.1`; only the tunnel or proxy should face the internet. Set
+`NEESMO_PUSH_CONTACT` to your HTTPS address so push notifications work.
