@@ -14,3 +14,9 @@ Everything lives in `reels/` (read `reels/README.md` first).
 5. Deliver `out/<slug>.mp4` and `out/<slug>.txt` (post text) to the user.
 
 Keep: "Pubblicità" label, personal-code disclosure, current offer terms (verify on the bank's site), no logos or other creators' branding.
+
+## Always (user rule)
+Every reel is made with the `viral-hooks` and `viral-instagram-reels` skills:
+1. `viral-hooks`: write 6+ hooks across 3+ archetypes, pick one; first spoken word = most interesting word; 3-5 word on-screen text from frame 1.
+2. `viral-instagram-reels`: structure for sends (CTA = "Mandalo a [specific person]"), caption keyword in line 1, 3-5 hashtags.
+3. Before delivering, run `viral-hooks/assets/hook-checklist.md` and `viral-instagram-reels/assets/reels-hook-checklist.md` on stills of the first 3 seconds; fix every fail (text out of top/bottom fifth, topic legible on mute, picture matches the hook). Report the checklist result to the user.

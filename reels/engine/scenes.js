@@ -284,6 +284,7 @@ function hook(p, ctx) {
   const rays = K.canvasTex(1024, 1024, (g, W) => { const n = 18; for (let i = 0; i < n; i++) { g.fillStyle = i % 2 ? (p.ray1 || '#ff6b81') : (p.ray2 || '#ff3b5c'); g.beginPath(); g.moveTo(W / 2, W / 2); g.arc(W / 2, W / 2, W, i / n * 6.283, (i + 1) / n * 6.283); g.fill(); } });
   const rp = new THREE.Mesh(new THREE.PlaneGeometry(40, 40), new THREE.MeshBasicMaterial({ map: rays })); rp.position.set(0, 3, -6); scene.add(rp);
   const H = hero(ctx); H.root.position.set(0, 0, 0); scene.add(H.root);
+  if (p.holdGame) { const gb = gameBox(p.holdGame); gb.scale.setScalar(1.6); H.armR.hand.add(gb); gb.position.set(0, -.6, 0); gb.rotation.set(2.4 - Math.PI, Math.PI, Math.PI); }
   const floor = new THREE.Mesh(new THREE.CircleGeometry(3.2, 40), new THREE.MeshBasicMaterial({ color: '#000', transparent: true, opacity: .18 })); floor.rotation.x = -Math.PI / 2; floor.position.y = .01; scene.add(floor);
   const coins = Array.from({ length: 8 }, (_, i) => { const c = K.coin('€', -Math.PI / 2); c.scale.setScalar(.55); scene.add(c); return c; });
   const lastAt = Math.max(...(p.title || []).map(l => at(l.at, 0)));
@@ -300,6 +301,7 @@ function hook(p, ctx) {
       if (p.react === 'shock') { H.armL.s.rotation.x = H.armR.s.rotation.x = -2.9 * up; H.armL.s.rotation.z = -.5 * up; H.armR.s.rotation.z = .5 * up; H.armL.el.rotation.x = H.armR.el.rotation.x = -.9 * up; }   // hands on head
       else { H.armL.s.rotation.z = -2.6 * up - .2; H.armR.s.rotation.z = 2.6 * up + .2; }
       H.face(t >= sh ? (p.react === 'shock' ? 'surprised' : 'happy') : faceAt(p.faces, t, 'surprised')); idle(H, t);
+      if (p.holdGame) { H.armR.s.rotation.x = -2.4; H.armR.s.rotation.z = .15; H.armR.el.rotation.x = -.2; }   // show the game box up high
       coins.forEach((c, i) => { const a = i / coins.length * 6.283 + t * 1.4; c.position.set(Math.cos(a) * 3.4, 3.4 + Math.sin(a * 2 + t) * 1.2, Math.sin(a) * 1.5);
         if (p.react === 'shock' && t >= sh) { const d = t - sh; c.position.set(Math.cos(i * .8) * 3.6, Math.max(.3, 3.4 + Math.sin(i * 2) - d * d * 14), Math.sin(i * .8) * 1.5); c.rotation.set(d > .4 ? Math.PI / 2 : 0, 0, 0); }   // coins drop: the bonus shrinks
         else c.rotation.y = t * 3 + i;
@@ -434,7 +436,7 @@ function shop(p, ctx) {
   const sign = new THREE.Mesh(new THREE.PlaneGeometry(3.4, 1.06), new THREE.MeshBasicMaterial({ map: signT, transparent: true })); sign.position.set(0, 6.6, .6); k0.add(sign);
   for (let i = 0; i < 3; i++) { const sw = new THREE.Group(); box(.9, .2, .6, '#e2b36b', 0, 0, 0, sw); box(.95, .08, .62, '#5ccf55', 0, .13, 0, sw); box(.9, .2, .6, '#e2b36b', 0, .26, 0, sw); sw.position.set(-1.2 + i * 1.2, 2.3, .3); k0.add(sw); }
   const V = friend(ctx); V.root.position.set(-1.4, .3, -2.2); scene.add(V.root);
-  const H = hero(ctx); H.root.position.set(2.1, 0, .8); H.root.rotation.y = -.9; scene.add(H.root);
+  const H = hero(ctx); H.root.position.set(1.5, 0, 1.1); H.root.rotation.y = -.9; scene.add(H.root);
   const sand = new THREE.Group(); box(.8, .2, .55, '#e2b36b', 0, 0, 0, sand); box(.85, .08, .58, '#5ccf55', 0, .13, 0, sand); box(.8, .2, .55, '#e2b36b', 0, .26, 0, sand); sand.visible = false; H.armL.hand.add(sand); sand.position.set(0, -.25, .35);
   const b = bill('10€'); b.scale.setScalar(.6); H.armR.hand.add(b); b.position.set(0, -.3, .4);
   const camera = cam(40);
