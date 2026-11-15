@@ -1,0 +1,162 @@
+{
+ "layout": {
+  "page1": [
+   [
+    0.33,
+    [
+     1
+    ]
+   ],
+   [
+    0.31,
+    [
+     0.45,
+     0.55
+    ]
+   ],
+   [
+    0.36,
+    [
+     0.6,
+     0.4
+    ]
+   ]
+  ],
+  "page2": [
+   [
+    0.3,
+    [
+     1
+    ]
+   ],
+   [
+    0.34,
+    [
+     0.5,
+     0.5
+    ]
+   ],
+   [
+    0.36,
+    [
+     1
+    ]
+   ]
+  ]
+ },
+ "voices": {
+  "rookie": "TX3LPaxmHKxFdv7VOQHJ",
+  "sarge": "M5E055lOUxMi0kJpGyE9",
+  "commissar": "onwK4e9ZLuTAKqWW03F9"
+ },
+ "voice_fx": {},
+ "lines": [
+  {
+   "id": "l01",
+   "who": "sarge",
+   "say": "[gravelly, tired] The Emperor has been sitting there for TEN THOUSAND YEARS.",
+   "text": "THE EMPEROR HAS BEEN SITTING THERE FOR TEN THOUSAND YEARS."
+  },
+  {
+   "id": "l02",
+   "who": "rookie",
+   "say": "[curious] Sitting? Doing what, Sarge?",
+   "text": "SITTING? DOING WHAT, SARGE?"
+  },
+  {
+   "id": "l03",
+   "who": "sarge",
+   "say": "[deadpan] Keeping the light on. Every ship steers home by it.",
+   "text": "KEEPING THE LIGHT ON. EVERY SHIP STEERS HOME BY IT."
+  },
+  {
+   "id": "l04",
+   "who": "rookie",
+   "say": "[cocky] That's it? I could do that.",
+   "text": "THAT'S IT? I COULD DO THAT."
+  },
+  {
+   "id": "l05",
+   "who": "sarge",
+   "say": "[grim] A thousand psykers are fed to the Throne. Every. Single. Day.",
+   "text": "A THOUSAND PSYKERS ARE FED TO THE THRONE. EVERY. SINGLE. DAY."
+  },
+  {
+   "id": "l06",
+   "who": "rookie",
+   "say": "[shocked] A thousand... A DAY?!",
+   "text": "A THOUSAND... A DAY?!"
+  },
+  {
+   "id": "l07",
+   "who": "commissar",
+   "say": "[coldly] The Emperor protects, Private. Do not ask what it costs.",
+   "text": "THE EMPEROR PROTECTS, PRIVATE. DO NOT ASK WHAT IT COSTS."
+  },
+  {
+   "id": "l08",
+   "who": "rookie",
+   "say": "[quietly] He's been sitting so long... he must be so tired.",
+   "text": "HE'S BEEN SITTING SO LONG... HE MUST BE SO TIRED."
+  },
+  {
+   "id": "l09",
+   "who": "sarge",
+   "say": "[gently] Yeah, kid. He is.",
+   "text": "YEAH, KID. HE IS."
+  },
+  {
+   "id": "l10",
+   "who": "rookie",
+   "say": "[sheepish] ...Can I take a shift? Sit for him?",
+   "text": "...CAN I TAKE A SHIFT? SIT FOR HIM?"
+  },
+  {
+   "id": "l11",
+   "who": "commissar",
+   "say": "[dry, unimpressed] Denied. You would last fifteen hours.",
+   "text": "DENIED. YOU WOULD LAST FIFTEEN HOURS."
+  },
+  {
+   "id": "l12",
+   "who": "rookie",
+   "say": "[small voice] ...Fair.",
+   "text": "...FAIR."
+  }
+ ],
+ "sfx": {
+  "hum": [
+   "Deep low mystical choir hum swelling, golden machine drone",
+   2.5
+  ],
+  "zap": [
+   "Electric crackle and zap of psychic energy, short",
+   1.2
+  ],
+  "puff": [
+   "Man exhales a long puff of cigar smoke, slow breath",
+   1.5
+  ],
+  "wind": [
+   "Soft desert wind at dusk",
+   2.0
+  ],
+  "gasp": [
+   "Single man gasps in shock",
+   0.8
+  ],
+  "boing": [
+   "Cartoon spring boing, comedic",
+   0.8
+  ],
+  "page": [
+   "Comic book page turning quickly, paper whoosh",
+   1.0
+  ],
+  "whoosh": [
+   "Quick soft camera whoosh swipe transition",
+   0.6
+  ]
+ },
+ "music": "Slow melancholy gothic choir and low cello, sad then darkly comic, sparse, instrumental, no vocals, 70 bpm"
+}
