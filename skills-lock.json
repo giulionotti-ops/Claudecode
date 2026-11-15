@@ -733,6 +733,12 @@
       "skillPath": "skills/voicestudio/SKILL.md",
       "computedHash": ""
     },
+    "watch": {
+      "source": "alexlarcheveque/claude-watch",
+      "sourceType": "github",
+      "skillPath": "skill/SKILL.md",
+      "computedHash": "95301f2bc9ce72e8963595ac76916b2f13c6e12c2d69239ce006dbe69c1ed5df"
+    },
     "web-design-guidelines": {
       "source": "vercel-labs/agent-skills",
       "sourceType": "github",
