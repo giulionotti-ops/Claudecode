@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Neesmo</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
@@ -17,6 +17,7 @@
 <style>
   :root { --rgb: 61,255,143; --c: rgb(var(--rgb)); --c2: #c6ff4a; --bg: #02070d; --dim: rgba(var(--rgb),.35); --err: #ff5f6d; --fs: 14px; }
   * { box-sizing: border-box; }
+  html { touch-action: manipulation; -webkit-text-size-adjust: 100%; }  /* no double-tap zoom */
   html { background-color: #02070d; min-height: 100lvh; }  /* iPhone home-screen app paints the area under the page with this */
   html, body { margin: 0; height: 100%; background: var(--bg) radial-gradient(ellipse at center, rgba(var(--rgb),.13) 0%, var(--bg) 70%) no-repeat fixed; color: var(--c);
     font: var(--fs)/1.4 ui-monospace, "SF Mono", Menlo, Consolas, monospace; overflow: hidden; }
@@ -42,7 +43,7 @@
   #log p.you { border-color: var(--c2); color: var(--c2); }
   form { position: fixed; left: 16px; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); display: flex; gap: 8px; max-width: 720px; margin: 0 auto; }
   input, select, button { font: inherit; color: var(--c); background: rgba(2,20,30,.8); border: 1px solid var(--dim); border-radius: 4px; }
-  input { flex: 1; min-width: 0; padding: 12px; outline: none; }
+  input { flex: 1; min-width: 0; padding: 12px; outline: none; font-size: max(16px, 1em); }  /* 16px+: iOS zooms in on smaller inputs */
   input:focus, select:focus, button:focus-visible { border-color: var(--c); box-shadow: 0 0 10px var(--dim); outline: none; }
   button { padding: 0 16px; cursor: pointer; letter-spacing: .1em; }
   #mic { width: 48px; padding: 0; font-size: 18px; }
@@ -109,6 +110,9 @@
   .agent small { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-top: 2px; }
   dialog#report { --a: var(--c); border-top: 3px solid var(--a) !important; width: min(1100px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); padding: 0; border: 1px solid var(--dim); border-radius: 10px;
     background: rgba(2,14,10,.97); color: var(--c); box-shadow: 0 0 40px rgba(var(--rgb),.15); }
+  /* dialogs start below the iPhone island / status bar and end above the home bar */
+  dialog#ap, dialog#report { margin: calc(env(safe-area-inset-top) + 8px) auto calc(env(safe-area-inset-bottom) + 8px);
+    max-height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 16px); }
   dialog#report::backdrop { background: rgba(0,0,0,.7); backdrop-filter: blur(3px); }
   .rp { padding: 18px; display: flex; flex-direction: column; gap: 14px; }
   .rp header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
@@ -432,6 +436,7 @@ async function loadNotes() {
   try { notes = (await (await api('/api/notifications')).json()).items; } catch { return; }
   const pending = notes.filter(n => n.status === 'pending').length, unread = notes.filter(n => n.id > seenId).length;
   const badge = $('#badge'); badge.hidden = !(pending || unread); badge.textContent = pending || unread;
+  try { (pending || unread) ? navigator.setAppBadge?.(pending || unread) : navigator.clearAppBadge?.(); } catch {}  // home-screen icon badge
   $('#nlist').innerHTML = notes.map(n => `<li><button type="button" data-n="${n.id}" class="${n.id > seenId ? 'unread' : ''}" style="--a:${AGENT_COLORS[n.agent] || 'var(--dim)'}">
     ${n.kind === 'approval' ? `<em class="chip ${esc(n.status)}">${chipText[n.status] || esc(n.status)}</em>` : ''}<b>${esc(n.title)}</b><span>${esc(n.at)} · ${esc(n.body)}</span></button>${n.status === 'pending' ? '' : `<button type="button" class="x" data-del="${n.id}" aria-label="Delete">✕</button>`}</li>`).join('') || '<li><small>Nothing yet</small></li>';
   if (!$('#pop-n').hidden && notes.length) { seenId = Math.max(seenId, notes[0].id); try { localStorage.setItem('neesmo-seen', seenId); } catch {} }
@@ -479,6 +484,7 @@ $('#ap').addEventListener('click', e => { if (e.target.id === 'ap') e.target.clo
 // Opened from a push notification: /?n=<id>, or a message from the service worker when the app is already open.
 const openParam = +new URLSearchParams(location.search).get('n');
 if (openParam) { openNote(openParam); history.replaceState(null, '', '/'); }
+for (const ev of ['gesturestart', 'gesturechange']) document.addEventListener(ev, e => e.preventDefault(), { passive: false });  // no pinch zoom
 navigator.serviceWorker?.addEventListener('message', e => { if (e.data?.open) openNote(+e.data.open); });
 let inboxAfter = 0, inboxPrimed = false;
 async function pollInbox() {
