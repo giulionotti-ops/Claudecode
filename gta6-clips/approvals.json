@@ -32,6 +32,41 @@
           "why": "LoL 'max win' scream"
         }
       ]
+    },
+    {
+      "date": "2026-11-14",
+      "posted": [],
+      "reason": "no streamer approved in streamers.json; nothing rendered or posted",
+      "needs_permission_top": [
+        {
+          "streamer": "ruetoo",
+          "clip": "https://www.twitch.tv/ruetoo/clip/FancySourTrayPartyTime-TVw9ysQZDnVK8Zi9",
+          "span": "00:00-00:12",
+          "score": 76,
+          "why": "PoE screaming meltdown after setup line, huge reaction"
+        },
+        {
+          "streamer": "lirik",
+          "clip": "https://www.twitch.tv/lirik/clip/MoralAltruisticGoshawkStinkyCheese-KLk--qWBgcL4s5S3",
+          "span": "00:04-00:34",
+          "score": 72,
+          "why": "Starship catch live reaction, 'no way / holy shit' (not a game)"
+        },
+        {
+          "streamer": "caedrel",
+          "clip": "https://www.twitch.tv/caedrel/clip/ColdbloodedUglyGarageSuperVinlin-Yb1fh6v9eF7R69TS",
+          "span": "00:00-00:20",
+          "score": 70,
+          "why": "Ruler 1v1 outplay, hype cast, 38k views"
+        },
+        {
+          "streamer": "jynxzi",
+          "clip": "https://www.twitch.tv/jynxzi/clip/SeductiveScaryArtichokeMikeHogu-ilokmbgy1N7dF3Gp",
+          "span": "00:09-00:21",
+          "score": 60,
+          "why": "'three days left until GTA 6', on-topic for launch week"
+        }
+      ]
     }
   ]
 }
