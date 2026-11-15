@@ -34,6 +34,14 @@ Make the next 40k comic short and add it to `uploader/schedule.json`. Work from 
    the last beat loops back to the first panel. Put a 3–5 word on-screen hook in `shots.py`:
    `HOOK = {'text': '...', 'until': 2.5, 'y': 0.27}` (sharpens the spoken line, does not repeat it; move `y`
    between 0.22 and 0.75 so it covers no face or bubble; never above 0.2).
+   Proven explainer formula (from 10M+ view shorts; adapt it to dialogue, keep the comic style):
+   - First line is a paradox (two true lore facts that seem to clash), with a question right after.
+   - Correct a belief most viewers hold ("everyone thinks X, but...").
+   - Put the viewer in the scene (a vivid "imagine you're..." beat, or panel 1 seen through the rookie's eyes).
+   - New picture every 1–2 s (camera moves/cuts), with exact numbers or labels where the lore has them.
+   - Exact facts: name the source (book, codex or Lexicanum page) in the `📜 THE LORE` section.
+   - The payoff flips the opening line; the last line runs straight back into the first so replays feel seamless.
+   - CTA names a persona: "send this to the friend who still thinks the Emperor is fine".
 4. **Build the short** in a new folder `shorts/<slug>/`, copying the structure of `red-wunz/`
    (`script.json`, `page1.txt`, `page2.txt`, `shots.py`) and running the commands in `red-wunz/README.md`.
    - Gemini pages: at most 2 pages plus at most 2 redraws per run (cost cap ~$0.60).
