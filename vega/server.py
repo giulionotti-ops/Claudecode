@@ -48,16 +48,6 @@ def _gateway_env() -> dict:
             "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1"}
 HERE = Path(__file__).parent
 UPLOADER = HERE.parent / "shorts" / "uploader"   # its token.json is the channel login
-# The server's project folders (one git worktree per channel), as set up in ~/start-claude.sh
-CHANNELS = {
-    "setup": Path.home() / "Claudecode",          # uploader, skills, Neesmo itself
-    "glazier": Path.home() / "glazier-40k",       # Glazier of Terra, 40k lore shorts
-    "comics": Path.home() / "comics-40k",         # Warhammer 40K comics
-    "gta6": Path.home() / "gta6",                 # GTA 6 clips and shorts
-    "physics": Path.home() / "physics-channel",   # Fable Physics
-    "roblox": Path.home() / "roblox",             # Roblox games (Luau + Rojo)
-    "product": Path.home() / "neesmo-product",    # turning Neesmo into a product to sell
-}
 JOB_LOGS = Path.home() / "neesmo-jobs"
 
 SYSTEM_PROMPT = (
@@ -110,6 +100,27 @@ async def channel_stats(_args):
     return {"content": [{"type": "text", "text": json.dumps(data)}]}
 
 
+
+
+def system_prompt() -> str:
+    """Private install (no agents.json): the original prompt. Product install: built from the configured agents."""
+    if not agents.configured():
+        return SYSTEM_PROMPT
+    items = [a for a in agents.load()]
+    roster = "; ".join(f"{a['id']} = {a['name']} ({a.get('role') or 'general'})" for a in items)
+    yt = ("For questions about the owner's YouTube channel, call the channel_stats tool and answer from its numbers only. "
+          if (UPLOADER / "token.json").exists() else "")
+    return (
+        "You are Neesmo, a calm, witty assistant speaking through a voice interface. "
+        "Your replies are read aloud, so answer in one to three short spoken sentences: no markdown, lists, code, emoji or URLs. "
+        + yt +
+        f"The owner has dedicated agents, each with its own folder: {roster}. "
+        "To give one a job, call run_channel with its id and a clear, complete instruction; it works in the background "
+        "and finishes the job on its own. Use channel_jobs when asked how jobs are going. "
+        "Before starting anything that changes, uploads or deletes something, repeat the task back in one sentence and wait for a yes."
+    )
+
+
 _jobs: dict[int, dict] = {}
 _job_ids = itertools.count(1)
 
@@ -117,16 +128,18 @@ _job_ids = itertools.count(1)
 @tool("run_channel", "Start a background Claude Code agent in one of the server's project folders to do a task",
       {"channel": str, "task": str})
 async def run_channel(args):
-    folder = CHANNELS.get(str(args.get("channel", "")).lower())
+    aid = str(args.get("channel", "")).lower()
+    folder = agents.folders().get(aid)
     task = str(args.get("task", "")).strip()
     if not folder or not task:
-        return {"content": [{"type": "text", "text": f"Need a task and one of: {', '.join(CHANNELS)}"}], "is_error": True}
+        return {"content": [{"type": "text", "text": f"Need a task and one of: {', '.join(agents.folders())}"}], "is_error": True}
+    brief = ["--append-system-prompt", agents.instructions(agents._get(aid))] if agents.configured() else []
     claude = shutil.which("claude") or str(Path.home() / ".local/bin/claude")
     JOB_LOGS.mkdir(exist_ok=True)
     jid = next(_job_ids)
     log = JOB_LOGS / f"{jid}-{args['channel']}.log"
     with open(log, "wb") as out:  # the child keeps its own copy of the file handle
-        proc = await asyncio.create_subprocess_exec(claude, "-p", task, "--permission-mode", "auto",
+        proc = await asyncio.create_subprocess_exec(claude, "-p", task, "--permission-mode", "auto", *brief,
                                                     cwd=folder, stdout=out, stderr=asyncio.subprocess.STDOUT)
     _jobs[jid] = {"channel": args["channel"], "task": task, "proc": proc, "log": log,
                   "started": datetime.datetime.now().strftime("%H:%M")}
@@ -371,6 +384,25 @@ async def agents_overview():
     return {"agents": await asyncio.to_thread(agents.overview)}
 
 
+@app.get("/api/agents-config")
+def agents_config():
+    return {"configured": agents.configured(), "agents": agents.load(), "colors": agents.COLORS,
+            "default_instructions": {a["id"]: agents.instructions({**a, "instructions": ""}) for a in agents.load()}}
+
+
+@app.put("/api/agents-config")
+async def agents_config_save(items: list[dict]):
+    global _client
+    try:
+        saved = agents.save(items)
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+    old, _client = _client, None  # next chat starts with the new roster in its prompt
+    if old is not None:
+        asyncio.create_task(old.disconnect())
+    return {"agents": saved}
+
+
 @app.get("/api/agents/{aid}")
 async def agent_report(aid: str):
     rep = await asyncio.to_thread(agents.report, aid)
@@ -408,7 +440,7 @@ async def chat(body: ChatIn):
         if _client is None:
             _client = ClaudeSDKClient(ClaudeAgentOptions(
                 model=MODEL,
-                system_prompt=SYSTEM_PROMPT,
+                system_prompt=system_prompt(),
                 tools=["ListAgents", "SendMessage"],  # talk to the local project sessions; still no file or shell tools
                 mcp_servers={"neesmo": create_sdk_mcp_server("neesmo", tools=[channel_stats, run_channel, channel_jobs])},
                 allowed_tools=["ListAgents", "SendMessage", "mcp__neesmo__channel_stats",
@@ -476,9 +508,9 @@ async def push_unsubscribe(sub: dict):
 
 # ── notification history + approvals ──
 def _agent_for(cwd: str) -> tuple[str, str]:
-    for aid, name, folder, _role in agents.AGENTS:
-        if cwd == str(folder) or cwd.startswith(str(folder) + "/"):
-            return aid, name
+    for a in agents.load():
+        if cwd == a["folder"] or cwd.startswith(a["folder"] + "/"):
+            return a["id"], a["name"]
     return "other", Path(cwd).name or "A session"
 
 

@@ -6,22 +6,87 @@ Sources (all local, nothing is sent anywhere): each project's newest Claude Code
 import datetime
 import json
 import os
+import re
 import subprocess
 import time
 from collections import Counter
 from pathlib import Path
 
 HOME = Path.home()
-AGENTS = [  # id, fallback name, folder, short role
-    ("setup", "Setup & uploader", HOME / "Claudecode", "Server setup, uploader, Neesmo"),
-    ("glazier", "Glazier of Terra", HOME / "glazier-40k", "40k lore shorts"),
-    ("comics", "Warhammer 40K comics", HOME / "comics-40k", "Comic shorts"),
-    ("gta6", "GTA6 clips", HOME / "gta6", "Clips and shorts"),
-    ("physics", "Fable physics", HOME / "physics-channel", "Physics shorts"),
-    ("roblox", "Roblox games", HOME / "roblox", "Roblox games"),
-    ("product", "Neesmo product", HOME / "neesmo-product", "Make Neesmo sellable"),
+NEESMO_DIR = Path(os.environ.get("NEESMO_DIR", HOME / ".config" / "neesmo"))
+CONFIG = NEESMO_DIR / "agents.json"   # made by the setup wizard / Settings → Agents
+AGENT_HOME = Path(os.environ.get("NEESMO_AGENT_HOME", HOME / "neesmo-agents"))  # default folder for new agents
+COLORS = ["#ff6b6b", "#ff7ac6", "#5cc8ff", "#b388ff", "#ffd166", "#3dff8f", "#ff9f43", "#7ee8fa"]
+# Without agents.json: the original private setup, unchanged.
+DEFAULTS = [
+    {"id": "setup", "name": "Setup & uploader", "folder": str(HOME / "Claudecode"), "role": "Server setup, uploader, Neesmo", "short": "Setup", "color": "#3dff8f", "hidden": True},
+    {"id": "glazier", "name": "Glazier of Terra", "folder": str(HOME / "glazier-40k"), "role": "40k lore shorts", "short": "YouTube", "color": "#7d8a83", "dev": True},
+    {"id": "comics", "name": "Warhammer 40K comics", "folder": str(HOME / "comics-40k"), "role": "Comic shorts", "short": "Comics", "color": "#ff6b6b"},
+    {"id": "gta6", "name": "GTA6 clips", "folder": str(HOME / "gta6"), "role": "Clips and shorts", "short": "Clips", "color": "#ff7ac6"},
+    {"id": "physics", "name": "Fable physics", "folder": str(HOME / "physics-channel"), "role": "Physics shorts", "short": "Physics", "color": "#5cc8ff"},
+    {"id": "roblox", "name": "Roblox games", "folder": str(HOME / "roblox"), "role": "Roblox games", "short": "Roblox", "color": "#b388ff"},
+    {"id": "product", "name": "Neesmo product", "folder": str(HOME / "neesmo-product"), "role": "Make Neesmo sellable", "short": "Product", "color": "#ffd166"},
 ]
-HIDDEN = {"setup"}  # not shown as a card (the user asked); its report still works
+_ID = re.compile(r"^[a-z0-9][a-z0-9-]{0,23}$")
+
+
+def load() -> list[dict]:
+    try:
+        items = json.loads(CONFIG.read_text())
+        return items if isinstance(items, list) else DEFAULTS
+    except (OSError, ValueError):
+        return DEFAULTS
+
+
+def configured() -> bool:
+    return CONFIG.exists()
+
+
+def instructions(a: dict) -> str:
+    """The dedicated agent's brief: what it is for and how it finishes a job."""
+    return (a.get("instructions") or "").strip() or (
+        f"You are {a['name']}, a dedicated Neesmo agent. Your job area: {a.get('role') or a['name']}. "
+        "When given a task, finish it end to end on your own: work out the steps, do them, check the result works, "
+        "and commit your work if this folder is a git repository. Ask the owner only for things that cost money, "
+        "publish something, or delete data. End with a 2-3 line report: what you did, what is left, and anything the owner must do.")
+
+
+def save(items: list[dict]) -> list[dict]:
+    """Validate and store the agent list. New agents get a folder under ~/neesmo-agents."""
+    out, seen = [], set()
+    for i, raw in enumerate(items[:16]):
+        name = str(raw.get("name", "")).strip()[:40]
+        aid = str(raw.get("id") or re.sub(r"[^a-z0-9]+", "-", name.lower()).strip("-"))[:24]
+        if not name or not _ID.match(aid):
+            raise ValueError(f"agent {i + 1}: give it a name that starts with a letter or number")
+        if aid in seen:
+            raise ValueError(f"{name}: another agent already uses this name")
+        seen.add(aid)
+        folder = Path(os.path.expanduser(str(raw.get("folder") or AGENT_HOME / aid))).resolve()
+        if folder != HOME and HOME not in folder.parents:
+            raise ValueError(f"{name}: folder must be inside {HOME}")
+        folder.mkdir(parents=True, exist_ok=True)
+        color = str(raw.get("color") or COLORS[i % len(COLORS)])
+        if not re.match(r"^#[0-9a-fA-F]{6}$", color):
+            raise ValueError(f"{name}: colour must look like #33ff99")
+        out.append({"id": aid, "name": name, "folder": str(folder), "role": str(raw.get("role", "")).strip()[:120],
+                    "short": (str(raw.get("short") or name.split()[0]).strip())[:10], "color": color,
+                    "instructions": str(raw.get("instructions", "")).strip()[:4000],
+                    **({"hidden": True} if raw.get("hidden") else {}), **({"dev": True} if raw.get("dev") else {})})
+    NEESMO_DIR.mkdir(parents=True, exist_ok=True)
+    CONFIG.write_text(json.dumps(out, indent=1))
+    _cache.clear()
+    return out
+
+
+def folders() -> dict[str, Path]:
+    return {a["id"]: Path(a["folder"]) for a in load()}
+
+
+def _get(aid: str) -> dict | None:
+    return next((a for a in load() if a["id"] == aid), None)
+
+
 TAIL_BYTES = 6 * 1024 * 1024   # enough for today's activity without reading whole multi-MB logs
 _cache: dict[str, tuple[float, dict]] = {}
 
@@ -191,27 +256,30 @@ def _ago(sec: float | None) -> str:
 
 
 def report(aid: str) -> dict | None:
-    for a in AGENTS:
-        if a[0] == aid:
-            log = _log_file(a[2])
-            key = (log.stat().st_mtime if log else 0, _online(a[2]))
-            hit = _cache.get(aid)
-            if hit and hit[0] == key and time.time() - hit[1]["_at"] < 60:
-                return hit[1]
-            rep = _summarise(*a)
-            rep["_at"] = time.time()
-            _cache[aid] = (key, rep)
-            return rep
-    return None
+    a = _get(aid)
+    if a is None:
+        return None
+    folder = Path(a["folder"])
+    log = _log_file(folder)
+    key = (log.stat().st_mtime if log else 0, _online(folder))
+    hit = _cache.get(aid)
+    if hit and hit[0] == key and time.time() - hit[1]["_at"] < 60:
+        return hit[1]
+    rep = _summarise(aid, a["name"], folder, a.get("role", ""))
+    rep.update(color=a.get("color"), short=a.get("short"), dev=bool(a.get("dev")))
+    rep["_at"] = time.time()
+    _cache[aid] = (key, rep)
+    return rep
 
 
 def overview() -> list[dict]:
-    keep = ("id", "name", "role", "online", "status", "last_active_ago", "last_reply", "model", "today", "git")
+    keep = ("id", "name", "role", "online", "status", "last_active_ago", "last_reply", "model", "today", "git",
+            "color", "short", "dev")
     out = []
-    for a in AGENTS:
-        if a[0] in HIDDEN:
+    for a in load():
+        if a.get("hidden"):
             continue
-        r = report(a[0]) or {}
+        r = report(a["id"]) or {}
         card = {k: r.get(k) for k in keep}
         card["last_reply"] = (card.get("last_reply") or "")[:160]
         out.append(card)

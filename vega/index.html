@@ -77,11 +77,12 @@
   .nlist li { position: relative; } .nlist .x.ign { width: auto; padding: 0 8px; font-size: 11px; } .nlist .x { position: absolute; top: 4px; right: 4px; width: 26px; height: 26px; padding: 0; border: 0; border-left: 0; text-align: center; opacity: .6; }
   .nlist li > button[data-n] { padding-right: 34px; } .nlist li:has(.ign) > button[data-n] { padding-right: 70px; } .nlist .chip { margin-right: 4px; }
   .nhead { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; } .nhead h3 { margin: 0; }
-  #nclear, #logout { padding: 3px 10px; font-size: 11px; }
+  #nclear, #logout, #ag-add { padding: 3px 10px; font-size: 11px; }
   .nlist .unread b::before { content: "● "; color: var(--c2); }
   dialog#ap { --a: var(--c); width: min(720px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); padding: 0; border: 1px solid var(--dim);
     border-top: 3px solid var(--a); border-radius: 10px; background: rgba(2,14,10,.98); color: var(--c); }
-  dialog#ap::backdrop { background: rgba(0,0,0,.7); backdrop-filter: blur(3px); }
+  dialog#ag { --a: var(--c); width: min(560px, calc(100vw - 24px)); padding: 0; border: 1px solid var(--dim); border-top: 3px solid var(--a); border-radius: 10px; background: rgba(2,14,10,.98); color: var(--c); }
+  dialog#ag::backdrop, dialog#ap::backdrop { background: rgba(0,0,0,.7); backdrop-filter: blur(3px); }
   #ap .rp h2 { color: var(--a); } #ap .what { font-size: 16px; } #ap .pre { max-height: 45dvh; border: 1px solid rgba(var(--rgb),.2); border-radius: 6px; padding: 10px; background: rgba(0,0,0,.35); font-size: 12px; }
   #ap .btns { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; } #ap .btns button { padding: 12px 20px; }
   #ap-media video, #ap-media img { display: block; width: 100%; max-height: 60vh; object-fit: contain; background: #000; border-radius: 10px; margin: 0 0 10px; }
@@ -112,11 +113,17 @@
   dialog#report { --a: var(--c); border-top: 3px solid var(--a) !important; width: min(1100px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); padding: 0; border: 1px solid var(--dim); border-radius: 10px;
     background: rgba(2,14,10,.97); color: var(--c); box-shadow: 0 0 40px rgba(var(--rgb),.15); }
   /* dialogs start below the iPhone island / status bar and end above the home bar */
-  dialog#ap, dialog#report { position: fixed; inset: 0; margin: calc(env(safe-area-inset-top, 0px) + 8px) auto calc(env(safe-area-inset-bottom, 0px) + 8px) !important;
+  dialog#ap, dialog#report, dialog#ag { position: fixed; inset: 0; margin: calc(env(safe-area-inset-top, 0px) + 8px) auto calc(env(safe-area-inset-bottom, 0px) + 8px) !important;
     max-height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 16px) !important; overflow-y: auto; overscroll-behavior: contain; }
   /* title and ✕ stay pinned at the top of the panel while its content scrolls */
-  #ap .rp > header, #report .rp > header { position: sticky; top: -18px; z-index: 2; margin: -18px -18px 0; padding: 18px;
+  #ap .rp > header, #report .rp > header, #ag .rp > header { position: sticky; top: -18px; z-index: 2; margin: -18px -18px 0; padding: 18px;
     background: rgba(2,14,10,.98); border-bottom: 1px solid rgba(var(--rgb),.15); }
+  #ag form { position: static; max-width: none; margin: 0; display: flex; flex-direction: column; gap: 6px; } #ag label { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); margin-top: 6px; }
+  #ag input, #ag textarea { width: 100%; padding: 10px; font: inherit; font-size: 16px; color: var(--c); background: rgba(0,0,0,.35); border: 1px solid rgba(var(--rgb),.35); border-radius: 6px; }
+  #ag textarea { font-size: 13px; } #ag .btns { display: flex; gap: 10px; justify-content: space-between; margin-top: 10px; } #ag-save { margin-left: auto; } #ag .btns button { padding: 12px 18px; }
+  #ag-save { background: var(--c); color: var(--bg); font-weight: 600; } #ag-del { border-color: var(--err); color: var(--err); } #ag-err { color: var(--err); min-height: 1.2em; }
+  .aglist li button[data-ag] { display: flex; align-items: center; gap: 8px; } .aglist i { width: 10px; height: 10px; border-radius: 50%; background: var(--a); flex: none; }
+  #ag-close { flex: none; min-width: 44px; min-height: 44px; }
   #ap-close, #r-close { flex: none; min-width: 44px; min-height: 44px; }
   dialog#report::backdrop { background: rgba(0,0,0,.7); backdrop-filter: blur(3px); }
   .rp { padding: 18px; display: flex; flex-direction: column; gap: 14px; }
@@ -173,6 +180,8 @@
   <div class="row"><label id="l-mark">NEESMO lettering</label><button type="button" class="tog" role="switch" id="t-mark" aria-labelledby="l-mark"></button></div>
   <div class="row"><label id="l-scan">Scanlines</label><button type="button" class="tog" role="switch" id="t-scan" aria-labelledby="l-scan"></button></div>
   <div class="row"><label id="l-calm">Calm animation</label><button type="button" class="tog" role="switch" id="t-calm" aria-labelledby="l-calm"></button></div>
+  <div class="nhead" style="margin-top:14px"><h3>Agents</h3><button type="button" id="ag-add">+ Add</button></div>
+  <ul class="nlist aglist" id="aglist"></ul>
   <div id="acct" hidden>
     <div class="nhead" style="margin-top:14px"><h3>Devices</h3><button type="button" id="logout">Sign out</button></div>
     <ul class="nlist" id="devlist"></ul>
@@ -195,6 +204,19 @@
 </div></dialog>
 <div class="cards l" id="agents-l" aria-label="Agents"></div>
 <div class="cards r" id="agents-r" aria-label="Agents"></div>
+<dialog id="ag" aria-labelledby="ag-title"><div class="rp">
+  <header><div><h2 id="ag-title">Agent</h2><small>A box on the home screen with its own folder and its own dedicated agent.</small></div><button type="button" id="ag-close" aria-label="Close">✕</button></header>
+  <form id="ag-form">
+    <label for="ag-name">Name</label><input id="ag-name" required maxlength="40" placeholder="e.g. Shop website">
+    <label for="ag-short">Card label (one word)</label><input id="ag-short" maxlength="10" placeholder="e.g. Shop">
+    <label for="ag-role">What it works on</label><input id="ag-role" maxlength="120" placeholder="e.g. builds and fixes my Shopify theme">
+    <label for="ag-folder">Folder (empty = a new one in ~/neesmo-agents)</label><input id="ag-folder" autocapitalize="off" placeholder="~/projects/shop">
+    <label>Colour</label><div class="swatches" id="ag-colors"></div>
+    <label for="ag-inst">How it should work (optional)</label><textarea id="ag-inst" rows="5"></textarea>
+    <div id="ag-err" role="alert"></div>
+    <div class="btns"><button type="button" id="ag-del">Delete</button><button type="submit" id="ag-save">Save</button></div>
+  </form>
+</div></dialog>
 <dialog id="report" aria-labelledby="r-name"><div class="rp">
   <header><div><h2 id="r-name">Agent</h2><small id="r-sub"></small></div><button type="button" id="r-close" aria-label="Close">✕</button></header>
   <div class="kpis" id="r-kpis"></div>
@@ -245,7 +267,7 @@ function applyPrefs() {
   root.classList.toggle('no-mark', !PREFS.mark); root.classList.toggle('no-scan', !PREFS.scan);
   for (const [k, id] of [['mark', '#t-mark'], ['scan', '#t-scan'], ['calm', '#t-calm']]) $(id).setAttribute('aria-checked', String(!!PREFS[k]));
   $('#fsize').value = PREFS.fs;
-  for (const b of document.querySelectorAll('.sw')) b.setAttribute('aria-pressed', String(b.dataset.t === PREFS.theme));
+  for (const b of document.querySelectorAll('#swatches .sw')) b.setAttribute('aria-pressed', String(b.dataset.t === PREFS.theme));
   try { localStorage.setItem('neesmo-prefs', JSON.stringify(PREFS)); } catch {}
   if (typeof reduce !== 'undefined') reduce = matchMedia('(prefers-reduced-motion: reduce)').matches || PREFS.calm;
 }
@@ -349,15 +371,16 @@ addEventListener('keydown', e => { if (e.code === 'Space' && e.target === docume
 addEventListener('keyup', e => { if (e.code === 'Space' && e.target === document.body) stopRec(); });
 
 // ── agent cards + report ──
-const AGENT_SHORT = { setup: 'Setup', glazier: 'YouTube', comics: 'Comics', gta6: 'Clips', physics: 'Physics', roblox: 'Roblox', product: 'Product' };  // one word per card
-const AGENT_DEV = new Set(['glazier']);   // still in development: shown greyed out
-const AGENT_COLORS = { setup: '#3dff8f', glazier: '#7d8a83', comics: '#ff6b6b', gta6: '#ff7ac6', physics: '#5cc8ff', roblox: '#b388ff', product: '#ffd166' };
+// label, colour and "in development" come from the agent config on the server (Settings → Agents)
+const AGENT_SHORT = {}, AGENT_COLORS = {}, AGENT_DEV = new Set();
+function learnAgents(list) { for (const a of list) { AGENT_SHORT[a.id] = a.short || a.name; AGENT_COLORS[a.id] = a.color || '#3dff8f'; a.dev ? AGENT_DEV.add(a.id) : AGENT_DEV.delete(a.id); } }
 const fmt = n => n == null ? '—' : Number(n).toLocaleString();
 const kfmt = n => !n ? '0' : n >= 1e6 ? (n / 1e6).toFixed(1) + 'M' : n >= 1e3 ? Math.round(n / 1e3) + 'k' : String(n);
 const esc = t => String(t ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 async function loadAgents() {
   try {
     const { agents } = await (await api('/api/agents')).json(), half = Math.ceil(agents.length / 2);
+    learnAgents(agents);
     const card = a => `<button type="button" class="card agent${AGENT_DEV.has(a.id) ? ' dev' : ''}" style="--a:${AGENT_COLORS[a.id] || '#3dff8f'}" data-id="${esc(a.id)}" aria-label="${esc(a.name)} report">
       <span class="st ${AGENT_DEV.has(a.id) ? 'dev' : esc(a.status)}">${AGENT_DEV.has(a.id) ? 'in dev' : esc(a.status)}<span class="ago"> · ${esc(a.last_active_ago || '—')}</span></span><b>${esc(AGENT_SHORT[a.id] || a.name)}</b>
       <small>${esc(a.last_reply || a.role)}</small></button>`;
@@ -435,7 +458,47 @@ function togglePop(btn, pop, open = pop.hidden) {
   pop.hidden = !open; btn.setAttribute('aria-expanded', String(open));
   if (open && pop.id === 'pop-n') { loadNotes(); pushState().catch(() => {}); }
 }
-$('#gear').onclick = () => { togglePop($('#gear'), $('#pop-s')); if (!$('#pop-s').hidden) loadDevices(); };
+$('#gear').onclick = () => { togglePop($('#gear'), $('#pop-s')); if (!$('#pop-s').hidden) { loadDevices(); loadAgentCfg(); } };
+// ── agents editor ──
+let agCfg = { agents: [], colors: [] }, agEdit = -1, agColor = '';
+async function loadAgentCfg() {
+  try { agCfg = await (await api('/api/agents-config')).json(); } catch { return; }
+  learnAgents(agCfg.agents);
+  $('#aglist').innerHTML = agCfg.agents.map((a, i) => `<li><button type="button" data-ag="${i}" style="--a:${esc(a.color)}"><i></i><b>${esc(a.name)}</b><span>${esc(a.role || '')}${a.hidden ? ' · hidden' : ''}</span></button></li>`).join('') || '<li><small>No agents yet</small></li>';
+}
+function openAgentEditor(i) {
+  agEdit = i; const a = agCfg.agents[i] || {};
+  agColor = a.color || agCfg.colors[agCfg.agents.length % agCfg.colors.length] || '#3dff8f';
+  $('#ag-title').textContent = i < 0 ? 'New agent' : a.name;
+  $('#ag-name').value = a.name || ''; $('#ag-short').value = a.short || ''; $('#ag-role').value = a.role || '';
+  $('#ag-folder').value = a.folder || ''; $('#ag-inst').value = a.instructions || '';
+  $('#ag-inst').placeholder = (agCfg.default_instructions || {})[a.id] || 'Default: finish each job end to end, check it works, then report in 2-3 lines.';
+  $('#ag-del').hidden = i < 0; $('#ag-err').textContent = '';
+  const paint = () => { $('#ag').style.setProperty('--a', agColor); $('#ag-colors').innerHTML = agCfg.colors.map(c => `<button type="button" class="sw" style="--s:${c}" aria-pressed="${c === agColor}" data-c="${c}" aria-label="Colour ${c}"></button>`).join(''); };
+  paint(); $('#ag-colors').onclick = e => { const b = e.target.closest('[data-c]'); if (b) { agColor = b.dataset.c; paint(); } };
+  $('#pop-s').hidden = true; $('#ag').showModal();
+}
+async function saveAgents(list) {
+  try { await api('/api/agents-config', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(list) }); }
+  catch (e) { $('#ag-err').textContent = e.message; return false; }
+  await loadAgentCfg(); loadAgents(); return true;
+}
+$('#aglist').addEventListener('click', e => { const b = e.target.closest('[data-ag]'); if (b) openAgentEditor(+b.dataset.ag); });
+$('#ag-add').onclick = () => openAgentEditor(-1);
+$('#ag-close').onclick = () => $('#ag').close();
+$('#ag-form').onsubmit = async e => {
+  e.preventDefault();
+  const prev = agCfg.agents[agEdit] || {};
+  const a = { ...prev, name: $('#ag-name').value.trim(), short: $('#ag-short').value.trim(), role: $('#ag-role').value.trim(),
+    folder: $('#ag-folder').value.trim(), instructions: $('#ag-inst').value.trim(), color: agColor };
+  if (agEdit < 0) delete a.id;
+  const list = agCfg.agents.slice(); agEdit < 0 ? list.push(a) : (list[agEdit] = a);
+  if (await saveAgents(list)) $('#ag').close();
+};
+$('#ag-del').onclick = async () => {
+  if (!confirm('Remove this agent from Neesmo? Its folder and files are kept.')) return;
+  if (await saveAgents(agCfg.agents.filter((_, i) => i !== agEdit))) $('#ag').close();
+};
 // ── remembered devices (only when login is on) ──
 async function loadDevices() {
   let d; try { d = await (await api('/api/devices')).json(); } catch { return; }
