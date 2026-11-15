@@ -73,9 +73,9 @@
   .nlist button { width: 100%; text-align: left; padding: 8px 10px; display: block; letter-spacing: normal; border-left: 3px solid var(--a, var(--dim)); }
   .nlist b { display: block; font-weight: 600; } .nlist span { display: block; color: var(--dim); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .chip { float: right; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; padding: 1px 6px; border-radius: 8px; border: 1px solid currentColor; }
-  .chip.pending { color: var(--c2); } .chip.approved { color: var(--c); } .chip.denied, .chip.expired { color: #7d8a83; } .chip.changes { color: var(--c2); }
-  .nlist li { position: relative; } .nlist .x { position: absolute; top: 4px; right: 4px; width: 26px; height: 26px; padding: 0; border: 0; border-left: 0; text-align: center; opacity: .6; }
-  .nlist li > button[data-n] { padding-right: 34px; } .nlist .chip { margin-right: 4px; }
+  .chip.pending { color: var(--c2); } .chip.approved { color: var(--c); } .chip.denied, .chip.expired, .chip.ignored { color: #7d8a83; } .chip.changes { color: var(--c2); }
+  .nlist li { position: relative; } .nlist .x.ign { width: auto; padding: 0 8px; font-size: 11px; } .nlist .x { position: absolute; top: 4px; right: 4px; width: 26px; height: 26px; padding: 0; border: 0; border-left: 0; text-align: center; opacity: .6; }
+  .nlist li > button[data-n] { padding-right: 34px; } .nlist li:has(.ign) > button[data-n] { padding-right: 70px; } .nlist .chip { margin-right: 4px; }
   .nhead { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; } .nhead h3 { margin: 0; }
   #nclear { padding: 3px 10px; font-size: 11px; }
   .nlist .unread b::before { content: "● "; color: var(--c2); }
@@ -437,7 +437,7 @@ addEventListener('keydown', e => { if (e.key === 'Escape') { $('#pop-s').hidden 
 
 // ── notification history ──
 let notes = [], seenId = +(localStorage.getItem('neesmo-seen') || 0);
-const chipText = { pending: 'needs approval', approved: 'approved', denied: 'denied', expired: 'expired', 'changes asked': 'changes asked' };
+const chipText = { pending: 'needs approval', approved: 'approved', denied: 'denied', expired: 'expired', ignored: 'ignored', 'changes asked': 'changes asked' };
 const asks = n => n.kind === 'approval' || n.kind === 'review';
 async function loadNotes() {
   try { notes = (await (await api('/api/notifications')).json()).items; } catch { return; }
@@ -445,10 +445,12 @@ async function loadNotes() {
   const badge = $('#badge'); badge.hidden = !(pending || unread); badge.textContent = pending || unread;
   try { (pending || unread) ? navigator.setAppBadge?.(pending || unread) : navigator.clearAppBadge?.(); } catch {}  // home-screen icon badge
   $('#nlist').innerHTML = notes.map(n => `<li><button type="button" data-n="${n.id}" class="${n.id > seenId ? 'unread' : ''}" style="--a:${AGENT_COLORS[n.agent] || 'var(--dim)'}">
-    ${asks(n) ? `<em class="chip ${esc(n.status)}">${chipText[n.status] || esc(n.status)}</em>` : ''}<b>${esc(n.title)}</b><span>${esc(n.at)} · ${esc(n.body)}</span></button>${n.status === 'pending' ? '' : `<button type="button" class="x" data-del="${n.id}" aria-label="Delete">✕</button>`}</li>`).join('') || '<li><small>Nothing yet</small></li>';
+    ${asks(n) ? `<em class="chip ${esc(n.status)}">${chipText[n.status] || esc(n.status)}</em>` : ''}<b>${esc(n.title)}</b><span>${esc(n.at)} · ${esc(n.body)}</span></button>${n.status === 'pending' ? `<button type="button" class="x ign" data-ign="${n.id}" aria-label="Ignore">Ignore</button>` : `<button type="button" class="x" data-del="${n.id}" aria-label="Delete">✕</button>`}</li>`).join('') || '<li><small>Nothing yet</small></li>';
   if (!$('#pop-n').hidden && notes.length) { seenId = Math.max(seenId, notes[0].id); try { localStorage.setItem('neesmo-seen', seenId); } catch {} }
 }
 $('#nlist').addEventListener('click', async e => {
+  const g = e.target.closest('[data-ign]');
+  if (g) { await api('/api/notifications/' + g.dataset.ign + '/ignore', { method: 'POST' }).catch(() => {}); return loadNotes(); }
   const d = e.target.closest('[data-del]');
   if (d) { await api('/api/notifications/' + d.dataset.del, { method: 'DELETE' }).catch(() => {}); return loadNotes(); }
   const b = e.target.closest('[data-n]'); if (b) openNote(+b.dataset.n);
@@ -476,10 +478,11 @@ async function openNote(id) {
     const src = `/api/approvals/${id}/media/${i}`;
     return (m.video ? `<video src="${src}" controls playsinline preload="metadata"></video>` : `<img src="${src}" alt="">`) + `<small>${esc(m.name)}</small>`;
   }).join('');
-  const pending = asks(n) && n.status === 'pending';
+  const pending = asks(n) && (n.status === 'pending' || (n.kind === 'review' && n.status === 'ignored'));
   $('#ap-btns').hidden = !pending;
   $('#ap-state').textContent = !asks(n) ? '' : pending ? 'Waiting for your answer.'
     : n.note ? `You asked for changes${n.decided_at ? ' at ' + n.decided_at : ''}: ${n.note}`
+    : n.status === 'ignored' ? (n.kind === 'review' ? 'You ignored this. You can still answer it.' : 'You ignored this: answer it in the Claude app if it still needs you.')
     : n.status === 'expired' ? 'No longer waiting here (over 2 days, or the chat moved on): answer it in the Claude app if it still needs you.' : `You ${n.status} this${n.decided_at ? ' at ' + n.decided_at : ''}.`;
   if (!dlg.open) dlg.showModal();
 }
