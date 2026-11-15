@@ -26,6 +26,7 @@ from pydantic import BaseModel
 import agent_chat
 import agents
 import auth
+import license
 import notes
 import push
 
@@ -183,7 +184,7 @@ notes.hook_token()  # create the hook's secret at start, so approval_hook.py can
 app.mount("/static", StaticFiles(directory=HERE / "static"), name="static")
 
 # ── login (product mode: NEESMO_AUTH=1) ──
-PUBLIC = {"/login", "/api/login", "/api/setup", "/api/auth/state", "/manifest.webmanifest", "/sw.js"}
+PUBLIC = {"/welcome", "/login", "/api/login", "/api/setup", "/api/auth/state", "/manifest.webmanifest", "/sw.js"}
 
 
 @app.middleware("http")
@@ -246,6 +247,38 @@ def auth_login(body: LoginIn, request: Request):
         raise HTTPException(429, str(e))
     except ValueError as e:
         raise HTTPException(401, str(e))
+
+
+class LicenseIn(BaseModel):
+    key: str
+
+
+@app.get("/api/license")
+def license_get():
+    return license.status()
+
+
+@app.post("/api/license")
+def license_set(body: LicenseIn):
+    try:
+        return license.activate(body.key)
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+
+
+@app.delete("/api/license")
+def license_del():
+    return license.remove()
+
+
+@app.get("/guide")
+def guide():
+    return FileResponse(Path(__file__).parent / "static" / "guide.html")
+
+
+@app.get("/welcome")
+def welcome():
+    return FileResponse(Path(__file__).parent / "static" / "landing.html")
 
 
 @app.get("/api/devices")

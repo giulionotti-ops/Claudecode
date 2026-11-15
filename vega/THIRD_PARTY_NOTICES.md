@@ -16,6 +16,7 @@ Checked 2026-11-15.
 | google-api-python-client | Apache-2.0 |
 | google-auth-oauthlib | Apache-2.0 |
 | pywebpush | MPL-2.0 (used unmodified) |
+| cryptography | Apache-2.0 OR BSD-3-Clause |
 
 ## Bundled tools (installed by `install.sh`, each optional)
 

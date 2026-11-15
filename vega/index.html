@@ -236,9 +236,34 @@
   .ratts button { border: 0; background: none; padding: 0 6px; height: 20px; }
   .rfoot { display: flex; justify-content: space-between; gap: 8px; } .rfoot button { padding: 5px 12px; font-size: 11px; }
   #r-stop { color: var(--err); border-color: var(--err); }
+  .licf { display: flex; gap: 6px; margin: 6px 0 2px; position: static; max-width: none; } .licf input { flex: 1; min-width: 0; padding: 7px 8px; font-size: max(16px, 1em); }
+  .licf button { padding: 6px 10px; } .licf[hidden] { display: none; } .licmsg { display: block; min-height: 1em; color: var(--err); }
+  .links { display: flex; gap: 14px; margin-top: 4px; font-size: 12px; } .links a { color: var(--c2); }
+
+  /* motion (ideas from remocn: staggered reveals, text decode, count-ups, springy panels, light sweeps) */
+  .boot .agent { animation: cardin .7s cubic-bezier(.2,.9,.25,1.15) both; animation-delay: calc(var(--i, 0) * 80ms + 150ms); }
+  @keyframes cardin { from { opacity: 0; translate: var(--from, -24px) 0; filter: blur(6px); clip-path: inset(0 100% 0 0); } 60% { clip-path: inset(0 0 0 0); } }
+  #agents-r .agent { --from: 24px; }
+  .boot #wordmark { animation: markin 1.4s cubic-bezier(.2,.8,.2,1) both; }
+  @keyframes markin { from { opacity: 0; letter-spacing: .2em; filter: blur(12px); } }
+  .boot form#f, .boot > form { animation: rise .7s .5s cubic-bezier(.2,.8,.2,1) both; }
+  @keyframes rise { from { opacity: 0; translate: 0 20px; } }
+  .agent { position: relative; overflow: hidden; }
+  .agent::after { content: ""; position: absolute; inset: 0; pointer-events: none; translate: -110% 0;
+    background: linear-gradient(100deg, transparent 30%, color-mix(in srgb, var(--a) 22%, transparent) 50%, transparent 70%); }
+  .agent:hover::after, .agent:focus-visible::after { translate: 110% 0; transition: translate .8s cubic-bezier(.2,.8,.2,1); }
+  .agent.flash { animation: flash 1.2s ease-out; } @keyframes flash { 0% { box-shadow: 0 0 0 0 var(--a); } 30% { box-shadow: 0 0 24px 2px var(--a); } }
+  dialog[open] > .rp { animation: panel .5s cubic-bezier(.2,1.25,.3,1) both; }
+  @keyframes panel { from { opacity: 0; scale: .94; translate: 0 18px; filter: blur(4px); } }
+  dialog[open]::backdrop { animation: fadein .3s ease both; }
+  .pop:not([hidden]) { animation: drop .28s cubic-bezier(.2,1.2,.3,1) both; transform-origin: top right; }
+  @keyframes drop { from { opacity: 0; scale: .92; translate: 0 -8px; } }
+  .strip b { display: inline-block; min-width: 1ch; }
+  .calm *, .calm *::before, .calm *::after { animation-duration: .01ms !important; animation-delay: 0s !important; transition-duration: .01ms !important; }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-delay: 0s !important; transition-duration: .01ms !important; } }
 </style>
 </head>
-<body>
+<body class="boot">
 <div id="wordmark" aria-hidden="true">NEESMO</div>
 <canvas id="hud" aria-hidden="true"></canvas>
 <div class="corner tl">Neesmo // online<br><b id="clock">--:--:--</b><br><span id="date"></span></div>
@@ -258,6 +283,11 @@
   <div class="row"><label id="l-calm">Calm animation</label><button type="button" class="tog" role="switch" id="t-calm" aria-labelledby="l-calm"></button></div>
   <div class="nhead" style="margin-top:14px"><h3>Agents</h3><button type="button" id="ag-add">+ Add</button></div>
   <ul class="nlist aglist" id="aglist"></ul>
+  <h3 style="margin-top:14px">License</h3>
+  <div class="row"><small>Status</small><small id="lic-state">…</small></div>
+  <form id="lic-form" class="licf" hidden><input id="lic-key" placeholder="License key" aria-label="License key" autocomplete="off" spellcheck="false"><button type="submit">Activate</button></form>
+  <small id="lic-msg" class="licmsg"></small>
+  <div class="links"><a href="/guide" target="_blank" rel="noopener">Guide</a><a href="/welcome" target="_blank" rel="noopener">Website</a><a href="#" id="lic-rm" hidden>Remove key</a></div>
   <div id="acct" hidden>
     <div class="nhead" style="margin-top:14px"><h3>Devices</h3><button type="button" id="logout">Sign out</button></div>
     <ul class="nlist" id="devlist"></ul>
@@ -386,7 +416,7 @@ function applyPrefs() {
   const [hex, rgb, c2] = THEMES[PREFS.theme] || THEMES.green, root = document.documentElement;
   Object.assign(THEME, { hex, rgb, c2 });
   root.style.setProperty('--rgb', rgb); root.style.setProperty('--c2', c2); root.style.setProperty('--fs', PREFS.fs);
-  root.classList.toggle('no-mark', !PREFS.mark); root.classList.toggle('no-scan', !PREFS.scan);
+  root.classList.toggle('no-mark', !PREFS.mark); root.classList.toggle('calm', !!PREFS.calm); root.classList.toggle('no-scan', !PREFS.scan);
   for (const [k, id] of [['mark', '#t-mark'], ['scan', '#t-scan'], ['calm', '#t-calm']]) $(id).setAttribute('aria-checked', String(!!PREFS[k]));
   $('#fsize').value = PREFS.fs;
   for (const b of document.querySelectorAll('#swatches .sw')) b.setAttribute('aria-pressed', String(b.dataset.t === PREFS.theme));
@@ -544,15 +574,37 @@ function learnAgents(list) { for (const a of list) { AGENT_SHORT[a.id] = a.short
 const fmt = n => n == null ? '—' : Number(n).toLocaleString();
 const kfmt = n => !n ? '0' : n >= 1e6 ? (n / 1e6).toFixed(1) + 'M' : n >= 1e3 ? Math.round(n / 1e3) + 'k' : String(n);
 const esc = t => String(t ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+// text decode: letters settle from random glyphs, left to right
+function decode(el, text = el.textContent, ms = 600) {
+  if (reduce || !text) { el.textContent = text; return; }
+  const G = '█▓▒░<>/\\|=+*#01', t0 = performance.now();
+  (function tick(now) {
+    const k = Math.min(1, (now - t0) / ms), n = Math.floor(k * text.length);
+    el.textContent = text.slice(0, n) + [...text.slice(n)].map(c => c === ' ' ? ' ' : G[Math.random() * G.length | 0]).join('');
+    if (k < 1) requestAnimationFrame(tick); else el.textContent = text;
+  })(t0);
+}
+// numbers count up from 0
+function countUp(root) {
+  for (const b of root.querySelectorAll('b[data-n]')) {
+    const end = +b.dataset.n, suf = b.dataset.s || '', t0 = performance.now();
+    if (reduce || !end) { b.textContent = end.toLocaleString() + suf; continue; }
+    (function tick(now) { const k = Math.min(1, (now - t0) / 700), e = 1 - (1 - k) ** 3;
+      b.textContent = Math.round(end * e).toLocaleString() + suf; if (k < 1) requestAnimationFrame(tick); })(t0);
+  }
+}
 async function loadAgents() {
   try {
     const { agents } = await (await api('/api/agents')).json(), half = Math.ceil(agents.length / 2);
     learnAgents(agents);
-    const card = a => `<button type="button" class="card agent${AGENT_DEV.has(a.id) ? ' dev' : ''}" style="--a:${AGENT_COLORS[a.id] || '#3dff8f'}" data-id="${esc(a.id)}" aria-label="${esc(a.name)} report">
+    const card = (a, i) => `<button type="button" class="card agent${AGENT_DEV.has(a.id) ? ' dev' : ''}" style="--a:${AGENT_COLORS[a.id] || '#3dff8f'};--i:${i}" data-id="${esc(a.id)}" aria-label="${esc(a.name)} report">
       <span class="st ${AGENT_DEV.has(a.id) ? 'dev' : esc(a.status)}">${AGENT_DEV.has(a.id) ? 'in dev' : esc(a.status)}<span class="ago"> · ${esc(a.last_active_ago || '—')}</span></span><b>${esc(AGENT_SHORT[a.id] || a.name)}</b>
       <small>${esc(a.last_reply || a.role)}</small></button>`;
     $('#agents-l').innerHTML = agents.slice(0, half).map(card).join('');
-    $('#agents-r').innerHTML = agents.slice(half).map(card).join('');
+    $('#agents-r').innerHTML = agents.slice(half).map((a, i) => card(a, i + .5)).join('');
+    if (!loadAgents.done) { loadAgents.done = true; document.querySelectorAll('.agent b').forEach((b, i) => setTimeout(() => decode(b), 200 + i * 80)); setTimeout(() => document.body.classList.remove('boot'), 2500); }
+    for (const a of agents) { const prev = loadAgents.seen?.[a.id]; if (prev && prev !== a.last_reply) document.querySelector(`.agent[data-id="${CSS.escape(a.id)}"]`)?.classList.add('flash'); }
+    loadAgents.seen = Object.fromEntries(agents.map(a => [a.id, a.last_reply]));
     layoutHud();
   } catch (e) { $('#agents-l').innerHTML = '<div class="card"><span>Agents</span><small>offline</small></div>'; }
 }
@@ -568,9 +620,12 @@ async function openReport(id) {
     $('#r-name').textContent = AGENT_DEV.has(r.id) ? `${AGENT_SHORT[r.id]} (in development)` : r.name;
     $('#r-sub').innerHTML = `<span class="st ${esc(r.status)}">${esc(r.status)}</span> · ${esc(r.role)} · last active ${esc(r.last_active_ago || '—')}${r.model ? ' · ' + esc(r.model) : ''}`;
     const last = (g.commits || [])[0], now = (r.requests || [])[0];
-    $('#r-strip').innerHTML = `<span><b>${fmt(t.requests || 0)}</b> requests today</span><span><b>${ctxPct}%</b> context</span>`
-      + (g.uncommitted ? `<span><b>${fmt(g.uncommitted)}</b> unsaved</span>` : '') + (g.unpushed ? `<span><b>${fmt(g.unpushed)}</b> not pushed</span>` : '')
+    const first = $('#report').dataset.shown !== id; $('#report').dataset.shown = id;
+    const nb = (n, suf = '') => `<b data-n="${n || 0}" data-s="${suf}">${fmt(n || 0)}${suf}</b>`;
+    $('#r-strip').innerHTML = `<span>${nb(t.requests)} requests today</span><span>${nb(ctxPct, '%')} context</span>`
+      + (g.uncommitted ? `<span>${nb(g.uncommitted)} unsaved</span>` : '') + (g.unpushed ? `<span>${nb(g.unpushed)} not pushed</span>` : '')
       + (last ? `<span>last commit ${esc(last.ago)}</span>` : '') + (now ? `<span class="now" title="${esc(now.text)}">Now: ${esc(now.text)}</span>` : '');
+    if (first) { countUp($('#r-strip')); decode($('#r-name')); }
     $('#r-q').placeholder = `Message ${AGENT_SHORT[r.id] || r.name}…`;
     const kpi = (label, val, w) => `<div class="kpi"><span>${label}</span><b>${val}</b>${w != null ? `<i style="--w:${w}%"></i>` : ''}</div>`;
     $('#r-kpis').innerHTML = kpi('Requests today', fmt(t.requests || 0)) + kpi('Tool calls today', fmt(t.tool_calls || 0))
@@ -630,7 +685,7 @@ $('#r-new').onclick = async () => {
 };
 $('#r-close').onclick = () => $('#report').close();
 $('#report').addEventListener('click', e => { if (e.target.id === 'report') e.target.close(); });
-$('#report').addEventListener('close', () => { reportFor = null; clearTimeout(rPoll); });
+$('#report').addEventListener('close', () => { reportFor = null; clearTimeout(rPoll); delete $('#report').dataset.shown; });
 loadAgents(); setInterval(() => { if (!document.hidden) { loadAgents(); if (reportFor) openReport(reportFor); } }, 15000);
 
 // ── home-screen app: notifications + replies that arrive on their own ──
@@ -671,7 +726,7 @@ function togglePop(btn, pop, open = pop.hidden) {
   pop.hidden = !open; btn.setAttribute('aria-expanded', String(open));
   if (open && pop.id === 'pop-n') { loadNotes(); pushState().catch(() => {}); }
 }
-$('#gear').onclick = () => { togglePop($('#gear'), $('#pop-s')); if (!$('#pop-s').hidden) { loadDevices(); loadAgentCfg(); } };
+$('#gear').onclick = () => { togglePop($('#gear'), $('#pop-s')); if (!$('#pop-s').hidden) { loadDevices(); loadAgentCfg(); loadLicense(); } };
 // ── agents editor ──
 let agCfg = { agents: [], colors: [] }, agEdit = -1, agColor = '';
 async function loadAgentCfg() {
@@ -713,6 +768,19 @@ $('#ag-del').onclick = async () => {
   if (await saveAgents(agCfg.agents.filter((_, i) => i !== agEdit))) $('#ag').close();
 };
 // ── remembered devices (only when login is on) ──
+function showLicense(l) {
+  const txt = { owner: 'Owner copy · no key needed', licensed: `Licensed · ${l.plan || 'pro'}${l.to ? ' · ' + l.to : ''}${l.expires ? ' · until ' + l.expires : ''}`,
+    trial: `Trial · ${l.days_left} day${l.days_left === 1 ? '' : 's'} left`, expired: 'Trial ended · add a key', invalid: 'Key problem: ' + (l.error || '') };
+  $('#lic-state').textContent = txt[l.state] || l.state;
+  $('#lic-form').hidden = l.state === 'owner' || l.state === 'licensed'; $('#lic-rm').hidden = l.state !== 'licensed' && l.state !== 'invalid';
+}
+async function loadLicense() { try { showLicense(await (await api('/api/license')).json()); } catch { $('#lic-state').textContent = 'unknown'; } }
+$('#lic-form').onsubmit = async e => {
+  e.preventDefault(); $('#lic-msg').textContent = '';
+  try { showLicense(await (await api('/api/license', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: $('#lic-key').value }) })).json()); $('#lic-key').value = ''; }
+  catch (err) { $('#lic-msg').textContent = err.message; }
+};
+$('#lic-rm').onclick = async e => { e.preventDefault(); if (confirm('Remove the license key from this server?')) showLicense(await (await api('/api/license', { method: 'DELETE' })).json()); };
 async function loadDevices() {
   let d; try { d = await (await api('/api/devices')).json(); } catch { return; }
   $('#acct').hidden = !d.enabled; if (!d.enabled) return;
