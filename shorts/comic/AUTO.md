@@ -37,7 +37,7 @@ Make the next 40k comic short and add it to `uploader/schedule.json`. Work from 
    first line works alone, one send/comment CTA that is not engagement bait, 3–5 hashtags incl. #warhammer40k #shorts.
 7. **Schedule it.** Append to `comic/uploader/schedule.json`:
    `{"name": slug, "video": "../../<slug>/<slug>.mp4", "captions": "../../<slug>/<slug>.srt",
-     "publish": "<next day with no entry> 21:30", "title", "description", "tags": [8 tags], "pinned", "synthetic": true}`.
+     "publish": "<next day with no entry> 21:30", "title", "description", "tags": [8 tags], "pinned", "synthetic": false}`  (never turn on the AI / altered-content label).
    Also append it to `comic/board/shorts.json` in the same shape as the existing entries.
 8. **Commit** the new folder and the JSON changes (no keys, no `token.json`). Don't push.
 

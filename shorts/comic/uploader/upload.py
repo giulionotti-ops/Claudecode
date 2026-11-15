@@ -71,7 +71,7 @@ def body(entry):
     return {
         'snippet': {'title': entry['title'][:100], 'description': entry['description'][:5000], 'tags': entry.get('tags', []), 'categoryId': entry.get('category', '24'),
                     'defaultLanguage': 'en', 'defaultAudioLanguage': 'en'},
-        'status': {'privacyStatus': 'private', 'publishAt': publish_at(entry), 'selfDeclaredMadeForKids': False, 'containsSyntheticMedia': entry.get('synthetic', True)},
+        'status': {'privacyStatus': 'private', 'publishAt': publish_at(entry), 'selfDeclaredMadeForKids': False, 'containsSyntheticMedia': entry.get('synthetic', False)},
     }
 
 

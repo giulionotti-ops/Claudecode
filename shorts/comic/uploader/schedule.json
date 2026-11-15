@@ -17,7 +17,7 @@
    "40k comic"
   ],
   "pinned": "Be honest: how many hours would you last as a Guardsman? \u23f1\ufe0f",
-  "synthetic": true
+  "synthetic": false
  },
  {
   "name": "red-wunz",
@@ -37,7 +37,7 @@
    "40k comic"
   ],
   "pinned": "Red ones go faster. Purple ones are sneakier. Change my mind \ud83d\udd34\ud83d\udfe3",
-  "synthetic": true
+  "synthetic": false
  },
  {
   "name": "ogryn-loyal",
@@ -57,7 +57,7 @@
    "40k comic"
   ],
   "pinned": "Grunk can't count, but he'd never leave you. Best soldier in the Guard? \ud83d\udee1\ufe0f",
-  "synthetic": true
+  "synthetic": false
  },
  {
   "name": "golden-throne",
@@ -77,6 +77,6 @@
    "40k comic"
   ],
   "pinned": "Ten thousand years of sitting. Be honest: how many hours would YOU last on the Throne? \ud83d\udd6f\ufe0f",
-  "synthetic": true
+  "synthetic": false
  }
 ]

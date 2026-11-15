@@ -24,5 +24,5 @@ Every new short is a folder with `script.json` (layout, voices, lines, SFX, musi
 
 ## Channel rules (40k Comic Shorts)
 - **Every description explains the lore of the short.** Order: a one-line hook, then a `📜 THE LORE` section of 3–5 short bullets that explain each 40k idea the joke relies on (factions, ranks, terms, famous memes and where they come from), then a question for the comments, hashtags, and the fan-work line. Check facts against the Lexicanum wiki; label fan jokes as fan jokes, not canon.
-- Audience: "No, it's not made for kids". Tick "Altered or synthetic content: Yes" (AI voices and art).
+- Audience: "No, it's not made for kids". Leave "Altered or synthetic content" OFF (owner rule: never turn on the AI label).
 - One short a day at 21:30 Rome / 15:30 New York. Add each new short to the board: https://claude.ai/artifact/2hJXCNcCu4RNQRWdhCZZHF (`shorts.json`, preview video ≤15 MB, poster).
