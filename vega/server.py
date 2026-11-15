@@ -514,6 +514,14 @@ def notifications():
     return {"items": notes.history()}
 
 
+@app.post("/api/notifications/{nid}/ignore")
+def notification_ignore(nid: int):
+    try:
+        return notes.ignore(nid)
+    except ValueError as e:
+        raise HTTPException(409, str(e))
+
+
 @app.delete("/api/notifications/{nid}")
 def notification_delete(nid: int):
     return {"removed": notes.remove(nid)}

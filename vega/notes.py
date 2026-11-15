@@ -100,7 +100,7 @@ def decide(nid: int, decision: str, note: str = "") -> dict:
             raise ValueError("decision must be " + " or ".join(ok))
         if decision == "changes" and not note.strip():
             raise ValueError("say what to change")
-        if item["status"] != "pending":
+        if item["status"] != "pending" and not (item["kind"] == "review" and item["status"] == "ignored"):
             raise ValueError(f"already {item['status']}")
         item["status"] = {"allow": "approved", "deny": "denied", "changes": "changes asked"}[decision]
         if note.strip():
@@ -117,6 +117,23 @@ def expire(nid: int) -> None:
             if i["id"] == nid and i.get("status") == "pending":
                 i["status"] = "expired"
                 _save()
+
+
+def ignore(nid: int) -> dict:
+    """Skip a pending request without opening it. An approval goes back to the Claude app's own prompt
+    (the hook stops waiting); an ignored review just sits and can still be answered later."""
+    with _lock:
+        _load()
+        _expire_old()
+        item = next((i for i in _items if i["id"] == nid), None)
+        if item is None:
+            raise ValueError("no such request")
+        if item.get("status") != "pending":
+            raise ValueError(f"already {item.get('status')}")
+        item["status"] = "ignored"
+        item["decided_at"] = datetime.datetime.now().strftime("%d %b %H:%M")
+        _save()
+        return item
 
 
 def remove(nid: int | None = None) -> int:
@@ -147,4 +164,7 @@ if __name__ == "__main__":  # self-check: python3 notes.py
     c = add("info", "hi", "x"); p = add("approval", "a", "b", status="pending")
     assert remove(c["id"]) == 1 and get(c["id"]) is None
     remove(); assert [i["id"] for i in history()] == [p["id"]]
+    assert ignore(p["id"])["status"] == "ignored" and remove(p["id"]) == 1
+    r = add("review", "t", "n", status="pending"); ignore(r["id"])
+    assert decide(r["id"], "allow")["status"] == "approved"
     print("ok")
