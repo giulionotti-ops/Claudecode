@@ -44,6 +44,7 @@
     display: flex; flex-direction: column; gap: 6px; mask-image: linear-gradient(transparent, #000 30%); padding-top: 24px; }
   #log p { margin: 0; padding: 6px 10px; border-left: 2px solid var(--dim); background: rgba(var(--rgb),.05); }
   #log p.you { border-color: var(--c2); color: var(--c2); }
+  form { transition: bottom .32s cubic-bezier(.2,.8,.2,1); } form.kb-snap { transition: none; }
   form { position: fixed; left: 16px; right: 16px; bottom: max(calc(16px + env(safe-area-inset-bottom)), calc(var(--kb, 0px) + 10px)); display: flex; gap: 8px; max-width: 720px; margin: 0 auto; }
   input, select, button { font: inherit; color: var(--c); background: rgba(2,20,30,.8); border: 1px solid var(--dim); border-radius: 4px; }
   input { flex: 1; min-width: 0; padding: 12px; outline: none; font-size: max(16px, 1em); }
@@ -547,11 +548,31 @@ async function ask(text, { typed = false } = {}) {
 const chatOpen = () => document.body.classList.contains('chat');
 const coarse = matchMedia('(pointer: coarse)').matches;
 // Keyboard: track the visible part of the screen so the top buttons, the input and the ring stay in view.
+let kbWait = 0;   // while the iPhone keyboard is on its way up, keep the predicted height
 function onViewport() {
   const vv = window.visualViewport, top = vv ? vv.offsetTop : 0, h = vv ? vv.height : innerHeight, st = document.documentElement.style;
-  st.setProperty('--vvt', `${Math.max(0, top)}px`); st.setProperty('--kb', `${Math.max(0, innerHeight - h - top)}px`);
+  const kb = Math.max(0, innerHeight - h - top);
+  if (kb < 80 && Date.now() < kbWait) return;
+  if (kb > 120) { kbWait = 0; try { localStorage.setItem('neesmo-kb', String(Math.round(kb + top))); } catch {} }
+  st.setProperty('--vvt', `${Math.max(0, top)}px`); st.setProperty('--kb', `${kb}px`);
   if (typeof layoutHud === 'function') layoutHud();
 }
+// iPhone pushes the whole page up when an input near the bottom gets focus, then we pull it back: a bounce.
+// Instead, put the input where it will sit above the keyboard *before* focusing, so iOS has nothing to scroll.
+const iOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+if (iOS) $('#q').addEventListener('touchend', e => {
+  if (document.activeElement === $('#q')) return;
+  e.preventDefault();
+  let kb = 0; try { kb = +localStorage.getItem('neesmo-kb') || 0; } catch {}
+  kb = kb || Math.round(innerHeight * .45);
+  const f = $('#f'); f.classList.add('kb-snap');
+  document.documentElement.style.setProperty('--kb', `${kb}px`); kbWait = Date.now() + 1200;
+  f.offsetHeight;   // apply the new spot now, before focus
+  openChat(); $('#q').focus({ preventScroll: true });
+  f.animate?.([{ opacity: 0 }, { opacity: 1 }], { duration: 320, easing: 'ease-out' });
+  setTimeout(() => f.classList.remove('kb-snap'), 700);
+  setTimeout(onViewport, 1300);   // no keyboard came (hardware keyboard): use the real numbers
+}, { passive: false });
 window.visualViewport?.addEventListener('resize', onViewport); window.visualViewport?.addEventListener('scroll', onViewport);
 function openChat() {
   if (chatOpen()) return;
@@ -1188,7 +1209,8 @@ const hud = { cy: innerHeight / 2, R: 100, tcy: 0, tR: 0, init: false };
 function layoutHud() {
   const narrow = innerWidth <= 900, gap = 34;   // room for the status line under the ring
   if (document.body.classList.contains('chat')) {   // chat open: the ring sits large and dim behind the conversation
-    const vv = window.visualViewport, vt = vv ? vv.offsetTop : 0, vh = vv ? vv.height : innerHeight;
+    const vv = window.visualViewport, vt = vv ? vv.offsetTop : 0, cs = getComputedStyle(document.documentElement);
+    const kb = parseFloat(cs.getPropertyValue('--kb')) || 0, vh = Math.max(200, innerHeight - kb - vt);   // the part of the screen above the keyboard
     hud.tR = Math.min(innerWidth, vh) * .3; hud.tcy = vt + vh / 2; $('#wordmark').style.top = `${hud.tcy}px`; return;
   }
   const top = narrow ? $('.corner.tr').getBoundingClientRect().bottom + 6 : 0;
@@ -1211,7 +1233,8 @@ document.fonts?.ready.then(fitWordmark); addEventListener('resize', fitWordmark)
 addEventListener('resize', layoutHud); setInterval(layoutHud, 1000); layoutHud();
 function frame(t) {
   if (!hud.init && hud.tR) { hud.cy = hud.tcy; hud.R = hud.tR; hud.init = true; }
-  const k = reduce ? 1 : .14; hud.cy += (hud.tcy - hud.cy) * k; hud.R += (hud.tR - hud.R) * k;
+  const k = reduce ? 1 : .09;   // glide, never jump
+  hud.cy += (hud.tcy - hud.cy) * k; hud.R += (hud.tR - hud.R) * k;
   t = reduce ? 0 : t / 1000;
   if (analyser && mode !== 'idle' && mode !== 'thinking') { analyser.getByteFrequencyData(data); level += (data.reduce((a, b) => a + b, 0) / data.length / 255 * 2.2 - level) * .3; }
   else level *= .9;
