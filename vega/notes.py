@@ -56,7 +56,7 @@ def _expire_old() -> None:
     """A pending approval whose hook has given up (or was cancelled) is answered in the Claude app instead."""
     now = time.time()
     for i in _items:
-        if i.get("status") == "pending" and now - i["ts"] > WAIT_S + 15:
+        if i.get("status") == "pending" and i["kind"] == "approval" and now - i["ts"] > WAIT_S + 15:
             i["status"] = "expired"
 
 
@@ -86,19 +86,25 @@ def get(nid: int) -> dict | None:
         return next((i for i in _items if i["id"] == nid), None)
 
 
-def decide(nid: int, decision: str) -> dict:
-    """Approve or deny a pending request. Raises ValueError if it is no longer pending."""
-    if decision not in ("allow", "deny"):
-        raise ValueError("decision must be allow or deny")
+def decide(nid: int, decision: str, note: str = "") -> dict:
+    """Answer a pending request. Raises ValueError if it is no longer pending.
+    approval (permission prompt): allow / deny.  review (e.g. a new short to post): allow / changes, with a note."""
     with _lock:
         _load()
         _expire_old()
-        item = next((i for i in _items if i["id"] == nid and i["kind"] == "approval"), None)
+        item = next((i for i in _items if i["id"] == nid and i["kind"] in ("approval", "review")), None)
         if item is None:
             raise ValueError("no such request")
+        ok = ("allow", "changes") if item["kind"] == "review" else ("allow", "deny")
+        if decision not in ok:
+            raise ValueError("decision must be " + " or ".join(ok))
+        if decision == "changes" and not note.strip():
+            raise ValueError("say what to change")
         if item["status"] != "pending":
             raise ValueError(f"already {item['status']}")
-        item["status"] = "approved" if decision == "allow" else "denied"
+        item["status"] = {"allow": "approved", "deny": "denied", "changes": "changes asked"}[decision]
+        if note.strip():
+            item["note"] = note.strip()[:2000]
         item["decided_at"] = datetime.datetime.now().strftime("%d %b %H:%M")
         _save()
         return item
