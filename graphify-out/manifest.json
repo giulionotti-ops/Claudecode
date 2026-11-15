@@ -16026,9 +16026,9 @@
     "semantic_hash": ""
   },
   "vega/install.sh": {
-    "mtime": 1794774878.4956772,
-    "seen": 1794775937.538181,
-    "ast_hash": "d85bc9d7cc37a30a6339ca133fc2474e",
+    "mtime": 1794776498.7721348,
+    "seen": 1794776527.9163764,
+    "ast_hash": "6c105e8e9a700cc78d5bf2a315d962a5",
     "semantic_hash": ""
   },
   "docs/product/AUDIT.md": {
@@ -16068,9 +16068,9 @@
     "semantic_hash": ""
   },
   "vega/static/guide.html": {
-    "mtime": 1794775647.231511,
-    "seen": 1794775937.5406199,
-    "ast_hash": "0bee60b1bc2bdf314ed2ac2c59b98716",
+    "mtime": 1794776498.7721348,
+    "seen": 1794776527.9196413,
+    "ast_hash": "3dc160bd8840450b9fb848658c8e1997",
     "semantic_hash": ""
   },
   "vega/static/landing.html": {

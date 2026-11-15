@@ -35,7 +35,7 @@
   @keyframes drift { to { transform: translate(-50%, -50%) skewX(-11deg) scale(1.03); filter: blur(2.2px); } }
   @media (prefers-reduced-motion: reduce) { #wordmark { animation: none; } }
   .corner { position: fixed; padding: 16px; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); }
-  .tl { top: env(safe-area-inset-top); left: env(safe-area-inset-left); } .tr { top: env(safe-area-inset-top); right: env(safe-area-inset-right); text-align: right; }
+  .tl { top: calc(var(--vvt, 0px) + env(safe-area-inset-top)); left: env(safe-area-inset-left); } .tr { top: calc(var(--vvt, 0px) + env(safe-area-inset-top)); right: env(safe-area-inset-right); text-align: right; }
   .corner b { color: var(--c); font-weight: 600; }
   #status { position: fixed; left: 0; right: 0; top: calc(50% + min(26vmin, 210px)); text-align: center;
     letter-spacing: .4em; text-transform: uppercase; font-size: 13px; text-shadow: 0 0 8px var(--c); }
@@ -44,7 +44,7 @@
     display: flex; flex-direction: column; gap: 6px; mask-image: linear-gradient(transparent, #000 30%); padding-top: 24px; }
   #log p { margin: 0; padding: 6px 10px; border-left: 2px solid var(--dim); background: rgba(var(--rgb),.05); }
   #log p.you { border-color: var(--c2); color: var(--c2); }
-  form { position: fixed; left: 16px; right: 16px; bottom: calc(16px + env(safe-area-inset-bottom)); display: flex; gap: 8px; max-width: 720px; margin: 0 auto; }
+  form { position: fixed; left: 16px; right: 16px; bottom: max(calc(16px + env(safe-area-inset-bottom)), calc(var(--kb, 0px) + 10px)); display: flex; gap: 8px; max-width: 720px; margin: 0 auto; }
   input, select, button { font: inherit; color: var(--c); background: rgba(2,20,30,.8); border: 1px solid var(--dim); border-radius: 4px; }
   input { flex: 1; min-width: 0; padding: 12px; outline: none; font-size: max(16px, 1em); }
   #f > * { border-radius: 12px; } #q { padding-inline: 16px; } ::placeholder { color: rgba(var(--rgb),.45); }
@@ -202,17 +202,18 @@
   .cards, #status, #hud, #log { transition: opacity .45s cubic-bezier(.2,.8,.2,1), filter .45s, translate .45s cubic-bezier(.2,.8,.2,1); }
   body.chat .cards { opacity: 0; filter: blur(6px); pointer-events: none; }
   body.chat .cards.l { translate: -40px 0; } body.chat .cards.r { translate: 40px 0; }
-  body.chat #status { opacity: 0; }
+  body.chat #status { opacity: 0 !important; }   /* beats the inline opacity the status animation leaves */
   body.chat #hud { opacity: .32; }
   #chathead { display: none; }
-  body.chat #chathead { display: flex; position: fixed; z-index: 5; top: calc(14px + env(safe-area-inset-top)); left: 50%; translate: -50% 0;
+  body.chat #chathead { display: flex; position: fixed; z-index: 5; top: calc(var(--vvt, 0px) + 14px + env(safe-area-inset-top)); left: 50%; translate: -50% 0;
     gap: 8px; align-items: center; animation: fadein .35s both; }
   #chathead button { height: 36px; font-size: 12px; } #chathead h2 { margin: 0 8px; font-size: 13px; letter-spacing: .35em; font-weight: 600; }
   @media (max-width: 900px) { body.chat #chathead { left: 16px; translate: none; } body.chat .corner.tl { opacity: 0; pointer-events: none; } }
   .corner.tl { transition: opacity .3s; }
-  body.chat #log { left: 50%; translate: -50% 0; width: min(760px, calc(100% - 32px)); top: calc(64px + env(safe-area-inset-top));
-    bottom: calc(80px + env(safe-area-inset-bottom) + var(--att, 0px)); max-height: none; mask-image: linear-gradient(transparent, #000 24px);
+  body.chat #log { left: 50%; translate: -50% 0; width: min(760px, calc(100% - 32px)); top: calc(var(--vvt, 0px) + 64px + env(safe-area-inset-top));
+    bottom: calc(max(calc(16px + env(safe-area-inset-bottom)), calc(var(--kb, 0px) + 10px)) + 64px + var(--att, 0px)); max-height: none; mask-image: linear-gradient(transparent, #000 24px);
     gap: 14px; padding: 24px 2px 8px; overscroll-behavior: contain; }
+  body:not(.chat) #log { display: none; }   /* replies live in the chat screen, not as text over the home screen */
   /* home screen: only the newest line, two rows at most; the full conversation lives in the chat screen */
   body:not(.chat) #log p:not(:last-of-type), body:not(.chat) #log .typing { display: none; }
   body:not(.chat) #log p { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; cursor: pointer;
@@ -434,7 +435,10 @@ const $ = s => document.querySelector(s);
 const statusEl = $('#status'), logEl = $('#log'), voiceSel = $('#voice');
 let ac, analyser, level = 0, mode = 'idle', rec, chunks = [], micStream, micSrc;
 
-function setStatus(t, err) { statusEl.textContent = t; statusEl.classList.toggle('err', !!err); }
+function setStatus(t, err) {
+  statusEl.textContent = t; statusEl.classList.toggle('err', !!err); clearTimeout(setStatus.t);
+  if (t === 'Heard nothing') setStatus.t = setTimeout(() => { if (statusEl.textContent === t && mode === 'idle') setStatus('Standby'); }, 2500);
+}
 // Replies: a small, safe markdown subset (code, bold, links, lists). Everything is escaped first.
 function md(t) {
   const esc = x => x.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -524,6 +528,7 @@ voiceSel.onchange = () => { try { localStorage.setItem('neesmo-voice-v2', voiceS
 async function ask(text, { typed = false } = {}) {
   text = text.trim(); const files = pending.splice(0); renderAtts();
   if ((!text && !files.length) || mode === 'thinking') return;
+  if (!typed) openChat();   // spoken: show the conversation the same way typing does
   say(text, 'you', { files }); mode = 'thinking'; setStatus('Processing'); typing(true);
   try {
     const paths = [];
@@ -540,15 +545,23 @@ async function ask(text, { typed = false } = {}) {
 }
 // ── chat screen ──
 const chatOpen = () => document.body.classList.contains('chat');
+const coarse = matchMedia('(pointer: coarse)').matches;
+// Keyboard: track the visible part of the screen so the top buttons, the input and the ring stay in view.
+function onViewport() {
+  const vv = window.visualViewport, top = vv ? vv.offsetTop : 0, h = vv ? vv.height : innerHeight, st = document.documentElement.style;
+  st.setProperty('--vvt', `${Math.max(0, top)}px`); st.setProperty('--kb', `${Math.max(0, innerHeight - h - top)}px`);
+  if (typeof layoutHud === 'function') layoutHud();
+}
+window.visualViewport?.addEventListener('resize', onViewport); window.visualViewport?.addEventListener('scroll', onViewport);
 function openChat() {
   if (chatOpen()) return;
   const go = () => { document.body.classList.add('chat'); $('#q').placeholder = 'Message Neesmo…'; logEl.scrollTop = 1e9; layoutHud?.(); };
-  document.startViewTransition && !reduce ? document.startViewTransition(go) : go();
+  document.startViewTransition && !reduce && !coarse ? document.startViewTransition(go) : go();
 }
 function closeChat() {
   if (!chatOpen()) return;
   const go = () => { document.body.classList.remove('chat'); $('#q').placeholder = 'Ask Neesmo anything'; $('#q').blur(); layoutHud?.(); };
-  document.startViewTransition && !reduce ? document.startViewTransition(go) : go();
+  document.startViewTransition && !reduce && !coarse ? document.startViewTransition(go) : go();
 }
 $('#q').addEventListener('focus', openChat);
 logEl.addEventListener('click', e => { if (!chatOpen() && e.target.closest('p')) openChat(); });
@@ -598,6 +611,7 @@ async function speak(text) {
       analyser.disconnect();
     }
   } catch (e) { setStatus('Voice: ' + e.message, true); }
+  finally { try { analyser.disconnect(); } catch {} if (mode === 'speaking') { mode = 'idle'; setStatus('Standby'); } }
 }
 $('#f').onsubmit = e => { e.preventDefault(); ask($('#q').value, { typed: true }); $('#q').value = ''; };
 
@@ -902,15 +916,15 @@ $('#wel-name').oninput = $('#wel-text').oninput = async () => { PREFS.welName = 
 $('#wel-try').onclick = () => { togglePop($('#gear'), $('#pop-s'), false); welcome(true); };
 async function welcome(force) {
   const text = welText(await welBusy()), el = $('#welcome');
+  if (PREFS.welVoice || force === 'voice') {   // spoken: just say it, no text on screen
+    const go = () => speak(text).catch(() => {});
+    try { await audio().resume(); } catch {}
+    if (ac?.state === 'running') go(); else addEventListener('pointerdown', () => { audio().resume().then(go); }, { once: true });
+    return;
+  }
   el.innerHTML = `<span></span><small>Neesmo online</small>`; el.hidden = false;
   decode(el.firstChild, text, 900);
   if (window.Motion && !reduce) Motion.animate(el, { opacity: [0, 1], scale: [.92, 1], filter: ['blur(8px)', 'blur(0px)'] }, { type: 'spring', stiffness: 220, damping: 20 });
-  if (PREFS.welVoice || force === 'voice') {
-    const go = () => speak(text).catch(() => {});
-    try { await audio().resume(); } catch {}
-    if (ac.state === 'running') go();
-    else addEventListener('pointerdown', () => { audio().resume().then(go); }, { once: true });
-  }
   clearTimeout(welcome.t);
   welcome.t = setTimeout(() => {
     const hide = () => { el.hidden = true; };
@@ -1170,20 +1184,21 @@ addEventListener('resize', resize); window.ResizeObserver && new ResizeObserver(
 function arc(r, a0, a1, w, color, blur) { g.beginPath(); g.arc(0, 0, r, a0, a1); g.lineWidth = w; g.strokeStyle = color; g.shadowBlur = blur || 0; g.shadowColor = color; g.stroke(); }
 // Ring placement: centred in the free space (between the header and the cards on phones,
 // above the input on desktop), sized so the ring, its NEESMO lettering and the status line fit.
-const hud = { cy: innerHeight / 2, R: 100 };
+const hud = { cy: innerHeight / 2, R: 100, tcy: 0, tR: 0, init: false };
 function layoutHud() {
   const narrow = innerWidth <= 900, gap = 34;   // room for the status line under the ring
   if (document.body.classList.contains('chat')) {   // chat open: the ring sits large and dim behind the conversation
-    hud.R = Math.min(innerWidth, innerHeight) * .3; hud.cy = innerHeight / 2; $('#wordmark').style.top = `${hud.cy}px`; return;
+    const vv = window.visualViewport, vt = vv ? vv.offsetTop : 0, vh = vv ? vv.height : innerHeight;
+    hud.tR = Math.min(innerWidth, vh) * .3; hud.tcy = vt + vh / 2; $('#wordmark').style.top = `${hud.tcy}px`; return;
   }
   const top = narrow ? $('.corner.tr').getBoundingClientRect().bottom + 6 : 0;
   const cards = $('#agents-l'), cardTop = cards.children.length ? cards.getBoundingClientRect().top : innerHeight - 160;
   const bottom = (narrow ? cardTop : $('#f').getBoundingClientRect().top) - 6;
   const avail = Math.max(120, bottom - top - gap);
-  hud.R = Math.max(40, Math.min(Math.min(innerWidth, innerHeight) * .22, avail / 3.4, innerWidth / 3.6));
-  hud.cy = top + avail / 2;
-  statusEl.style.top = `${hud.cy + hud.R * 1.45}px`;
-  $('#wordmark').style.top = `${hud.cy}px`;
+  hud.tR = Math.max(40, Math.min(Math.min(innerWidth, innerHeight) * .22, avail / 3.4, innerWidth / 3.6));
+  hud.tcy = top + avail / 2;
+  statusEl.style.top = `${hud.tcy + hud.tR * 1.45}px`;
+  $('#wordmark').style.top = `${hud.tcy}px`;
 }
 // Wordmark: measured so the slanted word fills ~94% of a phone's width (62% on desktop), centred.
 function fitWordmark() {
@@ -1195,6 +1210,8 @@ function fitWordmark() {
 document.fonts?.ready.then(fitWordmark); addEventListener('resize', fitWordmark); fitWordmark();
 addEventListener('resize', layoutHud); setInterval(layoutHud, 1000); layoutHud();
 function frame(t) {
+  if (!hud.init && hud.tR) { hud.cy = hud.tcy; hud.R = hud.tR; hud.init = true; }
+  const k = reduce ? 1 : .14; hud.cy += (hud.tcy - hud.cy) * k; hud.R += (hud.tR - hud.R) * k;
   t = reduce ? 0 : t / 1000;
   if (analyser && mode !== 'idle' && mode !== 'thinking') { analyser.getByteFrequencyData(data); level += (data.reduce((a, b) => a + b, 0) / data.length / 255 * 2.2 - level) * .3; }
   else level *= .9;

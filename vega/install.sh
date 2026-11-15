@@ -74,6 +74,8 @@ else
   fi
   env_text="# Neesmo settings (read by the service at start)
 NEESMO_AUTH=1
+# agent sessions also show in the Claude app (Remote Control; needs a Claude.ai login, set 0 for API-key logins)
+NEESMO_RC=1
 NEESMO_DIR=$CONF
 NEESMO_URL=http://127.0.0.1:$PORT${contact:+
 NEESMO_PUSH_CONTACT=mailto:$contact}"
