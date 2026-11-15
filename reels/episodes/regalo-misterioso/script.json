@@ -1,0 +1,41 @@
+{
+ "title": "Il regalo da 80€ che sparisce domani",
+ "brand": { "hashtags": [] },
+ "cast": { "hero": { "shirt": "#7a4cff", "hair": "#e0b34a", "pants": "#22223b" }, "friend": { "shirt": "#33c26b", "cap": "#1d1d1d" } },
+ "tail": 3.0,
+ "lines": [
+  { "text": "Domani a mezzanotte sparisce un regalo da 80€.", "say": "Domani a mezzanotte sparisce un regalo da ottanta euro.",
+    "scene": { "type": "mystery", "captionY": -999, "y": 430, "camLift": 1.2, "clockFrom": 86399, "clockSpeed": 1,
+               "title": [{ "text": "SPARISCE DOMANI", "at": 0 }, { "text": "80€ ?", "at": 0, "big": true, "color": "#ffd23f" }] } },
+  { "text": "E quasi nessuno lo sta usando." },
+  { "text": "Non è un concorso. Non è un abbonamento. E non devi invitare nessuno.",
+    "scene": { "type": "guess", "bg": "#ffd23f", "floor": "#f4b400",
+               "cards": [{ "text": "CONCORSO", "at": "@concorso" }, { "text": "ABBONAMENTO", "at": "@abbonamento" }, { "text": "INVITARE AMICI", "at": "@invitare" }, { "text": "1 CODICE + 10€", "at": "@servono", "ok": true }] } },
+  { "text": "Ti servono solo un codice e 10€.", "say": "Ti servono solo un codice e dieci euro." },
+  { "text": "È il bonus del conto Buddy di UniCredit.",
+    "scene": { "type": "mystery", "openAt": "@bonus", "clock": false, "prize": "80" } },
+  { "text": "Apri il conto con un codice invito entro domani, e spendi 10€ con la carta entro 30 giorni.", "say": "Apri il conto con un codice invito entro domani, e spendi dieci euro con la carta entro trenta giorni.",
+    "scene": { "type": "checklist", "head": "COSA FARE",
+               "steps": [{ "text": "Apri il conto Buddy", "sub": "entro il 16/11", "at": "@apri" }, { "text": "Inserisci il codice", "sub": "durante l'apertura", "at": "@codice" }, { "text": "Spendi 10€ con la carta", "sub": "entro 30 giorni", "at": "@spendi" }] } },
+  { "text": "Gli 80€ arrivano entro 90 giorni lavorativi: 50 di bonus più 30 extra.", "say": "Gli ottanta euro arrivano entro novanta giorni lavorativi: cinquanta di bonus più trenta extra.",
+    "scene": { "type": "vault", "openAt": "@arrivano", "note": "Solo maggiorenni residenti in Italia e nuovi clienti: nessun rapporto con UniCredit dal 2020",
+               "badges": [{ "text": "+50€", "kind": "green", "at": "@50", "pos": [300, 470] }, { "text": "+30€", "kind": "green", "at": "@30", "pos": [780, 470] }] } },
+  { "text": "Da martedì il regalo scende a 50€.", "say": "Da martedì il regalo scende a cinquanta euro.",
+    "scene": { "type": "vault", "openAt": 0, "closeAt": "@scende",
+               "badges": [{ "text": "80€", "kind": "green", "at": 0, "out": "@scende", "pos": [540, 470] }, { "text": "50€", "kind": "red", "at": "@scende", "pos": [540, 470] }] } },
+  { "text": "Mandalo all'amico che dice sempre di essere al verde. Il codice è nel link in bio.",
+    "scene": { "type": "end", "title": "CODICE INVITO", "sub": "conto Buddy · UniCredit", "card": "#7a4cff", "ink": "#ffffff", "sky0": "#0d0a24", "sky1": "#3a2a8a", "seed": 61,
+               "lines": ["Mandalo a chi è sempre al verde", "80€ solo fino al 16/11/26"] } }
+ ],
+ "post": [
+  "Regalo da 80€ che sparisce domani: bonus Buddy fino al 16/11 ⏳ Codice invito: {code}",
+  "Non è un concorso, non è un abbonamento e non devi invitare nessuno. Da martedì 17/11 scende a 50€.",
+  "1️⃣ Apri il conto Genius buddy (canone zero) dall'app buddy UniCredit",
+  "2️⃣ Inserisci il codice {code} durante l'apertura, entro il 16/11",
+  "3️⃣ Entro 30 giorni spendi almeno 10€ con la carta (bonifici e ricariche non contano)",
+  "💸 Bonus entro 90 giorni lavorativi. Solo maggiorenni residenti in Italia e nuovi clienti (nessun rapporto con UniCredit dal 2020).",
+  "📩 Mandalo all'amico che dice sempre di essere al verde.",
+  "ℹ️ Codice personale: se lo usi ricevo anch'io un bonus. Condizioni complete sul sito buddy UniCredit."
+ ],
+ "hashtags": ["#codiceinvito", "#bonus", "#soldi", "#buddy", "#risparmio"]
+}

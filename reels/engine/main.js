@@ -63,6 +63,9 @@ built.forEach((b, i) => {
   if (b.p.calendar) b.p.calendar.slice(1).forEach(c => SFX.push({ t: c.at, kind: 'flip' }));
   if (b.end) SFX.push({ t: b.t0 + .05, kind: 'ding' });
   (b.p.cuts || []).forEach(c => SFX.push({ t: c, kind: 'click' }));
+  if (b.p.openAt != null) SFX.push({ t: b.p.openAt, kind: b.p.type === 'vault' ? 'rise' : 'ding' });
+  (b.p.cards || []).forEach(c => SFX.push({ t: c.at, kind: 'flip' }, { t: typeof c.at === 'number' ? c.at + .35 : c.at, kind: c.ok ? 'ding' : 'down' }));
+  (b.p.steps || []).forEach(s => SFX.push({ t: s.at, kind: 'pop' }));
   for (const k of ['buyAt', 'billAt', 'rainAt', 'notifyAt']) if (b.p[k] != null) SFX.push({ t: b.p[k], kind: k === 'notifyAt' ? 'ding' : k === 'rainAt' ? 'coin' : 'pop' });
   (b.p.panel?.msgs || b.p.form?.msgs || []).forEach(x => SFX.push({ t: x.at, kind: 'pop' }));
 });

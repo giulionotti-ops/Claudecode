@@ -276,6 +276,24 @@ function bigcal(p, ctx) {
   };
 }
 
+// Big stacked 2D title lines (used by hook and mystery). p.title: [{text, at, big, color, strikeAt}], p.y = top
+function drawTitles(g, t, p) {
+      let y = p.y || 260;
+      for (const l of p.title || []) {
+        const big = !!l.big, k = pop(seg(t, at(l.at, 1e9), at(l.at, 1e9) + .25)); const size = big ? 300 : 170;
+        if (k > 0) {
+          g.save(); g.translate(540, y + size / 2); g.rotate(big ? -.06 + Math.sin(t * 6) * .015 : -.03); const pulse = big ? 1 + .04 * Math.sin(t * 8) : 1; g.scale(k * pulse, k * pulse);
+          const s = K.fitText(g, l.text, 980, size, 800, 'Baloo'); g.font = `800 ${s}px Baloo`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.lineJoin = 'round';
+          g.shadowColor = 'rgba(0,0,0,.45)'; g.shadowBlur = 24; g.shadowOffsetY = 10; g.strokeStyle = '#1d0b0b'; g.lineWidth = s * .2; g.strokeText(l.text, 0, 0); g.shadowColor = 'transparent';
+          g.fillStyle = l.color || '#ffffff'; g.fillText(l.text, 0, 0);
+          const st = seg(t, at(l.strikeAt), at(l.strikeAt) + .25);   // red strike-through, e.g. 80€ → 50€
+          if (st > 0) { const w = g.measureText(l.text).width / 2 + 20; g.strokeStyle = '#ff2d2d'; g.lineCap = 'round'; g.lineWidth = s * .12; g.beginPath(); g.moveTo(-w, s * .18); g.lineTo(-w + 2 * w * st, -s * .18); g.stroke(); }
+          g.restore();
+        }
+        y += (big ? 300 : 170) * .9;
+      }
+}
+
 // ---------------- hook: spinning rays, orbiting coins, hero jumps; huge stacked title in 2D ----------------
 // p.title: [{text, at, color}] — each line slams in at its time; p.shake = time of the big word
 function hook(p, ctx) {
@@ -307,22 +325,7 @@ function hook(p, ctx) {
         else c.rotation.y = t * 3 + i;
         c.visible = t > (p._t0 + .1); });
     },
-    overlay2d(g, t) {
-      let y = p.y || 260;
-      for (const l of p.title || []) {
-        const big = !!l.big, k = pop(seg(t, at(l.at, 1e9), at(l.at, 1e9) + .25)); const size = big ? 300 : 170;
-        if (k > 0) {
-          g.save(); g.translate(540, y + size / 2); g.rotate(big ? -.06 + Math.sin(t * 6) * .015 : -.03); const pulse = big ? 1 + .04 * Math.sin(t * 8) : 1; g.scale(k * pulse, k * pulse);
-          const s = K.fitText(g, l.text, 980, size, 800, 'Baloo'); g.font = `800 ${s}px Baloo`; g.textAlign = 'center'; g.textBaseline = 'middle'; g.lineJoin = 'round';
-          g.shadowColor = 'rgba(0,0,0,.45)'; g.shadowBlur = 24; g.shadowOffsetY = 10; g.strokeStyle = '#1d0b0b'; g.lineWidth = s * .2; g.strokeText(l.text, 0, 0); g.shadowColor = 'transparent';
-          g.fillStyle = l.color || '#ffffff'; g.fillText(l.text, 0, 0);
-          const st = seg(t, at(l.strikeAt), at(l.strikeAt) + .25);   // red strike-through, e.g. 80€ → 50€
-          if (st > 0) { const w = g.measureText(l.text).width / 2 + 20; g.strokeStyle = '#ff2d2d'; g.lineCap = 'round'; g.lineWidth = s * .12; g.beginPath(); g.moveTo(-w, s * .18); g.lineTo(-w + 2 * w * st, -s * .18); g.stroke(); }
-          g.restore();
-        }
-        y += (big ? 300 : 170) * .9;
-      }
-    },
+    overlay2d(g, t) { drawTitles(g, t, p); },
   };
 }
 
@@ -413,7 +416,7 @@ function street(p, ctx) {
   return {
     scene, camera, update(t) {
       const tl = t - p._t0; lookCam(camera, [.6 + Math.sin(tl * .8) * .3, 3.9, 10.2], [0, 3.1, -.6]);
-      world.position.z = (tl * 3.2) % 7;
+      world.position.z = -((tl * 3.2) % 7);   // hero walks toward camera, so the street slides away from it
       H.reset(); walk(H, t); H.face(faceAt(p.faces, t, 'neutral'));
       others.forEach((o, i) => { o.reset(); walk(o, t + i * .4); o.armR.s.rotation.x = -1.3; o.armR.el.rotation.x = -.4; o.face('happy'); o.head.rotation.y = i ? .3 : -.3; });
       const sb = ease(seg(t, at(p.billAt), at(p.billAt) + .3));
@@ -519,6 +522,149 @@ function pizza(p, ctx) {
   };
 }
 
+// ---------------- mystery: spotlit stage, wobbling gift box, "?" floating, countdown clock; bursts open at openAt ----------------
+function mystery(p, ctx) {
+  const scene = new THREE.Scene(); scene.background = new THREE.Color(p.bg || '#0d0a24');
+  K.lights(scene, { sky: '#b9b0ff', ground: '#120c30', hemi: .7, sunI: .5, dir: [2, 10, 6] });
+  const spot = new THREE.SpotLight('#fff3d0', 260, 30, .5, .5); spot.position.set(0, 14, 4); spot.target.position.set(0, 0, 0); spot.castShadow = true; scene.add(spot, spot.target);
+  box(30, .3, 20, '#1b1540', 0, -.15, 0, scene);
+  const disc = new THREE.Mesh(new THREE.CylinderGeometry(3.4, 3.6, .4, 48), K.mat('#2d2466')); disc.position.y = .2; disc.receiveShadow = true; scene.add(disc);
+  const beam = new THREE.Mesh(new THREE.ConeGeometry(4, 14, 40, 1, true), new THREE.MeshBasicMaterial({ color: '#fff3d0', transparent: true, opacity: .07, side: THREE.DoubleSide, depthWrite: false })); beam.position.set(0, 7.2, 0); scene.add(beam);
+  const gift = new THREE.Group(); gift.position.y = .4; scene.add(gift);
+  const gc = p.giftColor || '#e8384f', rc = p.ribbon || '#ffd23f';
+  box(2.8, 2.4, 2.8, gc, 0, 1.2, 0, gift); box(.5, 2.42, 2.82, rc, 0, 1.2, 0, gift); box(2.82, 2.42, .5, rc, 0, 1.2, 0, gift);
+  const lid = new THREE.Group(); lid.position.y = 2.4; gift.add(lid);
+  box(3.1, .55, 3.1, gc, 0, .27, 0, lid); box(.52, .57, 3.12, rc, 0, .27, 0, lid); box(3.12, .57, .52, rc, 0, .27, 0, lid);
+  const bow1 = box(.9, .5, .3, rc, -.45, .8, 0, lid); bow1.rotation.z = .5; const bow2 = box(.9, .5, .3, rc, .45, .8, 0, lid); bow2.rotation.z = -.5;
+  const qT = K.canvasTex(128, 128, g => { g.fillStyle = '#ffd23f'; g.font = '900 120px Nunito'; g.textAlign = 'center'; g.textBaseline = 'middle'; g.fillText('?', 64, 70); });
+  const qs = Array.from({ length: 5 }, (_, i) => { const sp = new THREE.Sprite(new THREE.SpriteMaterial({ map: qT, transparent: true })); sp.scale.setScalar(.9 + (i % 2) * .4); scene.add(sp); return sp; });
+  const clockT = K.canvasTex(512, 160, (g, W, Hh, t = 0) => {
+    g.fillStyle = '#05040f'; K.rrect(g, 0, 0, W, Hh, 24); g.fill(); g.strokeStyle = '#ff2d55'; g.lineWidth = 6; K.rrect(g, 6, 6, W - 12, Hh - 12, 20); g.stroke();
+    const left = Math.max(0, (p.clockFrom ?? 86399) - Math.floor(t * (p.clockSpeed ?? 1))); const h = Math.floor(left / 3600), m = Math.floor(left % 3600 / 60), sec = left % 60;
+    g.fillStyle = '#ff2d55'; g.font = '900 100px "Courier New", monospace'; g.textAlign = 'center'; g.textBaseline = 'middle';
+    g.fillText(`${String(h).padStart(2, '0')}:${String(m).padStart(2, '0')}:${String(sec).padStart(2, '0')}`, W / 2, Hh / 2 + 6); });
+  const clock = new THREE.Mesh(new THREE.PlaneGeometry(3.6, 1.12), new THREE.MeshBasicMaterial({ map: clockT })); clock.position.set(-1.5, 4.9, -.5); clock.scale.setScalar(.6); clock.rotation.y = .25; scene.add(clock); clock.visible = p.clock !== false;
+  const H = hero(ctx); H.root.position.set(2.5, .4, 1.2); H.root.rotation.y = -.5; scene.add(H.root);
+  const prize = K.coin(p.prize || '80', -Math.PI / 2); prize.scale.setScalar(0); prize.position.set(0, 2.8, 0); scene.add(prize);
+  const conf = Array.from({ length: 60 }, (_, i) => { const m = new THREE.Mesh(new THREE.PlaneGeometry(.18, .32), new THREE.MeshBasicMaterial({ color: ['#ffd23f', '#ff3d8b', '#33c26b', '#3a6cff', '#ffffff'][i % 5], side: THREE.DoubleSide })); m.visible = false; scene.add(m); return m; });
+  const camera = cam(40);
+  return {
+    scene, camera, update(t) {
+      const tl = t - p._t0, o = at(p.openAt), op = seg(t, o, o + .5);
+      lookCam(camera, [Math.sin(tl * .6) * .5, 5.0, 15.5 - ease(seg(t, p._t0, p._t1)) * 1.5], [0, 3.4 + (p.camLift || 0), 0]);
+      const shake = t < o ? Math.sin(t * 22) * .05 * (1 + Math.sin(t * 1.3)) : 0; gift.rotation.z = shake; gift.position.x = shake * 2;
+      lid.position.y = 2.4 + op * 6; lid.rotation.x = op * 2.2; lid.position.z = op * -1.5; lid.visible = op < .98;
+      const pr = pop(seg(t, o + .1, o + .6)); prize.scale.setScalar(pr * 1.4); prize.position.y = 2.8 + pr * 2.2; prize.rotation.y = t * 2.5;
+      qs.forEach((q, i) => { const a = i / qs.length * 6.283 + t * .8; q.position.set(Math.cos(a) * 3.2, 4.2 + Math.sin(t * 2 + i) * .6, Math.sin(a) * 1.4); q.visible = t < o; });
+      conf.forEach((c, i) => { const d = t - o; c.visible = d > 0 && d < 3; if (!c.visible) return; const a = i * 2.39, v = 4 + (i % 7); c.position.set(Math.cos(a) * d * (1 + i % 3) * .9, 2.8 + v * d - 6 * d * d, Math.sin(a) * d); c.rotation.set(d * 6 + i, d * 4, i); });
+      clockT.redraw(tl);
+      H.reset(); idle(H, t); H.face(t >= o ? 'stars' : faceAt(p.faces, t, 'surprised'));
+      const peek = Math.sin(tl * 1.6) * .5 + .5; H.head.rotation.z = t < o ? .25 * peek : 0; H.torso.rotation.z = t < o ? .1 * peek : 0;
+      if (t >= o) { H.armL.s.rotation.z = -2.5; H.armR.s.rotation.z = 2.5; }
+    },
+    overlay2d(g, t) { drawTitles(g, t, p); },
+  };
+}
+
+// ---------------- guess: cards flip up one by one and get a red X (or a green check) ----------------
+// p.cards: [{text, at, ok}]
+function guess(p, ctx) {
+  const scene = new THREE.Scene(); scene.background = new THREE.Color(p.bg || '#ffd23f');
+  K.lights(scene, { hemi: 1.7, sunI: 1.3, dir: [3, 8, 10] });
+  box(30, 20, .5, p.bg || '#ffd23f', 0, 10, -3, scene); box(30, .3, 20, p.floor || '#f4b400', 0, -.15, 4, scene);
+  const H = hero(ctx); H.root.position.set(0, 0, -1.2); scene.add(H.root);
+  const n = (p.cards || []).length;
+  const cards = (p.cards || []).map((c, i) => {
+    const front = K.canvasTex(400, 260, (g, W, Hh, mark = 0) => {
+      g.fillStyle = '#fff'; K.rrect(g, 0, 0, W, Hh, 26); g.fill(); g.fillStyle = '#1d1d1d'; g.textAlign = 'center'; g.textBaseline = 'middle';
+      K.fitText(g, c.text, W - 60, 64, 900); g.fillText(c.text, W / 2, Hh / 2 + 4);
+      if (mark > 0) { g.save(); g.globalAlpha = Math.min(1, mark * 1.5); g.lineCap = 'round'; g.lineWidth = 26;
+        if (c.ok) { g.strokeStyle = '#33c26b'; g.beginPath(); g.moveTo(W * .3, Hh * .55); g.lineTo(W * .45, Hh * .75); g.lineTo(W * .75, Hh * .25); g.stroke(); }
+        else { g.strokeStyle = '#ff2d2d'; const k = mark; g.beginPath(); g.moveTo(40, 30); g.lineTo(40 + (W - 80) * k, 30 + (Hh - 60) * k); g.moveTo(W - 40, 30); g.lineTo(W - 40 - (W - 80) * k, 30 + (Hh - 60) * k); g.stroke(); }
+        g.restore(); } });
+    const m = new THREE.Mesh(new THREE.BoxGeometry(2.25, 1.46, .08), [K.mat('#ddd'), K.mat('#ddd'), K.mat('#ddd'), K.mat('#ddd'), new THREE.MeshLambertMaterial({ map: front }), K.mat('#3a6cff')]);
+    m.castShadow = true; scene.add(m); return { m, front, c, i, x: n === 1 ? 0 : (i % 2 ? 1.2 : -1.2), y: 6.7 - Math.floor(i / 2) * 1.7 };
+  });
+  const camera = cam(40);
+  return {
+    scene, camera, update(t) {
+      lookCam(camera, [0, 4.8, 13.5 - ease(seg(t, p._t0, p._t1)) * 1.0], [0, 4.4, 0]);
+      H.reset(); idle(H, t);
+      let last = null;
+      cards.forEach(({ m, front, c, x, y }) => {
+        const a = at(c.at), f = ease(seg(t, a, a + .3)), mk = seg(t, a + .3, a + .6);
+        m.visible = f > 0; m.position.set(x, y + (1 - f) * -2, .8); m.rotation.y = (1 - f) * Math.PI; m.rotation.z = (c.i % 2 ? .05 : -.05);
+        front.redraw(mk); if (t >= a) last = c;
+      });
+      const shakeNo = last && !last.ok && t - at(last.at) < 1.2; H.head.rotation.y = shakeNo ? Math.sin(t * 18) * .35 : 0;
+      H.face(last ? (last.ok ? 'happy' : 'bored') : 'neutral');
+      if (last && last.ok) { H.armR.s.rotation.z = 2.3; H.armR.el.rotation.z = .4; }
+    },
+  };
+}
+
+// ---------------- checklist: giant clipboard, steps tick at their times; hero with a big pencil ----------------
+// p.steps: [{text, at}]
+function checklist(p, ctx) {
+  const scene = new THREE.Scene(); scene.background = new THREE.Color(p.bg || '#7ee0c3');
+  K.lights(scene, { hemi: 1.7, sunI: 1.2, dir: [4, 8, 10] });
+  box(30, 20, .5, p.bg || '#7ee0c3', 0, 10, -3, scene); box(30, .3, 20, p.floor || '#4fbf9f', 0, -.15, 4, scene);
+  const steps = p.steps || [];
+  const tex = K.canvasTex(600, 820, (g, W, Hh, t = 0) => {
+    g.fillStyle = '#fffdf5'; K.rrect(g, 0, 0, W, Hh, 30); g.fill();
+    g.fillStyle = '#1d1d1d'; g.textAlign = 'center'; g.textBaseline = 'middle'; K.fitText(g, p.head || 'COSA FARE', W - 80, 62, 900); g.fillText(p.head || 'COSA FARE', W / 2, 90);
+    steps.forEach((s, i) => {
+      const y = 210 + i * (560 / Math.max(1, steps.length)), k = clamp((t - at(s.at)) / .3);
+      g.strokeStyle = '#1d1d1d'; g.lineWidth = 6; K.rrect(g, 40, y - 40, 80, 80, 14); g.stroke();
+      if (k > 0) { g.strokeStyle = '#1f8f4a'; g.lineWidth = 14; g.lineCap = 'round'; g.beginPath(); g.moveTo(55, y); g.lineTo(55 + 20 * Math.min(1, k * 2), y + 20 * Math.min(1, k * 2)); if (k > .5) g.lineTo(75 + 40 * (k - .5) * 2, y + 20 - 50 * (k - .5) * 2); g.stroke(); }
+      g.fillStyle = k > 0 ? '#1d1d1d' : '#8a8a8a'; g.textAlign = 'left'; K.fitText(g, s.text, W - 190, 46, 900); g.fillText(s.text, 150, y - 4);
+      if (s.sub) { g.fillStyle = '#666'; g.font = '800 30px Nunito'; g.fillText(s.sub, 150, y + 40); }
+    }); });
+  const board = new THREE.Group(); board.position.set(-.7, 4.7, -1.2); board.rotation.z = .04; board.scale.setScalar(.85); scene.add(board);
+  box(4.6, 6.1, .2, '#a0663a', 0, 0, 0, board); box(1.6, .5, .3, '#c0c0c0', 0, 3.0, .12, board);
+  const paper = new THREE.Mesh(new THREE.PlaneGeometry(4.2, 5.7), new THREE.MeshBasicMaterial({ map: tex })); paper.position.z = .11; board.add(paper);
+  const H = hero(ctx); H.root.position.set(1.8, 0, .6); H.root.rotation.y = -.6; scene.add(H.root);
+  const pencil = new THREE.Group(); box(.25, 1.6, .25, '#ffd23f', 0, 0, 0, pencil); box(.26, .3, .26, '#ff8fb1', 0, .9, 0, pencil); box(.15, .3, .15, '#3a2a1a', 0, -.9, 0, pencil); H.armR.hand.add(pencil); pencil.position.set(0, -.4, .3);
+  const camera = cam(40);
+  return {
+    scene, camera, update(t) {
+      lookCam(camera, [.4, 4.6, 13.2 - ease(seg(t, p._t0, p._t1)) * 1.0], [.1, 4.1, -.5]);
+      tex.redraw(t); H.reset(); idle(H, t);
+      let near = false; for (const s of steps) if (t > at(s.at) - .2 && t < at(s.at) + .5) near = true;
+      H.armR.s.rotation.x = near ? -1.6 + Math.sin(t * 25) * .1 : -.6; H.armR.s.rotation.z = near ? .6 : .2;
+      H.face(faceAt(p.faces, t, 'happy'));
+    },
+  };
+}
+
+// ---------------- vault: round vault door swings open (openAt), gold light, coin stacks rise; closes at closeAt ----------------
+function vault(p, ctx) {
+  const scene = new THREE.Scene(); scene.background = new THREE.Color(p.bg || '#2b2f3a');
+  K.lights(scene, { hemi: 1.1, sunI: 1.0, dir: [4, 9, 10] });
+  box(30, 20, .5, '#3a3f4d', 0, 10, -3, scene); box(30, .3, 20, '#22252e', 0, -.15, 4, scene);
+  box(8.4, 8.4, .6, '#5b6170', 0, 4.6, -2.6, scene);
+  const inside = new THREE.Mesh(new THREE.CircleGeometry(3.2, 48), new THREE.MeshBasicMaterial({ color: '#ffcf4a' })); inside.position.set(0, 4.6, -2.25); scene.add(inside);
+  const stacks = Array.from({ length: 7 }, (_, i) => { const g = new THREE.Group(); for (let k = 0; k < 6; k++) { const c = new THREE.Mesh(new THREE.CylinderGeometry(.35, .35, .12, 20), K.mat('#e2a33a')); c.position.y = k * .13; g.add(c); } g.position.set(-1.8 + (i % 4) * 1.2, 2.2 + Math.floor(i / 4) * 1.4, -2.1); scene.add(g); return g; });
+  const hinge = new THREE.Group(); hinge.position.set(-3.3, 4.6, -1.9); scene.add(hinge);
+  const door = new THREE.Mesh(new THREE.CylinderGeometry(3.3, 3.3, .7, 48), K.mat('#a8b0c0')); door.rotation.x = Math.PI / 2; door.position.x = 3.3; door.castShadow = true; hinge.add(door);
+  const wheel = new THREE.Group(); wheel.position.set(3.3, 0, .45); hinge.add(wheel);
+  for (let i = 0; i < 3; i++) { const sp = box(3.0, .22, .22, '#6b7385', 0, 0, 0, wheel); sp.rotation.z = i * Math.PI / 3; }
+  const hub = new THREE.Mesh(new THREE.CylinderGeometry(.45, .45, .3, 24), K.mat('#6b7385')); hub.rotation.x = Math.PI / 2; wheel.add(hub);
+  const H = hero(ctx); H.root.position.set(1.9, 0, 2.2); H.root.rotation.y = -.5; scene.add(H.root);
+  const camera = cam(40);
+  return {
+    scene, camera, update(t) {
+      lookCam(camera, [.6, 4.6, 19.5 - ease(seg(t, p._t0, p._t1)) * 1.4], [.3, 4.0, -1]);
+      const o = at(p.openAt), c = at(p.closeAt), spin = seg(t, o - .6, o), op = ease(seg(t, o, o + .7)) * (1 - ease(seg(t, c, c + .5)));
+      wheel.rotation.z = spin * Math.PI * 2; hinge.rotation.y = -op * 1.9;
+      stacks.forEach((g, i) => { const k = ease(seg(t, o + .3 + i * .08, o + .7 + i * .08)); g.scale.set(1, Math.max(.01, k), 1); });
+      inside.material.color.setHSL(.12, 1, .45 + op * .15);
+      H.reset(); idle(H, t); H.face(op > .5 ? 'stars' : faceAt(p.faces, t, 'neutral'));
+      if (op > .5) { H.armL.s.rotation.z = -2.4; H.armR.s.rotation.z = 2.4; }
+    },
+  };
+}
+
 // ---------------- portrait for profile pictures: hero head-and-shoulders on a flat colour ----------------
 function portrait(p, ctx) {
   const scene = new THREE.Scene(); scene.background = new THREE.Color(p.bg || '#ffd23f');
@@ -531,4 +677,4 @@ function portrait(p, ctx) {
   return { scene, camera, update() { lookCam(camera, [.5, 3.4, 12.5], [.35, 3.2, 0]); } };
 }
 
-export const SCENES = { city, room, park, phone, screen, end, portrait, desk, bigcal, hook, cinema, money, street, shop, bank, pizza };
+export const SCENES = { city, room, park, phone, screen, end, portrait, desk, bigcal, hook, cinema, money, street, shop, bank, pizza, mystery, guess, checklist, vault };
