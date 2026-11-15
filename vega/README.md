@@ -4,6 +4,19 @@ A voice-assistant HUD. Claude does the thinking, and [VoiceStudio](https://githu
 
 You speak, then VoiceStudio transcribes what you said and Claude (Opus 5.5) replies. VoiceStudio reads the reply aloud in the voice you picked, and the rings react to the audio.
 
+
+## Install (product bundle)
+
+```bash
+./install.sh            # asks before each optional part
+./install.sh --all      # everything: app, login, approval hook, OmniRoute, graphify, claude-mem, skill pack
+./install.sh --dry-run  # show what it would do
+```
+
+It sets up a Python venv, writes `~/.config/neesmo/neesmo.env` (login on), adds the approval hook,
+and runs Neesmo as a systemd service on 127.0.0.1:8080. The skill pack list is `skills.txt`
+(licenses in `THIRD_PARTY_NOTICES.md`).
+
 ## Run it (on the laptop/server where VoiceStudio runs)
 
 Needs: Python 3.11+, [uv](https://docs.astral.sh/uv/), Claude Code signed in (`claude` → log in), VoiceStudio running.
