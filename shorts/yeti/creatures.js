@@ -25,15 +25,22 @@ export function makeBeast() {
   const hump = mesh(shaggy(.34, 7, .1), fur, 0, 1.12, -.1); torso.add(hump);
   const head = new THREE.Group(); head.position.set(0, 1.42, .1); torso.add(head);
   const skull = mesh(shaggy(.3, 9, .07), fur); skull.scale.set(1.05, .95, 1); head.add(skull);
+  // yeti face: flat dark face mask, heavy brow ridge, pointed crown, no snout or round ears (those fade in only as it turns into a bear)
   const snout = mesh(new THREE.ConeGeometry(.16, .3, 6), furD, 0, -.07, .3); snout.rotation.x = Math.PI / 2; head.add(snout);
-  head.add(mesh(new THREE.IcosahedronGeometry(.055, 0), skinM, 0, -.04, .46));
+  const mask = mesh(shaggy(.17, 13, .04, 1), flat(0x7a6a5e), 0, -.03, .22); mask.scale.set(1.1, .95, .5); head.add(mask);
+  const crest = mesh(new THREE.ConeGeometry(.17, .3, 6), fur, 0, .28, -.06); crest.rotation.x = -.35; head.add(crest);
+  const ridge = mesh(new THREE.BoxGeometry(.5, .1, .16), furD, 0, .15, .22); head.add(ridge);
+  const mouth = mesh(new THREE.BoxGeometry(.2, .035, .04), flat(0x120c08), 0, -.14, .33); head.add(mouth);
+  const nose = mesh(new THREE.IcosahedronGeometry(.055, 0), skinM, 0, -.04, .46); head.add(nose);
   const eyeM = new THREE.MeshBasicMaterial({ color: 0x120c08 });
+  const ears = [];
   for (const s of [-1, 1]) {
-    head.add(mesh(new THREE.SphereGeometry(.045, 8, 6), eyeM, .13 * s, .07, .26));
-    head.add(mesh(new THREE.IcosahedronGeometry(.09, 0), fur, .2 * s, .26, -.02));
-    const brow = mesh(new THREE.BoxGeometry(.13, .03, .05), skinM, .13 * s, .15, .27); brow.rotation.z = -.35 * s; head.add(brow);
+    head.add(mesh(new THREE.SphereGeometry(.04, 8, 6), eyeM, .11 * s, .06, .31));
+    const ear = mesh(new THREE.IcosahedronGeometry(.09, 0), fur, .2 * s, .26, -.02); ears.push(ear); head.add(ear);
+    const brow = mesh(new THREE.BoxGeometry(.16, .045, .06), skinM, .11 * s, .12, .31); brow.rotation.z = -.2 * s; head.add(brow);
+    // shaggy side hair framing the face
+    const side = mesh(new THREE.ConeGeometry(.09, .34, 5), furD, .27 * s, -.1, .02); side.rotation.z = Math.PI + .25 * s; head.add(side);
   }
-  const fang = mesh(new THREE.ConeGeometry(.02, .08, 4), toothM, .06, -.17, .38); fang.rotation.x = Math.PI; head.add(fang);
   // limbs hang from pivots; legs from the hips, arms from the shoulders. Each has a paw (scaled for the snowshoe fix).
   function limb(len, r0, r1, px, py, parent) {
     const piv = new THREE.Group(); piv.position.set(px, py, 0); parent.add(piv);
@@ -45,8 +52,12 @@ export function makeBeast() {
   const legs = [-1, 1].map(s => limb(.95, .25, .19, .26 * s, 0, hips));
   const arms = [-1, 1].map(s => limb(1.05, .21, .16, .5 * s, .88, torso));
   for (const a of arms) { for (const k of [-1, 0, 1]) { const c = mesh(new THREE.ConeGeometry(.016, .07, 4), toothM, .05 * k, 0, .13); c.rotation.x = Math.PI / 2; a.paw.add(c); a.paw.userData.claws = true; } }
+  const tufts = [];
+  function fringe(piv, n, w, rad) { for (let i = 0; i < n; i++) { const c = mesh(new THREE.ConeGeometry(.07, .38, 4), furD, (i % 2 ? .5 : -.5) * rad, 0, (i % 3 - 1) * rad * .8); c.rotation.x = Math.PI; piv.add(c); tufts.push({ c, f: (i + .5) / n }); } }
+  for (const a of arms) fringe(a.piv, 6, 1, .2);
+  for (const l of legs) fringe(l.piv, 4, 1, .22);
   const fs = { v: 1 };
-  function setColor(k) { fur.color.copy(pale).lerp(brown, k); furD.color.copy(paleD).lerp(brownD, k); }
+  function setColor(k) { for (const e of ears) e.scale.setScalar(.01 + k * 1.1); snout.scale.setScalar(.35 + .65 * k); mask.scale.set(1.1, .95, .5).multiplyScalar(1 - k * .85); crest.scale.setScalar(Math.max(.01, 1 - k)); ridge.scale.setScalar(1 - k * .6); nose.scale.setScalar(1 + k * .7); for (const t of tufts) t.c.scale.setScalar(Math.max(.01, 1 - k)); fur.color.copy(pale).lerp(brown, k); furD.color.copy(paleD).lerp(brownD, k); }
   function pose({ stand = 1, walk = 0, feet = 1, lie = 0, look = 0, t = 0 } = {}) {
     const r = lerp(1.42, 0, stand);                       // torso lean
     const hy = lerp(lerp(.72, .95, stand), .42, lie);
@@ -57,8 +68,9 @@ export function makeBeast() {
       const L = legs[i], A = arms[i], s = i ? 1 : -1;
       L.len = lerp(hy, .45, lie); L.tube.scale.y = L.len; L.paw.position.y = -L.len; L.piv.rotation.set(-torso.rotation.x + sw * .5 * s, 0, 0);
       const shY = hy + .88 * Math.cos(torso.rotation.x) - .0 * Math.sin(torso.rotation.x);
-      A.len = lerp(lerp(Math.max(.4, shY - .02), .5, lie), 1.05, stand); A.tube.scale.y = A.len; A.paw.position.y = -A.len;
+      A.len = lerp(lerp(Math.max(.4, shY - .02), .5, lie), 1.3, stand); A.tube.scale.y = A.len; A.paw.position.y = -A.len;
       A.piv.rotation.set(-torso.rotation.x - sw * .5 * s, 0, s * lerp(.12, 0, 1 - stand));
+      for (const T of tufts) { const o = arms[i].piv.children.includes(T.c) ? arms[i] : legs[i].piv.children.includes(T.c) ? legs[i] : null; if (o) T.c.position.y = -o.len * T.f; }
       for (const p of [L.paw, A.paw]) p.scale.set(feet, lerp(1, .55, clamp((feet - 1) / 1.4)), feet * 1.5);
     }
     head.rotation.set(-torso.rotation.x * .75 + lie * .3, look, 0);
