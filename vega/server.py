@@ -55,6 +55,7 @@ CHANNELS = {
     "gta6": Path.home() / "gta6",                 # GTA 6 clips and shorts
     "physics": Path.home() / "physics-channel",   # Fable Physics
     "roblox": Path.home() / "roblox",             # Roblox games (Luau + Rojo)
+    "product": Path.home() / "neesmo-product",    # turning Neesmo into a product to sell
 }
 JOB_LOGS = Path.home() / "neesmo-jobs"
 
@@ -64,9 +65,9 @@ SYSTEM_PROMPT = (
     "no markdown, lists, code, emoji or URLs. Address the user as 'sir' or 'ma'am' only if they ask you to. "
     "For questions about the Glazier of Terra YouTube channel, call the channel_stats tool and answer from its numbers only. "
     "The user's project sessions run on this same server, named Setup & uploader, Glazier of Terra, Warhammer 40K comics, "
-    "GTA6 clips and shorts, Fable physics and Roblox games (each tagged server). To talk to one, find it with ListAgents and message it with "
+    "GTA6 clips and shorts, Fable physics, Roblox games and Neesmo product (each tagged server). To talk to one, find it with ListAgents and message it with "
     "SendMessage; its reply arrives later as a new message, which you then summarise aloud. "
-    "Only if a session is not listed, fall back to run_channel with setup, glazier, comics, gta6, physics or roblox. "
+    "Only if a session is not listed, fall back to run_channel with setup, glazier, comics, gta6, physics, roblox or product. "
     "Write every task as a clear, complete instruction. "
     "Before starting anything that changes, uploads or deletes something, repeat the task back in one sentence and wait for a yes. "
     "Jobs run in the background: say it started, and use channel_jobs when asked how they are going."

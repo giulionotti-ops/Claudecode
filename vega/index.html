@@ -344,9 +344,9 @@ addEventListener('keydown', e => { if (e.code === 'Space' && e.target === docume
 addEventListener('keyup', e => { if (e.code === 'Space' && e.target === document.body) stopRec(); });
 
 // ── agent cards + report ──
-const AGENT_SHORT = { setup: 'Setup', glazier: 'YouTube', comics: 'Comics', gta6: 'Clips', physics: 'Physics', roblox: 'Roblox' };  // one word per card
+const AGENT_SHORT = { setup: 'Setup', glazier: 'YouTube', comics: 'Comics', gta6: 'Clips', physics: 'Physics', roblox: 'Roblox', product: 'Product' };  // one word per card
 const AGENT_DEV = new Set(['glazier']);   // still in development: shown greyed out
-const AGENT_COLORS = { setup: '#3dff8f', glazier: '#7d8a83', comics: '#ff6b6b', gta6: '#ff7ac6', physics: '#5cc8ff', roblox: '#b388ff' };
+const AGENT_COLORS = { setup: '#3dff8f', glazier: '#7d8a83', comics: '#ff6b6b', gta6: '#ff7ac6', physics: '#5cc8ff', roblox: '#b388ff', product: '#ffd166' };
 const fmt = n => n == null ? '—' : Number(n).toLocaleString();
 const kfmt = n => !n ? '0' : n >= 1e6 ? (n / 1e6).toFixed(1) + 'M' : n >= 1e3 ? Math.round(n / 1e3) + 'k' : String(n);
 const esc = t => String(t ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));

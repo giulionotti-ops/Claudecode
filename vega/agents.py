@@ -19,6 +19,7 @@ AGENTS = [  # id, fallback name, folder, short role
     ("gta6", "GTA6 clips", HOME / "gta6", "Clips and shorts"),
     ("physics", "Fable physics", HOME / "physics-channel", "Physics shorts"),
     ("roblox", "Roblox games", HOME / "roblox", "Roblox games"),
+    ("product", "Neesmo product", HOME / "neesmo-product", "Make Neesmo sellable"),
 ]
 HIDDEN = {"setup"}  # not shown as a card (the user asked); its report still works
 TAIL_BYTES = 6 * 1024 * 1024   # enough for today's activity without reading whole multi-MB logs
