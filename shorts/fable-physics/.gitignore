@@ -5,3 +5,4 @@ PAUSE
 .reviews.json
 .review_watch.lock
 assets-dl/
+models/*.glb
