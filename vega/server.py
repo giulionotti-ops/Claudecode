@@ -344,6 +344,8 @@ KITTEN_VOICES = [("expr-voice-3-m", "Male · deep"), ("expr-voice-2-m", "Male ·
 
 class ChatIn(BaseModel):
     text: str
+    typed: bool = False          # sent from the chat screen, not by voice: replies may be longer and use markdown
+    files: list[str] = []        # paths returned by /api/upload
 
 
 class SpeakIn(BaseModel):
@@ -428,8 +430,15 @@ async def voices():
 async def chat(body: ChatIn):
     global _client
     text = body.text.strip()
-    if not text:
+    files = [f for f in body.files if Path(f).resolve().is_relative_to(UPLOADS.resolve()) and Path(f).is_file()]
+    if not text and not files:
         raise HTTPException(400, "empty message")
+    if files:
+        text += ("\n\n[Attached files, saved on the server. You cannot open them yourself: pass these paths to the agent "
+                 "that should use them.]\n" + "\n".join(files))
+    if body.typed:
+        text = ("[Typed in the chat screen, not spoken: you may answer in more detail and use short markdown "
+                "(lists, bold, code), still concise.]\n" + text)
     async with _lock:
         if _client is not None and time.monotonic() - _last_chat[0] > IDLE_RESET_S:
             old, _client = _client, None  # long pause: start a fresh, small conversation (faster, cheaper)
@@ -467,6 +476,41 @@ async def chat(body: ChatIn):
             _turn = None
     _last_chat[0] = time.monotonic()
     return {"reply": " ".join(parts).strip()}
+
+
+UPLOADS = auth.DIR / "uploads"
+MAX_UPLOAD = 50 * 1024 * 1024
+
+
+@app.post("/api/upload")
+async def upload(file: UploadFile):
+    """A file attached in the chat. Saved on the server so Neesmo can hand its path to an agent."""
+    name = re.sub(r"[^\w.\- ]", "_", Path(file.filename or "file").name).strip(". ") or "file"
+    UPLOADS.mkdir(parents=True, exist_ok=True)
+    dest = UPLOADS / f"{datetime.datetime.now():%Y%m%d-%H%M%S}-{secrets.token_hex(2)}-{name[-80:]}"
+    size = 0
+    with dest.open("wb") as f:
+        while chunk := await file.read(1 << 20):
+            size += len(chunk)
+            if size > MAX_UPLOAD:
+                f.close(); dest.unlink(missing_ok=True)
+                raise HTTPException(413, "files up to 50 MB")
+            f.write(chunk)
+    return {"path": str(dest), "name": name, "size": size}
+
+
+@app.post("/api/chat/reset")
+async def chat_reset():
+    """New chat: drop the current conversation; the next message starts a fresh one."""
+    global _client
+    async with _lock:
+        old, _client = _client, None
+    if old is not None:
+        try:
+            await old.disconnect()
+        except Exception as e:
+            print(f"disconnect: {e}", flush=True)
+    return {"ok": True}
 
 
 @app.get("/api/inbox")
