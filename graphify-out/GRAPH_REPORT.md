@@ -1,7 +1,7 @@
 # Graph Report - neesmo-product  (2026-11-15)
 
 ## Corpus Check
-- 1286 files · ~1,802,654 words
+- 1286 files · ~1,802,697 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 136 file(s) not represented in the graph (top: .css 92, (none) 16, .ttf 14)
 
@@ -11,7 +11,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `c8dae4b4`
+- Built from commit: `85717ed5`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -966,12 +966,12 @@
 ## Surprising Connections (you probably didn't know these)
 - `Personal or hard-coded (must change before selling)` --references--> `channel_stats()`  [INFERRED]
   docs/product/AUDIT.md → vega/server.py
-- `Reusable as is` --references--> `run_channel()`  [INFERRED]
-  docs/product/AUDIT.md → vega/server.py
-- `Reusable as is` --references--> `channel_jobs()`  [INFERRED]
-  docs/product/AUDIT.md → vega/server.py
 - `The eleven heroes` --references--> `collage()`  [INFERRED]
   .claude/skills/design-taste-frontend/references/layout-v4.md → .claude/skills/design-taste-frontend/assets/layout/layout.js
+- `Reusable as is` --references--> `channel_jobs()`  [INFERRED]
+  docs/product/AUDIT.md → vega/server.py
+- `Reusable as is` --references--> `run_channel()`  [INFERRED]
+  docs/product/AUDIT.md → vega/server.py
 - `_channel_stats()` --calls--> `credentials()`  [INFERRED]
   vega/server.py → shorts/uploader/upload.py
 
@@ -3600,17 +3600,17 @@ Nodes (3): extractColdStarts(), gate(), metadata
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `lib()` connect `lib` to `consistency.mjs`?**
-  _High betweenness centrality (0.016) - this node is a cross-community bridge._
+- **Why does `color` connect `color` to `rng`, `edge-glow/effect.js`, `duotone-grade/effect.js`, `prism-dispersion/effect.js`, `mount`, `shader`, `soft-light-bars/effect.js`, `line-engraving/effect.js`, `frag`, `god-rays/effect.js`, `dotted-globe/effect.js`, `start.mjs`, `fx.js`, `gradient-mesh/effect.js`, `halftone-screen/effect.js`, `orb-sphere/effect.js`, `ruled-grounds/effect.js`, `spotlight-cone/effect.js`?**
+  _High betweenness centrality (0.010) - this node is a cross-community bridge._
 - **Are the 51 inferred relationships involving `lib()` (e.g. with `arrive()` and `audit()`) actually correct?**
   _`lib()` has 51 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `PATH`, `{ color, normalizePalette, readPalette, GLSL_LIB }` to the rest of the system?**
   _2 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `validate-skill-bundle.py` be split into smaller, more focused modules?**
   _Cohesion score 0.028662420382165606 - nodes in this community are weakly interconnected._
-- **Why does `color` connect `color` to `rng`, `edge-glow/effect.js`, `duotone-grade/effect.js`, `prism-dispersion/effect.js`, `mount`, `shader`, `soft-light-bars/effect.js`, `line-engraving/effect.js`, `frag`, `god-rays/effect.js`, `dotted-globe/effect.js`, `start.mjs`, `fx.js`, `gradient-mesh/effect.js`, `halftone-screen/effect.js`, `orb-sphere/effect.js`, `ruled-grounds/effect.js`, `spotlight-cone/effect.js`?**
-  _High betweenness centrality (0.009) - this node is a cross-community bridge._
+- **Why does `lib()` connect `lib` to `consistency.mjs`?**
+  _High betweenness centrality (0.006) - this node is a cross-community bridge._
 - **Should `lib` be split into smaller, more focused modules?**
   _Cohesion score 0.05791505791505792 - nodes in this community are weakly interconnected._
-- **Should `.agents/skills/caveman-compress/scripts/compress.py` be split into smaller, more focused modules?**
-  _Cohesion score 0.040439457690509585 - nodes in this community are weakly interconnected._
+- **Why does `go()` connect `diagram.js` to `fx.js`?**
+  _High betweenness centrality (0.006) - this node is a cross-community bridge._
