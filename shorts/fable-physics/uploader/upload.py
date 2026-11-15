@@ -90,7 +90,7 @@ def body(entry, when):
         'snippet': {'title': entry['title'][:100], 'description': entry['description'][:5000], 'tags': entry.get('tags', []), 'categoryId': entry.get('category', '28'),
                     'defaultLanguage': 'en', 'defaultAudioLanguage': 'en'},
         'status': {'privacyStatus': 'private', 'publishAt': when.astimezone(datetime.timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
-                   'selfDeclaredMadeForKids': False, 'containsSyntheticMedia': True},   # AI voice: declare altered/synthetic content
+                   'selfDeclaredMadeForKids': False, 'containsSyntheticMedia': False},   # fantasy animation: YouTube needs no AI disclosure for unrealistic content
     }
 
 
