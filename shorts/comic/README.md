@@ -14,7 +14,7 @@ Look: flat cartoon webcomic. Thick black outlines, flat colours with one shadow 
 - **Hook in panel 1, first 2 s:** a question or shock line ("FIFTEEN HOURS. That's how long a Guardsman lasts.").
 - **Retention:** each panel ends on a beat that needs the next one; the punchline lands in the last 3 s and loops back to the first panel.
 - Topics that win (see `../research-40k-shorts.md`): Guardsmen, Krieg, Ogryns, Orks, Commissars, the Emperor. Mix funny with sad.
-- Astartes stories are an extra lane, at most about 1 in 3 shorts and never a replacement: same style, grimmer tone (what being a Space Marine costs). Original Chapters only, no official names, colours or heraldry.
+- Astartes stories are an extra lane, at most about 1 in 3 shorts and never a replacement: same style, grimmer tone (what being a Space Marine costs). Real Chapters and real lore (correct colours and history, checked on Lexicanum), drawn fresh in our style; no copied GW art or logos.
 - Lettering is drawn by code on top of the art (so text is always spelled right and can be animated), not by the image model.
 
 ## Gemini setup

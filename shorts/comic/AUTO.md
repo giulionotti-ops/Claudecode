@@ -13,7 +13,9 @@ Make the next 40k comic short and add it to `uploader/schedule.json`. Work from 
    Astartes (Space Marine) stories are allowed as an extra option, about 1 short in 3 at most; they never replace the
    Guard/Ork/Ogryn/Emperor mix. Same art style, cast-friendly framing and joke-hook shape, but a grimmer tone: the cost of
    being a Marine (lost humanity, the Black Rage, gene-seed and the dead brothers it comes from, Chapters dying out,
-   serfs and Guardsmen who barely matter to them). Original Chapters only: no official Chapter names, colours or heraldry.
+   serfs and Guardsmen who barely matter to them). Use real Chapters and real lore (Ultramarines, Space Wolves,
+   Blood Angels, Black Templars, Salamanders, Dark Angels, Raven Guard, Iron Hands, Imperial Fists, White Scars, Flesh Tearers,
+   Lamenters, etc.) with their real colours, checked on Lexicanum. Draw them fresh in our cartoon style; never copy GW art or logos.
    Mark these "Astartes" in the topic notes so the analytics can compare them.
    Use the `viral-short-form-ideas` skill to shortlist 3 angles and pick the one with the clearest stake.
 2. **Check the lore** on the Lexicanum wiki (wh40k.lexicanum.com). Fan jokes are labelled as fan jokes.
