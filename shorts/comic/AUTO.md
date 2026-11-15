@@ -7,7 +7,8 @@ uploads every entry in `uploader/schedule.json` that is not in `uploader/uploade
 Make the next 40k comic short and add it to `uploader/schedule.json`. Work from `shorts/`.
 
 1. **Pick a topic.** Read `comic/README.md` (format + channel rules), `research-40k-shorts.md` (what wins) and
-   `comic/board/shorts.json` + `comic/uploader/schedule.json` (what's done). Choose a topic not done yet.
+   `comic/board/shorts.json` + `comic/uploader/schedule.json` (what's done) and
+   `comic/ANALYTICS.md` (live stats: lean into what the top short did: topic type, hook, title pattern). Choose a topic not done yet.
    Reuse the recurring cast (rookie, sarge, commissar, Orks) when it fits. Mix funny with sad.
    Use the `viral-short-form-ideas` skill to shortlist 3 angles and pick the one with the clearest stake.
 2. **Check the lore** on the Lexicanum wiki (wh40k.lexicanum.com). Fan jokes are labelled as fan jokes.

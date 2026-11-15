@@ -21,6 +21,7 @@ print(sum(1 for e in plan if e['publish'] > now))
 EOF
 )
 echo "waiting to publish: $WAITING"
+(cd "$HERE/uploader" && python3 analytics.py >/dev/null) || echo "analytics failed"
 if [ "$WAITING" -lt 2 ]; then
   timeout 3h claude -p "Follow comic/AUTO.md exactly (you are in shorts/): make today's short." \
     --model sonnet --permission-mode acceptEdits --allowedTools Bash Read Write Edit Glob Grep WebFetch WebSearch \
