@@ -41,6 +41,13 @@ ask()  {  # ask "question" -> 0 for yes
 say "Checking requirements"
 have python3 || { warn "python3 is needed (3.10+)"; exit 1; }
 python3 -c 'import sys; sys.exit(sys.version_info < (3, 10))' || { warn "python 3.10+ is needed"; exit 1; }
+if ! have tmux; then
+  if have apt-get && ask "tmux runs the agent sessions. Install it now (apt-get install -y tmux)?"; then
+    run $([ "$(id -u)" = 0 ] || echo sudo) apt-get install -y tmux
+  else
+    warn "tmux is needed for agent chats: install it with your package manager"
+  fi
+fi
 have node || warn "node/npm not found: OmniRoute, claude-mem and the skill pack need Node 20+ (https://nodejs.org)"
 if ! have claude; then
   if have npm && ask "Claude Code is not installed. Install it now (npm install -g @anthropic-ai/claude-code)?"; then
@@ -119,6 +126,12 @@ if have npx && ask "Install the skill pack ($(grep -vc '^#' "$HERE/skills.txt") 
     skills+=("$s")
   done < <(sort "$HERE/skills.txt")
   flush
+fi
+
+if have claude && ask "Install the caveman plugin (short, plain replies from Claude that keep every technical detail; Apache-2.0)?"; then
+  run claude plugin marketplace add JuliusBrussee/caveman || warn "could not add the caveman marketplace"
+  run claude plugin install caveman@caveman -s user || warn "could not install the caveman plugin"
+  echo "   Turn it (and any skill) on or off later in Neesmo: Settings > System"
 fi
 
 # ---- 5. service ---------------------------------------------------------------

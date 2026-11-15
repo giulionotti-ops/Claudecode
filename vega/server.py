@@ -13,6 +13,7 @@ import json
 import re
 import secrets
 import shutil
+import subprocess
 import sys
 import time
 
@@ -25,6 +26,7 @@ from pydantic import BaseModel
 
 import agent_chat
 import agents
+import extensions
 import auth
 import license
 import notes
@@ -426,6 +428,52 @@ def agents_config():
             "default_instructions": {a["id"]: agents.instructions({**a, "instructions": ""}) for a in agents.load()}}
 
 
+class AgentOrder(BaseModel):
+    ids: list[str]
+
+
+@app.post("/api/agents/order")
+def agents_order(body: AgentOrder):
+    return {"order": agents.set_order(body.ids[:32])}
+
+
+@app.get("/api/extensions")
+async def extensions_list():
+    sk, pl = await asyncio.gather(asyncio.to_thread(extensions.skills), asyncio.to_thread(extensions.plugins))
+    return {"skills": sk, "plugins": pl, "skills_dir": str(extensions.SKILLS)}
+
+
+class Toggle(BaseModel):
+    on: bool
+
+
+@app.post("/api/skills/{name}")
+async def skill_toggle(name: str, body: Toggle):
+    try:
+        await asyncio.to_thread(extensions.set_skill, name, body.on)
+    except LookupError as e:
+        raise HTTPException(404, str(e))
+    except (ValueError, OSError) as e:
+        raise HTTPException(400, str(e))
+    return {"ok": True}
+
+
+@app.post("/api/plugins/{pid}")
+async def plugin_toggle(pid: str, body: Toggle):
+    try:
+        await asyncio.to_thread(extensions.set_plugin, pid, body.on)
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+    except (RuntimeError, subprocess.TimeoutExpired) as e:
+        raise HTTPException(502, str(e))
+    return {"ok": True}
+
+
+@app.get("/api/notices")
+def notices_list():
+    return {"sections": extensions.notices()}
+
+
 @app.put("/api/agents-config")
 async def agents_config_save(items: list[dict]):
     global _client
@@ -459,12 +507,6 @@ def _agent_or_404(aid: str) -> dict:
     return a
 
 
-@app.get("/api/agents/{aid}/chat")
-def agent_thread(aid: str):
-    _agent_or_404(aid)
-    return agent_chat.thread(aid)
-
-
 @app.post("/api/agents/{aid}/chat")
 async def agent_send(aid: str, body: AgentMsg):
     """A message for this agent's own conversation; it answers in the background (poll the GET)."""
@@ -475,15 +517,37 @@ async def agent_send(aid: str, body: AgentMsg):
         text += "\n\nAttached files (read them from these paths):\n" + "\n".join(files)
     if not text:
         raise HTTPException(400, "empty message")
-    brief = agents.instructions(a) if agents.configured() else None
 
     async def done(reply: str):
         await _notify(f"{a['name']} replied", reply[:150], tag=f"agent-{aid}", kind="reply")
     try:
-        await agent_chat.send(aid, agents.folders()[aid], text, brief, done)
+        await agent_chat.send(aid, a["name"], text, done)
     except RuntimeError as e:
         raise HTTPException(409, str(e))
+    return await asyncio.to_thread(agent_chat.thread, aid)
+
+
+@app.get("/api/agents/{aid}/chat")
+def agent_thread(aid: str):
+    _agent_or_404(aid)
     return agent_chat.thread(aid)
+
+
+class AgentKey(BaseModel):
+    key: str
+
+
+@app.post("/api/agents/{aid}/chat/key")
+def agent_key(aid: str, body: AgentKey):
+    """Answer a numbered question on the session's screen (1-9) or press Esc."""
+    _agent_or_404(aid)
+    try:
+        agent_chat.key(aid, body.key)
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+    except RuntimeError as e:
+        raise HTTPException(409, str(e))
+    return {"ok": True}
 
 
 @app.post("/api/agents/{aid}/chat/stop")
@@ -494,9 +558,9 @@ def agent_stop(aid: str):
 
 @app.post("/api/agents/{aid}/chat/reset")
 def agent_reset(aid: str):
-    _agent_or_404(aid)
+    a = _agent_or_404(aid)
     try:
-        agent_chat.reset(aid)
+        agent_chat.reset(aid, a["name"])
     except RuntimeError as e:
         raise HTTPException(409, str(e))
     return {"ok": True}

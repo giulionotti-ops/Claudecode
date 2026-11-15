@@ -18,6 +18,13 @@ Checked 2026-11-15.
 | pywebpush | MPL-2.0 (used unmodified) |
 | cryptography | Apache-2.0 OR BSD-3-Clause |
 
+## Shipped in static/
+
+| Item | Source | License |
+|---|---|---|
+| Motion 14.14.0 (`static/vendor/motion.js`) | motion.dev, github.com/motiondivision/motion | MIT (`static/vendor/motion-LICENSE.md`) |
+| Geist and Geist Mono fonts (`static/fonts/`) | github.com/vercel/geist-font, via @fontsource-variable | SIL OFL 1.1 (`static/fonts/OFL.txt`) |
+
 ## Bundled tools (installed by `install.sh`, each optional)
 
 | Tool | Source | License |
@@ -25,6 +32,7 @@ Checked 2026-11-15.
 | OmniRoute (free-model gateway) | github.com/diegosouzapw/OmniRoute | MIT |
 | graphify (code knowledge graph) | pypi.org/project/graphifyy | Apache-2.0 |
 | claude-mem (long-term memory plugin) | github.com/thedotmack/claude-mem | Apache-2.0 |
+| caveman plugin (short, plain replies) | github.com/JuliusBrussee/caveman | Apache-2.0 |
 
 ## Skill pack
 

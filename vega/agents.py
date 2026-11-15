@@ -30,12 +30,36 @@ DEFAULTS = [
 _ID = re.compile(r"^[a-z0-9][a-z0-9-]{0,23}$")
 
 
-def load() -> list[dict]:
+ORDER = NEESMO_DIR / "agent_order.json"  # card order from drag and drop, kept apart from agents.json
+
+
+def _raw() -> list[dict]:
     try:
         items = json.loads(CONFIG.read_text())
         return items if isinstance(items, list) else DEFAULTS
     except (OSError, ValueError):
         return DEFAULTS
+
+
+def load() -> list[dict]:
+    items = _raw()
+    try:
+        order = json.loads(ORDER.read_text())
+    except (OSError, ValueError):
+        return items
+    rank = {a: i for i, a in enumerate(order) if isinstance(a, str)} if isinstance(order, list) else {}
+    return sorted(items, key=lambda a: rank.get(a.get("id"), len(rank)))
+
+
+def set_order(ids: list[str]) -> list[str]:
+    known = [a["id"] for a in _raw()]
+    order = [i for i in dict.fromkeys(ids) if i in known] + [i for i in known if i not in ids]
+    NEESMO_DIR.mkdir(parents=True, exist_ok=True)
+    tmp = ORDER.with_suffix(".tmp")
+    tmp.write_text(json.dumps(order))
+    os.replace(tmp, ORDER)
+    _cache.clear()
+    return order
 
 
 def configured() -> bool:
@@ -118,12 +142,17 @@ def _entries(path: Path) -> list[dict]:
 
 
 def _online(folder: Path) -> bool:
-    """A Remote Control worker (claude --sdk-url ...) is running in this folder."""
+    """A Claude session is running in this folder: a Remote Control worker or an interactive terminal session."""
     for pid in filter(str.isdigit, os.listdir("/proc")):
         try:
             if os.readlink(f"/proc/{pid}/cwd") != str(folder):
                 continue
-            if b"--sdk-url" in Path(f"/proc/{pid}/cmdline").read_bytes():
+            argv = Path(f"/proc/{pid}/cmdline").read_bytes().split(b"\0")
+            if b"--sdk-url" in argv:
+                return True
+            # an interactive claude in a terminal (the tmux sessions Neesmo chats through)
+            if b"claude" in b" ".join(argv[:2]) and not {b"-p", b"--print", b"remote-control"} & set(argv) \
+                    and os.readlink(f"/proc/{pid}/fd/0").startswith("/dev/pts/"):
                 return True
         except OSError:
             continue

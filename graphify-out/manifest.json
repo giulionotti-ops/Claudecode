@@ -3888,9 +3888,9 @@
     "semantic_hash": ""
   },
   "vega/agents.py": {
-    "mtime": 1794758895.4803894,
-    "seen": 1794759608.272262,
-    "ast_hash": "8b8ae8d8e40dd67ce8888d16be943a03",
+    "mtime": 1794775730.8242772,
+    "seen": 1794775937.538169,
+    "ast_hash": "075b9afbaea1ad8e22df265f4d330331",
     "semantic_hash": ""
   },
   "vega/approval_hook.py": {
@@ -3912,9 +3912,9 @@
     "semantic_hash": ""
   },
   "vega/server.py": {
-    "mtime": 1794759232.1622834,
-    "seen": 1794759608.2722762,
-    "ast_hash": "0ef9c90de97c48233939859780957fe9",
+    "mtime": 1794775024.2282631,
+    "seen": 1794775937.5381927,
+    "ast_hash": "51522dfe0f2e5352e30f5078693ea338",
     "semantic_hash": ""
   },
   "vega/static/sw.js": {
@@ -8586,15 +8586,15 @@
     "semantic_hash": ""
   },
   "vega/index.html": {
-    "mtime": 1794759495.7724755,
-    "seen": 1794759608.2739327,
-    "ast_hash": "e6a1165f46fc68f1e424785f95819b23",
+    "mtime": 1794775706.8383443,
+    "seen": 1794775937.5406027,
+    "ast_hash": "abdf58e17faef9436c381f1ed36140bf",
     "semantic_hash": ""
   },
   "vega/requirements.txt": {
-    "mtime": 1794748725.7686014,
-    "seen": 1794759608.273938,
-    "ast_hash": "fd2fb81e2baa1f55d94904516e06cb21",
+    "mtime": 1794768087.6659052,
+    "seen": 1794768453.00753,
+    "ast_hash": "ebd050f1ed4e36afa464470bef6172a7",
     "semantic_hash": ""
   },
   ".claude/skills/design-taste-frontend/assets/components/fx-photo/meeting-room.jpg": {
@@ -16026,9 +16026,9 @@
     "semantic_hash": ""
   },
   "vega/install.sh": {
-    "mtime": 1794759140.0845757,
-    "seen": 1794759608.2722697,
-    "ast_hash": "fea524bee3eb0e99a36c5ce380965e99",
+    "mtime": 1794774878.4956772,
+    "seen": 1794775937.538181,
+    "ast_hash": "d85bc9d7cc37a30a6339ca133fc2474e",
     "semantic_hash": ""
   },
   "docs/product/AUDIT.md": {
@@ -16038,9 +16038,9 @@
     "semantic_hash": ""
   },
   "vega/THIRD_PARTY_NOTICES.md": {
-    "mtime": 1794758381.4354186,
-    "seen": 1794759608.2739305,
-    "ast_hash": "df80f73f5ab0d46bcc5beedf29a32f7d",
+    "mtime": 1794774976.2693992,
+    "seen": 1794775937.540597,
+    "ast_hash": "d29e4a5e1f3f484a7e1de614af3b9087",
     "semantic_hash": ""
   },
   "vega/login.html": {
@@ -16053,6 +16053,54 @@
     "mtime": 1794759021.3939629,
     "seen": 1794759608.2739396,
     "ast_hash": "cce5072ccb96f443f67836872396370f",
+    "semantic_hash": ""
+  },
+  "vega/agent_chat.py": {
+    "mtime": 1794773894.4214363,
+    "seen": 1794774024.8551996,
+    "ast_hash": "394bc6643fad382ca019d011e9f0d532",
+    "semantic_hash": ""
+  },
+  "vega/license.py": {
+    "mtime": 1794768075.0989404,
+    "seen": 1794768453.0056338,
+    "ast_hash": "ad68e59da3c721112462618c58286607",
+    "semantic_hash": ""
+  },
+  "vega/static/guide.html": {
+    "mtime": 1794775647.231511,
+    "seen": 1794775937.5406199,
+    "ast_hash": "0bee60b1bc2bdf314ed2ac2c59b98716",
+    "semantic_hash": ""
+  },
+  "vega/static/landing.html": {
+    "mtime": 1794775647.232511,
+    "seen": 1794775937.5406249,
+    "ast_hash": "33337237389b7b95c85d02f86d3666cc",
+    "semantic_hash": ""
+  },
+  "vega/static/vendor/motion.js": {
+    "mtime": 1794773073.073699,
+    "seen": 1794774024.8553472,
+    "ast_hash": "95b6dbd76598b7201e9aa1336d1b5b27",
+    "semantic_hash": ""
+  },
+  "vega/static/fonts/OFL.txt": {
+    "mtime": 1794773079.9076803,
+    "seen": 1794774024.857137,
+    "ast_hash": "6bc8ee5e488d62bd62df7d879b70477f",
+    "semantic_hash": ""
+  },
+  "vega/static/vendor/motion-LICENSE.md": {
+    "mtime": 1794773079.9016802,
+    "seen": 1794774024.8571458,
+    "ast_hash": "f67d6e0b9cdcc7b31a7ff058e664e133",
+    "semantic_hash": ""
+  },
+  "vega/extensions.py": {
+    "mtime": 1794775730.8252773,
+    "seen": 1794775937.5381782,
+    "ast_hash": "65e4d075df99bf4368cd3ae74c492073",
     "semantic_hash": ""
   }
 }
