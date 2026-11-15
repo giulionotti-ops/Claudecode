@@ -139,6 +139,22 @@ def auto(dry=False):
         if vid: done[e['name']] = sim[e['name']]; save(LOG, done)
 
 
+def retire(dry=False):
+    """Remakes: a queue entry with "replaces": "<old slug>" deletes the old video once the remake is public (owner's choice)."""
+    queue, done = load(QUEUE, []), load(LOG, {})
+    now = datetime.datetime.now(TZ)
+    for e in queue:
+        new, old = done.get(e['name']), done.get(e.get('replaces') or '')
+        if not new or not old or old.get('deleted') or not new.get('publish'): continue
+        if datetime.datetime.strptime(new['publish'], '%Y-%m-%d %H:%M').replace(tzinfo=TZ) > now: continue   # remake not live yet
+        if dry: print(f"  would delete {e['replaces']} ({old['id']}), replaced by {e['name']}"); continue
+        try: youtube().videos().delete(id=old['id']).execute()
+        except Exception as x:
+            if getattr(getattr(x, 'resp', None), 'status', 0) != 404: print(f"  delete {old['id']} failed: {x}"); continue
+        old['deleted'] = f'{now:%Y-%m-%d %H:%M}'; save(LOG, done)
+        print(f"  deleted {e['replaces']} ({old['id']}), replaced by {e['name']}")
+
+
 def show():
     done = load(LOG, {})
     for e in load(QUEUE, []):
@@ -153,6 +169,7 @@ def main():
     if cmd == 'auth-finish' and len(a) == 2: return auth_finish(a[1])
     if cmd == 'check': return check()
     if cmd == 'auto': return auto(dry)
+    if cmd == 'retire': return retire(dry)
     if cmd == 'list': return show()
     if cmd == 'pending': return print('\n'.join(e['name'] for e in load(QUEUE, []) if e.get('approved') is False) or 'none')
     if cmd == 'approve' and len(a) >= 2:

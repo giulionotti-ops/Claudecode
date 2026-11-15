@@ -79,6 +79,8 @@ def main():
         elif r['status'] == 'changes asked':
             log('changes', slug, r['note']); fix(slug, r['note'], st); st = notify.load(notify.STATE, {})
     notify.pending()   # new shorts, and fixed ones, get their review
+    if any(e.get('replaces') for e in notify.load(os.path.join(UP, 'queue.json'), [])):
+        sh(sys.executable, 'upload.py', 'retire', cwd=UP)   # a remake went live: delete the old video
 
 
 if __name__ == '__main__':

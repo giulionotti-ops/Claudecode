@@ -49,6 +49,7 @@ Append to `fable-physics/uploader/queue.json`:
 Always `"approved": false`: the owner approves each short before it is posted, unless the file `fable-physics/AUTO_APPROVE` exists. `notify.py` sends each short to the owner's phone (Neesmo) to watch; `review_watch.py` schedules it when they tap Approve, or runs a fix when they ask for changes. Never approve anything yourself.
 - Title: under 70 characters, one CAPS word, one emoji, ends with `#shorts` (see the existing entries).
 - Description: 2–3 sentences, then a question for comments, then hashtags. Intro shorts also name the culture.
+**Remakes** of an already posted short (new style): new slug `<old slug>-v2`, and add `"replaces": "<old slug>"` to its queue entry. Once the remake is public, `review_watch.py` runs `upload.py retire`, which deletes the old video (the owner's choice).
 Set the creature's `"intro"` or `"physics"` in `creatures.json`. Add a row to the table in `fable-physics/README.md`.
 
 ### 7. Commit and push
