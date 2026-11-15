@@ -1217,7 +1217,7 @@ function frame(t) {
   else level *= .9;
   const dpr = devicePixelRatio, R = hud.R * dpr * (1 + Math.min(level, 1.5) * .09), hot = mode === 'listening' ? THEME.c2 : THEME.hex;
   g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, cv.width, cv.height);
-  g.translate(cv.width / 2, (hud.cy - cv.getBoundingClientRect().top) * dpr);
+  g.translate(cv.width / 2, hud.cy * cv.height / (cv.clientHeight || innerHeight));   // layout coords, like the wordmark (iOS reports the rect shifted while the keyboard is up)
   // core glow
   const core = g.createRadialGradient(0, 0, 0, 0, 0, R * (.45 + level * .25));
   core.addColorStop(0, '#f2fff6'); core.addColorStop(.25, hot); core.addColorStop(1, 'transparent');
