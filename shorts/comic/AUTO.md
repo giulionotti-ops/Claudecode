@@ -10,6 +10,11 @@ Make the next 40k comic short and add it to `uploader/schedule.json`. Work from 
    `comic/board/shorts.json` + `comic/uploader/schedule.json` (what's done) and
    `comic/ANALYTICS.md` (live stats: lean into what the top short did: topic type, hook, title pattern). Choose a topic not done yet.
    Reuse the recurring cast (rookie, sarge, commissar, Orks) when it fits. Mix funny with sad.
+   Astartes (Space Marine) stories are allowed as an extra option, about 1 short in 3 at most; they never replace the
+   Guard/Ork/Ogryn/Emperor mix. Same art style, cast-friendly framing and joke-hook shape, but a grimmer tone: the cost of
+   being a Marine (lost humanity, the Black Rage, gene-seed and the dead brothers it comes from, Chapters dying out,
+   serfs and Guardsmen who barely matter to them). Original Chapters only: no official Chapter names, colours or heraldry.
+   Mark these "Astartes" in the topic notes so the analytics can compare them.
    Use the `viral-short-form-ideas` skill to shortlist 3 angles and pick the one with the clearest stake.
 2. **Check the lore** on the Lexicanum wiki (wh40k.lexicanum.com). Fan jokes are labelled as fan jokes.
 3. **Write the hook and script with the viral skills.** Read `../.claude/skills/viral-hooks/assets/hook-checklist.md`
