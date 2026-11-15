@@ -55,6 +55,12 @@ Rules while scoring:
   payoff needs it.
 - End right after the payoff lands (the laugh, the "NO WAY", the crash). Cut
   the cool-down.
+- Hook in the first 1-2 s: open on the surprising beat or the question it
+  raises ("wait, how did he...?"), not on a slow build. If the setup is long,
+  start later and keep only the setup line the payoff needs.
+- Prefer ends that loop: cut so the last frame/line flows back into the first
+  (same scene, a reaction that matches the opening), so replays add watch time.
+  (Lessons from 10M+ view shorts; on-screen text stays off per CLIPPING_RULES.)
 - Skip: intros, BRB/starting soon, ads, sponsor reads, menus, loading screens,
   chat-reading, donation alerts, music the streamer can't own (Content ID).
 - A loud spike with no speech can still be the best clip: score it on hook and
