@@ -112,8 +112,12 @@
   dialog#report { --a: var(--c); border-top: 3px solid var(--a) !important; width: min(1100px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); padding: 0; border: 1px solid var(--dim); border-radius: 10px;
     background: rgba(2,14,10,.97); color: var(--c); box-shadow: 0 0 40px rgba(var(--rgb),.15); }
   /* dialogs start below the iPhone island / status bar and end above the home bar */
-  dialog#ap, dialog#report { margin: calc(env(safe-area-inset-top) + 8px) auto calc(env(safe-area-inset-bottom) + 8px);
-    max-height: calc(100dvh - env(safe-area-inset-top) - env(safe-area-inset-bottom) - 16px); }
+  dialog#ap, dialog#report { position: fixed; inset: 0; margin: calc(env(safe-area-inset-top, 0px) + 8px) auto calc(env(safe-area-inset-bottom, 0px) + 8px) !important;
+    max-height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 16px) !important; overflow-y: auto; overscroll-behavior: contain; }
+  /* title and ✕ stay pinned at the top of the panel while its content scrolls */
+  #ap .rp > header, #report .rp > header { position: sticky; top: -18px; z-index: 2; margin: -18px -18px 0; padding: 18px;
+    background: rgba(2,14,10,.98); border-bottom: 1px solid rgba(var(--rgb),.15); }
+  #ap-close, #r-close { flex: none; min-width: 44px; min-height: 44px; }
   dialog#report::backdrop { background: rgba(0,0,0,.7); backdrop-filter: blur(3px); }
   .rp { padding: 18px; display: flex; flex-direction: column; gap: 14px; }
   .rp header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
