@@ -205,6 +205,37 @@
   #atts button { border: 0; background: none; padding: 0 6px; height: 20px; }
   body.chat form#f { max-width: 760px; }
   @media (prefers-reduced-motion: reduce) { body.chat #log p, #chathead { animation: none !important; } }
+
+  /* agent box: a slim header, one line of numbers, then a chat with that agent */
+  dialog#report { width: min(780px, calc(100vw - 24px)); height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 16px); overflow: hidden !important; }
+  #report .rp { height: 100%; box-sizing: border-box; gap: 10px; }
+  #report .rp > header { position: static; margin: 0; padding: 0; background: none; }
+  .strip { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12px; color: var(--dim); }
+  .strip b { color: var(--a); font-weight: 600; } .strip .now { flex-basis: 100%; color: var(--c); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  #r-more summary { cursor: pointer; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); }
+  #r-more[open] { max-height: 42dvh; overflow: auto; } #r-more .kpis { margin: 10px 0; }
+  .thread { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding: 10px 2px; border-top: 1px solid rgba(var(--rgb),.15);
+    overscroll-behavior: contain; }
+  .thread p { margin: 0; line-height: 1.55; overflow-wrap: anywhere; animation: msg .35s cubic-bezier(.2,.8,.2,1) both; }
+  .thread p.you { align-self: flex-end; max-width: 85%; padding: 9px 13px; border-radius: 14px 14px 4px 14px; white-space: pre-wrap;
+    background: color-mix(in srgb, var(--a) 14%, transparent); border: 1px solid color-mix(in srgb, var(--a) 45%, transparent); }
+  .thread p.agent { color: color-mix(in srgb, var(--c) 35%, #fff); } .thread p.err { color: var(--err); }
+  .thread p small { display: block; font-size: 10px; margin-top: 3px; opacity: .7; } .thread p.you small { text-align: right; }
+  .thread .empty { margin: auto; text-align: center; color: var(--dim); font-size: 13px; max-width: 340px; }
+  .thread p code { background: rgba(var(--rgb),.12); padding: 1px 5px; border-radius: 4px; } .thread p a { color: var(--c2); }
+  .thread p pre { margin: 8px 0; padding: 10px 12px; background: rgba(0,0,0,.45); border: 1px solid rgba(var(--rgb),.2); border-radius: 8px; overflow-x: auto; white-space: pre; }
+  .thread .typing { display: flex; gap: 5px; align-items: center; color: var(--dim); font-size: 12px; } .thread .typing i { width: 6px; height: 6px; border-radius: 50%;
+    background: var(--a); animation: blink 1.2s infinite ease-in-out both; } .thread .typing i:nth-child(2) { animation-delay: .15s; } .thread .typing i:nth-child(3) { animation-delay: .3s; }
+  #report form.composer { position: static; display: flex; gap: 8px; max-width: none; margin: 0; align-items: flex-end; }
+  #r-q { flex: 1; min-width: 0; resize: none; max-height: 30dvh; padding: 11px 12px; font: inherit; font-size: max(16px, 1em); color: var(--c); background: rgba(2,20,30,.8);
+    border: 1px solid var(--dim); border-radius: 4px; outline: none; } #r-q:focus { border-color: var(--a); box-shadow: 0 0 10px var(--dim); }
+  #r-attach, #r-send { height: 46px; } #r-attach { width: 44px; padding: 0; display: grid; place-items: center; }
+  #r-attach svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .ratts { display: flex; flex-wrap: wrap; gap: 6px; } .ratts:empty { display: none; }
+  .ratts span { display: flex; align-items: center; gap: 4px; padding: 3px 4px 3px 10px; border: 1px solid var(--dim); border-radius: 14px; font-size: 12px; }
+  .ratts button { border: 0; background: none; padding: 0 6px; height: 20px; }
+  .rfoot { display: flex; justify-content: space-between; gap: 8px; } .rfoot button { padding: 5px 12px; font-size: 11px; }
+  #r-stop { color: var(--err); border-color: var(--err); }
 </style>
 </head>
 <body>
@@ -264,15 +295,25 @@
 </div></dialog>
 <dialog id="report" aria-labelledby="r-name"><div class="rp">
   <header><div><h2 id="r-name">Agent</h2><small id="r-sub"></small></div><button type="button" id="r-close" aria-label="Close">✕</button></header>
-  <div class="kpis" id="r-kpis"></div>
-  <div class="grid">
-    <section class="wide"><h3>Latest reply <small id="r-reply-at"></small></h3><p id="r-reply" class="pre"></p></section>
-    <section><h3>Recent requests</h3><ol id="r-reqs" class="list"></ol></section>
-    <section><h3>Activity</h3><ol id="r-tools" class="list mono"></ol></section>
-    <section><h3>Tools used today</h3><div id="r-toolbars"></div></section>
-    <section><h3>Commits <small id="r-branch"></small></h3><ol id="r-commits" class="list"></ol></section>
-  </div>
-  <div class="actions"><button type="button" id="r-ask">Ask what it's working on</button></div>
+  <div class="strip" id="r-strip"></div>
+  <details id="r-more"><summary>Details</summary>
+    <div class="kpis" id="r-kpis"></div>
+    <div class="grid">
+      <section><h3>Recent requests</h3><ol id="r-reqs" class="list"></ol></section>
+      <section><h3>Activity</h3><ol id="r-tools" class="list mono"></ol></section>
+      <section><h3>Tools used today</h3><div id="r-toolbars"></div></section>
+      <section><h3>Commits <small id="r-branch"></small></h3><ol id="r-commits" class="list"></ol></section>
+    </div>
+  </details>
+  <div class="thread" id="r-thread" aria-live="polite"></div>
+  <div class="ratts" id="r-atts"></div>
+  <form class="composer" id="r-form">
+    <button type="button" id="r-attach" aria-label="Attach files" title="Attach files"><svg viewBox="0 0 24 24"><path d="M21 11.5 12.6 20a5.5 5.5 0 0 1-7.8-7.8l8.5-8.5a3.7 3.7 0 0 1 5.2 5.2l-8.5 8.5a1.8 1.8 0 0 1-2.6-2.6L15.2 7"/></svg></button>
+    <input type="file" id="r-files" multiple hidden>
+    <textarea id="r-q" rows="1" placeholder="Message this agent…" aria-label="Message for this agent"></textarea>
+    <button type="submit" id="r-send">Send</button>
+  </form>
+  <div class="rfoot"><button type="button" id="r-new">New thread</button><button type="button" id="r-stop" hidden>Stop</button></div>
 </div></dialog>
 <div id="status" role="status" aria-live="polite">Standby</div>
 <div id="chathead"><button type="button" id="chat-back" aria-label="Back to the home screen">← Back</button><h2>CHAT</h2><button type="button" id="chat-new">New chat</button></div>
@@ -515,7 +556,7 @@ async function loadAgents() {
     layoutHud();
   } catch (e) { $('#agents-l').innerHTML = '<div class="card"><span>Agents</span><small>offline</small></div>'; }
 }
-document.addEventListener('click', e => { const b = e.target.closest('.agent'); if (b) openReport(b.dataset.id); });
+document.addEventListener('click', e => { const b = e.target.closest('.agent'); if (b) { rSeen = ''; rPending = []; renderRAtts(); openReport(b.dataset.id); loadThread(b.dataset.id, true); } });
 let reportFor = null;
 async function openReport(id) {
   reportFor = id; const dlg = $('#report');
@@ -525,25 +566,71 @@ async function openReport(id) {
     const t = r.today || {}, g = r.git || {}, ctxPct = Math.min(100, Math.round((r.context_tokens || 0) / 1e6 * 100));
     $('#report').style.setProperty('--a', AGENT_COLORS[r.id] || '#3dff8f');
     $('#r-name').textContent = AGENT_DEV.has(r.id) ? `${AGENT_SHORT[r.id]} (in development)` : r.name;
-    $('#r-sub').innerHTML = `<span class="st ${esc(r.status)}">${esc(r.status)}</span> · ${esc(r.role)} · last active ${esc(r.last_active_ago || '—')} · ${esc(r.model || '')}`;
+    $('#r-sub').innerHTML = `<span class="st ${esc(r.status)}">${esc(r.status)}</span> · ${esc(r.role)} · last active ${esc(r.last_active_ago || '—')}${r.model ? ' · ' + esc(r.model) : ''}`;
+    const last = (g.commits || [])[0], now = (r.requests || [])[0];
+    $('#r-strip').innerHTML = `<span><b>${fmt(t.requests || 0)}</b> requests today</span><span><b>${ctxPct}%</b> context</span>`
+      + (g.uncommitted ? `<span><b>${fmt(g.uncommitted)}</b> unsaved</span>` : '') + (g.unpushed ? `<span><b>${fmt(g.unpushed)}</b> not pushed</span>` : '')
+      + (last ? `<span>last commit ${esc(last.ago)}</span>` : '') + (now ? `<span class="now" title="${esc(now.text)}">Now: ${esc(now.text)}</span>` : '');
+    $('#r-q').placeholder = `Message ${AGENT_SHORT[r.id] || r.name}…`;
     const kpi = (label, val, w) => `<div class="kpi"><span>${label}</span><b>${val}</b>${w != null ? `<i style="--w:${w}%"></i>` : ''}</div>`;
     $('#r-kpis').innerHTML = kpi('Requests today', fmt(t.requests || 0)) + kpi('Tool calls today', fmt(t.tool_calls || 0))
       + kpi('Tokens written today', kfmt(t.output_tokens)) + kpi('Tokens read today', kfmt((t.input_tokens || 0) + (t.cached_tokens || 0)))
       + kpi('Context used', `${kfmt(r.context_tokens)} <small>/ 1M</small>`, ctxPct)
       + kpi('Unsaved changes', fmt(g.uncommitted)) + kpi('Not pushed', g.unpushed == null ? '—' : fmt(g.unpushed));
-    $('#r-reply').textContent = r.last_reply || 'No reply yet.'; $('#r-reply-at').textContent = r.last_reply_at || '';
     $('#r-reqs').innerHTML = (r.requests || []).map(q => `<li><em>${esc(q.at)}</em>${esc(q.text)}</li>`).join('') || '<li>None yet</li>';
     $('#r-tools').innerHTML = (r.tools || []).map(x => `<li><em>${esc(x.at)}</em>${esc(x.label)}</li>`).join('') || '<li>None yet</li>';
     const max = Math.max(1, ...(r.tool_counts || []).map(x => x[1]));
     $('#r-toolbars').innerHTML = (r.tool_counts || []).map(([n, c]) => `<div class="bar"><span>${esc(n)}</span><i style="--w:${Math.round(c / max * 100)}%"></i><span>${c}</span></div>`).join('') || '<small>No tools used today</small>';
     $('#r-branch').textContent = g.branch || '';
     $('#r-commits').innerHTML = (g.commits || []).map(c => `<li><em>${esc(c.ago)}</em>${esc(c.subject)}</li>`).join('') || '<li>None</li>';
-    $('#r-ask').onclick = () => { $('#report').close(); ask(`Ask the ${r.name} session what it's working on right now, then tell me in two sentences.`); };
-  } catch (e) { $('#r-reply').textContent = 'Could not load: ' + e.message; }
+  } catch (e) { $('#r-strip').textContent = 'Could not load: ' + e.message; }
 }
+// chat with the agent: each message is a turn of its own Claude Code conversation (it remembers the thread)
+let rPending = [], rBusy = false, rPoll = null, rSeen = '';
+async function loadThread(id, force) {
+  try {
+    const d = await (await api(`/api/agents/${encodeURIComponent(id)}/chat`)).json(); if (reportFor !== id) return;
+    const key = d.messages.length + ':' + d.busy;
+    rBusy = d.busy; $('#r-stop').hidden = !d.busy; $('#r-send').disabled = d.busy;
+    clearTimeout(rPoll); if (d.busy) rPoll = setTimeout(() => reportFor === id && loadThread(id), 3000);
+    if (key === rSeen && !force) return; rSeen = key;
+    const th = $('#r-thread');
+    th.innerHTML = d.messages.map(m => `<p class="${m.who === 'you' ? 'you' : 'agent'}${m.error ? ' err' : ''}">${m.who === 'you' ? esc(m.text) : md(m.text)}<small>${esc(m.at || '')}</small></p>`).join('')
+      + (d.busy ? '<div class="typing"><i></i><i></i><i></i> working… you can close this, Neesmo will notify you</div>' : '')
+      || `<div class="empty">Chat with this agent directly. It works in its own folder with its own memory of this thread, and keeps going if you close the box.</div>`;
+    th.scrollTop = th.scrollHeight;
+  } catch (e) { $('#r-thread').innerHTML = `<div class="empty">Could not load the chat: ${esc(e.message)}</div>`; }
+}
+function renderRAtts() {
+  $('#r-atts').innerHTML = rPending.map((f, i) => `<span>${esc(f.name)}<button type="button" data-i="${i}" aria-label="Remove ${esc(f.name)}">✕</button></span>`).join('');
+}
+$('#r-atts').onclick = e => { const b = e.target.closest('button'); if (b) { rPending.splice(+b.dataset.i, 1); renderRAtts(); } };
+$('#r-attach').onclick = () => $('#r-files').click();
+$('#r-files').onchange = e => { for (const f of e.target.files) f.size > 50e6 ? alert(`${f.name} is over 50 MB`) : rPending.push(f); e.target.value = ''; renderRAtts(); };
+const rq = $('#r-q'), grow = () => { rq.style.height = 'auto'; rq.style.height = rq.scrollHeight + 'px'; };
+rq.addEventListener('input', grow);
+rq.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey && !matchMedia('(pointer: coarse)').matches) { e.preventDefault(); $('#r-form').requestSubmit(); } });
+$('#r-form').onsubmit = async e => {
+  e.preventDefault(); const id = reportFor, text = rq.value.trim();
+  if (!id || rBusy || (!text && !rPending.length)) return;
+  $('#r-send').disabled = true;
+  try {
+    const files = [];
+    for (const f of rPending) { const fd = new FormData(); fd.append('file', f); files.push((await (await api('/api/upload', { method: 'POST', body: fd })).json()).path); }
+    await api(`/api/agents/${encodeURIComponent(id)}/chat`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text, files }) });
+    rq.value = ''; grow(); rPending = []; renderRAtts();
+  } catch (err) { alert('Could not send: ' + err.message); }
+  loadThread(id, true);
+};
+$('#r-stop').onclick = () => reportFor && api(`/api/agents/${encodeURIComponent(reportFor)}/chat/stop`, { method: 'POST' }).then(() => loadThread(reportFor, true));
+$('#r-new').onclick = async () => {
+  if (!reportFor || !confirm('Start a new thread? The agent forgets this conversation.')) return;
+  try { await api(`/api/agents/${encodeURIComponent(reportFor)}/chat/reset`, { method: 'POST' }); } catch (err) { alert(err.message); }
+  loadThread(reportFor, true);
+};
 $('#r-close').onclick = () => $('#report').close();
 $('#report').addEventListener('click', e => { if (e.target.id === 'report') e.target.close(); });
-$('#report').addEventListener('close', () => { reportFor = null; });
+$('#report').addEventListener('close', () => { reportFor = null; clearTimeout(rPoll); });
 loadAgents(); setInterval(() => { if (!document.hidden) { loadAgents(); if (reportFor) openReport(reportFor); } }, 15000);
 
 // ── home-screen app: notifications + replies that arrive on their own ──

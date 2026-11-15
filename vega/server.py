@@ -23,6 +23,7 @@ from fastapi.responses import FileResponse, JSONResponse, RedirectResponse, Resp
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 
+import agent_chat
 import agents
 import auth
 import notes
@@ -411,6 +412,61 @@ async def agent_report(aid: str):
     if rep is None:
         raise HTTPException(404, "unknown agent")
     return rep
+
+
+class AgentMsg(BaseModel):
+    text: str = ""
+    files: list[str] = []
+
+
+def _agent_or_404(aid: str) -> dict:
+    a = next((x for x in agents.load() if x["id"] == aid), None)
+    if a is None or aid not in agents.folders():
+        raise HTTPException(404, "no such agent")
+    return a
+
+
+@app.get("/api/agents/{aid}/chat")
+def agent_thread(aid: str):
+    _agent_or_404(aid)
+    return agent_chat.thread(aid)
+
+
+@app.post("/api/agents/{aid}/chat")
+async def agent_send(aid: str, body: AgentMsg):
+    """A message for this agent's own conversation; it answers in the background (poll the GET)."""
+    a = _agent_or_404(aid)
+    files = [f for f in body.files if Path(f).resolve().is_relative_to(UPLOADS.resolve()) and Path(f).is_file()]
+    text = body.text.strip()
+    if files:
+        text += "\n\nAttached files (read them from these paths):\n" + "\n".join(files)
+    if not text:
+        raise HTTPException(400, "empty message")
+    brief = agents.instructions(a) if agents.configured() else None
+
+    async def done(reply: str):
+        await _notify(f"{a['name']} replied", reply[:150], tag=f"agent-{aid}", kind="reply")
+    try:
+        await agent_chat.send(aid, agents.folders()[aid], text, brief, done)
+    except RuntimeError as e:
+        raise HTTPException(409, str(e))
+    return agent_chat.thread(aid)
+
+
+@app.post("/api/agents/{aid}/chat/stop")
+def agent_stop(aid: str):
+    _agent_or_404(aid)
+    return {"stopped": agent_chat.stop(aid)}
+
+
+@app.post("/api/agents/{aid}/chat/reset")
+def agent_reset(aid: str):
+    _agent_or_404(aid)
+    try:
+        agent_chat.reset(aid)
+    except RuntimeError as e:
+        raise HTTPException(409, str(e))
+    return {"ok": True}
 
 
 @app.get("/api/config")
