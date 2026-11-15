@@ -15,7 +15,16 @@ Make the next 40k comic short and add it to `uploader/schedule.json`. Work from 
    being a Marine (lost humanity, the Black Rage, gene-seed and the dead brothers it comes from, Chapters dying out,
    serfs and Guardsmen who barely matter to them). Use real Chapters and real lore (Ultramarines, Space Wolves,
    Blood Angels, Black Templars, Salamanders, Dark Angels, Raven Guard, Iron Hands, Imperial Fists, White Scars, Flesh Tearers,
-   Lamenters, etc.) with their real colours, checked on Lexicanum. Draw them fresh in our cartoon style; never copy GW art or logos.
+   Lamenters, Deathwatch, etc.) with their real colours, checked on Lexicanum. Draw them fresh in our cartoon style; never copy GW art.
+   - Chapter symbols must be recognisable: redraw each icon by hand in our style (shoulder pad, banner, chest) so fans spot it at a glance.
+     Spell the icon out in the Gemini prompt (e.g. "white upturned omega on the left pauldron" for Ultramarines).
+   - Show the range of armour and name the mark in the prompt: Mk II Crusade, Mk III Iron, Mk IV Maximus, Mk VI Corvus (beaky),
+     Mk VII Aquila, Mk VIII Errant, Mk X Tacticus / Gravis / Phobos (Primaris), Tactical Dreadnought (Terminator), Cataphractii.
+     Vary it between shorts; old marks for veterans and Horus Heresy era, Primaris for post-Rift stories.
+   - Deathwatch: black armour with a silver left arm, and the right pauldron in the Marine's home Chapter colours and symbol. Kill-teams
+     mixing Chapters are a great hook (clashing personalities, one squad, many icons).
+   - Get inspired by fan-painted miniatures (kitbashes, battle damage, freehand banners, weathering) for detail and colour ideas;
+     describe the look in words, never paste or trace a fan's photo.
    Mark these "Astartes" in the topic notes so the analytics can compare them.
    Use the `viral-short-form-ideas` skill to shortlist 3 angles and pick the one with the clearest stake.
 2. **Check the lore** on the Lexicanum wiki (wh40k.lexicanum.com). Fan jokes are labelled as fan jokes.
