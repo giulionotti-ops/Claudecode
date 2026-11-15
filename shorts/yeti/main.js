@@ -149,19 +149,21 @@ function wordAt(t) { let w = null; for (const x of words) { if (x.t0 <= t + .02)
 function showChip(text, a, b, t, y) { const box = O.chip(ov, text, t - a, Math.min(1, (b - t) / .2), y); if (box) texts.push({ id: 'chip:' + text, text, ...box }); }
 function sky(hex, near, far) { bg.set(hex); fog.color.copy(bg); fog.near = near; fog.far = far; }
 const DAY = 0xa8c8e6;
+const WALK_V = .75;             // ground speed (m/s) of the WALK (BIGFOOT) clip at 1x: measured from its stance-foot travel
 const RIGHT = Math.PI / 2;      // facing +x (profile to a camera on +z)
 
 window.render = (t) => {
   texts.length = 0; O.clear(ov);
   bear.holder.visible = hare.holder.visible = yak.holder.visible = den.visible = false; yeti.holder.visible = true; world.visible = true;
+  world.position.x = 16 - WALK_V * (t < S.d ? t : t < S.e ? S.d : S.d + Math.min(t, T.built) - S.e);   // the ground slides back at the yeti's walking speed, so its feet never skate
   sky(DAY, 60, 230); hemi.color.set(0xdcecff); hemi.intensity = 1.6; sun.color.set(0xfff2dc); sun.intensity = 2.6; sun.position.set(10, 22, 14);
   for (const f of yeti.feet) f.scale.set(1, 1, 1);
   let after = null, dens = .3, flash = 0, focus = V(0, 0, 0);
 
   if (t < S.b) {
     // 1. a yeti walks along a snowy ridge below the big peaks
-    const p = seg(t, S.a, S.b), x = lerp(-1.6, 1.6, p);
-    place(yeti, x, 0, 0, RIGHT - .35, 1); pose(yeti, 'WALK (BIGFOOT)', t * .9);
+    const x = 0;
+    place(yeti, x, 0, 0, RIGHT - .06, 1); pose(yeti, 'WALK (BIGFOOT)', t);
     cam(V(x + 1.3, 1.9, 8.4), V(x, 1.5, 0), 50); focus = V(x, 0, 0); dens = .35;
     after = () => {
       showChip('HIMALAYA · FOLKLORE', .2, T.sherpa + .3, t);
@@ -172,8 +174,8 @@ window.render = (t) => {
     // 2. deep snow: small feet sink, wide furry feet float, like a snowshoe hare
     const sinkK = ei(seg(t, T.sinks, T.sinks + .8)), growK = eo(seg(t, T.grow + .2, T.grow + 1.5)), sink = sinkK * 1.05 * (1 - growK);
     const wide = t >= T.grow + .2;
-    place(yeti, -.9, -sink, 0, RIGHT - .4, 1);
-    if (t < T.sinks) pose(yeti, 'WALK (BIGFOOT)', t * .9); else if (!wide) pose(yeti, 'WALK', t * .7); else pose(yeti, 'WALK (BIGFOOT)', t * .9);
+    place(yeti, -.9, -sink, 0, RIGHT - .06, 1);
+    pose(yeti, 'WALK (BIGFOOT)', t);
     if (growK > 0) feetScale(yeti, 1 + 1.6 * growK);
     hare.holder.visible = t > T.hare - .5; const hk = eo(seg(t, T.hare - .5, T.hare + .6));
     place(hare, lerp(4.2, 1.6, hk), 0, 1.4, -RIGHT - .5, 1.8);
@@ -191,8 +193,8 @@ window.render = (t) => {
   } else if (t < S.d) {
     // 3. thin air: the oxygen gauge drops, then the yak shows how it is done
     sky(0x7fa6d4, 60, 230);
-    place(yeti, -.4, 0, 0, RIGHT - .5, 1);
-    pose(yeti, 'WALK (BIGFOOT)', t * .5);
+    place(yeti, -.4, 0, 0, RIGHT - .06, 1);
+    pose(yeti, 'WALK (BIGFOOT)', t);
     yak.holder.visible = t > T.yak - .6; const yk = eo(seg(t, T.yak - .6, T.yak + .9));
     place(yak, lerp(6.5, 2.1, yk), 0, .6, -RIGHT - .15, 1);
     pose(yak, 'ArmatureAction', yk < 1 ? t * .9 : (t - T.yak) * .25);
@@ -211,7 +213,7 @@ window.render = (t) => {
     sky(0x8d9fb5, 8, 60); hemi.intensity = 1.2; sun.intensity = 1.4;
     den.visible = true; world.visible = true;
     if (t < T.sleep - .3) {
-      place(yeti, lerp(-1.7, -.5, eio(seg(t, S.d, T.sleep - .4))), 0, 1.4, RIGHT - .3, .65); pose(yeti, 'WALK (BIGFOOT)', t * .8);
+      place(yeti, lerp(-1.7, -.5, eio(seg(t, S.d, T.sleep - .4))), 0, 1.4, RIGHT - .1, .65); pose(yeti, 'WALK (BIGFOOT)', t * (1.2 / (T.sleep - .4 - S.d)) / (WALK_V * .65));
     } else {
       yeti.holder.visible = false; bear.holder.visible = true; const k = seg(t, T.sleep - .3, T.sleep + .5);
       place(bear, 0, 0, .3, RIGHT - .6, 1.5 * (.85 + .15 * eo(k))); pose(bear, 'Lying_Idle_01', t - T.sleep + .3);
@@ -228,7 +230,7 @@ window.render = (t) => {
   } else if (t < S.f) {
     // 5. now look at what you built: the yeti rears and roars
     const k = seg(t, S.e, S.f);
-    place(yeti, 0, 0, 0, RIGHT - .55, 1); pose(yeti, t < T.built ? 'WALK (BIGFOOT)' : 'AGRESSIVE', t < T.built ? t * .5 : t - T.built + .3);
+    place(yeti, 0, 0, 0, RIGHT - (t < T.built ? .12 : .55), 1); pose(yeti, t < T.built ? 'WALK (BIGFOOT)' : 'AGRESSIVE', t < T.built ? t : t - T.built + .3);
     cam(V(2.0, 1.9, 7.6), V(0, 1.5, 0), 52); dens = .3;
     after = () => {
       showChip('NOW LOOK AT WHAT YOU BUILT', T.now - .1, T.furry - .3, t);
