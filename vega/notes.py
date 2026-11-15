@@ -60,10 +60,22 @@ def _expire_old() -> None:
             i["status"] = "expired"
 
 
+def _next_id() -> int:
+    """Ids are never reused, even after the list is cleared: a job polling an old review id must never read a new one."""
+    last_file = DIR / "last_id"
+    try:
+        last = int(last_file.read_text())
+    except (OSError, ValueError):
+        last = 0
+    nid = max([last] + [i["id"] for i in _items]) + 1
+    last_file.write_text(str(nid))
+    return nid
+
+
 def add(kind: str, title: str, body: str, **extra) -> dict:
     with _lock:
         _load()
-        nid = max((i["id"] for i in _items), default=0) + 1
+        nid = _next_id()
         item = {"id": nid, "kind": kind, "title": title, "body": body[:4000], "ts": time.time(),
                 "at": datetime.datetime.now().strftime("%d %b %H:%M"), **extra}
         _items.append(item)
@@ -76,7 +88,17 @@ def history() -> list[dict]:
     with _lock:
         _load()
         _expire_old()
-        return list(reversed(_items))
+        return [i for i in reversed(_items) if not i.get("hidden")]
+
+
+def collect(nid: int) -> None:
+    """The job behind a review has read its answer: from now on deleting it really deletes it."""
+    with _lock:
+        _load()
+        for i in _items:
+            if i["id"] == nid and i["kind"] == "review" and i.get("status") not in ("pending", "ignored") and not i.get("collected"):
+                i["collected"] = True
+                _save()
 
 
 def get(nid: int) -> dict | None:
@@ -137,12 +159,22 @@ def ignore(nid: int) -> dict:
 
 
 def remove(nid: int | None = None) -> int:
-    """Delete one notification, or all of them (nid None). A still-pending approval is kept: its chat is waiting on it."""
+    """Delete one notification, or all of them (nid None). A still-pending approval is kept: its chat is waiting on it.
+    A review whose job has not read the answer yet (or that is still open) is only hidden from the list: deleting it
+    must not lose an "ask for changes" note, nor make the job send the same review again."""
     with _lock:
         _load()
         _expire_old()
-        keep = [i for i in _items if i.get("status") == "pending" or (nid is not None and i["id"] != nid)]
-        gone = len(_items) - len(keep)
+        keep, gone = [], 0
+        for i in _items:
+            if nid is not None and i["id"] != nid:
+                keep.append(i); continue
+            if i["kind"] == "review" and not i.get("collected"):
+                gone += not i.get("hidden"); i["hidden"] = True; keep.append(i)
+            elif i.get("status") == "pending":
+                keep.append(i)
+            else:
+                gone += 1
         _items[:] = keep
         _save()
         return gone
@@ -167,4 +199,7 @@ if __name__ == "__main__":  # self-check: python3 notes.py
     assert ignore(p["id"])["status"] == "ignored" and remove(p["id"]) == 1
     r = add("review", "t", "n", status="pending"); ignore(r["id"])
     assert decide(r["id"], "allow")["status"] == "approved"
+    remove(); assert get(r["id"])["status"] == "approved" and r["id"] not in [i["id"] for i in history()]
+    collect(r["id"]); remove(); assert get(r["id"]) is None
+    n = add("info", "a", "b"); remove(); assert add("info", "c", "d")["id"] > n["id"]   # ids never reused
     print("ok")

@@ -481,6 +481,8 @@ def review_status(nid: int, x_neesmo_hook: str | None = Header(None)):
     item = notes.get(nid)
     if item is None or item["kind"] != "review":
         raise HTTPException(404, "no such review")
+    if item["status"] not in ("pending", "ignored"):
+        notes.collect(nid)   # the job has the answer now
     return {"status": item["status"], "note": item.get("note", "")}
 
 
