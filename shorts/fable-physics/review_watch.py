@@ -69,7 +69,11 @@ def main():
     for slug, s in list(st.items()):
         if s.get('fixing') or not s.get('nid'): continue
         try: r = notify.api(f"/api/reviews/{s['nid']}")
-        except Exception as e: log('status failed', slug, e); continue
+        except Exception as e:
+            log('status failed', slug, e)
+            if getattr(e, 'code', None) == 404:   # Neesmo lost the review: forget it so notify.pending() sends a new one
+                st.pop(slug, None); save(st)
+            continue
         if r['status'] == 'approved':
             st.pop(slug); save(st); log('approved', slug); approved(slug)
         elif r['status'] == 'changes asked':
