@@ -360,7 +360,7 @@
     <div class="row"><small>Status</small><small id="lic-state">…</small></div>
     <form id="lic-form" class="licf" hidden><input id="lic-key" placeholder="License key" aria-label="License key" autocomplete="off" spellcheck="false"><button type="submit">Activate</button></form>
     <small id="lic-msg" class="licmsg"></small>
-    <div class="links"><a href="/guide" target="_blank" rel="noopener">Guide</a><a href="/welcome" target="_blank" rel="noopener">Website</a><a href="#" id="lic-rm" hidden>Remove key</a></div>
+    <div class="links"><a href="/guide" target="_blank" rel="noopener">Guide</a><a href="/welcome" target="_blank" rel="noopener">Website</a><a href="#" id="lic-buy" target="_blank" rel="noopener" hidden>Buy a key</a><a href="#" id="lic-rm" hidden>Remove key</a></div>
     <h3>Open-source licenses</h3>
     <small class="sub">Everything Neesmo ships or installs, and the license each one uses.</small>
     <div id="notices"><small>loading…</small></div>
@@ -1047,6 +1047,8 @@ function showLicense(l) {
   const txt = { owner: 'Owner copy · no key needed', licensed: `Licensed · ${l.plan || 'pro'}${l.to ? ' · ' + l.to : ''}${l.expires ? ' · until ' + l.expires : ''}`,
     trial: `Trial · ${l.days_left} day${l.days_left === 1 ? '' : 's'} left`, expired: 'Trial ended · add a key', invalid: 'Key problem: ' + (l.error || '') };
   $('#lic-state').textContent = txt[l.state] || l.state;
+  if (l.state === 'licensed' && /early/.test(l.plan || '')) $('#lic-state').textContent += ' · thank you for backing Neesmo early. Every update is yours, free.';
+  const buy = $('#lic-buy'); buy.hidden = !l.buy || !['trial', 'expired', 'invalid'].includes(l.state); if (l.buy) buy.href = l.buy;
   $('#lic-form').hidden = l.state === 'owner' || l.state === 'licensed'; $('#lic-rm').hidden = l.state !== 'licensed' && l.state !== 'invalid';
 }
 async function loadLicense() { try { showLicense(await (await api('/api/license')).json()); } catch { $('#lic-state').textContent = 'unknown'; } }
