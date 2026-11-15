@@ -4,7 +4,7 @@ notification, then taps Approve (it gets scheduled) or Ask for changes (review_w
   notify.py --pending        send a review for every unapproved short that has none open
   notify.py "title" ["body"] plain notification
 """
-import sys, os, json, subprocess, urllib.request
+import sys, os, re, json, subprocess, urllib.request
 
 HERE = os.path.dirname(os.path.abspath(__file__))
 SHORTS = os.path.dirname(HERE)
@@ -37,8 +37,8 @@ def preview(e):
 
 
 def send_review(e):
-    desc = e.get('description', '').split('\n\n#')[0]
-    details = f"{e['title']}\n\n{desc}\n\nPinned comment: {e.get('pinned', '')}\n\nApprove = scheduled at the next free slot (13:30 / 21:30)."
+    desc = e.get('description', '').split('\n\n#')[0].split('\n\n')[0]   # plain words only: no hashtags, question or pinned comment
+    details = re.split(r'(?<=[.!?])\s', re.sub(r'\s*#\w+', '', desc).strip())[0]   # one plain sentence
     r = api('/api/reviews', {'title': 'Fable Physics: approve this short?', 'name': e['title'].split(' #')[0],
                              'details': details, 'media': [preview(e)], 'agent': '/root/physics-channel'})
     return r['id']
