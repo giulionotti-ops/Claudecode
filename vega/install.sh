@@ -128,6 +128,12 @@ if have npx && ask "Install the skill pack ($(grep -vc '^#' "$HERE/skills.txt") 
   flush
 fi
 
+if have claude && ask "Install the caveman plugin (short, plain replies from Claude that keep every technical detail; Apache-2.0)?"; then
+  run claude plugin marketplace add JuliusBrussee/caveman || warn "could not add the caveman marketplace"
+  run claude plugin install caveman@caveman -s user || warn "could not install the caveman plugin"
+  echo "   Turn it (and any skill) on or off later in Neesmo: Settings > System"
+fi
+
 # ---- 5. service ---------------------------------------------------------------
 if [ "$SERVICE" = 1 ] && have systemctl; then
   say "Setting up the neesmo service (127.0.0.1:$PORT, starts at boot)"

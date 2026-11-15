@@ -32,6 +32,7 @@ Checked 2026-11-15.
 | OmniRoute (free-model gateway) | github.com/diegosouzapw/OmniRoute | MIT |
 | graphify (code knowledge graph) | pypi.org/project/graphifyy | Apache-2.0 |
 | claude-mem (long-term memory plugin) | github.com/thedotmack/claude-mem | Apache-2.0 |
+| caveman plugin (short, plain replies) | github.com/JuliusBrussee/caveman | Apache-2.0 |
 
 ## Skill pack
 

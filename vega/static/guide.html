@@ -27,7 +27,7 @@
 </head>
 <body>
 <div class="wrap">
-<aside><b>NEESMO</b><a href="/">← Back to Neesmo</a><a href="#start">Getting started</a><a href="#commands">Commands</a><a href="#chat">Chat screen</a><a href="#agents">Agents</a><a href="#approvals">Approvals</a><a href="#phone">Phone app</a><a href="#access">Access and login</a><a href="#bundle">Bundle</a><a href="#license">License</a><a href="#trouble">Troubleshooting</a></aside>
+<aside><b>NEESMO</b><a href="/">← Back to Neesmo</a><a href="#start">Getting started</a><a href="#commands">Commands</a><a href="#chat">Chat screen</a><a href="#agents">Agents</a><a href="#settings">Settings</a><a href="#approvals">Approvals</a><a href="#phone">Phone app</a><a href="#access">Access and login</a><a href="#bundle">Bundle</a><a href="#license">License</a><a href="#trouble">Troubleshooting</a></aside>
 <main>
 <h1>Neesmo guide</h1>
 <p>Everything you need to run Claude Code from one screen.</p>
@@ -60,6 +60,16 @@
   <li><b>Claude app:</b> a folder run by the Claude app's Remote Control (<code>claude remote-control</code>) is shown read-only. To use the app and Neesmo on the same session, set <code>NEESMO_RC=1</code> so the sessions Neesmo starts join Remote Control.</li>
 </ul>
 
+<h2 id="settings">Settings</h2>
+<p>Tap the gear. Settings are split into tabs:</p>
+<ul>
+  <li><b>General:</b> the welcome greeting Neesmo shows (and can say out loud) when you open it. Set your name and the message; <code>{greeting}</code>, <code>{name}</code> and <code>{busy}</code> are filled in for you. Also the voice.</li>
+  <li><b>Appearance:</b> colour, text size, the big NEESMO lettering, scan lines (thin lines over the screen like an old CRT monitor) and calm motion. Saved per device.</li>
+  <li><b>Agents:</b> add, edit and reorder agents. Drag a row, or drag the cards on the home screen; on a phone, hold a card for a moment, then move it. It snaps into place and the order is saved on the server.</li>
+  <li><b>System:</b> switch the general Claude Code plugins and skills (the ones every session on the server gets) on or off. Changes apply to sessions started afterwards. Skills inside a project folder belong to that project and are not listed.</li>
+  <li><b>License:</b> your key, and every open-source part Neesmo ships or installs with its license.</li>
+</ul>
+
 <h2 id="approvals">Approvals</h2>
 <p>When an agent needs permission for something, Neesmo sends a notification. Approve, deny, or ignore it right from the notification list without opening it. Ignored requests time out on their own.</p>
 
@@ -74,6 +84,7 @@
   <li><b>OmniRoute</b>: a local gateway to free models, for cheap text jobs. Add providers with <code>omniroute providers add</code>.</li>
   <li><b>graphify</b>: builds a knowledge graph of a codebase so agents find code faster.</li>
   <li><b>claude-mem</b>: long-term memory across Claude Code sessions.</li>
+  <li><b>caveman</b>: a plugin that makes Claude answer short and plain while keeping every technical detail. Turn it off in Settings → System if you prefer long answers.</li>
   <li><b>Skill pack</b>: 55 skills for engineering, code review, video making, reading links and finding the right skill for a job.</li>
 </ul>
 

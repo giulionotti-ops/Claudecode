@@ -66,6 +66,37 @@
     max-height: calc(100dvh - 160px); overflow: auto; z-index: 20; padding: 14px; border: 1px solid var(--dim); border-radius: 10px;
     background: rgba(2,14,10,.97); box-shadow: 0 0 30px rgba(var(--rgb),.15); text-transform: none; letter-spacing: normal; text-align: left; }
   .pop[hidden] { display: none; }
+  .pop.wide { width: min(520px, calc(100vw - 32px)); padding-top: 0; }
+  .tabs { position: sticky; top: 0; z-index: 2; display: flex; gap: 2px; margin: 0 -14px 10px; padding: 10px 10px 0; background: rgba(2,14,10,.98);
+    border-bottom: 1px solid rgba(var(--rgb),.18); overflow-x: auto; scrollbar-width: none; }
+  .tabs button { flex: none; border: 0; border-bottom: 2px solid transparent; border-radius: 0; padding: 8px 10px; background: none; color: var(--dim);
+    font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
+  .tabs button[aria-selected="true"] { color: var(--c); border-bottom-color: var(--c); }
+  .tab[hidden] { display: none; } .tab h3 { margin-top: 14px; } .tab h3:first-child { margin-top: 4px; }
+  .pop .sub { display: block; font-size: 11.5px; line-height: 1.35; margin-top: 2px; }
+  .pop .row.col { flex-direction: column; align-items: stretch; gap: 4px; }
+  .tin { min-width: 0; flex: 1; max-width: 240px; padding: 7px 8px; font: inherit; font-size: max(16px, 1em); color: var(--c); background: rgba(0,0,0,.35); border: 1px solid rgba(var(--rgb),.35); border-radius: 6px; }
+  .row.col .tin { max-width: none; }
+  .xlist { list-style: none; margin: 6px 0 0; padding: 0; display: flex; flex-direction: column; }
+  .xlist li { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-top: 1px solid rgba(var(--rgb),.1); }
+  .xlist li:first-child { border-top: 0; } .xlist .xi { flex: 1; min-width: 0; }
+  .xlist b { font-weight: 600; } .xlist .xd { display: block; color: var(--dim); font-size: 11.5px; line-height: 1.3; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  .lchip { display: inline-block; margin-left: 6px; padding: 0 6px; border: 1px solid rgba(var(--rgb),.35); border-radius: 9px; font: 10.5px/16px var(--mono); color: var(--c2); white-space: nowrap; }
+  .tog[aria-busy="true"] { opacity: .5; pointer-events: none; }
+  #notices h4 { margin: 12px 0 4px; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--c); font-weight: 600; }
+  #notices table { width: 100%; border-collapse: collapse; font-size: 12px; } #notices td { padding: 4px 0; border-top: 1px solid rgba(var(--rgb),.1); vertical-align: top; }
+  #notices td:last-child { text-align: right; padding-left: 8px; } #notices td small { display: block; color: var(--dim); word-break: break-all; }
+  #notices p { margin: 4px 0; font-size: 12px; color: var(--dim); }
+  /* drag to reorder */
+  .agent, .aglist li { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
+  .dragging { position: relative; z-index: 30; pointer-events: none; opacity: .95; box-shadow: 0 10px 30px rgba(0,0,0,.6), 0 0 18px rgba(var(--rgb),.45); }
+  .agent.dragging { scale: 1.06; } .drag-armed { outline: 1px solid var(--c); outline-offset: 2px; }
+  .aglist li > button[data-ag]::after { content: "⠿"; margin-left: auto; color: var(--dim); font-size: 16px; }
+  /* welcome */
+  #welcome { position: fixed; left: 50%; top: 50%; translate: -50% -50%; z-index: 15; width: min(560px, calc(100vw - 48px)); text-align: center; pointer-events: none;
+    font: 600 clamp(22px, 4.4vw, 34px)/1.2 var(--sans); color: #eafff2; text-shadow: 0 0 24px rgba(var(--rgb),.6); letter-spacing: -.01em; }
+  #welcome small { display: block; margin-top: 10px; font: 12px/1.4 var(--mono); letter-spacing: .3em; text-transform: uppercase; color: var(--c); text-shadow: 0 0 8px var(--c); }
+  #welcome[hidden] { display: none; }
   .pop h3 { margin: 0 0 10px; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); }
   .pop .row { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 8px 0; border-top: 1px solid rgba(var(--rgb),.12); }
   .pop .row:first-of-type { border-top: 0; } .pop label { color: var(--c); } .pop small { color: var(--dim); }
@@ -282,27 +313,56 @@
   <button type="button" class="ic" id="bell" aria-label="Notifications" aria-expanded="false" aria-controls="pop-n"><svg viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg><span class="badge" id="badge" hidden>0</span></button>
   <button type="button" class="ic" id="gear" aria-label="Settings" aria-expanded="false" aria-controls="pop-s"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
 </div></div>
-<div class="pop" id="pop-s" hidden role="dialog" aria-label="Settings">
-  <h3>Voice</h3>
-  <div class="row"><label for="voice">Voice</label><select id="voice"><option>loading…</option></select></div>
-  <div class="row"><small>Status</small><small id="vs">voice: …</small></div>
-  <h3 style="margin-top:14px">Appearance</h3>
-  <div class="row"><label>Colour</label><div class="swatches" id="swatches"></div></div>
-  <div class="row"><label for="fsize">Text size</label><select id="fsize"><option value="13px">Small</option><option value="14px">Medium</option><option value="16px">Large</option></select></div>
-  <div class="row"><label id="l-mark">NEESMO lettering</label><button type="button" class="tog" role="switch" id="t-mark" aria-labelledby="l-mark"></button></div>
-  <div class="row"><label id="l-scan">Scanlines</label><button type="button" class="tog" role="switch" id="t-scan" aria-labelledby="l-scan"></button></div>
-  <div class="row"><label id="l-calm">Calm animation</label><button type="button" class="tog" role="switch" id="t-calm" aria-labelledby="l-calm"></button></div>
-  <div class="nhead" style="margin-top:14px"><h3>Agents</h3><button type="button" id="ag-add">+ Add</button></div>
-  <ul class="nlist aglist" id="aglist"></ul>
-  <h3 style="margin-top:14px">License</h3>
-  <div class="row"><small>Status</small><small id="lic-state">…</small></div>
-  <form id="lic-form" class="licf" hidden><input id="lic-key" placeholder="License key" aria-label="License key" autocomplete="off" spellcheck="false"><button type="submit">Activate</button></form>
-  <small id="lic-msg" class="licmsg"></small>
-  <div class="links"><a href="/guide" target="_blank" rel="noopener">Guide</a><a href="/welcome" target="_blank" rel="noopener">Website</a><a href="#" id="lic-rm" hidden>Remove key</a></div>
-  <div id="acct" hidden>
-    <div class="nhead" style="margin-top:14px"><h3>Devices</h3><button type="button" id="logout">Sign out</button></div>
-    <ul class="nlist" id="devlist"></ul>
+<div class="pop wide" id="pop-s" hidden role="dialog" aria-label="Settings">
+  <div class="tabs" role="tablist" aria-label="Settings sections">
+    <button type="button" role="tab" data-tab="general" aria-selected="true">General</button><button type="button" role="tab" data-tab="look" aria-selected="false">Appearance</button><button type="button" role="tab" data-tab="agents" aria-selected="false">Agents</button><button type="button" role="tab" data-tab="system" aria-selected="false">System</button><button type="button" role="tab" data-tab="license" aria-selected="false">License</button>
   </div>
+  <section class="tab" data-tab="general" role="tabpanel">
+    <h3>Welcome</h3>
+    <div class="row"><div><label id="l-wel">Greet me when Neesmo opens</label></div><button type="button" class="tog" role="switch" id="t-wel" aria-labelledby="l-wel"></button></div>
+    <div class="row"><label for="wel-name">Your name</label><input id="wel-name" class="tin" maxlength="30" placeholder="optional" autocomplete="given-name"></div>
+    <div class="row col"><label for="wel-text">Message</label><input id="wel-text" class="tin" maxlength="160"><small>Use {greeting} (good morning…), {name} and {busy} (what your agents are doing).</small></div>
+    <div class="row"><div><label id="l-welv">Say it out loud</label><small class="sub">If the browser blocks sound, it speaks on your first tap.</small></div><button type="button" class="tog" role="switch" id="t-welv" aria-labelledby="l-welv"></button></div>
+    <div class="row"><small id="wel-prev"></small><button type="button" id="wel-try">Try it</button></div>
+    <h3>Voice</h3>
+    <div class="row"><label for="voice">Voice</label><select id="voice"><option>loading…</option></select></div>
+    <div class="row"><small>Status</small><small id="vs">voice: …</small></div>
+  </section>
+  <section class="tab" data-tab="look" role="tabpanel" hidden>
+    <h3>Appearance</h3>
+    <div class="row"><label>Colour</label><div class="swatches" id="swatches"></div></div>
+    <div class="row"><label for="fsize">Text size</label><select id="fsize"><option value="13px">Small</option><option value="14px">Medium</option><option value="16px">Large</option></select></div>
+    <div class="row"><div><label id="l-mark">NEESMO lettering</label><small class="sub">The big faded name behind the ring.</small></div><button type="button" class="tog" role="switch" id="t-mark" aria-labelledby="l-mark"></button></div>
+    <div class="row"><div><label id="l-scan">Scan lines</label><small class="sub">Thin horizontal lines over the screen, like an old CRT monitor. Turn off for a cleaner look.</small></div><button type="button" class="tog" role="switch" id="t-scan" aria-labelledby="l-scan"></button></div>
+    <div class="row"><div><label id="l-calm">Calm motion</label><small class="sub">Fewer and shorter animations.</small></div><button type="button" class="tog" role="switch" id="t-calm" aria-labelledby="l-calm"></button></div>
+    <small class="sub">Saved on this device only.</small>
+  </section>
+  <section class="tab" data-tab="agents" role="tabpanel" hidden>
+    <div class="nhead"><h3>Agents</h3><button type="button" id="ag-add">+ Add</button></div>
+    <small class="sub">Tap to edit. Drag to change the order (hold, then move on a phone). You can also drag the cards on the home screen.</small>
+    <ul class="nlist aglist" id="aglist"></ul>
+  </section>
+  <section class="tab" data-tab="system" role="tabpanel" hidden>
+    <h3>Plugins</h3>
+    <ul class="xlist" id="plist"><li><small>loading…</small></li></ul>
+    <h3>Skills</h3>
+    <ul class="xlist" id="slist"><li><small>loading…</small></li></ul>
+    <small class="sub" id="x-note">These are the general ones every Claude session on this server gets. Changes apply to sessions started after the switch.</small>
+    <div id="acct" hidden>
+      <div class="nhead"><h3>Devices</h3><button type="button" id="logout">Sign out</button></div>
+      <ul class="nlist" id="devlist"></ul>
+    </div>
+  </section>
+  <section class="tab" data-tab="license" role="tabpanel" hidden>
+    <h3>Your key</h3>
+    <div class="row"><small>Status</small><small id="lic-state">…</small></div>
+    <form id="lic-form" class="licf" hidden><input id="lic-key" placeholder="License key" aria-label="License key" autocomplete="off" spellcheck="false"><button type="submit">Activate</button></form>
+    <small id="lic-msg" class="licmsg"></small>
+    <div class="links"><a href="/guide" target="_blank" rel="noopener">Guide</a><a href="/welcome" target="_blank" rel="noopener">Website</a><a href="#" id="lic-rm" hidden>Remove key</a></div>
+    <h3>Open-source licenses</h3>
+    <small class="sub">Everything Neesmo ships or installs, and the license each one uses.</small>
+    <div id="notices"><small>loading…</small></div>
+  </section>
 </div>
 <div class="pop" id="pop-n" hidden role="dialog" aria-label="Notifications">
   <div class="row"><label id="l-push">Notifications</label><button type="button" class="tog" role="switch" id="t-push" aria-labelledby="l-push"></button></div>
@@ -356,6 +416,7 @@
   </form>
   <div class="rfoot"><button type="button" id="r-new">New thread</button><span class="rlink" id="r-link"></span><button type="button" id="r-stop" hidden>Stop</button></div>
 </div></dialog>
+<div id="welcome" hidden aria-hidden="true"></div>
 <div id="status" role="status" aria-live="polite">Standby</div>
 <div id="chathead"><button type="button" id="chat-back" aria-label="Back to the home screen">← Back</button><h2>CHAT</h2><button type="button" id="chat-new">New chat</button></div>
 <div id="log" aria-live="polite"></div>
@@ -421,7 +482,7 @@ function audio() {
 // ── appearance settings (this device only) ──
 const THEMES = { green: ['#3dff8f', '61,255,143', '#c6ff4a'], cyan: ['#3fe0ff', '63,224,255', '#ffb547'], amber: ['#ffb547', '255,181,71', '#ff6b3d'],
   violet: ['#b388ff', '179,136,255', '#ff7ac6'], red: ['#ff5f6d', '255,95,109', '#ffd166'] };
-let PREFS = { theme: 'green', fs: '14px', mark: true, scan: true, calm: false };
+let PREFS = { theme: 'green', fs: '14px', mark: true, scan: true, calm: false, wel: true, welName: '', welText: '{greeting}, {name}. {busy}', welVoice: false };
 try { Object.assign(PREFS, JSON.parse(localStorage.getItem('neesmo-prefs') || '{}')); } catch {}
 const THEME = {};
 function applyPrefs() {
@@ -429,7 +490,7 @@ function applyPrefs() {
   Object.assign(THEME, { hex, rgb, c2 });
   root.style.setProperty('--rgb', rgb); root.style.setProperty('--c2', c2); root.style.setProperty('--fs', PREFS.fs);
   root.classList.toggle('no-mark', !PREFS.mark); root.classList.toggle('calm', !!PREFS.calm); root.classList.toggle('no-scan', !PREFS.scan);
-  for (const [k, id] of [['mark', '#t-mark'], ['scan', '#t-scan'], ['calm', '#t-calm']]) $(id).setAttribute('aria-checked', String(!!PREFS[k]));
+  for (const [k, id] of [['mark', '#t-mark'], ['scan', '#t-scan'], ['calm', '#t-calm'], ['wel', '#t-wel'], ['welVoice', '#t-welv']]) $(id).setAttribute('aria-checked', String(!!PREFS[k]));
   $('#fsize').value = PREFS.fs;
   for (const b of document.querySelectorAll('#swatches .sw')) b.setAttribute('aria-pressed', String(b.dataset.t === PREFS.theme));
   try { localStorage.setItem('neesmo-prefs', JSON.stringify(PREFS)); } catch {}
@@ -438,7 +499,7 @@ function applyPrefs() {
 $('#swatches').innerHTML = Object.entries(THEMES).map(([k, [hex]]) => `<button type="button" class="sw" data-t="${k}" style="--s:${hex}" aria-label="${k}"></button>`).join('');
 $('#swatches').onclick = e => { const b = e.target.closest('.sw'); if (b) { PREFS.theme = b.dataset.t; applyPrefs(); } };
 $('#fsize').onchange = e => { PREFS.fs = e.target.value; applyPrefs(); };
-for (const [k, id] of [['mark', '#t-mark'], ['scan', '#t-scan'], ['calm', '#t-calm']]) $(id).onclick = () => { PREFS[k] = !PREFS[k]; applyPrefs(); };
+for (const [k, id] of [['mark', '#t-mark'], ['scan', '#t-scan'], ['calm', '#t-calm'], ['wel', '#t-wel'], ['welVoice', '#t-welv']]) $(id).onclick = () => { PREFS[k] = !PREFS[k]; applyPrefs(); };
 applyPrefs();
 
 // ── voices ──
@@ -615,9 +676,10 @@ function countUp(root) {
   }
 }
 async function loadAgents() {
+  if (dragOn) return;   // never re-render under a finger mid-drag
   try {
     const { agents } = await (await api('/api/agents')).json(), half = Math.ceil(agents.length / 2);
-    learnAgents(agents);
+    learnAgents(agents); lastAgents = agents;
     const card = (a, i) => `<button type="button" class="card agent${AGENT_DEV.has(a.id) ? ' dev' : ''}" style="--a:${AGENT_COLORS[a.id] || '#3dff8f'};--i:${i}" data-id="${esc(a.id)}" aria-label="${esc(a.name)} report">
       <span class="st ${AGENT_DEV.has(a.id) ? 'dev' : esc(a.status)}">${AGENT_DEV.has(a.id) ? 'in dev' : esc(a.status)}<span class="ago"> · ${esc(a.last_active_ago || '—')}</span></span><b>${esc(AGENT_SHORT[a.id] || a.name)}</b>
       <small>${esc(a.last_reply || a.role)}</small></button>`;
@@ -629,6 +691,7 @@ async function loadAgents() {
     layoutHud();
   } catch (e) { $('#agents-l').innerHTML = '<div class="card"><span>Agents</span><small>offline</small></div>'; }
 }
+document.addEventListener('click', e => { if (dragEnded()) { e.preventDefault(); e.stopPropagation(); return; } }, true);
 document.addEventListener('click', e => { const b = e.target.closest('.agent'); if (b) { rSeen = ''; rPending = []; renderRAtts(); openReport(b.dataset.id); loadThread(b.dataset.id, true); } });
 let reportFor = null;
 async function openReport(id) {
@@ -756,7 +819,7 @@ function togglePop(btn, pop, open = pop.hidden) {
   pop.hidden = !open; btn.setAttribute('aria-expanded', String(open));
   if (open && pop.id === 'pop-n') { loadNotes(); pushState().catch(() => {}); }
 }
-$('#gear').onclick = () => { togglePop($('#gear'), $('#pop-s')); if (!$('#pop-s').hidden) { loadDevices(); loadAgentCfg(); loadLicense(); } };
+$('#gear').onclick = () => { togglePop($('#gear'), $('#pop-s')); if (!$('#pop-s').hidden) showTab(settingsTab); };
 // ── agents editor ──
 let agCfg = { agents: [], colors: [] }, agEdit = -1, agColor = '';
 async function loadAgentCfg() {
@@ -781,6 +844,153 @@ async function saveAgents(list) {
   catch (e) { $('#ag-err').textContent = e.message; return false; }
   await loadAgentCfg(); loadAgents(); return true;
 }
+// ── settings tabs ──
+let settingsTab = 'general';
+try { settingsTab = localStorage.getItem('neesmo-tab') || 'general'; } catch {}
+function showTab(t) {
+  if (!document.querySelector(`.tab[data-tab="${t}"]`)) t = 'general';
+  settingsTab = t; try { localStorage.setItem('neesmo-tab', t); } catch {}
+  for (const b of document.querySelectorAll('.tabs [data-tab]')) b.setAttribute('aria-selected', String(b.dataset.tab === t));
+  document.querySelector(`.tabs [data-tab="${t}"]`)?.scrollIntoView({ block: "nearest", inline: "nearest" });
+  for (const p of document.querySelectorAll('.tab')) p.hidden = p.dataset.tab !== t;
+  ({ general: welPreview, agents: loadAgentCfg, system: () => { loadExtensions(); loadDevices(); }, license: () => { loadLicense(); loadNotices(); } }[t] || (() => {}))();
+}
+$('.tabs').onclick = e => { const b = e.target.closest('[data-tab]'); if (b) showTab(b.dataset.tab); };
+// ── skills and plugins (Settings → System) ──
+async function loadExtensions() {
+  let x; try { x = await (await api('/api/extensions')).json(); } catch (e) { $('#plist').innerHTML = $('#slist').innerHTML = `<li><small>${esc(e.message)}</small></li>`; return; }
+  const row = (kind, id, name, on, desc, lic) => `<li><div class="xi"><b>${esc(name)}</b>${lic ? `<span class="lchip">${esc(lic)}</span>` : ''}${desc ? `<span class="xd">${esc(desc)}</span>` : ''}</div>
+    <button type="button" class="tog" role="switch" aria-checked="${on}" aria-label="${esc(name)}" data-kind="${kind}" data-x="${esc(id)}"></button></li>`;
+  $('#plist').innerHTML = x.plugins.map(p => row('plugins', p.id, p.name, p.on, p.version ? 'v' + p.version : '', p.license)).join('') || '<li><small>No user-wide plugins installed.</small></li>';
+  $('#slist').innerHTML = x.skills.map(k => row('skills', k.name, k.name, k.on, k.description, k.license)).join('')
+    || `<li><small>No general skills in ${esc(x.skills_dir)}. Skills inside a project folder belong to that project.</small></li>`;
+}
+document.querySelector('#pop-s').addEventListener('click', async e => {
+  const t = e.target.closest('.tog[data-x]'); if (!t) return;
+  const on = t.getAttribute('aria-checked') !== 'true';
+  t.setAttribute('aria-busy', 'true'); t.setAttribute('aria-checked', String(on));
+  try { await api(`/api/${t.dataset.kind}/${encodeURIComponent(t.dataset.x)}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ on }) });
+    $('#x-note').textContent = `${t.getAttribute('aria-label')} ${on ? 'on' : 'off'}. New Claude sessions pick it up; running ones keep what they started with.`; }
+  catch (err) { t.setAttribute('aria-checked', String(!on)); $('#x-note').textContent = err.message; }
+  t.removeAttribute('aria-busy');
+});
+// ── open-source licenses (Settings → License) ──
+async function loadNotices() {
+  if (loadNotices.done) return;
+  let d; try { d = await (await api('/api/notices')).json(); } catch { return; }
+  loadNotices.done = true;
+  $('#notices').innerHTML = d.sections.map(s => `<h4>${esc(s.title)}</h4>${s.rows.length ? `<table>${s.rows.map(r => `<tr><td>${esc(r.item)}${r.source ? `<small>${esc(r.source)}</small>` : ''}</td><td><span class="lchip">${esc(r.license)}</span></td></tr>`).join('')}</table>` : ''}${s.notes.map(n => `<p>${esc(n)}</p>`).join('')}`).join('');
+}
+// ── welcome on open ──
+function welText(busy) {
+  const h = new Date().getHours(), greeting = h < 5 ? 'Good evening' : h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
+  return (PREFS.welText || '{greeting}, {name}. {busy}').replace(/\{greeting\}/g, greeting).replace(/\{name\}/g, (PREFS.welName || '').trim()).replace(/\{busy\}/g, busy)
+    .replace(/,\s*(?=[.!?]|$)/g, '').replace(/\s+([.,!?])/g, '$1').replace(/\s{2,}/g, ' ').trim();
+}
+var lastAgents = null;
+async function welBusy() {
+  try {   // use the cards already loaded; never hold the greeting for more than 1.5 s
+    const agents = lastAgents || await Promise.race([api('/api/agents').then(r => r.json()).then(d => d.agents), new Promise((_, no) => setTimeout(no, 1500))]);
+    const working = agents.filter(a => /work|busy|run/i.test(a.status || ''));
+    if (!agents.length) return 'Add an agent in Settings to get started.';
+    if (!working.length) return `All ${agents.length} agents are standing by.`;
+    return working.length === 1 ? `${AGENT_SHORT[working[0].id] || working[0].name} is working.` : `${working.length} agents are working.`;
+  } catch { return 'Systems online.'; }
+}
+async function welPreview() { $('#wel-name').value = PREFS.welName || ''; $('#wel-text').value = PREFS.welText; $('#wel-prev').textContent = welText(await welBusy()); }
+$('#wel-name').oninput = $('#wel-text').oninput = async () => { PREFS.welName = $('#wel-name').value; PREFS.welText = $('#wel-text').value || '{greeting}, {name}. {busy}'; applyPrefs(); $('#wel-prev').textContent = welText(await welBusy()); };
+$('#wel-try').onclick = () => { togglePop($('#gear'), $('#pop-s'), false); welcome(true); };
+async function welcome(force) {
+  const text = welText(await welBusy()), el = $('#welcome');
+  el.innerHTML = `<span></span><small>Neesmo online</small>`; el.hidden = false;
+  decode(el.firstChild, text, 900);
+  if (window.Motion && !reduce) Motion.animate(el, { opacity: [0, 1], scale: [.92, 1], filter: ['blur(8px)', 'blur(0px)'] }, { type: 'spring', stiffness: 220, damping: 20 });
+  if (PREFS.welVoice || force === 'voice') {
+    const go = () => speak(text).catch(() => {});
+    try { await audio().resume(); } catch {}
+    if (ac.state === 'running') go();
+    else addEventListener('pointerdown', () => { audio().resume().then(go); }, { once: true });
+  }
+  clearTimeout(welcome.t);
+  welcome.t = setTimeout(() => {
+    const hide = () => { el.hidden = true; };
+    if (window.Motion && !reduce) Motion.animate(el, { opacity: 0, scale: 1.04, filter: 'blur(6px)' }, { duration: .5 }).then(hide); else hide();
+  }, 4200);
+}
+(() => { let seen = false; try { seen = sessionStorage.getItem('neesmo-welcomed'); sessionStorage.setItem('neesmo-welcomed', '1'); } catch {}
+  if (PREFS.wel && !seen) setTimeout(() => welcome(), 1300); })();
+// ── drag to reorder (home cards and Settings → Agents), snaps into place on drop ──
+var dragOn = false, dragEndAt = 0;  // var: loadAgents() reads dragOn before this line runs
+const dragEnded = () => performance.now() - dragEndAt < 350;
+function flip(els, fn) {
+  const before = new Map(els.map(el => [el, el.getBoundingClientRect()]));
+  fn();
+  if (reduce) return;
+  for (const el of els) {
+    if (el.classList.contains('dragging')) continue;
+    const a = before.get(el), b = el.getBoundingClientRect(), dx = a.left - b.left, dy = a.top - b.top;
+    if (dx || dy) el.animate([{ transform: `translate(${dx}px,${dy}px)` }, { transform: 'none' }], { duration: 260, easing: 'cubic-bezier(.2,.9,.3,1.15)' });
+  }
+}
+function sortable(boxes, itemSel, onDrop) {
+  let el = null, start = null, armed = false, timer = 0, base = null;
+  const items = () => boxes.flatMap(b => [...b.querySelectorAll(itemSel)]);
+  const reset = () => { clearTimeout(timer); el?.classList.remove('drag-armed'); el = null; armed = false; };
+  const arm = () => { armed = dragOn = true; el.classList.remove('drag-armed'); el.classList.add('dragging'); base = el.getBoundingClientRect(); navigator.vibrate?.(12); };
+  for (const box of boxes) {
+    box.addEventListener('pointerdown', e => {
+      const it = e.target.closest(itemSel); if (!it || e.button > 0 || dragOn) return;
+      el = it; start = { x: e.clientX, y: e.clientY, touch: e.pointerType !== 'mouse' };
+      if (start.touch) { el.classList.add('drag-armed'); timer = setTimeout(() => { if (el) { arm(); } }, 380); }
+    });
+    box.addEventListener('touchmove', e => { if (armed) e.preventDefault(); }, { passive: false });
+    box.addEventListener('contextmenu', e => { if (el) e.preventDefault(); });
+  }
+  addEventListener('pointermove', e => {
+    if (!el) return;
+    const dx = e.clientX - start.x, dy = e.clientY - start.y;
+    if (!armed) {
+      if (Math.hypot(dx, dy) < 6) return;
+      if (start.touch) { reset(); return; }   // moved before the long press: a scroll, not a drag
+      arm();
+    }
+    e.preventDefault();
+    const r0 = el.getBoundingClientRect();
+    el.style.transform = 'none';
+    const home = el.getBoundingClientRect();
+    el.style.transform = `translate(${e.clientX - start.x + base.left - home.left}px,${e.clientY - start.y + base.top - home.top}px)`;
+    const over = document.elementFromPoint(e.clientX, e.clientY)?.closest(itemSel);
+    const box = over ? boxes.find(b => b.contains(over)) : boxes.find(b => { const r = b.getBoundingClientRect(); return e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom; });
+    if (!box || over === el) return;
+    const row = getComputedStyle(box).flexDirection.startsWith('row');
+    flip(items(), () => {
+      if (over) { const r = over.getBoundingClientRect(), after = row ? e.clientX > r.left + r.width / 2 : e.clientY > r.top + r.height / 2;
+        over.parentNode.insertBefore(el, after ? over.nextSibling : over); }
+      else if (!box.contains(el)) box.append(el);
+    });
+    void r0;
+  }, { passive: false });
+  const end = () => {
+    if (!el) return;
+    const done = el, was = armed; reset();
+    if (!was) return;
+    dragEndAt = performance.now();
+    const cur = done.style.transform; done.style.transform = '';
+    done.classList.remove('dragging');
+    if (!reduce && cur) done.animate([{ transform: cur + ' scale(1.06)' }, { transform: 'none' }], { duration: 380, easing: 'cubic-bezier(.2,1.4,.4,1)' });
+    dragOn = false;
+    onDrop(items());
+  };
+  addEventListener('pointerup', end); addEventListener('pointercancel', end);
+}
+async function saveOrder(ids) {
+  try { await api('/api/agents/order', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ids }) }); setStatus('Order saved'); }
+  catch (e) { setStatus('Order: ' + e.message, true); }
+}
+sortable([$('#agents-l'), $('#agents-r')], '.agent', async els => { await saveOrder(els.map(x => x.dataset.id)); setTimeout(loadAgents, 450); });
+sortable([$('#aglist')], 'li:has(> [data-ag])', async els => {
+  await saveOrder(els.map(li => agCfg.agents[+li.firstElementChild.dataset.ag]?.id).filter(Boolean)); await loadAgentCfg(); loadAgents();
+});
 $('#aglist').addEventListener('click', e => { const b = e.target.closest('[data-ag]'); if (b) openAgentEditor(+b.dataset.ag); });
 $('#ag-add').onclick = () => openAgentEditor(-1);
 $('#ag-close').onclick = () => $('#ag').close();
