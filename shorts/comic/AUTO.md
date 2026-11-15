@@ -21,7 +21,7 @@ Make the next 40k comic short and add it to `uploader/schedule.json`. Work from 
    - Show the range of armour and name the mark in the prompt: Mk II Crusade, Mk III Iron, Mk IV Maximus, Mk VI Corvus (beaky),
      Mk VII Aquila, Mk VIII Errant, Mk X Tacticus / Gravis / Phobos (Primaris), Tactical Dreadnought (Terminator), Cataphractii.
      Vary it between shorts; old marks for veterans and Horus Heresy era, Primaris for post-Rift stories.
-   - Deathwatch: black armour with a silver left arm, and the right pauldron in the Marine's home Chapter colours and symbol. Kill-teams
+   - Deathwatch: black armour with a silver left arm (always some engraving on the silver pauldron: the Inquisitorial "I" and skull scrollwork, a few engraved lines at minimum), and the right pauldron in the Marine's home Chapter colours and symbol. Kill-teams
      mixing Chapters are a great hook (clashing personalities, one squad, many icons).
    - Get inspired by fan-painted miniatures (kitbashes, battle damage, freehand banners, weathering) for detail and colour ideas;
      describe the look in words, never paste or trace a fan's photo.
