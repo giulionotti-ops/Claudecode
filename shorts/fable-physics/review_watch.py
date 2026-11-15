@@ -67,7 +67,8 @@ def main():
     except OSError: return   # a fix is still running
     st = notify.load(notify.STATE, {})
     for slug, s in list(st.items()):
-        if s.get('fixing') or not s.get('nid'): continue
+        s = notify.load(notify.STATE, {}).get(slug)   # re-read: a slug may have been dropped (rejected) while a fix ran
+        if not s or s.get('fixing') or not s.get('nid'): continue
         try: r = notify.api(f"/api/reviews/{s['nid']}")
         except Exception as e:
             log('status failed', slug, e)

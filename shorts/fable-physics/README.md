@@ -19,5 +19,3 @@ Creature-science shorts: one mythical creature per short, worked out with real b
 | 4 | `../kappa-intro` | kappa (Japan · folklore; intro short: who tells it, the dish of water, the bow, the softshell turtle) |
 | 5 | `../kappa` | kappa (physics: crocodile ambush, softshell-turtle breathing, water-holding-frog water storage, the spilled dish) |
 | 6 | `../yeti` | yeti (Himalaya · folklore; physics: snowshoe-hare feet, yak altitude genes, brown-bear hibernation, the 2017 DNA twist: eight Asian bears and a dog) |
-| 7 | `../selkie-intro` | selkie (Scotland · folklore; intro short: seal-folk, the stolen sealskin, seven tears, haul-out seals, the sealskin-kayak theory) |
-| 8 | `../selkie` | selkie (Scotland · folklore; physics: cold water and blubber, grey-seal dive heart rate, the 155 kg problem, harbour-seal molt twist) |
