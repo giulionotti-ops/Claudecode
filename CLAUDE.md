@@ -30,6 +30,16 @@ Delegate the rest to the helpers in `.claude/agents`: `cavecrew-investigator` (H
 `cavecrew-builder` (Sonnet, known 1-2 file edits), `cavecrew-reviewer` (Sonnet, diff review).
 Other subagents default to Sonnet. On the server, `free-llm` sends plain text jobs to free models
 (see `~/.claude/CLAUDE.md` there); never send secrets or private data to it.
+On the server, OmniRoute (http://127.0.0.1:20128) stays on, and every plain-text job that needs no
+tools and no private data goes to `free-llm`: summaries, rewrites, titles/descriptions/captions,
+translations, brainstorm lists, first-draft scripts, classification, log digests. If it is down,
+use the Haiku helpers.
+
+## Don't re-read history
+
+When checking another session or a log, read only the newest reply or the lines needed
+(`list_events` with `kinds` and a small `limit`; `tail`, not `cat`), unless the user asks for the
+full history. Don't poll sessions on a loop. Start a fresh chat or `/compact` when the topic changes.
 
 ## graphify
 
