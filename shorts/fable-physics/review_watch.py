@@ -42,11 +42,12 @@ def approved(slug):
     sh(sys.executable, notify.__file__, f'Fable Physics: {slug} approved', notify_text)
 
 
-def fix(slug, note, st):
+def fix(slug, note, st, retry=False):
     st[slug]['fixing'] = True; save(st)
     path = os.path.join(SHORTS, slug, 'CHANGES.md')
-    with open(path, 'a') as f:
-        f.write(f"\n## {datetime.datetime.now():%d %b %Y %H:%M}\n{note}\n")
+    if not retry:   # a retry's note is already in CHANGES.md
+        with open(path, 'a') as f:
+            f.write(f"\n## {datetime.datetime.now():%d %b %Y %H:%M}\n{note}\n")
     prompt = (f"The owner watched the Fable Physics short shorts/{slug} on their phone and asked for these changes:\n\n{note}\n\n"
               f"Working folder: /root/physics-channel/shorts. Read fable-physics/AUTO.md for the rules (style, quality gate, music level, voice), "
               f"then apply exactly what was asked in shorts/{slug} (scene, script, voice, mix, or its entry in fable-physics/uploader/queue.json), "
@@ -56,9 +57,14 @@ def fix(slug, note, st):
     r = sh('timeout', '3h', 'claude', '-p', prompt, '--model', 'sonnet', '--permission-mode', 'acceptEdits',
            '--allowedTools', 'Bash', 'Read', 'Write', 'Edit', 'Glob', 'Grep', 'WebFetch', 'WebSearch', 'Agent',
            '--output-format', 'text', cwd=SHORTS, env=env, stdin=subprocess.DEVNULL)
-    st = notify.load(notify.STATE, {}); st.pop(slug, None); save(st)   # a fresh review goes out below
-    if r.returncode != 0:
-        sh(sys.executable, notify.__file__, f'Fable Physics: fixing {slug} failed', 'I will look at it; the old version is still waiting.')
+    st = notify.load(notify.STATE, {})
+    if r.returncode != 0:   # e.g. usage limit: keep the note and try again on the next run, don't send the old version back
+        if not retry:
+            sh(sys.executable, notify.__file__, f'Fable Physics: fixing {slug} failed', 'I will try again soon.')
+        st[slug] = {'fixing': True, 'retry': note}
+    else:
+        st.pop(slug, None)   # a fresh review goes out below
+    save(st)
 
 
 def main():
@@ -68,6 +74,8 @@ def main():
     st = notify.load(notify.STATE, {})
     for slug, s in list(st.items()):
         s = notify.load(notify.STATE, {}).get(slug)   # re-read: a slug may have been dropped (rejected) while a fix ran
+        if s and s.get('retry'):
+            log('retry', slug); fix(slug, s['retry'], st, retry=True); st = notify.load(notify.STATE, {}); continue
         if not s or s.get('fixing') or not s.get('nid'): continue
         try: r = notify.api(f"/api/reviews/{s['nid']}")
         except Exception as e:

@@ -65,5 +65,9 @@ if __name__ == '__main__':
     if sys.argv[1:] == ['--pending']:
         pending()
     else:
-        sys.path.insert(0, '/root/Claudecode/vega'); import push
+        sys.path.insert(0, '/root/Claudecode/vega')
+        try: import push
+        except ImportError:   # push needs Neesmo's venv (py_vapid)
+            py = '/root/Claudecode/vega/.venv/bin/python'
+            os.execv(py, [py, os.path.abspath(__file__), *sys.argv[1:]])
         print('sent to', push.send(sys.argv[1], sys.argv[2] if len(sys.argv) > 2 else '', tag='fable'), 'device(s)')
