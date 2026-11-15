@@ -3912,9 +3912,9 @@
     "semantic_hash": ""
   },
   "vega/server.py": {
-    "mtime": 1794786761.2126148,
-    "seen": 1794786830.5610187,
-    "ast_hash": "740423097bf8670cffaab60027e36716",
+    "mtime": 1794786922.5234082,
+    "seen": 1794786968.9952817,
+    "ast_hash": "51eae9c66a1e5c4dd0380ed106c4c041",
     "semantic_hash": ""
   },
   "vega/static/sw.js": {
@@ -16062,9 +16062,9 @@
     "semantic_hash": ""
   },
   "vega/license.py": {
-    "mtime": 1794786761.2116146,
-    "seen": 1794786830.5610101,
-    "ast_hash": "855f022e5232894dad60581fcc4375ae",
+    "mtime": 1794786922.5224082,
+    "seen": 1794786968.995276,
+    "ast_hash": "6780af694497edf87e96c18d328448c4",
     "semantic_hash": ""
   },
   "vega/static/guide.html": {
@@ -25203,6 +25203,42 @@
     "mtime": 1794786706.2447739,
     "seen": 1794786830.5691895,
     "ast_hash": "d917b2f0f633e2454b2d4065d240f76b",
+    "semantic_hash": ""
+  },
+  "site/assets/icons/android.svg": {
+    "mtime": 1794786940.820243,
+    "seen": 1794786968.9999037,
+    "ast_hash": "43e9856af5d3b33f09a5da2542e95246",
+    "semantic_hash": ""
+  },
+  "site/assets/icons/apple.svg": {
+    "mtime": 1794786940.6072447,
+    "seen": 1794786968.9999075,
+    "ast_hash": "661ac793103ef0d63ee576ad928999fe",
+    "semantic_hash": ""
+  },
+  "site/assets/icons/claude-code.svg": {
+    "mtime": 1794786940.5322454,
+    "seen": 1794786968.999912,
+    "ast_hash": "328f1e77685c99b562733d49dd37ec56",
+    "semantic_hash": ""
+  },
+  "site/assets/icons/cloudflare.svg": {
+    "mtime": 1794786940.5572453,
+    "seen": 1794786968.999914,
+    "ast_hash": "ca670f08865709b0862c3e259e62ee49",
+    "semantic_hash": ""
+  },
+  "site/assets/icons/linux-tux.svg": {
+    "mtime": 1794786940.584245,
+    "seen": 1794786969.0022619,
+    "ast_hash": "b1e7a761eb4e4a2c5f12119fcc076091",
+    "semantic_hash": ""
+  },
+  "site/img/hud-phone.webp": {
+    "mtime": 1794786913.7914882,
+    "seen": 1794786969.0027108,
+    "ast_hash": "ff7447517cb44dfe6a7f46d7d90ba32e",
     "semantic_hash": ""
   }
 }

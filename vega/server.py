@@ -189,7 +189,7 @@ app.mount("/static", StaticFiles(directory=HERE / "static"), name="static")
 PUBLIC = {"/welcome", "/login", "/api/login", "/api/setup", "/api/auth/state", "/manifest.webmanifest", "/sw.js"}
 
 
-_PAID = re.compile(r"^/api/(chat|speak|transcribe|upload|agents/[^/]+/chat)$")
+_PAID = re.compile(r"^/+api/+(chat|speak|transcribe|upload|agents/+[^/]+/+chat(/+key)?)/*$")
 
 
 @app.middleware("http")
