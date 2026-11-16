@@ -67,6 +67,7 @@ const groundMat = new THREE.MeshStandardMaterial({ color: 0x5a4a42, roughness: 1
 const ground = new THREE.Mesh(new THREE.PlaneGeometry(900, 900), groundMat); ground.rotation.x = -Math.PI / 2; ground.receiveShadow = true; scene.add(ground);
 const world = new THREE.Group(); scene.add(world);
 const tintCache = new Map();
+let world2 = null;   // second copy of the rocks, one tile (120) to the right, so the ground can scroll without end
 function prop(name, x, y, z, s, ry, hex = 0x4a403c, parent = world) {
   const o = SkeletonUtils.clone(PROPS[name]);
   o.traverse(m => { if (m.isMesh) { m.castShadow = true; m.receiveShadow = true;
@@ -79,6 +80,7 @@ function prop(name, x, y, z, s, ry, hex = 0x4a403c, parent = world) {
     prop(rocks[Math.floor(r() * rocks.length)], x, 0, z, 1.8 + r() * 3.4, r() * 6.28, [0x3e3532, 0x4c403a, 0x34302e][i % 3]); }
   for (let i = 0; i < 10; i++) prop(i % 2 ? 'stump_old' : 'log', (r() - .5) * 60, 0, -4 - r() * 30, 2 + r() * 2, r() * 6.28, 0x2a2220);
 }
+world2 = world.clone(true); scene.add(world2);
 // volcano: lathe profile with a crater, vertex colours (dark rock, glowing lip), lava pool, glow and smoke
 const VOL = new THREE.Group(); scene.add(VOL); VOL.position.set(0, 0, -130);
 const VR = 7, VH = 30;            // crater radius, rim height
@@ -185,11 +187,13 @@ window.render = (t) => {
   sky(DUSK, 90, 380); hemi.intensity = 1.5; sun.intensity = 2.8;
   for (const s of DUST) s.visible = false;
   let after = null, focus = V(0, 0, 0);
+  let off = 0;   // how far the ground has slid back, in world units: the dragon flies right, the land runs left
+  const FLY = 8;
   smoke(t);
 
   if (t < S.b) {
     // 1. a dragon beats its wings above the volcano at dusk
-    const k = eio(seg(t, 0, S.b));
+    off = FLY * t; const k = eio(seg(t, 0, S.b));
     place(dragon, lerp(.6, 1.4, k), 9.5 + Math.sin(t * 1.9) * .25, -6, RIGHT - .35, .05, 0, 1.25); flap(dragon, t + 1);
     cam(V(lerp(5, 4, k), lerp(4.5, 5.5, k), lerp(16, 12, k)), V(0, 11, -14), 52); focus = V(0, 9, -6);
     after = () => {
@@ -198,7 +202,7 @@ window.render = (t) => {
     };
   } else if (t < S.c) {
     // 2. close: bigger wings? no. stop flapping
-    const fast = t < T.stop ? 1.8 : 1;
+    off = FLY * t; const fast = t < T.stop ? 1.8 : 1;
     place(dragon, -1.4, 3.6 + Math.sin(t * 3) * .2, 0, RIGHT - .5, 0, 0, 1); flap(dragon, t * fast);
     cam(V(2.2, 3.8, 13), V(-.4, 3.0, 0), 50); focus = V(0, 3, 0);
     after = () => {
@@ -209,7 +213,7 @@ window.render = (t) => {
     };
   } else if (t < S.d) {
     // 3. flapping like mad, sinking to the ground; the weight chart
-    const sink = eio(seg(t, T.wall, T.dragon2 + .6));
+    off = FLY * Math.min(t, T.dragon2 + .6); const sink = eio(seg(t, T.wall, T.dragon2 + .6));
     place(dragon, 1.6, lerp(3.8, 1.55, sink) + Math.sin(t * 6) * .12 * (1 - sink), 0, RIGHT - .8, 0, 0, 1); flap(dragon, t * 2.2);
     const k = seg(t, S.c, S.d);
     cam(V(2.8, 3.6, 16), V(.2, lerp(2.6, 1.3, sink), 0), 52); focus = V(1, 0, 0);
@@ -230,7 +234,7 @@ window.render = (t) => {
     const hollow = eio(seg(t, T.hollow, T.hollow + .6));
     for (const c of cores) { c.visible = hollow < 1; c.scale.set(1 - hollow * .99, 1, 1 - hollow * .99); }
     for (const [m, i] of struts) { const a = seg(t, T.brace + .2 + i % 6 * .18, T.brace + .5 + i % 6 * .18); m.visible = a > 0; m.scale.set(1, Math.max(.001, a), 1); }
-    const k = seg(t, S.d, S.e);
+    off = FLY * t; const k = seg(t, S.d, S.e);
     BONE.position.set(0, 3.3, 2); BONE.scale.setScalar(.85); BONE.rotation.set(.45, -.2 + k * .15, .32);
     place(dragon, lerp(-5, 4, k), 8.4, -6, RIGHT - .2, 0, 0, 1); flap(dragon, t);
     cam(V(0, 4.6, 17), V(0, 3.9, 0), 50); focus = V(0, 2, 0);
@@ -245,7 +249,7 @@ window.render = (t) => {
   } else if (t < S.f) {
     // 5. on a cliff top: too heavy to flap up, so it vaults off its arms and glides
     const cliffTop = CLIFF_TOP; CLIFF.visible = true;
-    const hop = eo(seg(t, T.vault, T.vault + .8)), go = seg(t, T.glide - .2, S.f + .4);
+    const hop = eo(seg(t, T.vault, T.vault + .8)), go = seg(t, T.glide - .2, S.f + .4); off = FLY * Math.max(0, t - (T.glide - .2));
     let x = lerp(0, 5, go), y = cliffTop + 1.5 + hop * 2.2 - go * 1.0;
     if (t < T.vault) { place(dragon, 0, cliffTop + 1.5 + Math.sin(t * 6) * .1, 0, RIGHT - .3, 0, 0, 1); flap(dragon, t * 2.2); }
     else if (t < T.glide - .2) { place(dragon, 0, y, 0, RIGHT - .3, -.15 * hop, 0, 1); pose(dragon, 'Flying', lerp(1.3, 2.0, seg(t, T.vault, T.vault + .5))); }
@@ -260,7 +264,7 @@ window.render = (t) => {
     };
   } else if (t < S.g) {
     // 6. a glide only goes down; ride the warm air: circle up a thermal like a condor
-    const down = seg(t, S.f, T.ride), up = seg(t, T.ride, S.g);
+    off = FLY * Math.min(t, T.ride + .6); const down = seg(t, S.f, T.ride), up = seg(t, T.ride, S.g);
     let x, y, z, yaw, bank;
     if (t < T.ride) { x = lerp(-3, 3, down); y = lerp(7, 3.2, down); z = 0; yaw = RIGHT; bank = 0; }
     else { const a = (t - T.ride) * .9; x = Math.sin(a) * 2.6; z = -Math.cos(a) * 2.6 - 1.5; y = 3.2 + up * 6; yaw = a + RIGHT * 0 + Math.PI / 2; bank = .35; }
@@ -297,7 +301,7 @@ window.render = (t) => {
     };
   } else {
     // 8. payoff: not the fire, the lift. Ends on the opening shot, so the loop is seamless
-    const k = eio(seg(t, S.h, S.end));
+    off = (S.end - S.h) > 0 ? 120 * seg(t, S.h, S.end) : 0; const k = eio(seg(t, S.h, S.end));
     place(dragon, lerp(-1.2, .6, k), 9.5 + Math.sin(t * 1.9) * .25, -6, RIGHT - .35, .05, 0, 1.25);
     if (t < T.because) glide(dragon, t); else flap(dragon, 1 + (t - S.end) + 0);
     cam(V(lerp(7, 5, k), lerp(4, 4.5, k), lerp(19, 16, k)), V(0, 11, -14), 52); focus = V(0, 9, -6);
@@ -308,8 +312,14 @@ window.render = (t) => {
   }
   sun.position.set(-12, 14, 12).add(focus); sun.target.position.copy(focus);
   ground.position.set(camera.position.x, 0, camera.position.z);
+  world.position.x = -(off % 120); world2.position.x = world.position.x + 120; world2.visible = world.visible;
   renderer.render(scene, camera);
   if (after) after();
+  if (off > 0 && t < S.g && !(t >= S.c && t > T.dragon2 + .6 && t < S.d) || t >= S.f && t < T.ride + .6) {   // speed streaks: wind rushing back past the camera
+    const x = ov.x; x.save(); x.lineCap = 'round';
+    for (let i = 0; i < 9; i++) { const sp = 1.3 + (i * 37 % 7) * .22, ph = ((t * sp * .55 + i * .113) % 1), yy = H * (.08 + (i * 53 % 17) / 17 * .5), len = W * (.12 + (i % 3) * .06), xx = W * (1.1 - ph * 1.4);
+      x.globalAlpha = .28 * Math.sin(Math.PI * ph); x.strokeStyle = '#fff4e0'; x.lineWidth = 3 + i % 3; x.beginPath(); x.moveTo(xx, yy); x.lineTo(xx + len, yy); x.stroke(); }
+    x.restore(); }
   const w = wordAt(t);
   if (w) { O.caption(ov, w.w.replace(/[.,:?!]/g, '').toUpperCase(), t - w.t0); texts.push({ id: 'cap', text: w.w, x0: 0, y0: H * .64, x1: W, y1: H * .76, pass: true }); }
 };
