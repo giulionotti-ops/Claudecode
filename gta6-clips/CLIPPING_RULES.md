@@ -19,7 +19,7 @@ Follow these for every clip unless the owner says otherwise.
 6. **Daily automation.** A scheduled task scans yesterday's most-watched
    gaming clips every day and follows `DAILY.md`. Auto-posting is ON (owner,
    2026-11-13): the best picks of approved streamers go up on their own, max
-   1 a day (2 a day in GTA 6 launch week). Unapproved streamers are never
+   4-5 a day from the previous day's streams (owner, 2026-11-16). Unapproved streamers are never
    posted.
 7. **Channel scope.** A general gaming clipping channel, focused on GTA 6
    once it launches (Nov 19) because it'll be the hot topic.

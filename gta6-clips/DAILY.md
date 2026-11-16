@@ -4,7 +4,8 @@ Run by the daily scheduled task (a fresh cloud session each day). Follow
 `CLIPPING_RULES.md` and the `viral-moments` skill throughout.
 
 1. **Scan.** `cd gta6-clips && python3 daily_clips.py --model base`
-   (yesterday, UTC). Read `daily/<date>/sheet.md`.
+   (yesterday, UTC). It takes the top gaming clips plus each approved
+   streamer's own top clips. Read `daily/<date>/sheet.md`.
 2. **Score.** Each clip is one candidate. Score it with the viral-moments
    rubric (hook, reaction, payoff, shareability), trim to its best 15-45 s
    span, rerank across all clips. Check 2-3 frames of the top picks; fill in a
@@ -18,7 +19,7 @@ Run by the daily scheduled task (a fresh cloud session each day). Follow
    - `"auto_post": true` (on since 2026-11-13): add the top picks to
      `approvals.json` as approved (`date`, `streamer`, `file` = the rendered
      mp4 path relative to gta6-clips, `title`, `youtube_title`, `score`,
-     `approved: true`, `by: "auto"`), max 1 per day (2 a day Nov 19-25),
+     `approved: true`, `by: "auto"`), 4-5 per day (owner, 2026-11-16; aim for 5, fewer only if the moments are weak),
      then run `python3 uploader/upload.py post <date>`. Send the owner a
      short report: what was posted (links), what was skipped and why.
    - `"auto_post": false`: send the owner each rendered short with its

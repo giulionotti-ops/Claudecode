@@ -31,8 +31,8 @@ SCOPES = ["https://www.googleapis.com/auth/youtube.upload",
           "https://www.googleapis.com/auth/youtube.force-ssl",
           "https://www.googleapis.com/auth/youtube.readonly"]
 TZ = ZoneInfo("Europe/Rome")
-SLOTS = ["13:00", "19:00"]                       # posting times, Italian time
-LAUNCH = (dt.date(2026, 11, 19), dt.date(2026, 11, 25))   # 2 a day in GTA 6 launch week, else 1
+SLOTS = ["11:00", "14:00", "17:00", "19:30", "22:00"]   # posting times, Italian time
+PER_DAY = 5                                     # owner (2026-11-16): 4-5 clips a day
 
 
 def credentials():
@@ -143,18 +143,19 @@ def upload(video, title, description, tags, publish=None, dry=False):
     return resp["id"]
 
 
-def free_slots(day, taken):
-    n = 2 if LAUNCH[0] <= day <= LAUNCH[1] else 1
+def free_slots(day, taken, n=PER_DAY):
+    """The next n free posting slots from now: today's left, then the next days'."""
     now = dt.datetime.now(TZ)
     out = []
-    for d in (day, day + dt.timedelta(days=1)):
-        for s in (SLOTS if n == 2 else SLOTS[-1:]):
+    for k in range(4):
+        d = day + dt.timedelta(days=k)
+        for s in SLOTS:
             t = f"{d.isoformat()} {s}"
             if t not in taken and dt.datetime.strptime(t, "%Y-%m-%d %H:%M").replace(tzinfo=TZ) > now:
                 out.append(t)
-        if out:
-            return out[:n]
-    return out
+        if len(out) >= n:
+            break
+    return out[:n]
 
 
 def post(date, dry=False):

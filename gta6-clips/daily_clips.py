@@ -71,30 +71,66 @@ def helix(path, token, client_id, **params):
             time.sleep(2 ** (k + 1))
 
 
-def helix_clips(day, categories, games_n, per_game, languages=()):
+def app_token():
     cid, secret = os.environ["TWITCH_CLIENT_ID"], os.environ["TWITCH_CLIENT_SECRET"]
     body = urllib.parse.urlencode({"client_id": cid, "client_secret": secret,
                                    "grant_type": "client_credentials"}).encode()
-    with urllib.request.urlopen("https://id.twitch.tv/oauth2/token", body, timeout=30) as r:
-        token = json.load(r)["access_token"]
+    for k in range(4):
+        try:
+            with urllib.request.urlopen("https://id.twitch.tv/oauth2/token", body, timeout=30) as r:
+                return json.load(r)["access_token"], cid
+        except urllib.error.URLError as e:
+            if k == 3 or getattr(e, "code", None):
+                raise
+            time.sleep(2 ** (k + 1))
+
+
+def day_range(day):
+    start = dt.datetime.combine(day, dt.time(), dt.timezone.utc)
+    z = lambda t: t.isoformat().replace("+00:00", "Z")
+    return z(start), z(start + dt.timedelta(days=1))
+
+
+def clip_row(c, game):
+    return {"url": c["url"], "streamer": c["broadcaster_name"].lower(),
+            "title": c["title"], "views": c["view_count"],
+            "duration": c["duration"], "game": game,
+            "vod": c.get("video_id") or "", "vod_offset": c.get("vod_offset")}
+
+
+def helix_streamer_clips(day, logins, per):
+    """Yesterday's top clips from each named (approved) channel."""
+    token, cid = app_token()
+    users = helix("users", token, cid, login=list(logins)[:100])["data"]
+    a, b = day_range(day)
+    clips, names = [], {}
+    for u in users:
+        data = helix("clips", token, cid, broadcaster_id=u["id"], first=per,
+                     started_at=a, ended_at=b)["data"]
+        gids = {c["game_id"] for c in data if c.get("game_id")} - names.keys()
+        if gids:
+            names.update({g["id"]: g["name"] for g in
+                          helix("games", token, cid, id=list(gids))["data"]})
+        clips += [clip_row(c, names.get(c.get("game_id"), "")) for c in data]
+    return clips
+
+
+def helix_clips(day, categories, games_n, per_game, languages=()):
+    token, cid = app_token()
     if categories:
         games = helix("games", token, cid, name=categories)["data"]
     else:
         games = [g for g in helix("games/top", token, cid, first=40)["data"]
                  if g["name"].lower() not in NON_GAMING][:games_n]
-    start = dt.datetime.combine(day, dt.time(), dt.timezone.utc)
+    a, b = day_range(day)
     clips = []
     for g in games:
         data = helix("clips", token, cid, game_id=g["id"], first=per_game,
-                     started_at=start.isoformat().replace("+00:00", "Z"),
-                     ended_at=(start + dt.timedelta(days=1)).isoformat().replace("+00:00", "Z"))
+                     started_at=a, ended_at=b)
         for c in data["data"]:
             if languages and c.get("language", "").split("-")[0] not in languages:
                 continue
-            clips.append({"url": c["url"], "streamer": c["broadcaster_name"].lower(),
-                          "title": c["title"], "views": c["view_count"],
-                          "duration": c["duration"], "game": g["name"],
-                          "vod": c.get("video_id") or "", "vod_offset": c.get("vod_offset")})
+            clips.append(clip_row(c, g["name"]))
     return clips
 
 
@@ -141,6 +177,8 @@ def main():
     ap.add_argument("--date", help="UTC day to scan, YYYY-MM-DD (default: yesterday)")
     ap.add_argument("--top", type=int, default=12, help="clips to analyse (default 12)")
     ap.add_argument("--per-streamer", type=int, default=3)
+    ap.add_argument("--approved-per", type=int, default=2,
+                    help="extra clips per approved streamer, always included (default 2)")
     ap.add_argument("--model", default="small")
     ap.add_argument("--config", default=str(HERE / "streamers.json"))
     args = ap.parse_args()
@@ -170,6 +208,16 @@ def main():
             picked.append(c)
         if len(picked) >= args.top:
             break
+
+    # always add approved streamers' own top clips, so there's something to post
+    approved = [n for n, s in roster.items() if s.get("approved")]
+    if approved and os.environ.get("TWITCH_CLIENT_ID"):
+        have = {c["url"] for c in picked}
+        extra = [c for c in helix_streamer_clips(day, approved, args.approved_per)
+                 if c["url"] not in have and c["views"] > 0]
+        extra.sort(key=lambda c: c["views"], reverse=True)
+        print(f"+ {len(extra)} clips from {len(approved)} approved streamers", flush=True)
+        picked += extra
 
     out = HERE / "daily" / day.isoformat()
     (out / "clips").mkdir(parents=True, exist_ok=True)
