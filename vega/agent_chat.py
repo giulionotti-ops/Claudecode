@@ -180,8 +180,7 @@ def _messages(folder: Path) -> tuple[list[dict], bool]:
                         msgs[-1]["text"] += "\n\n" + b["text"]
                     else:
                         msgs.append({"who": "agent", "text": b["text"], "at": at, "ts": ts.timestamp() if ts else 0})
-                elif b.get("type") == "tool_use":
-                    msgs.append({"who": "tool", "text": agents._tool_label(b), "at": at, "ts": ts.timestamp() if ts else 0})
+                # tool steps (Bash, Read ...) are left out: the chat shows what was said, not the machinery
             busy = m.get("stop_reason") not in ("end_turn", "stop_sequence", None) or (
                 m.get("stop_reason") is None and any(b.get("type") == "tool_use" for b in m.get("content") or [] if isinstance(b, dict)))
     # fold runs of tool steps into one line so the chat stays readable
