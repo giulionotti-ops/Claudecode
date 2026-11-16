@@ -1,0 +1,7 @@
+[
+ {"vo":"Drop a coin down a hole through the Earth. It never lands. So why does it keep coming back?","cap":["Drop a coin through the Earth.","It NEVER lands."],"hi":"NEVER"},
+ {"vo":"Not because it hits the bottom. At the centre, gravity is zero, yet the coin is moving at nearly eight kilometres every second.","cap":["Centre: gravity = 0.","But speed = 7.9 km/s"],"hi":"7.9"},
+ {"vo":"Think of a swing. At the lowest point nothing pulls it, but it still swings right past, because speed carries it.","cap":["Like a swing:","speed carries it PAST"],"hi":"PAST"},
+ {"vo":"It takes about forty two minutes to reach the other side. There it stops for one instant, then drops back.","cap":["42 minutes to the other side.","Stop. Drop back."],"hi":"42"},
+ {"vo":"Eighty four minutes, again and again, forever. Send this to someone who thinks falling has a bottom. Because a coin never lands. It just keeps dropping, a coin down a hole through the Earth.","cap":["84 minutes. Forever.","Send this to someone who..."],"hi":"Forever."}
+]
