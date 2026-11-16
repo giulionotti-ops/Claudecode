@@ -514,6 +514,18 @@ const THEMES = { green: ['#3dff8f', '61,255,143', '#c6ff4a'], cyan: ['#3fe0ff', 
 let PREFS = { theme: 'green', fs: '14px', mark: true, scan: true, calm: false, wel: true, welName: '', welText: '{greeting}, {name}. {busy}', welVoice: false };
 try { Object.assign(PREFS, JSON.parse(localStorage.getItem('neesmo-prefs') || '{}')); } catch {}
 const THEME = {};
+// The greeting (on/off, name, message, spoken) is kept on the server, so every device greets the same way.
+const WEL_KEYS = ['wel', 'welName', 'welText', 'welVoice'];
+let welSent = null;
+const welNow = () => JSON.stringify(Object.fromEntries(WEL_KEYS.map(k => [k, PREFS[k]])));
+function syncWelcome() {
+  if (welSent === null || welNow() === welSent) return;   // not loaded yet, or nothing changed
+  clearTimeout(syncWelcome.t);
+  syncWelcome.t = setTimeout(() => { welSent = welNow(); api('/api/welcome', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: welSent }).catch(() => {}); }, 600);
+}
+const welLoaded = fetch('/api/welcome').then(r => r.ok ? r.json() : {}).catch(() => ({})).then(w => {
+  Object.assign(PREFS, w); welSent = welNow(); if (typeof applyPrefs === 'function') applyPrefs();
+});
 function applyPrefs() {
   const [hex, rgb, c2] = THEMES[PREFS.theme] || THEMES.green, root = document.documentElement;
   Object.assign(THEME, { hex, rgb, c2 });
@@ -523,6 +535,7 @@ function applyPrefs() {
   $('#fsize').value = PREFS.fs;
   for (const b of document.querySelectorAll('#swatches .sw')) b.setAttribute('aria-pressed', String(b.dataset.t === PREFS.theme));
   try { localStorage.setItem('neesmo-prefs', JSON.stringify(PREFS)); } catch {}
+  syncWelcome();
   if (typeof reduce !== 'undefined') reduce = matchMedia('(prefers-reduced-motion: reduce)').matches || PREFS.calm;
 }
 $('#swatches').innerHTML = Object.entries(THEMES).map(([k, [hex]]) => `<button type="button" class="sw" data-t="${k}" style="--s:${hex}" aria-label="${k}"></button>`).join('');
@@ -1017,7 +1030,7 @@ async function welcome(force) {
   }, 4200);
 }
 (() => { let seen = false; try { seen = sessionStorage.getItem('neesmo-welcomed'); sessionStorage.setItem('neesmo-welcomed', '1'); } catch {}
-  if (PREFS.wel && !seen) setTimeout(() => welcome(), 1300); })();
+  welLoaded.then(() => { if (PREFS.wel && !seen) setTimeout(() => welcome(), 1300); }); })();
 // ── drag to reorder (home cards and Settings → Agents), snaps into place on drop ──
 var dragOn = false, dragEndAt = 0;  // var: loadAgents() reads dragOn before this line runs
 const dragEnded = () => performance.now() - dragEndAt < 350;
