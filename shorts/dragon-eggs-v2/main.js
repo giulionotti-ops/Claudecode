@@ -1,5 +1,5 @@
 // How a dragon egg could hatch in a volcano (remake, new style): picture = render(t)
-// Animated game dragon (GLB, one "Flying" clip) for the mother and the baby; Kenney CC0 rocks and pines; volcano, eggs and the ground cutaway built in code.
+// Animated game dragons (GLB): the mother is "European Dragon" (Idle Sit clip, on the ground), the baby the "Flying" dragon; Kenney CC0 rocks and pines; volcano, eggs and the ground cutaway built in code.
 import * as THREE from 'three';
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
 import * as SkeletonUtils from 'three/addons/utils/SkeletonUtils.js';
@@ -25,7 +25,7 @@ scene.add(sun); scene.add(sun.target);
 // ---------------------------------------------------------------- loading
 const gl = new GLTFLoader();
 const load = n => gl.loadAsync('models/' + n + '.glb');
-const gDragon = await load('dragon');
+const gDragon = await load('dragon'), gMum = await load('eurodragon');
 const PROPS = {};
 await Promise.all(['rock_largeA', 'rock_largeC', 'rock_tallB', 'rock_tallE', 'rock_smallA', 'rock_smallC', 'stone_largeB', 'stump_old', 'log',
   'tree_pineTallA', 'tree_pineTallC', 'tree_pineSmallB', 'tree_pineRoundA'].map(async n => { PROPS[n] = (await load(n)).scene; }));
@@ -54,30 +54,24 @@ function pose(A, a, ta) {
 }
 function place(A, x, y, z, yaw = 0, pitch = 0, bank = 0, s = 1) { A.holder.position.set(x, y, z); A.holder.rotation.set(pitch, yaw, bank); A.holder.scale.setScalar(s); }
 
-const mother = makeActor(gDragon, 3.2, { base: 'Flying' });
+const mother = makeActor(gMum, 3.2, { base: 'Idle Sit' });
+mother.yawFix = 0; mother.lookAxis = new THREE.Vector3(0, 0, 1);
+mother.neck = []; mother.root.traverse(o => { if (o.isBone && /^DEF-neck\.00[1-4]_/.test(o.name)) mother.neck.push(o); });
+mother.root.traverse(o => { if (o.isMesh) for (const m of [].concat(o.material)) { m.color.setRGB(2.1, 1.05, .78); } });   // the model is near-black: warm it to the baby's red-brown
 const baby = makeActor(gDragon, 3.2, { base: 'Flying' });
 const RIGHT = Math.PI / 2;
 const flap = (A, t, rate = 1) => pose(A, 'Flying', t * rate);
-// ground pose for the mother: the glide pose with the wings folded (forearms bent back), feet planted, plus idle motion (breathing, head bob, tail sway, wing twitch)
-const bone = (A, n) => { if (!A.bones) A.bones = {}; if (!(n in A.bones)) { let r = null; A.root.traverse(o => { if (o.isBone && new RegExp('^' + n + '\\d').test(o.name)) r = o; }); A.bones[n] = r; } return A.bones[n]; };
-const turn = (A, n, x, y, z) => { const b = bone(A, n); if (b) b.quaternion.multiply(new THREE.Quaternion().setFromEuler(new THREE.Euler(x, y, z))); };
-const chain = (A, pre, from, to, fn) => { for (let i = from; i <= to; i++) { const [x, y, z] = fn(i); turn(A, pre + String(i).padStart(2, '0'), x, y, z); } };
-const feet = new THREE.Vector3();
+// the mother on the ground: a second game dragon (European Dragon, Regina Cachoa, CC BY) that has real ground clips; she plays "Idle Sit"
+// (sitting up, wings folded, breathing) and now and then turns her head to look around; feet kept on the ground
+const LOOK = [0, .5, -.35, .15, -.55, .3, 0, -.2];
 function perch(A, t, x, z, yaw, s = 1, press = 0) {
-  pose(A, 'Flying', 2.6);
-  for (const sd of ['l_', 'r_']) {
-    turn(A, sd + 'forearm', 0, 0, 2 + Math.sin(t * 1.1 + (sd === 'l_' ? 0 : 1.3)) * .06);      // wings folded, with a slow twitch
-    turn(A, sd + 'shoulder', 0, Math.sin(t * .9 + (sd === 'l_' ? 0 : 2)) * .04, 0);
-  }
-  chain(A, 'spine_', 1, 8, i => [0, 0, Math.sin(t * 1.7) * .012]);                              // breathing
-  chain(A, 'neck_', 1, 11, i => [0, Math.sin(t * .7 + i * .1) * .03, Math.sin(t * .9 + i * .15) * .018 - press * .03]);   // head bob and look
-  chain(A, 'tail_', 1, 30, i => [0, Math.sin(t * 1.2 - i * .35) * .035, 0]);                    // tail sway, a wave along its length
-  turn(A, 'jaw_01', 0, 0, Math.max(0, Math.sin(t * 1.5)) * .08);
-  A.root.updateMatrixWorld(true);
-  A.holder.rotation.set(0, yaw, 0); A.holder.scale.setScalar(s); A.holder.position.set(0, 0, 0); A.holder.updateMatrixWorld(true);
-  let low = 1e9, cx = 0, cz = 0, n = 0;
-  for (const nm of ['l_ball', 'r_ball', 'l_toeA', 'r_toeA']) { bone(A, nm).getWorldPosition(feet); low = Math.min(low, feet.y); cx += feet.x; cz += feet.z; n++; }
-  A.holder.position.set(x - cx / n, -low, z - cz / n); A.holder.visible = true;
+  const cl = 'Idle Sit'; pose(A, cl, t);
+  const seg4 = Math.floor(t / 3.2), f = eio(Math.min(1, (t / 3.2 - seg4) * 2.5));        // a new look every 3.2 s, turned in about 1.3 s, then held
+  const look = lerp(LOOK[seg4 % LOOK.length], LOOK[(seg4 + 1) % LOOK.length], f);
+  for (const b of A.neck) b.quaternion.multiply(new THREE.Quaternion().setFromAxisAngle(A.lookAxis, look / A.neck.length));
+  if (!A.footY) A.footY = {};
+  if (!(cl in A.footY)) { A.holder.position.set(0, 0, 0); A.holder.rotation.set(0, 0, 0); A.holder.scale.setScalar(1); A.holder.updateMatrixWorld(true); A.footY[cl] = new THREE.Box3().setFromObject(A.root, true).min.y; }
+  A.holder.rotation.set(0, yaw + A.yawFix, 0); A.holder.scale.setScalar(s); A.holder.position.set(x, -A.footY[cl] * s - press * .12, z); A.holder.visible = true;
 }
 const GLIDE = 2.6;
 const glide = (A, t) => pose(A, 'Flying', GLIDE + Math.sin(t * 1.3) * .05);
@@ -244,7 +238,7 @@ window.render = (t) => {
     const drop = t > T.cant - .25 ? eio(seg(t, T.cant - .25, T.cant + .05)) * (1 - eio(seg(t, T.imagine - .4, T.imagine + .2))) : 0;
     const squash = t > T.cant - .05 ? 1 : 0;
     nestEggs.forEach((e, i) => { setEgg(e, V((i - 1) * 1.1, .56, i === 1 ? -.4 : 0), 1.6, i); if (squash) { e.g.scale.set(EGG_H * 2.1, EGG_H * .5, EGG_H * 2.1); e.g.position.y = .17; eggColor(e, .25); } else eggColor(e, 0); });
-    perch(mother, t, lerp(.3, .8, drop), -3.6, -.4, .75, drop);
+    perch(mother, t, lerp(.3, .8, drop), -3.6, -.4, 1, drop);
     cam(V(1.0, 1.9, 10), V(-.2, 1.9, 0), 50); focus = V(0, 0, 0);
     dust(0, 0, t, drop * .9, 1.5);
     after = () => {

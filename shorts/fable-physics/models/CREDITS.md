@@ -5,3 +5,4 @@ Props and backgrounds: Kenney (kenney.nl), CC0.
 "Realistic Animated Bear 3D Model" by WildMesh 3D (https://sketchfab.com/WildMesh_3D), CC Attribution, https://sketchfab.com/3d-models/realistic-animated-bear-3d-model-bffc3c87d2d148ff8533e1cc8a11c9f1
 "Hare (animated)" by bluekiwi.dog (https://sketchfab.com/bluekiwi.dog), CC Attribution, https://sketchfab.com/3d-models/hare-animated-948938cd237d49a9868662213fa05543
 "Animated Free Bison" by Anees Animates (https://sketchfab.com/AneesAnimates), CC Attribution, https://sketchfab.com/3d-models/animated-free-bison-be2dcd97db1c4b9c91a7728d9bc89925 (stands in for the yak, shaggy highland bovine, recolored)
+"European Dragon" by Regina Cachoa (https://sketchfab.com/ReginaCachoa), CC Attribution, https://sketchfab.com/3d-models/european-dragon-82f393a2e6c048ad80c171ce3b3a7b87
