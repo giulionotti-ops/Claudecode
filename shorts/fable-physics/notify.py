@@ -16,7 +16,13 @@ TOKEN = open(os.path.expanduser('~/.config/neesmo/hook_token')).read().strip()
 
 
 def load(p, d):
-    return json.load(open(p)) if os.path.exists(p) else d
+    try: return json.load(open(p))
+    except (OSError, ValueError): return d      # missing or half-written file: start fresh, don't crash the cron
+
+
+def save(p, data):
+    tmp = p + '.tmp'
+    json.dump(data, open(tmp, 'w'), indent=1); os.replace(tmp, p)   # atomic: a crash never leaves an empty file
 
 
 def api(path, body=None):
@@ -80,7 +86,7 @@ def pending():
             except Exception: pass
         st[e['name']] = {'nid': send_review(e), 'video_mtime': mtime}
         print('review sent:', e['name'], st[e['name']]['nid'])
-    json.dump(st, open(STATE, 'w'), indent=1)
+    save(STATE, st)
 
 
 if __name__ == '__main__':

@@ -29,7 +29,7 @@ def commit(msg, *paths):
     sh('git', 'push', '-q', 'origin', 'HEAD', cwd=REPO)
 
 
-def save(st): json.dump(st, open(notify.STATE, 'w'), indent=1)
+def save(st): notify.save(notify.STATE, st)
 
 
 def approved(slug):
