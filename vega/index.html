@@ -263,6 +263,13 @@
   .strip b { color: var(--a); font-weight: 600; } .strip .now { flex-basis: 100%; color: var(--c); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   #r-more summary { cursor: pointer; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); }
   #r-more[open] { max-height: 42dvh; overflow: auto; } #r-more .kpis { margin: 10px 0; }
+  /* slim header: the chat gets the room; numbers and "Now" live under Details */
+  #report .rp > header > div { min-width: 0; flex: 1; }
+  #report .rp > header h2 { font-size: 17px; line-height: 1.2; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #r-sub { display: block; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #report #r-close, #report #r-gear { min-width: 40px; min-height: 40px; padding: 4px 8px; }
+  #r-more { margin-top: -4px; } #r-more .strip { margin-top: 8px; }
+  .thread > * { flex-shrink: 0; } /* long replies were squeezed to zero height */
   .thread { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding: 10px 2px; border-top: 1px solid rgba(var(--rgb),.15);
     overscroll-behavior: contain; }
   .thread p { margin: 0; line-height: 1.55; overflow-wrap: anywhere; animation: msg .35s cubic-bezier(.2,.8,.2,1) both; }
@@ -426,8 +433,8 @@
 </div></dialog>
 <dialog id="report" aria-labelledby="r-name"><div class="rp">
   <header><div><h2 id="r-name">Agent</h2><small id="r-sub"></small></div><button type="button" id="r-gear" aria-label="Agent settings" title="Agent settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button><button type="button" id="r-close" aria-label="Close">✕</button></header>
-  <div class="strip" id="r-strip"></div>
   <details id="r-more"><summary>Details</summary>
+    <div class="strip" id="r-strip"></div>
     <div class="kpis" id="r-kpis"></div>
     <div class="grid">
       <section><h3>Recent requests</h3><ol id="r-reqs" class="list"></ol></section>
