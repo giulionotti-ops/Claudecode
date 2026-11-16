@@ -7,6 +7,7 @@ import { clamp, lerp, seg, eio, eo, ei, mulberry } from '/core/lib.js';
 import * as O from './overlay.js';
 
 const W = innerWidth, H = innerHeight;
+const QZ = new Image(); QZ.src = './quetz.png'; await QZ.decode();   // Quetzalcoatlus sticker (Connor Ashbridge, CC BY 4.0)
 const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
 renderer.setPixelRatio(1); renderer.setSize(W, H);
 renderer.outputColorSpace = THREE.SRGBColorSpace; renderer.toneMapping = THREE.ACESFilmicToneMapping; renderer.toneMappingExposure = 1.1;
@@ -167,6 +168,15 @@ function heat(base, t, n = 4, h = 6, spread = 2.4, wdt = 12) {
     ov.x.save(); ov.x.globalAlpha = Math.sin(Math.PI * f); O.arrow(ov, a[0], a[1], b[0], b[1], 1, '#ff8a3a', wdt); ov.x.restore(); }
 }
 // a two-bar weight chart, left of the dragon
+// sticker: pops in with an overshoot, a burst of rays and a slight wobble; (cx, by) = bottom centre, w = width
+function sticker(t, a, b, cx, by, w) {
+  if (t < a || t > b) return; const x = ov.x, k = t - a, out = Math.min(1, (b - t) / .2);
+  const s = (k < .35 ? 1 + 2.7 * Math.pow(k / .35 - 1, 3) + 1.7 * Math.pow(k / .35 - 1, 2) : 1) * out, h = w * QZ.height / QZ.width;
+  x.save(); x.translate(cx, by - h / 2);
+  if (k < .5) { const r = eo(k / .5); x.strokeStyle = `rgba(255,214,90,${1 - r})`; x.lineWidth = W * .012; x.lineCap = 'round';
+    for (let i = 0; i < 12; i++) { const an = i / 12 * Math.PI * 2; x.beginPath(); x.moveTo(Math.cos(an) * w * (.35 + .3 * r), Math.sin(an) * w * (.35 + .3 * r)); x.lineTo(Math.cos(an) * w * (.45 + .45 * r), Math.sin(an) * w * (.45 + .45 * r)); x.stroke(); } }
+  x.rotate(Math.sin(k * 3.2) * .05); x.scale(Math.max(0, s), Math.max(0, s)); x.drawImage(QZ, -w / 2, -h / 2, w, h); x.restore();
+}
 function bars(t) {
   const x = ov.x, base = H * .58, top = H * .30, bw = W * .13, x1 = W * .07, x2 = W * .25;
   const qa = seg(t, T.biggest - .2, T.biggest + .4), da = seg(t, T.fifteen - .3, T.fifteen + .7);
@@ -224,6 +234,7 @@ window.render = (t) => {
       showChip('~200 KG · 10–11 M WINGS', T.two - .05, T.fifteen - .3, t);
       showChip('DRAGON: 15× HEAVIER', T.fifteen - .25, S.d, t);
       bars(t);
+      sticker(t, T.quetz - .05, S.d, W * .17, H * .58 - 6, W * .24);
     };
   } else if (t < S.e) {
     // 4. the bone: solid -> hollow -> snaps -> braced with criss-cross struts
@@ -260,6 +271,7 @@ window.render = (t) => {
       showChip('VAULT OFF THE ARMS', T.vault - .05, T.quetz2 - .1, t);
       showChip('LIKE QUETZALCOATLUS (HABIB, 2008)', T.quetz2 - .05, T.glide - .1, t);
       showChip('...AND GLIDE', T.glide - .05, S.f, t);
+      sticker(t, T.quetz2 - .05, T.glide + .3, W * .33, H * .47, W * .34);
       if (t > T.vault && t < T.glide) { const p = toScreen(V(0, cliffTop, 0)), q = toScreen(V(0, cliffTop + 3.2, 0)); O.arrow(ov, p[0] - W * .27, p[1], q[0] - W * .27, q[1], seg(t, T.vault, T.vault + .4)); }
     };
   } else if (t < S.g) {
@@ -326,7 +338,7 @@ window.render = (t) => {
 
 window.TEXTS = () => texts.slice();
 const EV = [{ t: .1, type: 'rumble' }, { t: T.three, type: 'thud' }, { t: T.wings, type: 'buzz' }, { t: T.stop, type: 'ding' }, { t: T.wall, type: 'flaps' },
-  { t: T.dragon2 + .5, type: 'thud' }, { t: T.two, type: 'blip' }, { t: T.fifteen, type: 'thud' }, { t: T.hollow, type: 'pop' }, { t: T.snap, type: 'crack' },
+  { t: T.dragon2 + .5, type: 'thud' }, { t: T.quetz, type: 'pop' }, { t: T.quetz2, type: 'pop' }, { t: T.two, type: 'blip' }, { t: T.fifteen, type: 'thud' }, { t: T.hollow, type: 'pop' }, { t: T.snap, type: 'crack' },
   { t: T.brace + .2, type: 'blip' }, { t: T.bridge, type: 'ding' }, { t: T.vault, type: 'flaps' }, { t: T.glide, type: 'wind' }, { t: T.ride, type: 'wind' },
   { t: T.flapped, type: 'blip' }, { t: T.hours, type: 'ding' }, { t: T.warm2, type: 'rumble' }, { t: T.volcano2, type: 'swell' }];
 for (const k of ['b', 'c', 'd', 'e', 'f', 'g', 'h']) EV.push({ t: S[k], type: 'whoosh' });
