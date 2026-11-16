@@ -805,9 +805,9 @@ const rkey = k => api(`/api/agents/${encodeURIComponent(reportFor)}/chat/key`, {
 async function loadThread(id, force) {
   try {
     const d = await (await api(`/api/agents/${encodeURIComponent(id)}/chat`)).json(); if (reportFor !== id) return;
-    const app = d.mode === 'app' || d.mode === 'terminal', key = JSON.stringify([d.messages.length, d.messages.at(-1)?.text?.length, d.busy, d.ask, d.mode]);
-    rBusy = d.busy; $('#r-stop').hidden = !d.busy; $('#r-send').disabled = app; rq.disabled = app; $('#r-new').disabled = app;
-    $('#r-link').textContent = d.attach ? 'terminal: ' + d.attach : d.mode === 'app' ? 'run from the Claude app' : d.mode === 'terminal' ? 'open in a terminal' : '';
+    const app = d.mode === 'terminal', key = JSON.stringify([d.messages.length, d.messages.at(-1)?.text?.length, d.busy, d.ask, d.mode]);
+    rBusy = d.busy; $('#r-stop').hidden = !d.busy || d.mode === 'app'; $('#r-send').disabled = app; rq.disabled = app; $('#r-new').disabled = app || d.mode === 'app';
+    $('#r-link').textContent = d.attach ? 'terminal: ' + d.attach : d.mode === 'app' ? 'also in the Claude app' : d.mode === 'terminal' ? 'open in a terminal' : '';
     $('#r-link').title = d.attach || '';
     clearTimeout(rPoll); rPoll = setTimeout(() => reportFor === id && loadThread(id), d.busy || d.ask ? 2000 : 6000);
     if (key === rSeen && !force) return; rSeen = key;
@@ -817,7 +817,7 @@ async function loadThread(id, force) {
         : `<p class="${m.who === 'you' ? 'you' : 'agent'}">${m.who === 'you' ? esc(m.text) : md(m.text)}<small>${esc(m.at || '')}</small></p>`).join('')
       + (d.ask ? `<div class="ask"><b>${esc(d.ask.question || 'Claude is asking')}</b>${d.ask.options.map(o => `<button type="button" data-k="${esc(o.key)}">${esc(o.key)}. ${esc(o.label)}</button>`).join('')}</div>`
         : d.busy ? '<div class="typing"><i></i><i></i><i></i> working… you can close this, Neesmo will notify you</div>' : '')
-      + (d.mode === 'app' ? '<div class="empty">This session is run from the Claude app. You can read it here; reply in the app.</div>' : d.mode === 'terminal' ? '<div class="empty">This session is open in a terminal outside tmux. You can read it here; run it inside tmux to type from Neesmo.</div>' : '')
+      + (d.mode === 'terminal' ? '<div class="empty">This session is open in a terminal outside tmux. You can read it here; run it inside tmux to type from Neesmo.</div>' : '')
       || `<div class="empty">This is the agent's own Claude Code session on your server, the same one you'd get in a terminal in its folder. Type to talk to it.</div>`;
     th.querySelectorAll('.ask button').forEach(b => b.onclick = () => rkey(b.dataset.k));
     if (near || force) th.scrollTop = th.scrollHeight;

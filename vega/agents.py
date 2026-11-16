@@ -183,9 +183,20 @@ def _text(content) -> str:
     return ""
 
 
+RELAY_TAG = "[Owner, typed in Neesmo]"
+
+
+def _owner_relay(t: str) -> str | None:
+    """The owner's words when Neesmo passed them to a session it can't type into; None otherwise."""
+    m = re.search(r"<cross-session-message[^>]*>\s*" + re.escape(RELAY_TAG) + r"\n(.*?)\s*</cross-session-message>", t, re.S)
+    return m.group(1) if m else None
+
+
 def _note(t: str) -> str | None:
     """Claude Code's own machine messages (a helper finished, another session wrote) as one plain line. None for the owner's words."""
     t = t.strip()
+    if _owner_relay(t) is not None:
+        return None
     if t.startswith("<task-notification"):
         m = re.search(r"<summary>(.*?)</summary>", t, re.S)
         s = m.group(1).strip() if m else ""
@@ -209,6 +220,9 @@ def _note(t: str) -> str | None:
 def _clean_prompt(t: str) -> str:
     """The owner's own words, or "" for anything Claude Code wrote into the conversation itself."""
     t = t.strip()
+    own = _owner_relay(t)
+    if own is not None:
+        return own
     if _note(t) is not None:
         return ""
     if t.startswith("[Image"):
