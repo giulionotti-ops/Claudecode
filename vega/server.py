@@ -481,6 +481,28 @@ async def plugin_toggle(pid: str, body: Toggle):
     return {"ok": True}
 
 
+def _agent_text(a: dict) -> str:
+    return " ".join(str(a.get(k) or "") for k in ("name", "role", "instructions"))
+
+
+@app.get("/api/agents/{aid}/plugins")
+async def agent_plugins(aid: str):
+    a = _agent_or_404(aid)
+    return await asyncio.to_thread(extensions.agent_plugins, Path(a["folder"]), _agent_text(a))
+
+
+@app.post("/api/agents/{aid}/plugins/{pid}")
+async def agent_plugin_toggle(aid: str, pid: str, body: Toggle):
+    a = _agent_or_404(aid)
+    try:
+        await asyncio.to_thread(extensions.set_agent_plugin, Path(a["folder"]), _agent_text(a), pid, body.on)
+    except ValueError as e:
+        raise HTTPException(400, str(e))
+    except (RuntimeError, subprocess.TimeoutExpired) as e:
+        raise HTTPException(502, str(e))
+    return {"ok": True}
+
+
 @app.get("/api/notices")
 def notices_list():
     return {"sections": extensions.notices()}

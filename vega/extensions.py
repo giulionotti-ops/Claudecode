@@ -116,11 +116,11 @@ def set_skill(name: str, on: bool) -> None:
             shutil.move(str(src), str(dst))
 
 
-def _claude(*args: str, timeout: int = 60) -> str:
+def _claude(*args: str, timeout: int = 60, cwd: Path | None = None) -> str:
     exe = shutil.which("claude")
     if not exe:
         raise RuntimeError("Claude Code is not installed on this server")
-    r = subprocess.run([exe, *args], capture_output=True, text=True, timeout=timeout)
+    r = subprocess.run([exe, *args], capture_output=True, text=True, timeout=timeout, cwd=cwd)
     if r.returncode:
         raise RuntimeError((r.stderr or r.stdout).strip()[-300:] or "claude plugin failed")
     return r.stdout
@@ -188,6 +188,114 @@ def set_plugin(pid: str, on: bool) -> None:
     else:
         _claude("plugin", "enable" if on else "disable", pid, "-s", "user")
     _plugins_cache = None
+
+
+# ── per-agent plugins ─────────────────────────────────────────────────────────────────────────────
+# Each agent's card shows only the plugins that fit its job. A job is a set of tags read from the
+# agent's folder (code files, git, a GitHub remote, a web project) and from its name, role and brief.
+# Switches write the agent folder's local settings (.claude/settings.local.json, never committed), so
+# other agents and the general list in Settings → System are not touched.
+TAGS = {
+    "caveman": {"general"}, "claude-mem": {"general"}, "superpowers": {"general"},
+    "claude-md-management": {"general"}, "skill-creator": {"general"}, "ralph-loop": {"general"},
+    "context7": {"code"}, "code-review": {"github"}, "code-simplifier": {"code"},
+    "feature-dev": {"code"}, "security-guidance": {"code"}, "commit-commands": {"git"},
+    "pr-review-toolkit": {"github"}, "github": {"github"}, "frontend-design": {"web"},
+    "playwright": {"web"},
+}
+_CODE_FILES = ("package.json", "pyproject.toml", "requirements.txt", "Cargo.toml", "go.mod", "Gemfile",
+               "pom.xml", "build.gradle", "Makefile", "CMakeLists.txt", "default.project.json")
+_CODE_EXT = {".py", ".js", ".ts", ".tsx", ".jsx", ".go", ".rs", ".rb", ".java", ".cs", ".cpp", ".c",
+             ".lua", ".luau", ".php", ".swift", ".kt", ".sh", ".html", ".vue", ".svelte"}
+_WORDS = {
+    "code": r"\b(code|coding|app|api|bug|fix|build|develop|dev|script|software|program|game|server|bot|tool)",
+    "web": r"\b(web|site|website|shop|store|frontend|front-end|ui|page|landing|html|css|react|next)",
+}
+_MEDIA = r"\b(shorts?|clips?|videos?|comics?|lore|youtube|tiktok|reels?|podcast|writing|blog)\b"
+_agent_cache: dict[str, tuple[float, list]] = {}
+
+
+def agent_job(folder: Path, text: str) -> set[str]:
+    tags = {"general"}
+    try:
+        names = [p.name for p in folder.iterdir()][:400]
+    except OSError:
+        names = []
+    sub = []   # project manifests one folder down (an app kept in ./app, ./vega, ...)
+    for n in names:
+        d = folder / n
+        if not n.startswith(".") and n != "node_modules" and d.is_dir():
+            try:
+                sub += [p.name for p in d.iterdir() if p.name in _CODE_FILES or p.name == "index.html"][:20]
+            except OSError:
+                pass
+    if any(n in _CODE_FILES for n in names + sub) or any(Path(n).suffix in _CODE_EXT for n in names):
+        tags.add("code")
+    if {"package.json", "index.html"} & set(names + sub):
+        tags.add("web")
+    if (folder / ".git").exists():   # a folder or, in a worktree, a file
+        tags.add("git")
+        try:
+            url = subprocess.run(["git", "-C", str(folder), "remote", "-v"], capture_output=True, text=True,
+                                 timeout=5).stdout
+            if "github.com" in url:
+                tags.add("github")
+        except (OSError, subprocess.TimeoutExpired):
+            pass
+    low = text.lower()
+    words = {tag for tag, rx in _WORDS.items() if re.search(rx, low)}
+    if re.search(_MEDIA, low) and not words:   # a video or writing job: its scripts are tooling, not the product
+        tags -= {"code", "web", "github"}
+    tags |= words
+    if "web" in tags:
+        tags.add("code")
+    if "github" in tags:
+        tags.add("git")
+    return tags
+
+
+def agent_plugins(folder: Path, text: str, fresh: bool = False) -> dict:
+    """Plugins for one agent: `fits` (its job could use them) and `on` (loaded in its folder)."""
+    key = str(folder)
+    hit = _agent_cache.get(key)
+    if fresh or not hit or time.time() - hit[0] > 30:
+        try:
+            raw = json.loads(_claude("plugin", "list", "--json", cwd=folder))
+        except (RuntimeError, ValueError, OSError, subprocess.TimeoutExpired):
+            raw = []
+        hit = _agent_cache[key] = (time.time(), raw)
+    job, out, seen = agent_job(folder, text), [], set()
+    for p in hit[1]:
+        pid = p.get("id", "")
+        if pid in seen or not _PLUGIN.match(pid):
+            continue
+        seen.add(pid)
+        name = pid.split("@")[0]
+        tags = TAGS.get(name)
+        fits = bool(tags & job) if tags else p.get("scope") in ("project", "local") or bool(p.get("projectEnabled"))
+        out.append({"id": pid, "name": name, "on": bool(p.get("enabled")), "fits": fits,
+                    "description": SUGGESTED.get(name, ""), "scope": p.get("scope", "")})
+    names = {o["name"] for o in out}
+    out += [{"id": f"{n}@{OFFICIAL}", "name": n, "on": False, "fits": True, "description": d, "suggested": True}
+            for n, d in SUGGESTED.items() if n not in names and TAGS.get(n, set()) & job]
+    out.sort(key=lambda o: (not o["fits"], not o["on"], o["name"]))
+    return {"job": sorted(job), "plugins": out}
+
+
+def set_agent_plugin(folder: Path, text: str, pid: str, on: bool) -> None:
+    if not _PLUGIN.match(pid):
+        raise ValueError("bad plugin id")
+    known = {p["id"]: p for p in agent_plugins(folder, text)["plugins"]}
+    p = known.get(pid)
+    if p is None:
+        raise ValueError("this plugin is not offered for this agent")
+    if p.get("suggested"):
+        if not on:
+            return
+        _claude("plugin", "install", pid, "-s", "local", timeout=180, cwd=folder)
+    else:
+        _claude("plugin", "enable" if on else "disable", pid, "-s", "local", cwd=folder)
+    _agent_cache.pop(str(folder), None)
 
 
 if __name__ == "__main__":

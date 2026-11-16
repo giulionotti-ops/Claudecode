@@ -28,7 +28,7 @@
     background: repeating-linear-gradient(0deg, rgba(var(--rgb),.03) 0 1px, transparent 1px 3px); }
   canvas { position: fixed; inset: 0; width: 100%; height: 100%; }
   /* Big faded wordmark far behind the ring: heavy condensed italic, tight letters, soft blur for depth */
-  #wordmark { position: fixed; left: 50%; top: 50%; transform: translate(-50%, -50%) skewX(-11deg); pointer-events: none; white-space: nowrap;
+  #wordmark { position: fixed; left: 50%; top: 0; translate: 0 50vh; will-change: translate; transform: translate(-50%, -50%) skewX(-11deg); pointer-events: none; white-space: nowrap;
     font: 400 min(26vw, 380px)/.78 "Anton", Impact, "Arial Narrow", sans-serif; letter-spacing: -.045em;
     background: linear-gradient(180deg, rgba(var(--rgb),.26), rgba(var(--rgb),.05) 85%); -webkit-background-clip: text; background-clip: text; color: transparent;
     filter: blur(1.6px); animation: drift 9s ease-in-out infinite alternate; }
@@ -165,7 +165,13 @@
   #ag-save { background: var(--c); color: var(--bg); font-weight: 600; } #ag-del { border-color: var(--err); color: var(--err); } #ag-err { color: var(--err); min-height: 1.2em; }
   .aglist li button[data-ag] { display: flex; align-items: center; gap: 8px; } .aglist i { width: 10px; height: 10px; border-radius: 50%; background: var(--a); flex: none; }
   #ag-close { flex: none; min-width: 44px; min-height: 44px; }
-  #ap-close, #r-close { flex: none; min-width: 44px; min-height: 44px; }
+  #ap-close, #r-close, #r-gear { flex: none; min-width: 44px; min-height: 44px; }
+  #r-gear { margin-left: auto; padding: 6px 10px; display: grid; place-items: center; }
+  #r-gear svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+  #report .rp > header { gap: 6px; }
+  #ag .tabs { position: static; margin: 0 0 6px; padding: 0; background: none; } #ag-btns[hidden] { display: none; }
+  .agtab[hidden] { display: none; } .agtab { display: flex; flex-direction: column; gap: 6px; }
+  #ag-pother summary { cursor: pointer; color: var(--dim); font-size: 12px; margin-top: 10px; }
   dialog#report::backdrop { background: rgba(0,0,0,.7); backdrop-filter: blur(3px); }
   .rp { padding: 18px; display: flex; flex-direction: column; gap: 14px; }
   .rp header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
@@ -191,7 +197,7 @@
   .bar i { height: 8px; background: rgba(var(--rgb),.15); border-radius: 4px; overflow: hidden; }
   .bar i::after { content: ""; display: block; height: 100%; width: var(--w); background: var(--a, var(--c2)); }
   .actions { display: flex; justify-content: flex-end; } .actions button { padding: 10px 16px; }
-  @media (max-width: 700px) { .grid { grid-template-columns: 1fr; } .rp { padding: 14px; } .kpis { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  @media (max-width: 700px) { .grid { grid-template-columns: 1fr; } .rp { padding: 14px; } #ap .rp > header, #report .rp > header, #ag .rp > header { top: -14px; margin: -14px -14px 0; padding: 14px; } .kpis { grid-template-columns: repeat(3, 1fr); gap: 6px; }
     .kpi { padding: 8px; } .kpi b { font-size: 16px; } .kpi span { font-size: 9px; } .agent .st .ago { display: none; } .agent .st { font-size: 10px; } }
   @media (max-width: 900px) {  /* phones and narrow windows: two scrolling strips under the clock */
     .cards { flex-direction: row; transform: none; left: 16px; right: 16px; width: auto; overflow-x: auto; gap: 8px; }
@@ -389,19 +395,31 @@
 <div class="cards r" id="agents-r" aria-label="Agents"></div>
 <dialog id="ag" aria-labelledby="ag-title"><div class="rp">
   <header><div><h2 id="ag-title">Agent</h2><small>A box on the home screen with its own folder and its own dedicated agent.</small></div><button type="button" id="ag-close" aria-label="Close">✕</button></header>
+  <div class="tabs" role="tablist" aria-label="Agent settings" id="ag-tabs">
+    <button type="button" role="tab" data-agtab="look" aria-selected="true">Appearance</button><button type="button" role="tab" data-agtab="job" aria-selected="false">Job</button><button type="button" role="tab" data-agtab="plugins" aria-selected="false">Plugins</button>
+  </div>
   <form id="ag-form">
-    <label for="ag-name">Name</label><input id="ag-name" required maxlength="40" placeholder="e.g. Shop website">
-    <label for="ag-short">Card label (one word)</label><input id="ag-short" maxlength="10" placeholder="e.g. Shop">
-    <label for="ag-role">What it works on</label><input id="ag-role" maxlength="120" placeholder="e.g. builds and fixes my Shopify theme">
-    <label for="ag-folder">Folder (empty = a new one in ~/neesmo-agents)</label><input id="ag-folder" autocapitalize="off" placeholder="~/projects/shop">
-    <label>Colour</label><div class="swatches" id="ag-colors"></div>
-    <label for="ag-inst">How it should work (optional)</label><textarea id="ag-inst" rows="5"></textarea>
+    <div class="agtab" data-agtab="look" role="tabpanel">
+      <label for="ag-name">Name</label><input id="ag-name" required maxlength="40" placeholder="e.g. Shop website">
+      <label for="ag-short">Card label (one word)</label><input id="ag-short" maxlength="10" placeholder="e.g. Shop">
+      <label>Colour</label><div class="swatches" id="ag-colors"></div>
+    </div>
+    <div class="agtab" data-agtab="job" role="tabpanel" hidden>
+      <label for="ag-role">What it works on</label><input id="ag-role" maxlength="120" placeholder="e.g. builds and fixes my Shopify theme">
+      <label for="ag-folder">Folder (empty = a new one in ~/neesmo-agents)</label><input id="ag-folder" autocapitalize="off" placeholder="~/projects/shop">
+      <label for="ag-inst">How it should work (optional)</label><textarea id="ag-inst" rows="5"></textarea>
+    </div>
+    <div class="agtab" data-agtab="plugins" role="tabpanel" hidden>
+      <small class="sub" id="ag-pnote">Plugins that fit this agent's job. Switches apply only to this agent's folder; the next session it starts picks them up.</small>
+      <ul class="xlist" id="ag-plist"><li><small>loading…</small></li></ul>
+      <details id="ag-pother" hidden><summary>On, but not needed for this job</summary><ul class="xlist" id="ag-plist2"></ul></details>
+    </div>
     <div id="ag-err" role="alert"></div>
-    <div class="btns"><button type="button" id="ag-del">Delete</button><button type="submit" id="ag-save">Save</button></div>
+    <div class="btns" id="ag-btns"><button type="button" id="ag-del">Delete</button><button type="submit" id="ag-save">Save</button></div>
   </form>
 </div></dialog>
 <dialog id="report" aria-labelledby="r-name"><div class="rp">
-  <header><div><h2 id="r-name">Agent</h2><small id="r-sub"></small></div><button type="button" id="r-close" aria-label="Close">✕</button></header>
+  <header><div><h2 id="r-name">Agent</h2><small id="r-sub"></small></div><button type="button" id="r-gear" aria-label="Agent settings" title="Agent settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button><button type="button" id="r-close" aria-label="Close">✕</button></header>
   <div class="strip" id="r-strip"></div>
   <details id="r-more"><summary>Details</summary>
     <div class="kpis" id="r-kpis"></div>
@@ -816,6 +834,10 @@ $('#r-new').onclick = async () => {
   loadThread(reportFor, true);
 };
 $('#r-close').onclick = () => $('#report').close();
+$('#r-gear').onclick = async () => {   // this agent's settings, over its chat
+  if (!agCfg.agents.length) await loadAgentCfg();
+  const i = (agCfg?.agents || []).findIndex(a => a.id === reportFor); if (i >= 0) openAgentEditor(i);
+};
 $('#report').addEventListener('click', e => { if (e.target.id === 'report') e.target.close(); });
 $('#report').addEventListener('close', () => { reportFor = null; clearTimeout(rPoll); delete $('#report').dataset.shown; });
 loadAgents(); setInterval(() => { if (!document.hidden) { loadAgents(); if (reportFor) openReport(reportFor); } }, 15000);
@@ -876,8 +898,38 @@ function openAgentEditor(i) {
   $('#ag-del').hidden = i < 0; $('#ag-err').textContent = '';
   const paint = () => { $('#ag').style.setProperty('--a', agColor); $('#ag-colors').innerHTML = agCfg.colors.map(c => `<button type="button" class="sw" style="--s:${c}" aria-pressed="${c === agColor}" data-c="${c}" aria-label="Colour ${c}"></button>`).join(''); };
   paint(); $('#ag-colors').onclick = e => { const b = e.target.closest('[data-c]'); if (b) { agColor = b.dataset.c; paint(); } };
-  $('#pop-s').hidden = true; $('#ag').showModal();
+  $('#ag-tabs [data-agtab="plugins"]').hidden = i < 0;
+  showAgTab('look'); $('#pop-s').hidden = true; if (!$('#ag').open) $('#ag').showModal();
 }
+// Agent settings tabs: Appearance and Job share the Save button; plugin switches apply at once.
+function showAgTab(t) {
+  for (const b of document.querySelectorAll('#ag-tabs [data-agtab]')) b.setAttribute('aria-selected', String(b.dataset.agtab === t));
+  for (const p of document.querySelectorAll('.agtab')) p.hidden = p.dataset.agtab !== t;
+  $('#ag-btns').hidden = t === 'plugins';
+  if (t === 'plugins') loadAgentPlugins();
+}
+$('#ag-tabs').onclick = e => { const b = e.target.closest('[data-agtab]'); if (b) showAgTab(b.dataset.agtab); };
+async function loadAgentPlugins() {
+  const a = agCfg.agents[agEdit]; if (!a) return;
+  $('#ag-plist').innerHTML = '<li><small>loading…</small></li>'; $('#ag-pother').hidden = true;
+  let d; try { d = await (await api(`/api/agents/${encodeURIComponent(a.id)}/plugins`)).json(); } catch (e) { $('#ag-plist').innerHTML = `<li><small>${esc(e.message)}</small></li>`; return; }
+  if (agCfg.agents[agEdit] !== a) return;
+  const row = p => `<li><div class="xi"><b>${esc(p.name)}</b>${p.description || p.suggested ? `<span class="xd">${esc(p.description || '')}${p.suggested ? ' · installs for this agent when switched on' : ''}</span>` : ''}</div>
+    <button type="button" class="tog" role="switch" aria-checked="${p.on}" aria-label="${esc(p.name)}" data-ap="${esc(p.id)}"></button></li>`;
+  const fit = d.plugins.filter(p => p.fits), other = d.plugins.filter(p => !p.fits && p.on);
+  $('#ag-plist').innerHTML = fit.map(row).join('') || '<li><small>No plugins fit this job yet.</small></li>';
+  $('#ag-plist2').innerHTML = other.map(row).join(''); $('#ag-pother').hidden = !other.length;
+}
+$('#ag').addEventListener('click', async e => {
+  const t = e.target.closest('.tog[data-ap]'), a = agCfg.agents[agEdit]; if (!t || !a || t.hasAttribute('aria-busy')) return;
+  const on = t.getAttribute('aria-checked') !== 'true', name = t.getAttribute('aria-label');
+  t.setAttribute('aria-busy', 'true'); t.setAttribute('aria-checked', String(on));
+  if (on && t.closest('li')?.textContent.includes('installs for')) $('#ag-pnote').textContent = `Installing ${name}… this can take a minute.`;
+  try { await api(`/api/agents/${encodeURIComponent(a.id)}/plugins/${encodeURIComponent(t.dataset.ap)}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ on }) });
+    $('#ag-pnote').textContent = `${name} ${on ? 'on' : 'off'} for ${a.name}. Its next session picks it up (New thread starts one).`; }
+  catch (err) { t.setAttribute('aria-checked', String(!on)); $('#ag-pnote').textContent = err.message; }
+  t.removeAttribute('aria-busy');
+});
 async function saveAgents(list) {
   try { await api('/api/agents-config', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(list) }); }
   catch (e) { $('#ag-err').textContent = e.message; return false; }
@@ -1042,11 +1094,11 @@ $('#ag-form').onsubmit = async e => {
     folder: $('#ag-folder').value.trim(), instructions: $('#ag-inst').value.trim(), color: agColor };
   if (agEdit < 0) delete a.id;
   const list = agCfg.agents.slice(); agEdit < 0 ? list.push(a) : (list[agEdit] = a);
-  if (await saveAgents(list)) $('#ag').close();
+  if (await saveAgents(list)) { $('#ag').close(); if ($('#report').open) openReport(reportFor); }
 };
 $('#ag-del').onclick = async () => {
   if (!confirm('Remove this agent from Neesmo? Its folder and files are kept.')) return;
-  if (await saveAgents(agCfg.agents.filter((_, i) => i !== agEdit))) $('#ag').close();
+  if (await saveAgents(agCfg.agents.filter((_, i) => i !== agEdit))) { $('#ag').close(); if ($('#report').open) $('#report').close(); }
 };
 // ── remembered devices (only when login is on) ──
 function showLicense(l) {
@@ -1231,11 +1283,22 @@ function layoutHud() {
   hud.tcy = top + avail / 2;
 }
 // The wordmark and status line ride on the ring's glide, so all three move together.
+// The wordmark moves on the GPU (translate, sub-pixel), the status line snaps to whole pixels.
 let markY = -1, statY = -1;
 function followRing() {
-  const y = Math.round(hud.cy * 2) / 2, sy = Math.round((hud.cy + hud.R * 1.45) * 2) / 2;
-  if (y !== markY) { markY = y; $('#wordmark').style.top = `${y}px`; }
+  const y = Math.round(hud.cy * 10) / 10, sy = Math.round(hud.cy + hud.R * 1.45);
+  if (y !== markY) { markY = y; $('#wordmark').style.translate = `0 ${y}px`; }
   if (sy !== statY && !document.body.classList.contains('chat')) { statY = sy; statusEl.style.top = `${sy}px`; }
+}
+// A critically damped spring per value: smooth start, no overshoot, same speed at any frame rate,
+// and a retarget mid-glide (the keyboard's real height arriving) bends the path instead of jerking it.
+const spring = { vy: 0, vr: 0, last: 0 };
+function glide(now) {
+  const dt = Math.min(.05, spring.last ? (now - spring.last) / 1000 : .016); spring.last = now;
+  if (reduce) { hud.cy = hud.tcy; hud.R = hud.tR; return; }
+  const w = 11;   // stiffness: ~0.4 s to settle
+  spring.vy += (-2 * w * spring.vy - w * w * (hud.cy - hud.tcy)) * dt; hud.cy += spring.vy * dt;
+  spring.vr += (-2 * w * spring.vr - w * w * (hud.R - hud.tR)) * dt; hud.R += spring.vr * dt;
 }
 // Wordmark: measured so the slanted word fills ~94% of a phone's width (62% on desktop), centred.
 function fitWordmark() {
@@ -1248,8 +1311,7 @@ document.fonts?.ready.then(fitWordmark); addEventListener('resize', fitWordmark)
 addEventListener('resize', layoutHud); setInterval(layoutHud, 1000); layoutHud();
 function frame(t) {
   if (!hud.init && hud.tR) { hud.cy = hud.tcy; hud.R = hud.tR; hud.init = true; }
-  const k = reduce ? 1 : .09;   // glide, never jump
-  hud.cy += (hud.tcy - hud.cy) * k; hud.R += (hud.tR - hud.R) * k; followRing();
+  glide(t); followRing();
   t = reduce ? 0 : t / 1000;
   if (analyser && mode !== 'idle' && mode !== 'thinking') { analyser.getByteFrequencyData(data); level += (data.reduce((a, b) => a + b, 0) / data.length / 255 * 2.2 - level) * .3; }
   else level *= .9;
