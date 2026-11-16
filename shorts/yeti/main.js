@@ -31,7 +31,7 @@ await Promise.all(['rock_largeA', 'rock_largeC', 'rock_tallB', 'rock_tallE', 'ro
   .map(async n => { PROPS[n] = (await load(n)).scene; }));
 
 // ---------------------------------------------------------------- actors: model + mixer, posed from the frame time
-function makeActor(g, height, { tint = {}, yawFix = 0, base = 'idle', lockRe = null, cullRe = null } = {}) {
+function makeActor(g, height, { tint = {}, yawFix = 0, base = 'idle', cullRe = null, pin = null } = {}) {
   const root = SkeletonUtils.clone(g.scene);
   const acts = {}, mixer = new THREE.AnimationMixer(root);
   const holder = new THREE.Group(), fix = new THREE.Group(); fix.rotation.y = yawFix; holder.add(fix); fix.add(root);
@@ -51,7 +51,7 @@ function makeActor(g, height, { tint = {}, yawFix = 0, base = 'idle', lockRe = n
   root.scale.multiplyScalar(k); root.position.set(-(box.min.x + box.max.x) / 2 * k, -box.min.y * k, -(box.min.z + box.max.z) / 2 * k);
   const A = { holder, root, mixer, acts, g, clip, height, k };
   A.feet = []; root.traverse(o => { if (o.isBone && /foot/i.test(o.name) && !/steps|toe/i.test(o.name)) A.feet.push(o); });
-  A.lock = []; if (lockRe) root.traverse(o => { if (o.isBone && lockRe.test(o.name)) A.lock.push([o, o.position.clone(), o.quaternion.clone()]); });
+  A.pin = []; if (pin) root.traverse(o => { if (o.isBone) for (const [re, v] of pin) if (re.test(o.name)) A.pin.push([o, new THREE.Vector3(...v)]); });   // bones whose rest offset is broken and that no clip moves
   scene.add(holder); return A;
 }
 // pose: clip a at time ta (looping), optionally blended with clip b
@@ -61,14 +61,14 @@ function pose(A, a, ta, b = null, tb = 0, wb = 0) {
   const X = get(a), d = X.getClip().duration; X.setEffectiveWeight(1 - wb); X.time = ((ta % d) + d) % d;
   if (b) { const Y = get(b), e = Y.getClip().duration; Y.setEffectiveWeight(wb); Y.time = ((tb % e) + e) % e; }
   A.mixer.update(0);
-  for (const [b, p, q] of A.lock) { b.position.copy(p); b.quaternion.copy(q); }   // keep the shoulders where the idle clip puts them (the walk clip drags them out)
+  for (const [b, v] of A.pin) b.position.copy(v);
   if (A.hide) for (const b of A.hide) b.scale.setScalar(.0001);   // drop the held shield / weapon pieces
   if (A.center) { A.holder.updateMatrixWorld(true); const bx = new THREE.Box3().setFromObject(A.holder, true); A.holder.position.x += A.tx - (bx.min.x + bx.max.x) / 2; A.holder.position.z += A.tz - (bx.min.z + bx.max.z) / 2; }   // cancel root motion: hold the model on its mark
 }
 function place(A, x, y, z, ry = 0, s = 1) { A.tx = x; A.tz = z; A.holder.position.set(x, y, z); A.holder.rotation.y = ry; A.holder.scale.setScalar(s); }
 function feetScale(A, s) { for (const f of A.feet) f.scale.multiplyScalar(s); }
 
-const yeti = makeActor(gYeti, 2.8, { yawFix: Math.PI, base: 'IDLE 1', tint: { color: new THREE.Color(2.3, 2.35, 2.6), rough: 1, cutout: .5 }, lockRe: /Clavicle|UpArm/ });
+const yeti = makeActor(gYeti, 2.8, { yawFix: Math.PI, base: 'IDLE 1', tint: { color: new THREE.Color(2.3, 2.35, 2.6), rough: 1, cutout: .5 }, pin: [[/RUpArmTwist_/, [.01, 0, 0]]] });   // right upper-arm twist keeps a broken rest offset (78, 510, -84) that no clip resets: it dragged the shoulder skin into a sheet; the left twin sits at (.01, 0, 0)
 const bear = makeActor(gBear, 1.25, { base: 'Stand_Idle_01' });
 const hare = makeActor(gHare, .62, { base: 'Idle' });
 const yak = makeActor(gYak, 1.9, { tint: { color: 0x6a4a36, rough: .95 }, base: 'ArmatureAction' });
