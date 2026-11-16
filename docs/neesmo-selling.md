@@ -21,7 +21,7 @@ Why Lemon Squeezy:
    - `STORE_PRODUCT = "<id>"`
    - `BUY_URL = "https://<store>.lemonsqueezy.com/buy/<…>"`
 3. Add the download file (the vega folder as a zip, without this file and without `.venv`). It goes only to buyers.
-4. Put the same checkout URL in `site/index.html`, replacing `https://neesmo.example/buy`.
+4. Put the same checkout URL in `site/index.html`, replacing `https://neesmo.example/buy`, and the contact email (now on `neesmo.example`).
 
 Neesmo uses the store's license API with these calls:
 - activate
