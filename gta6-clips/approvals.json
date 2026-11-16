@@ -67,6 +67,45 @@
           "why": "'three days left until GTA 6', on-topic for launch week"
         }
       ]
+    },
+    {
+      "date": "2026-11-15",
+      "posted": [],
+      "reason": "none of the 12 top clips came from an approved streamer; nothing rendered or posted (uploader signed in as Stream Peaks)",
+      "needs_permission_top": [
+        {
+          "streamer": "emiru",
+          "clip": "https://www.twitch.tv/emiru/clip/ColorfulCarelessSproutChocolateRain-axa56L4QuvntJVE-",
+          "span": "00:00-00:27",
+          "score": 70,
+          "why": "Zelda OoT jailed again, NPC lecture then 'FUCK!' payoff, 4k views"
+        },
+        {
+          "streamer": "xqc",
+          "clip": "https://www.twitch.tv/xqc/clip/CleanGoodParrotCoolStoryBob-T20x93Rpwcu27ave",
+          "span": "00:00-00:16",
+          "score": 58,
+          "why": "Song of Healing, 'not gonna cheat' chant then chat sings, 2.4k views"
+        },
+        {
+          "streamer": "ruffpickle",
+          "clip": "https://www.twitch.tv/ruffpickle/clip/LongDaintyGarbageWholeWheat-o2UXgTgfkip4bWqr",
+          "span": "00:11-00:45",
+          "score": 55,
+          "why": "GTA V RP photo-shoot chaos, on-topic before GTA 6 launch"
+        },
+        {
+          "streamer": "tfue",
+          "clip": "https://www.twitch.tv/tfue/clip/ObliviousBashfulSalsifyRiPepperonis-DpDA8IivZ7FtWC70",
+          "span": "00:00-00:04",
+          "score": 48,
+          "why": "ROB RUN -$3M, very short"
+        }
+      ],
+      "skipped_unsafe": [
+        "moonmoon (political rant)",
+        "sodapoppin (racial remark)"
+      ]
     }
   ]
 }
