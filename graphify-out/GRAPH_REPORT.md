@@ -1,17 +1,17 @@
 # Graph Report - neesmo-product  (2026-11-16)
 
 ## Corpus Check
-- 1566 files · ~2,459,985 words
+- 1295 files · ~1,828,461 words
 - Verdict: corpus is large enough that graph structure adds value.
-- Unclassified: 220 file(s) not represented in the graph (top: .css 176, (none) 16, .ttf 14)
+- Unclassified: 147 file(s) not represented in the graph (top: .css 102, (none) 17, .ttf 14)
 
 ## Summary
-- 13290 nodes · 22658 edges · 1030 communities (688 shown, 342 thin omitted)
+- 13290 nodes · 22659 edges · 1031 communities (689 shown, 342 thin omitted)
 - Extraction: 97% EXTRACTED · 3% INFERRED · 0% AMBIGUOUS · INFERRED: 650 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `d66628f7`
+- Built from commit: `62eec43a`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -308,7 +308,7 @@
 - Rules
 - Source-Driven Development
 - Rules
-- agent/skills/vercel-optimize/lib/scanners/index.mjs
+- agent/skills/vercel-optimize/lib/scanners/edge-heavy-import.mjs
 - Data collection
 - Rules
 - Source-Driven Development
@@ -499,7 +499,7 @@
 - Sections
 - verifyNextCacheComponentsRouteChainFile
 - .agents/skills/vercel-optimize/lib/queries.mjs
-- .agents/skills/vercel-optimize/lib/gates/external-api-slow.mjs
+- .agents/skills/vercel-optimize/scripts/gate-investigations.mjs
 - API service
 - Content site
 - E-commerce
@@ -668,7 +668,7 @@
 - 11. Monorepo
 - 1. Core Rendering
 - 8. React Compiler
-- .agents/skills/vercel-optimize/lib/gates/hard-gates.mjs
+- agent/skills/vercel-optimize/lib/scanners/turbo-force-bypass.mjs
 - 11. Monorepo
 - 1. Core Rendering
 - 8. React Compiler
@@ -679,7 +679,7 @@
 - diff-staged.sh
 - new-observation.sh
 - Chief of Staff Agent Architecture
-- .agents/skills/vercel-optimize/lib/cost-coverage.mjs
+- agent/skills/vercel-optimize/lib/gates/platform-bot-protection.mjs
 - agent/skills/idea-refine/scripts/idea-refine.sh
 - agent/skills/investigate-first/SKILL.md
 - agent/skills/lean-build/SKILL.md
@@ -944,6 +944,7 @@
 - .agents/skills/vercel-optimize/lib/sanitizers/function-duration-invocations.mjs
 - _HTML
 - mount
+- agent/skills/vercel-optimize/lib/gates/platform-fluid-compute.mjs
 - site/assets/layout/check.mjs
 - d
 - license.py
@@ -1011,19 +1012,19 @@
 ## Surprising Connections (you probably didn't know these)
 - `Personal or hard-coded (must change before selling)` --references--> `channel_stats()`  [INFERRED]
   docs/product/AUDIT.md → vega/server.py
-- `Reusable as is` --references--> `run_channel()`  [INFERRED]
-  docs/product/AUDIT.md → vega/server.py
-- `Reusable as is` --references--> `channel_jobs()`  [INFERRED]
-  docs/product/AUDIT.md → vega/server.py
 - `Parts` --references--> `d`  [INFERRED]
   site/assets/objects/product-render/README.md → vega/static/vendor/motion.js
 - `The eleven heroes` --references--> `collage()`  [INFERRED]
   .claude/skills/design-taste-frontend/references/layout-v4.md → .claude/skills/design-taste-frontend/assets/layout/layout.js
+- `Reusable as is` --references--> `channel_jobs()`  [INFERRED]
+  docs/product/AUDIT.md → vega/server.py
+- `Reusable as is` --references--> `run_channel()`  [INFERRED]
+  docs/product/AUDIT.md → vega/server.py
 
 ## Import Cycles
 - None detected.
 
-## Communities (1030 total, 342 thin omitted)
+## Communities (1031 total, 342 thin omitted)
 
 ### Community 0 - "validate-skill-bundle.py"
 Cohesion: 0.04
@@ -1118,12 +1119,12 @@ Cohesion: 0.07
 Nodes (46): BASE_UNIFORMS, CALM_SPOTS, clamp(), compose(), cssToHex(), DEFAULT_PALETTE, enforceBudget(), FOCAL (+38 more)
 
 ### Community 23 - "agent/skills/vercel-optimize/lib/gates/index.mjs"
-Cohesion: 0.05
-Nodes (41): gate(), metadata, unique(), extractColdStarts(), gate(), metadata, extractCallCounts(), extractExternalApis() (+33 more)
+Cohesion: 0.04
+Nodes (47): gate(), metadata, unique(), extractColdStarts(), gate(), metadata, extractCallCounts(), extractExternalApis() (+39 more)
 
 ### Community 24 - ".agents/skills/vercel-optimize/lib/render-report.mjs"
-Cohesion: 0.10
-Nodes (52): formatCandidateLabel(), formatKind(), formatPublicText(), formatRoute(), asArray(), assertValidObservations(), candidateForDisplay(), canonicalRefOf() (+44 more)
+Cohesion: 0.08
+Nodes (59): classifyService(), computeCostCoverage(), escapeCell(), renderCostCoverageMarkdown(), SERVICE_DIMENSION, formatCandidateLabel(), formatKind(), formatRoute() (+51 more)
 
 ### Community 25 - "copy-lint.mjs"
 Cohesion: 0.07
@@ -1315,7 +1316,7 @@ Nodes (28): A) `VERCEL_TOKEN` is already set in the environment, About `.vercel/
 
 ### Community 72 - ".agents/skills/vercel-optimize/lib/gates/index.mjs"
 Cohesion: 0.05
-Nodes (55): applyAuthDisqualifier(), AUTH_ROUTE_REGEX, isAuthRoute(), gate(), metadata, unique(), extractColdStarts(), gate() (+47 more)
+Nodes (48): gate(), metadata, unique(), extractColdStarts(), gate(), metadata, extractCallCounts(), extractExternalApis() (+40 more)
 
 ### Community 73 - "scripts/shoot.mjs"
 Cohesion: 0.09
@@ -1626,8 +1627,8 @@ Cohesion: 0.08
 Nodes (38): Ai(), animateValues(), ao(), As(), bi(), co(), e(), Ei() (+30 more)
 
 ### Community 150 - ".agents/skills/vercel-optimize/lib/route-normalize.mjs"
-Cohesion: 0.21
-Nodes (18): candidateKey(), canonicalizeBranchPrefix(), canonicalizeRoute(), decodeSegmentToken(), dedupeCandidates(), firstRouteSegment(), isBase64FlagState(), isDynamicPlaceholder() (+10 more)
+Cohesion: 0.13
+Nodes (27): applyHardGates(), FLAGS_ENDPOINT, flagsEndpointReason(), isFlagsEndpointCandidate(), isWorkflowRuntimeEndpointCandidate(), normalizeRoute(), VERCEL_FLAGS_PACKAGES, WORKFLOW_ENDPOINT_PREFIXES (+19 more)
 
 ### Community 151 - "Skill Authoring — structure, taxonomy, licensing, confidentiality, editing rules"
 Cohesion: 0.09
@@ -1654,8 +1655,8 @@ Cohesion: 0.17
 Nodes (17): escapeODataString(), mergeIntoEvidence(), odataEq(), SCANNER_KINDS, simplify(), SPEC_GENERATORS, specsForCandidate(), TIME_WINDOW (+9 more)
 
 ### Community 157 - ".agents/skills/vercel-optimize/scripts/render-report.mjs"
-Cohesion: 0.19
-Nodes (19): buildFinalReportMessage(), extractCoverageLine(), stripDetailsLink(), buildDebugArtifact(), candidateFamily(), candidateMatchesRef(), candidateTarget(), coerceOptionalString() (+11 more)
+Cohesion: 0.24
+Nodes (16): buildDebugArtifact(), candidateFamily(), candidateMatchesRef(), candidateTarget(), coerceOptionalString(), flattenObservations(), HARD_REGEN_TRIGGERS, log() (+8 more)
 
 ### Community 158 - ".agents/skills/vercel-optimize/lib/reconcile-candidates.mjs"
 Cohesion: 0.35
@@ -1706,7 +1707,7 @@ Cohesion: 0.20
 Nodes (18): mount(), params, makeTexture(), photoGL(), adapt(), bindTextures(), draw(), finish() (+10 more)
 
 ### Community 170 - "extensions.py"
-Cohesion: 0.20
+Cohesion: 0.21
 Nodes (8): _claude(), _describe(), _license_for(), notices(), _pack(), plugins(), set_plugin(), skills()
 
 ### Community 171 - "task-observer - One Skill to Rule Them All"
@@ -1875,7 +1876,7 @@ Nodes (16): 1.1 Avoid Boolean Prop Proliferation, 1.2 Use Compound Components, 1
 
 ### Community 212 - ".agents/skills/vercel-optimize/lib/display-labels.mjs"
 Cohesion: 0.12
-Nodes (25): buildBudgetSummary(), buildChatPreview(), buildExactChatMessage(), buildOptions(), buildPrintCheck(), buildQuestionPayload(), buildQuestionText(), renderBudgetSummaryMarkdown() (+17 more)
+Nodes (26): buildBudgetSummary(), buildChatPreview(), buildExactChatMessage(), buildOptions(), buildPrintCheck(), buildQuestionPayload(), buildQuestionText(), renderBudgetSummaryMarkdown() (+18 more)
 
 ### Community 213 - "site/assets/diagrams/diagram.js"
 Cohesion: 0.05
@@ -2185,9 +2186,9 @@ Nodes (12): Common Rationalizations, Overview, Red Flags, Retrieval Safety: Trea
 Cohesion: 0.15
 Nodes (12): 1. Fragments, 2. One word when one word is enough, 3. Each fact once, 4. Cut conjunctions only when order survives, 5. Tool runs, 6. Never perform, Floor, Persistence (+4 more)
 
-### Community 292 - "agent/skills/vercel-optimize/lib/scanners/index.mjs"
-Cohesion: 0.09
-Nodes (26): extractSpecifiers(), HEAVY_PATTERNS, isEdgeRuntimeFile(), isMiddleware(), metadata, scan(), scanners, isApplicable() (+18 more)
+### Community 292 - "agent/skills/vercel-optimize/lib/scanners/edge-heavy-import.mjs"
+Cohesion: 0.48
+Nodes (6): extractSpecifiers(), HEAVY_PATTERNS, isEdgeRuntimeFile(), isMiddleware(), metadata, scan()
 
 ### Community 293 - "Data collection"
 Cohesion: 0.15
@@ -2905,9 +2906,9 @@ Nodes (14): asArray(), firstAccessiblePath(), firstDynamicRouteChainReason(), is
 Cohesion: 0.53
 Nodes (5): defaultNormalize(), normalizeColdStart(), normalizerFor(), QUERIES, normalizeSummary()
 
-### Community 483 - ".agents/skills/vercel-optimize/lib/gates/external-api-slow.mjs"
-Cohesion: 0.13
-Nodes (16): extractCallCounts(), extractExternalApis(), gate(), metadata, computeBotShare(), gate(), metadata, totalRequestsFromSignals() (+8 more)
+### Community 483 - ".agents/skills/vercel-optimize/scripts/gate-investigations.mjs"
+Cohesion: 0.12
+Nodes (23): applyAuthDisqualifier(), AUTH_ROUTE_REGEX, isAuthRoute(), CandidateContractError, candidateLabel(), nonEmptyString(), VALID_SCOPES, validateCandidate() (+15 more)
 
 ### Community 484 - "API service"
 Cohesion: 0.33
@@ -3549,9 +3550,9 @@ Nodes (3): 1.1 Never Use && with Potentially Falsy Values, 1.2 Wrap Strings in T
 Cohesion: 0.67
 Nodes (3): 8.1 Destructure Functions Early in Render (React Compiler), 8.2 Use .get() and .set() for Reanimated Shared Values (not .value), 8. React Compiler
 
-### Community 652 - ".agents/skills/vercel-optimize/lib/gates/hard-gates.mjs"
-Cohesion: 0.33
-Nodes (9): applyHardGates(), FLAGS_ENDPOINT, flagsEndpointReason(), isFlagsEndpointCandidate(), isWorkflowRuntimeEndpointCandidate(), normalizeRoute(), VERCEL_FLAGS_PACKAGES, WORKFLOW_ENDPOINT_PREFIXES (+1 more)
+### Community 652 - "agent/skills/vercel-optimize/lib/scanners/turbo-force-bypass.mjs"
+Cohesion: 0.48
+Nodes (6): detectBuildCacheDisabled(), lineOfMatch(), metadata, safeScripts(), scan(), truncate()
 
 ### Community 653 - "11. Monorepo"
 Cohesion: 0.67
@@ -3565,9 +3566,9 @@ Nodes (3): 1.1 Never Use && with Potentially Falsy Values, 1.2 Wrap Strings in T
 Cohesion: 0.67
 Nodes (3): 8.1 Destructure Functions Early in Render (React Compiler), 8.2 Use .get() and .set() for Reanimated Shared Values (not .value), 8. React Compiler
 
-### Community 663 - ".agents/skills/vercel-optimize/lib/cost-coverage.mjs"
-Cohesion: 0.47
-Nodes (5): classifyService(), computeCostCoverage(), escapeCell(), renderCostCoverageMarkdown(), SERVICE_DIMENSION
+### Community 663 - "agent/skills/vercel-optimize/lib/gates/platform-bot-protection.mjs"
+Cohesion: 0.60
+Nodes (4): computeBotShare(), gate(), metadata, totalRequestsFromSignals()
 
 ### Community 951 - "_print-core/demo.js"
 Cohesion: 0.40
@@ -3604,6 +3605,10 @@ Nodes (5): mount(), params, poolX(), tones(), uniforms()
 ### Community 963 - "mount"
 Cohesion: 0.19
 Nodes (22): makeLayer(), mount(), calmAt(), colours(), count(), draw(), drawGrid(), drawPulse() (+14 more)
+
+### Community 964 - "agent/skills/vercel-optimize/lib/gates/platform-fluid-compute.mjs"
+Cohesion: 0.60
+Nodes (4): extractHighColdRoutes(), extractSlowHotRoutes(), gate(), metadata
 
 ### Community 967 - "site/assets/layout/check.mjs"
 Cohesion: 0.09
@@ -3699,7 +3704,7 @@ Nodes (10): clean(), fallback(), geometry(), inBand(), lightAt(), mount(), param
 
 ### Community 997 - "init"
 Cohesion: 0.18
-Nodes (5): init(), init(), done(), init(), POINTER_SVG
+Nodes (5): init(), init(), reset(), init(), POINTER_SVG
 
 ### Community 998 - "agent/skills/vercel-optimize/lib/gates/hard-gates.mjs"
 Cohesion: 0.33
@@ -3786,16 +3791,16 @@ Nodes (3): files, here, glslProblems()
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `w()` connect `d` to `vendor/motion.js`, `site/assets/components/fx-map/bake.mjs`, `mount`?**
-  _High betweenness centrality (0.041) - this node is a cross-community bridge._
+  _High betweenness centrality (0.028) - this node is a cross-community bridge._
 - **Are the 51 inferred relationships involving `lib()` (e.g. with `arrive()` and `audit()`) actually correct?**
   _`lib()` has 51 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `{ color, normalizePalette, readPalette, GLSL_LIB }`, `PATH`, `{ color, normalizePalette, readPalette, GLSL_LIB }` to the rest of the system?**
   _3 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `validate-skill-bundle.py` be split into smaller, more focused modules?**
   _Cohesion score 0.041584158415841586 - nodes in this community are weakly interconnected._
-- **Why does `lib()` connect `lib` to `consistency.mjs`?**
-  _High betweenness centrality (0.015) - this node is a cross-community bridge._
+- **Why does `loop()` connect `loop` to `ui.js`, `init`, `withLoop`?**
+  _High betweenness centrality (0.016) - this node is a cross-community bridge._
 - **Should `lib` be split into smaller, more focused modules?**
   _Cohesion score 0.05791505791505792 - nodes in this community are weakly interconnected._
-- **Why does `go()` connect `diagram.js` to `fx.js`?**
-  _High betweenness centrality (0.012) - this node is a cross-community bridge._
+- **Why does `sub()` connect `build.js` to `init`?**
+  _High betweenness centrality (0.016) - this node is a cross-community bridge._

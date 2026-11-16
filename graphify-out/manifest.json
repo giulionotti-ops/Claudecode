@@ -8586,9 +8586,9 @@
     "semantic_hash": ""
   },
   "vega/index.html": {
-    "mtime": 1794786588.7931128,
-    "seen": 1794786830.5633106,
-    "ast_hash": "ba0f45ff9e140808fc421080a4521706",
+    "mtime": 1794818767.1337702,
+    "seen": 1794818801.5110874,
+    "ast_hash": "5c52f9367fa27fb71164f2757ef374e0",
     "semantic_hash": ""
   },
   "vega/requirements.txt": {
@@ -16068,9 +16068,9 @@
     "semantic_hash": ""
   },
   "vega/static/guide.html": {
-    "mtime": 1794786748.0696528,
-    "seen": 1794786830.5633245,
-    "ast_hash": "12ce43b56814460204c4cae13bc33dce",
+    "mtime": 1794818769.1507561,
+    "seen": 1794818801.511098,
+    "ast_hash": "f8351932b8f7f5d3b5dad73b39b27b57",
     "semantic_hash": ""
   },
   "vega/static/landing.html": {
@@ -16098,9 +16098,9 @@
     "semantic_hash": ""
   },
   "vega/extensions.py": {
-    "mtime": 1794775730.8252773,
-    "seen": 1794775937.5381782,
-    "ast_hash": "65e4d075df99bf4368cd3ae74c492073",
+    "mtime": 1794818678.5024035,
+    "seen": 1794818801.5094664,
+    "ast_hash": "a40a7daca97b2bb40f2ec554176304c8",
     "semantic_hash": ""
   },
   "site/assets/backgrounds/backgrounds.js": {

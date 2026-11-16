@@ -126,8 +126,30 @@ def _claude(*args: str, timeout: int = 60) -> str:
     return r.stdout
 
 
+# Popular general plugins from Anthropic's official marketplace. Shown switched off until installed;
+# switching one on installs it at user scope, so every new session gets it.
+SUGGESTED = {
+    "superpowers": "Brainstorming, planning and subagent-driven development",
+    "frontend-design": "Distinctive, production-grade web interfaces",
+    "code-review": "Multi-agent review of pull requests",
+    "code-simplifier": "Cleans up code for clarity without changing behaviour",
+    "feature-dev": "Guided feature work: explore, plan, build, review",
+    "security-guidance": "Warns about security problems as Claude edits",
+    "commit-commands": "Commit, push and open a PR in one command",
+    "pr-review-toolkit": "Review agents for tests, errors, types and comments",
+    "claude-md-management": "Keeps CLAUDE.md files short and current",
+    "skill-creator": "Make and test new skills",
+    "context7": "Up-to-date library docs (online service)",
+    "playwright": "Drives a real browser to test web pages",
+    "github": "GitHub issues and pull requests (needs a GitHub token)",
+    "ralph-loop": "Runs a task in a loop until it is done",
+}
+OFFICIAL = "claude-plugins-official"
+
+
 def plugins(fresh: bool = False) -> list[dict]:
-    """User-scope plugins (the ones every session gets), one row per plugin id."""
+    """User-scope plugins (the ones every session gets), one row per plugin id, then the suggested ones
+    not installed yet."""
     global _plugins_cache
     if not fresh and _plugins_cache and time.time() - _plugins_cache[0] < 30:
         return _plugins_cache[1]
@@ -146,6 +168,9 @@ def plugins(fresh: bool = False) -> list[dict]:
         lic = next((r["license"] for r in rows if r["source"].lower().rstrip("/").rsplit("/", 1)[-1] == name.lower()), "")
         out.append({"id": pid, "name": name, "on": bool(p.get("enabled")), "version": p.get("version", ""),
                     "license": lic})
+    names = {o["name"] for o in out}
+    out += [{"id": f"{n}@{OFFICIAL}", "name": n, "on": False, "version": "", "license": "", "description": d,
+             "suggested": True} for n, d in SUGGESTED.items() if n not in names]
     _plugins_cache = (time.time(), out)
     return out
 
@@ -154,7 +179,14 @@ def set_plugin(pid: str, on: bool) -> None:
     if not _PLUGIN.match(pid):
         raise ValueError("bad plugin id")
     global _plugins_cache
-    _claude("plugin", "enable" if on else "disable", pid, "-s", "user")
+    installed = {p["id"] for p in plugins() if not p.get("suggested")}
+    if on and pid not in installed:
+        name, market = pid.split("@")
+        if market != OFFICIAL or name not in SUGGESTED:
+            raise ValueError("only installed or suggested plugins can be switched on")
+        _claude("plugin", "install", pid, "-s", "user", timeout=180)
+    else:
+        _claude("plugin", "enable" if on else "disable", pid, "-s", "user")
     _plugins_cache = None
 
 
