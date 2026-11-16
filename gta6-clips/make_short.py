@@ -167,7 +167,7 @@ def render(short, cfg, base_dir, out_dir):
     print(f"  -> {out}")
     if credit:  # ready-to-paste description with the credit and source link
         link = short.get("credit_url", cfg.get("credit_url", ""))
-        desc = f"{short['title']} #GTA6 #Shorts\n\nClip from {credit[4:] if credit.startswith('via ') else credit}"
+        desc = f"{short['title']}{' #GTA6' if 'gta' in short['title'].lower() else ''} #Shorts\n\nClip from {credit[4:] if credit.startswith('via ') else credit}"
         desc += f": {link}\n" if link else "\n"
         out.with_suffix(".txt").write_text(desc)
         print(f"  -> {out.with_suffix('.txt')}")

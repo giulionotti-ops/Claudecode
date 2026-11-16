@@ -1,111 +1,162 @@
 {
-  "auto_post": true,
-  "approval_phase_started": "2026-11-13",
-  "shorts": [],
-  "auto_post_enabled": "2026-11-13",
-  "auto_post_note": "Owner chose auto-posting on 2026-11-13, skipping the week of approvals. Only approved streamers are ever posted.",
-  "daily_log": [
+ "auto_post": true,
+ "approval_phase_started": "2026-11-13",
+ "shorts": [
+  {
+   "date": "2026-11-15",
+   "streamer": "summit1g",
+   "game": "World of Warcraft",
+   "file": "daily/2026-11-15/out/short_01_summit1g-why-did-i-not-live.mp4",
+   "title": "summit1g gets roasted after the dumbest WoW death",
+   "youtube_title": "summit1g gets roasted after the dumbest WoW death #Shorts",
+   "approved": true,
+   "by": "auto"
+  },
+  {
+   "date": "2026-11-15",
+   "streamer": "garek",
+   "game": "Grand Theft Auto V",
+   "file": "daily/2026-11-15/out/short_02_garek-lucky-b.mp4",
+   "title": "Garek can't believe she actually hit that in GTA RP",
+   "youtube_title": "Garek can't believe she actually hit that in GTA RP #Shorts",
+   "approved": true,
+   "by": "auto"
+  },
+  {
+   "date": "2026-11-15",
+   "streamer": "theburntpeanut",
+   "game": "ROB RUN",
+   "file": "daily/2026-11-15/out/short_03_burntpeanut-coconut.mp4",
+   "title": "TheBurntPeanut swears this guy is the best gamer alive",
+   "youtube_title": "TheBurntPeanut swears this guy is the best gamer alive #Shorts",
+   "approved": true,
+   "by": "auto"
+  },
+  {
+   "date": "2026-11-15",
+   "streamer": "twinkles",
+   "game": "Grand Theft Auto V",
+   "file": "daily/2026-11-15/out/short_04_twinkles-tickle-icu.mp4",
+   "title": "Clowns try to tickle a patient back to life in GTA RP",
+   "youtube_title": "Clowns try to tickle a patient back to life in GTA RP #Shorts",
+   "approved": true,
+   "by": "auto"
+  },
+  {
+   "date": "2026-11-15",
+   "streamer": "ladydimaalt",
+   "game": "Grand Theft Auto V",
+   "file": "daily/2026-11-15/out/short_05_ladydima-welcome-to-the-circuit.mp4",
+   "title": "Welcome to the circuit: total chaos in GTA RP",
+   "youtube_title": "Welcome to the circuit: total chaos in GTA RP #Shorts",
+   "approved": true,
+   "by": "auto"
+  }
+ ],
+ "auto_post_enabled": "2026-11-13",
+ "auto_post_note": "Owner chose auto-posting on 2026-11-13, skipping the week of approvals. Only approved streamers are ever posted.",
+ "daily_log": [
+  {
+   "date": "2026-11-13",
+   "posted": [],
+   "reason": "no streamer approved in streamers.json; nothing rendered or posted",
+   "needs_permission_top": [
     {
-      "date": "2026-11-13",
-      "posted": [],
-      "reason": "no streamer approved in streamers.json; nothing rendered or posted",
-      "needs_permission_top": [
-        {
-          "streamer": "ladydimaalt",
-          "clip": "https://www.twitch.tv/ladydimaalt/clip/AmusedArbitraryYakPMSTwin-u2Sq8GnpH8Ekj1xi",
-          "span": "00:23-00:41",
-          "score": 72,
-          "why": "GTA RP clowns vs Italians brawl, chaos + yelling"
-        },
-        {
-          "streamer": "garek",
-          "clip": "https://www.twitch.tv/garek/clip/SaltyPlainSandwichDeIlluminati-vjQJfypl2wSMXfbY",
-          "span": "00:04-00:33",
-          "score": 70,
-          "why": "GTA RP break-in, 'fat John Wick' roast"
-        },
-        {
-          "streamer": "caedrel",
-          "clip": "https://www.twitch.tv/caedrel/clip/SpookyRoundRaisinPicoMause-BVM2d-boC5QpPlyP",
-          "span": "00:08-00:21",
-          "score": 64,
-          "why": "LoL 'max win' scream"
-        }
-      ]
+     "streamer": "ladydimaalt",
+     "clip": "https://www.twitch.tv/ladydimaalt/clip/AmusedArbitraryYakPMSTwin-u2Sq8GnpH8Ekj1xi",
+     "span": "00:23-00:41",
+     "score": 72,
+     "why": "GTA RP clowns vs Italians brawl, chaos + yelling"
     },
     {
-      "date": "2026-11-14",
-      "posted": [],
-      "reason": "no streamer approved in streamers.json; nothing rendered or posted",
-      "needs_permission_top": [
-        {
-          "streamer": "ruetoo",
-          "clip": "https://www.twitch.tv/ruetoo/clip/FancySourTrayPartyTime-TVw9ysQZDnVK8Zi9",
-          "span": "00:00-00:12",
-          "score": 76,
-          "why": "PoE screaming meltdown after setup line, huge reaction"
-        },
-        {
-          "streamer": "lirik",
-          "clip": "https://www.twitch.tv/lirik/clip/MoralAltruisticGoshawkStinkyCheese-KLk--qWBgcL4s5S3",
-          "span": "00:04-00:34",
-          "score": 72,
-          "why": "Starship catch live reaction, 'no way / holy shit' (not a game)"
-        },
-        {
-          "streamer": "caedrel",
-          "clip": "https://www.twitch.tv/caedrel/clip/ColdbloodedUglyGarageSuperVinlin-Yb1fh6v9eF7R69TS",
-          "span": "00:00-00:20",
-          "score": 70,
-          "why": "Ruler 1v1 outplay, hype cast, 38k views"
-        },
-        {
-          "streamer": "jynxzi",
-          "clip": "https://www.twitch.tv/jynxzi/clip/SeductiveScaryArtichokeMikeHogu-ilokmbgy1N7dF3Gp",
-          "span": "00:09-00:21",
-          "score": 60,
-          "why": "'three days left until GTA 6', on-topic for launch week"
-        }
-      ]
+     "streamer": "garek",
+     "clip": "https://www.twitch.tv/garek/clip/SaltyPlainSandwichDeIlluminati-vjQJfypl2wSMXfbY",
+     "span": "00:04-00:33",
+     "score": 70,
+     "why": "GTA RP break-in, 'fat John Wick' roast"
     },
     {
-      "date": "2026-11-15",
-      "posted": [],
-      "reason": "none of the 12 top clips came from an approved streamer; nothing rendered or posted (uploader signed in as Stream Peaks)",
-      "needs_permission_top": [
-        {
-          "streamer": "emiru",
-          "clip": "https://www.twitch.tv/emiru/clip/ColorfulCarelessSproutChocolateRain-axa56L4QuvntJVE-",
-          "span": "00:00-00:27",
-          "score": 70,
-          "why": "Zelda OoT jailed again, NPC lecture then 'FUCK!' payoff, 4k views"
-        },
-        {
-          "streamer": "xqc",
-          "clip": "https://www.twitch.tv/xqc/clip/CleanGoodParrotCoolStoryBob-T20x93Rpwcu27ave",
-          "span": "00:00-00:16",
-          "score": 58,
-          "why": "Song of Healing, 'not gonna cheat' chant then chat sings, 2.4k views"
-        },
-        {
-          "streamer": "ruffpickle",
-          "clip": "https://www.twitch.tv/ruffpickle/clip/LongDaintyGarbageWholeWheat-o2UXgTgfkip4bWqr",
-          "span": "00:11-00:45",
-          "score": 55,
-          "why": "GTA V RP photo-shoot chaos, on-topic before GTA 6 launch"
-        },
-        {
-          "streamer": "tfue",
-          "clip": "https://www.twitch.tv/tfue/clip/ObliviousBashfulSalsifyRiPepperonis-DpDA8IivZ7FtWC70",
-          "span": "00:00-00:04",
-          "score": 48,
-          "why": "ROB RUN -$3M, very short"
-        }
-      ],
-      "skipped_unsafe": [
-        "moonmoon (political rant)",
-        "sodapoppin (racial remark)"
-      ]
+     "streamer": "caedrel",
+     "clip": "https://www.twitch.tv/caedrel/clip/SpookyRoundRaisinPicoMause-BVM2d-boC5QpPlyP",
+     "span": "00:08-00:21",
+     "score": 64,
+     "why": "LoL 'max win' scream"
     }
-  ]
+   ]
+  },
+  {
+   "date": "2026-11-14",
+   "posted": [],
+   "reason": "no streamer approved in streamers.json; nothing rendered or posted",
+   "needs_permission_top": [
+    {
+     "streamer": "ruetoo",
+     "clip": "https://www.twitch.tv/ruetoo/clip/FancySourTrayPartyTime-TVw9ysQZDnVK8Zi9",
+     "span": "00:00-00:12",
+     "score": 76,
+     "why": "PoE screaming meltdown after setup line, huge reaction"
+    },
+    {
+     "streamer": "lirik",
+     "clip": "https://www.twitch.tv/lirik/clip/MoralAltruisticGoshawkStinkyCheese-KLk--qWBgcL4s5S3",
+     "span": "00:04-00:34",
+     "score": 72,
+     "why": "Starship catch live reaction, 'no way / holy shit' (not a game)"
+    },
+    {
+     "streamer": "caedrel",
+     "clip": "https://www.twitch.tv/caedrel/clip/ColdbloodedUglyGarageSuperVinlin-Yb1fh6v9eF7R69TS",
+     "span": "00:00-00:20",
+     "score": 70,
+     "why": "Ruler 1v1 outplay, hype cast, 38k views"
+    },
+    {
+     "streamer": "jynxzi",
+     "clip": "https://www.twitch.tv/jynxzi/clip/SeductiveScaryArtichokeMikeHogu-ilokmbgy1N7dF3Gp",
+     "span": "00:09-00:21",
+     "score": 60,
+     "why": "'three days left until GTA 6', on-topic for launch week"
+    }
+   ]
+  },
+  {
+   "date": "2026-11-15",
+   "posted": [],
+   "reason": "none of the 12 top clips came from an approved streamer; nothing rendered or posted (uploader signed in as Stream Peaks)",
+   "needs_permission_top": [
+    {
+     "streamer": "emiru",
+     "clip": "https://www.twitch.tv/emiru/clip/ColorfulCarelessSproutChocolateRain-axa56L4QuvntJVE-",
+     "span": "00:00-00:27",
+     "score": 70,
+     "why": "Zelda OoT jailed again, NPC lecture then 'FUCK!' payoff, 4k views"
+    },
+    {
+     "streamer": "xqc",
+     "clip": "https://www.twitch.tv/xqc/clip/CleanGoodParrotCoolStoryBob-T20x93Rpwcu27ave",
+     "span": "00:00-00:16",
+     "score": 58,
+     "why": "Song of Healing, 'not gonna cheat' chant then chat sings, 2.4k views"
+    },
+    {
+     "streamer": "ruffpickle",
+     "clip": "https://www.twitch.tv/ruffpickle/clip/LongDaintyGarbageWholeWheat-o2UXgTgfkip4bWqr",
+     "span": "00:11-00:45",
+     "score": 55,
+     "why": "GTA V RP photo-shoot chaos, on-topic before GTA 6 launch"
+    },
+    {
+     "streamer": "tfue",
+     "clip": "https://www.twitch.tv/tfue/clip/ObliviousBashfulSalsifyRiPepperonis-DpDA8IivZ7FtWC70",
+     "span": "00:00-00:04",
+     "score": 48,
+     "why": "ROB RUN -$3M, very short"
+    }
+   ],
+   "skipped_unsafe": [
+    "moonmoon (political rant)",
+    "sodapoppin (racial remark)"
+   ]
+  }
+ ]
 }
