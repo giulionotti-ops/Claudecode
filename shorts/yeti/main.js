@@ -31,7 +31,7 @@ await Promise.all(['rock_largeA', 'rock_largeC', 'rock_tallB', 'rock_tallE', 'ro
   .map(async n => { PROPS[n] = (await load(n)).scene; }));
 
 // ---------------------------------------------------------------- actors: model + mixer, posed from the frame time
-function makeActor(g, height, { tint = {}, yawFix = 0, base = 'idle' } = {}) {
+function makeActor(g, height, { tint = {}, yawFix = 0, base = 'idle', lockRe = null, cullRe = null } = {}) {
   const root = SkeletonUtils.clone(g.scene);
   const acts = {}, mixer = new THREE.AnimationMixer(root);
   const holder = new THREE.Group(), fix = new THREE.Group(); fix.rotation.y = yawFix; holder.add(fix); fix.add(root);
@@ -39,6 +39,11 @@ function makeActor(g, height, { tint = {}, yawFix = 0, base = 'idle' } = {}) {
     const ms = Array.isArray(o.material) ? o.material : [o.material];
     const nm = ms.map(m => { const c = m.clone(); if (tint.color) c.color.multiply(tint.color.isColor ? tint.color : new THREE.Color(tint.color)); if (tint.rough != null) c.roughness = tint.rough; return c; });
     o.material = nm.length === 1 ? nm[0] : nm; } });
+  if (cullRe) root.traverse(o => { if (o.isSkinnedMesh) {   // drop the stray flat shoulder sheet: faces whose three vertices all belong to the clavicle bones
+    const names = o.skeleton.bones.map(b => cullRe.test(b.name)), si = o.geometry.attributes.skinIndex, sw = o.geometry.attributes.skinWeight;
+    const dom = i => { let b = 0, bw = -1; for (let c = 0; c < 4; c++) if (sw.getComponent(i, c) > bw) { bw = sw.getComponent(i, c); b = si.getComponent(i, c); } return names[b]; };
+    const ix = o.geometry.index.array, keep = []; for (let f = 0; f < ix.length; f += 3) if (!(dom(ix[f]) || dom(ix[f + 1]) || dom(ix[f + 2]))) keep.push(ix[f], ix[f + 1], ix[f + 2]);
+    o.geometry = o.geometry.clone(); o.geometry.setIndex(keep); } });
   const clip = n => g.animations.find(a => a.name.trim() === n.trim()) || g.animations.find(a => a.name.trim().endsWith('|' + n.trim()));
   const a0 = clip(base) || g.animations[0]; const act0 = mixer.clipAction(a0); act0.play(); mixer.update(0);
   root.updateMatrixWorld(true);
@@ -46,6 +51,7 @@ function makeActor(g, height, { tint = {}, yawFix = 0, base = 'idle' } = {}) {
   root.scale.multiplyScalar(k); root.position.set(-(box.min.x + box.max.x) / 2 * k, -box.min.y * k, -(box.min.z + box.max.z) / 2 * k);
   const A = { holder, root, mixer, acts, g, clip, height, k };
   A.feet = []; root.traverse(o => { if (o.isBone && /foot/i.test(o.name) && !/steps|toe/i.test(o.name)) A.feet.push(o); });
+  A.lock = []; if (lockRe) root.traverse(o => { if (o.isBone && lockRe.test(o.name)) A.lock.push([o, o.position.clone(), o.quaternion.clone()]); });
   scene.add(holder); return A;
 }
 // pose: clip a at time ta (looping), optionally blended with clip b
@@ -55,18 +61,19 @@ function pose(A, a, ta, b = null, tb = 0, wb = 0) {
   const X = get(a), d = X.getClip().duration; X.setEffectiveWeight(1 - wb); X.time = ((ta % d) + d) % d;
   if (b) { const Y = get(b), e = Y.getClip().duration; Y.setEffectiveWeight(wb); Y.time = ((tb % e) + e) % e; }
   A.mixer.update(0);
+  for (const [b, p, q] of A.lock) { b.position.copy(p); b.quaternion.copy(q); }   // keep the shoulders where the idle clip puts them (the walk clip drags them out)
   if (A.hide) for (const b of A.hide) b.scale.setScalar(.0001);   // drop the held shield / weapon pieces
   if (A.center) { A.holder.updateMatrixWorld(true); const bx = new THREE.Box3().setFromObject(A.holder, true); A.holder.position.x += A.tx - (bx.min.x + bx.max.x) / 2; A.holder.position.z += A.tz - (bx.min.z + bx.max.z) / 2; }   // cancel root motion: hold the model on its mark
 }
 function place(A, x, y, z, ry = 0, s = 1) { A.tx = x; A.tz = z; A.holder.position.set(x, y, z); A.holder.rotation.y = ry; A.holder.scale.setScalar(s); }
 function feetScale(A, s) { for (const f of A.feet) f.scale.multiplyScalar(s); }
 
-const yeti = makeActor(gYeti, 2.8, { yawFix: Math.PI, base: 'IDLE 1', tint: { color: new THREE.Color(2.3, 2.35, 2.6), rough: 1 } });
+const yeti = makeActor(gYeti, 2.8, { yawFix: Math.PI * 1.5, base: 'IDLE 1', cullRe: /Clavicle|UpArmTwist/, lockRe: /Clavicle|Twist|Footsteps|Summons|Bon_|bone_frag|Weapon|Shield|Attach|Point/, tint: { color: new THREE.Color(2.3, 2.35, 2.6), rough: 1 } });
 const bear = makeActor(gBear, 1.25, { base: 'Stand_Idle_01' });
 const hare = makeActor(gHare, .62, { base: 'Idle' });
 const yak = makeActor(gYak, 1.9, { tint: { color: 0x6a4a36, rough: .95 }, base: 'ArmatureAction' });
 yeti.center = bear.center = true;
-yeti.hide = []; yeti.root.traverse(o => { if (o.isBone && /Shield|Weapon_[LR]_\d/.test(o.name)) yeti.hide.push(o); });
+yeti.hide = []; yeti.root.traverse(o => { if (o.isBone && /Bip_(Shield|Weapon)|Attach|Bon_Hair/.test(o.name)) yeti.hide.push(o); });
 bear.holder.visible = hare.holder.visible = yak.holder.visible = false;
 
 // ---------------------------------------------------------------- the set: snow, Kenney rocks and pines
