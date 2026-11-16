@@ -108,6 +108,16 @@ def get(nid: int) -> dict | None:
         return next((i for i in _items if i["id"] == nid), None)
 
 
+def flag(nid: int, key: str) -> None:
+    """Mark a request, e.g. once its answer was typed into the agent's session."""
+    with _lock:
+        _load()
+        for i in _items:
+            if i["id"] == nid:
+                i[key] = True
+                _save()
+
+
 def decide(nid: int, decision: str, note: str = "") -> dict:
     """Answer a pending request. Raises ValueError if it is no longer pending.
     approval (permission prompt): allow / deny.  review (e.g. a new short to post): allow / changes, with a note."""

@@ -50,6 +50,9 @@ def _gateway_env() -> dict:
     return {"ANTHROPIC_BASE_URL": BASE_URL, "ANTHROPIC_API_KEY": key,
             "ANTHROPIC_DEFAULT_HAIKU_MODEL": MODEL, "ANTHROPIC_SMALL_FAST_MODEL": MODEL,
             "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1"}
+agent_chat.RELAY_ENV = _gateway_env
+if BASE_URL:
+    os.environ.setdefault("NEESMO_RELAY_MODEL", MODEL)
 HERE = Path(__file__).parent
 UPLOADER = HERE.parent / "shorts" / "uploader"   # its token.json is the channel login
 JOB_LOGS = Path.home() / "neesmo-jobs"
@@ -609,10 +612,9 @@ def agent_thread(aid: str):
     # what the owner answered on this agent's review requests belongs in its chat too
     first = d["messages"][0].get("ts", 0) if d["messages"] else 0
     for n in notes.history():
-        if n.get("agent") == aid and n.get("kind") == "review" and n.get("decided_ts", 0) > first and n.get("status") in ("approved", "changes asked"):
-            text = (f"Changes asked on \"{n.get('body', '')}\": {n.get('note', '')}" if n["status"] == "changes asked"
-                    else f"Approved \"{n.get('body', '')}\"" + (f": {n['note']}" if n.get("note") else ""))
-            d["messages"].append({"who": "you", "text": text, "at": datetime.datetime.fromtimestamp(n["decided_ts"]).strftime("%H:%M"),
+        if n.get("agent") == aid and n.get("kind") == "review" and n.get("decided_ts", 0) > first and n.get("status") in ("approved", "changes asked") \
+                and not (n.get("in_chat") and any(m["who"] == "you" and m["text"] == _review_line(n) for m in d["messages"])):
+            d["messages"].append({"who": "you", "text": _review_line(n), "at": datetime.datetime.fromtimestamp(n["decided_ts"]).strftime("%H:%M"),
                                   "ts": n["decided_ts"]})
     d["messages"].sort(key=lambda m: m.get("ts", 0))
     return d
@@ -900,11 +902,32 @@ def review_status(nid: int, x_neesmo_hook: str | None = Header(None)):
 
 
 @app.post("/api/approvals/{nid}")
-def approval_decide(nid: int, body: DecisionIn):
+async def approval_decide(nid: int, body: DecisionIn):
     try:
-        return notes.decide(nid, body.decision, body.note)
+        item = notes.decide(nid, body.decision, body.note)
     except ValueError as e:
         raise HTTPException(409, str(e))
+    text = _review_line(item)
+    aid = item.get("agent")
+    if item["kind"] == "review" and item.get("note") and aid in agents.folders():
+        async def tell():  # the owner's answer goes into the agent's real session, not only the Neesmo view
+            try:
+                await agent_chat.send(aid, _agent_or_404(aid)["name"], text)
+                notes.flag(nid, "in_chat")
+            except Exception as e:
+                print(f"review answer not sent to {aid}: {e}", flush=True)
+        _bg.add(t := asyncio.create_task(tell()))
+        t.add_done_callback(_bg.discard)
+    return item
+
+
+_bg: set = set()
+
+
+def _review_line(n: dict) -> str:
+    if n["status"] == "changes asked":
+        return f"Changes asked on \"{n.get('body', '')}\": {n.get('note', '')}"
+    return f"Approved \"{n.get('body', '')}\"" + (f": {n['note']}" if n.get("note") else "")
 
 
 @app.get("/api/approvals/{nid}/media/{i}")

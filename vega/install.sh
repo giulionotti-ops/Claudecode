@@ -112,7 +112,7 @@ if ask "Install graphify (code knowledge graph, Apache-2.0)?"; then
   else run python3 -m pip install --user graphifyy; fi
 fi
 
-if have npx && ask "Install claude-mem (long-term memory for Claude, Apache-2.0)?"; then
+if have npx; then  # claude-mem (long-term memory, Apache-2.0) is one of the general plugins
   run npx -y claude-mem install --ide claude-code
   run npx -y claude-mem start
 fi
@@ -130,10 +130,16 @@ if have npx && ask "Install the skill pack ($(grep -vc '^#' "$HERE/skills.txt") 
   flush
 fi
 
-if have claude && ask "Install the caveman plugin (short, plain replies from Claude that keep every technical detail; Apache-2.0)?"; then
+# The general plugins every Neesmo agent uses are part of the product: installed without asking.
+if have claude; then
+  say "Installing the general plugins"
   run claude plugin marketplace add JuliusBrussee/caveman || warn "could not add the caveman marketplace"
   run claude plugin install caveman@caveman -s user || warn "could not install the caveman plugin"
-  echo "   Turn it (and any skill) on or off later in Neesmo: Settings > System"
+  run claude plugin marketplace add anthropics/claude-plugins-official || true
+  for p in superpowers claude-md-management skill-creator ralph-loop; do
+    run claude plugin install "$p@claude-plugins-official" -s user || warn "could not install the $p plugin"
+  done
+  echo "   Turn any plugin or skill on or off later in Neesmo: Settings > System"
 fi
 
 # ---- 5. service ---------------------------------------------------------------
