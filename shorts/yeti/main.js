@@ -37,7 +37,7 @@ function makeActor(g, height, { tint = {}, yawFix = 0, base = 'idle', lockRe = n
   const holder = new THREE.Group(), fix = new THREE.Group(); fix.rotation.y = yawFix; holder.add(fix); fix.add(root);
   root.traverse(o => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true; o.frustumCulled = false;
     const ms = Array.isArray(o.material) ? o.material : [o.material];
-    const nm = ms.map(m => { const c = m.clone(); if (tint.color) c.color.multiply(tint.color.isColor ? tint.color : new THREE.Color(tint.color)); if (tint.rough != null) c.roughness = tint.rough; return c; });
+    const nm = ms.map(m => { const c = m.clone(); if (tint.color) c.color.multiply(tint.color.isColor ? tint.color : new THREE.Color(tint.color)); if (tint.rough != null) c.roughness = tint.rough; if (tint.cutout) { c.transparent = false; c.depthWrite = true; c.alphaTest = tint.cutout; } return c; });
     o.material = nm.length === 1 ? nm[0] : nm; } });
   if (cullRe) root.traverse(o => { if (o.isSkinnedMesh) {   // drop the stray flat shoulder sheet: faces whose three vertices all belong to the clavicle bones
     const names = o.skeleton.bones.map(b => cullRe.test(b.name)), si = o.geometry.attributes.skinIndex, sw = o.geometry.attributes.skinWeight;
@@ -45,7 +45,7 @@ function makeActor(g, height, { tint = {}, yawFix = 0, base = 'idle', lockRe = n
     const ix = o.geometry.index.array, keep = []; for (let f = 0; f < ix.length; f += 3) if (!(dom(ix[f]) || dom(ix[f + 1]) || dom(ix[f + 2]))) keep.push(ix[f], ix[f + 1], ix[f + 2]);
     o.geometry = o.geometry.clone(); o.geometry.setIndex(keep); } });
   const clip = n => g.animations.find(a => a.name.trim() === n.trim()) || g.animations.find(a => a.name.trim().endsWith('|' + n.trim()));
-  const a0 = clip(base) || g.animations[0]; const act0 = mixer.clipAction(a0); act0.play(); mixer.update(0);
+  const a0 = clip(base) || g.animations[0]; const act0 = mixer.clipAction(a0); act0.play(); acts[base] = act0; mixer.update(0);   // register it so pose() can turn it off (otherwise it blends 50/50 into every move)
   root.updateMatrixWorld(true);
   const box = new THREE.Box3().setFromObject(root, true), h = box.max.y - box.min.y, k = height / h;
   root.scale.multiplyScalar(k); root.position.set(-(box.min.x + box.max.x) / 2 * k, -box.min.y * k, -(box.min.z + box.max.z) / 2 * k);
@@ -68,12 +68,12 @@ function pose(A, a, ta, b = null, tb = 0, wb = 0) {
 function place(A, x, y, z, ry = 0, s = 1) { A.tx = x; A.tz = z; A.holder.position.set(x, y, z); A.holder.rotation.y = ry; A.holder.scale.setScalar(s); }
 function feetScale(A, s) { for (const f of A.feet) f.scale.multiplyScalar(s); }
 
-const yeti = makeActor(gYeti, 2.8, { yawFix: Math.PI * 1.5, base: 'IDLE 1', cullRe: /Clavicle|UpArmTwist/, lockRe: /Clavicle|Twist|Footsteps|Summons|Bon_|bone_frag|Weapon|Shield|Attach|Point/, tint: { color: new THREE.Color(2.3, 2.35, 2.6), rough: 1 } });
+const yeti = makeActor(gYeti, 2.8, { yawFix: Math.PI, base: 'IDLE 1', tint: { color: new THREE.Color(2.3, 2.35, 2.6), rough: 1, cutout: .5 }, lockRe: /Clavicle|UpArm/ });
 const bear = makeActor(gBear, 1.25, { base: 'Stand_Idle_01' });
 const hare = makeActor(gHare, .62, { base: 'Idle' });
 const yak = makeActor(gYak, 1.9, { tint: { color: 0x6a4a36, rough: .95 }, base: 'ArmatureAction' });
 yeti.center = bear.center = true;
-yeti.hide = []; yeti.root.traverse(o => { if (o.isBone && /Bip_(Shield|Weapon)|Attach|Bon_Hair/.test(o.name)) yeti.hide.push(o); });
+// yeti: no hidden bones (scaling bones to nothing stretches the skin into a sheet)
 bear.holder.visible = hare.holder.visible = yak.holder.visible = false;
 
 // ---------------------------------------------------------------- the set: snow, Kenney rocks and pines
@@ -156,7 +156,7 @@ function wordAt(t) { let w = null; for (const x of words) { if (x.t0 <= t + .02)
 function showChip(text, a, b, t, y) { const box = O.chip(ov, text, t - a, Math.min(1, (b - t) / .2), y); if (box) texts.push({ id: 'chip:' + text, text, ...box }); }
 function sky(hex, near, far) { bg.set(hex); fog.color.copy(bg); fog.near = near; fog.far = far; }
 const DAY = 0xa8c8e6;
-const WALK_V = .75;             // ground speed (m/s) of the WALK (BIGFOOT) clip at 1x: measured from its stance-foot travel
+const WALK_V = .77;             // ground speed (m/s) of the WALK 1 clip (upright; WALK (BIGFOOT) twists the mesh) at 1x: measured from its stance-foot travel
 const RIGHT = Math.PI / 2;      // facing +x (profile to a camera on +z)
 
 window.render = (t) => {
@@ -170,7 +170,7 @@ window.render = (t) => {
   if (t < S.b) {
     // 1. a yeti walks along a snowy ridge below the big peaks
     const x = 0;
-    place(yeti, x, 0, 0, RIGHT - .06, 1); pose(yeti, 'WALK (BIGFOOT)', t);
+    place(yeti, x, 0, 0, RIGHT - .06, 1); pose(yeti, 'WALK 1', t);
     cam(V(x + 1.3, 1.9, 8.4), V(x, 1.5, 0), 50); focus = V(x, 0, 0); dens = .35;
     after = () => {
       showChip('HIMALAYA · FOLKLORE', .2, T.sherpa + .3, t);
@@ -181,8 +181,8 @@ window.render = (t) => {
     // 2. deep snow: small feet sink, wide furry feet float, like a snowshoe hare
     const sinkK = ei(seg(t, T.sinks, T.sinks + .8)), growK = eo(seg(t, T.grow + .2, T.grow + 1.5)), sink = sinkK * 1.05 * (1 - growK);
     const wide = t >= T.grow + .2;
-    place(yeti, -.9, -sink, 0, RIGHT - .06, 1);
-    pose(yeti, 'WALK (BIGFOOT)', t);
+    place(yeti, -.3, -sink, 0, RIGHT - .06, 1);
+    pose(yeti, 'WALK 1', t);
     if (growK > 0) feetScale(yeti, 1 + 1.6 * growK);
     hare.holder.visible = t > T.hare - .5; const hk = eo(seg(t, T.hare - .5, T.hare + .6));
     place(hare, lerp(4.2, 1.6, hk), 0, 1.4, -RIGHT - .5, 1.8);
@@ -192,7 +192,7 @@ window.render = (t) => {
       showChip('BIG BODY SINKS', T.sinks - .2, T.grow - .15, t);
       showChip('WIDE FURRY FEET', T.grow - .1, T.hare - .1, t);
       showChip('SNOWSHOE HARE: BIG HIND FEET', T.hare - .05, T.top + .3, t);
-      const hp = toScreen(V(1.6, .15, 1.4)), yp = toScreen(V(-.7, .15 - sink, 0));
+      const hp = toScreen(V(1.6, .15, 1.4)), yp = toScreen(V(-.1, .15 - sink, 0));
       if (t < T.grow) O.mark(ov, W * .5, H * .40, false, seg(t, T.sinks + .5, T.sinks + .9));
       else { O.arrow(ov, yp[0] - W * .12, yp[1] - H * .09, yp[0] - W * .02, yp[1] - H * .01, seg(t, T.grow + .5, T.grow + 1.0)); O.mark(ov, W * .5, H * .40, true, seg(t, T.top - .3, T.top + .1)); }
       if (t > T.hare + .3) O.arrow(ov, hp[0] + W * .1, hp[1] - H * .1, hp[0] + W * .02, hp[1] - H * .015, seg(t, T.hare + .3, T.hare + .8));
@@ -200,8 +200,8 @@ window.render = (t) => {
   } else if (t < S.d) {
     // 3. thin air: the oxygen gauge drops, then the yak shows how it is done
     sky(0x7fa6d4, 60, 230);
-    place(yeti, -.4, 0, 0, RIGHT - .06, 1);
-    pose(yeti, 'WALK (BIGFOOT)', t);
+    place(yeti, -.15, 0, 0, RIGHT - .06, 1);
+    pose(yeti, 'WALK 1', t);
     yak.holder.visible = t > T.yak - .6; const yk = eo(seg(t, T.yak - .6, T.yak + .9));
     place(yak, lerp(6.5, 2.1, yk), 0, .6, -RIGHT - .15, 1);
     pose(yak, 'ArmatureAction', yk < 1 ? t * .9 : (t - T.yak) * .25);
@@ -220,7 +220,7 @@ window.render = (t) => {
     sky(0x8d9fb5, 8, 60); hemi.intensity = 1.2; sun.intensity = 1.4;
     den.visible = true; world.visible = true;
     if (t < T.sleep - .3) {
-      place(yeti, lerp(-1.7, -.5, eio(seg(t, S.d, T.sleep - .4))), 0, 1.4, RIGHT - .1, .65); pose(yeti, 'WALK (BIGFOOT)', t * (1.2 / (T.sleep - .4 - S.d)) / (WALK_V * .65));
+      place(yeti, lerp(-.75, -.2, eio(seg(t, S.d, T.sleep - .4))), 0, 1.4, RIGHT - .1, .65); pose(yeti, 'WALK 1', t * (.7 / (T.sleep - .4 - S.d)) / (WALK_V * .65));
     } else {
       yeti.holder.visible = false; bear.holder.visible = true; const k = seg(t, T.sleep - .3, T.sleep + .5);
       place(bear, 0, 0, .3, RIGHT - .6, 1.5 * (.85 + .15 * eo(k))); pose(bear, 'Lying_Idle_01', t - T.sleep + .3);
@@ -237,7 +237,7 @@ window.render = (t) => {
   } else if (t < S.f) {
     // 5. now look at what you built: the yeti rears and roars
     const k = seg(t, S.e, S.f);
-    place(yeti, 0, 0, 0, RIGHT - (t < T.built ? .12 : .55), 1); pose(yeti, t < T.built ? 'WALK (BIGFOOT)' : 'AGRESSIVE', t < T.built ? t : t - T.built + .3);
+    place(yeti, 0, 0, 0, RIGHT - (t < T.built ? .12 : .55), 1); pose(yeti, t < T.built ? 'WALK 1' : 'AGRESSIVE', t < T.built ? t : t - T.built + .3);
     cam(V(2.0, 1.9, 7.6), V(0, 1.5, 0), 52); dens = .3;
     after = () => {
       showChip('NOW LOOK AT WHAT YOU BUILT', T.now - .1, T.furry - .3, t);
