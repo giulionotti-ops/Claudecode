@@ -22,7 +22,7 @@ from claude_agent_sdk import (AssistantMessage, ClaudeAgentOptions, ClaudeSDKCli
 from fastapi import FastAPI, Header, HTTPException, Request, UploadFile
 from fastapi.responses import FileResponse, JSONResponse, RedirectResponse, Response
 from fastapi.staticfiles import StaticFiles
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 import agent_chat
 import agents
@@ -447,6 +447,31 @@ class AgentOrder(BaseModel):
 @app.post("/api/agents/order")
 def agents_order(body: AgentOrder):
     return {"order": agents.set_order(body.ids[:32])}
+
+
+class WelcomeIn(BaseModel):
+    wel: bool = True
+    welName: str = Field("", max_length=30)
+    welText: str = Field("", max_length=160)
+    welVoice: bool = False
+
+
+WELCOME = agents.NEESMO_DIR / "welcome.json"   # the greeting is the same on every device
+
+
+@app.get("/api/welcome")
+def welcome_get():
+    try:
+        return WelcomeIn(**json.loads(WELCOME.read_text())).model_dump(exclude_unset=True)
+    except (OSError, ValueError):
+        return {}
+
+
+@app.put("/api/welcome")
+def welcome_put(body: WelcomeIn):
+    WELCOME.parent.mkdir(parents=True, exist_ok=True)
+    WELCOME.write_text(json.dumps(body.model_dump()))
+    return body.model_dump()
 
 
 @app.get("/api/extensions")
