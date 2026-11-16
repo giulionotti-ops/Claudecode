@@ -17,16 +17,18 @@ NEESMO_DIR = Path(os.environ.get("NEESMO_DIR", HOME / ".config" / "neesmo"))
 CONFIG = NEESMO_DIR / "agents.json"   # made by the setup wizard / Settings → Agents
 AGENT_HOME = Path(os.environ.get("NEESMO_AGENT_HOME", HOME / "neesmo-agents"))  # default folder for new agents
 COLORS = ["#ff6b6b", "#ff7ac6", "#5cc8ff", "#b388ff", "#ffd166", "#3dff8f", "#ff9f43", "#7ee8fa"]
-# Without agents.json: the original private setup, unchanged.
-DEFAULTS = [
-    {"id": "setup", "name": "Setup & uploader", "folder": str(HOME / "Claudecode"), "role": "Server setup, uploader, Neesmo", "short": "Setup", "color": "#3dff8f", "hidden": True},
-    {"id": "glazier", "name": "Glazier of Terra", "folder": str(HOME / "glazier-40k"), "role": "40k lore shorts", "short": "YouTube", "color": "#7d8a83", "dev": True},
-    {"id": "comics", "name": "Warhammer 40K comics", "folder": str(HOME / "comics-40k"), "role": "Comic shorts", "short": "Comics", "color": "#ff6b6b"},
-    {"id": "gta6", "name": "GTA6 clips", "folder": str(HOME / "gta6"), "role": "Clips and shorts", "short": "Clips", "color": "#ff7ac6"},
-    {"id": "physics", "name": "Fable physics", "folder": str(HOME / "physics-channel"), "role": "Physics shorts", "short": "Physics", "color": "#5cc8ff"},
-    {"id": "roblox", "name": "Roblox games", "folder": str(HOME / "roblox"), "role": "Roblox games", "short": "Roblox", "color": "#b388ff"},
-    {"id": "product", "name": "Neesmo product", "folder": str(HOME / "neesmo-product"), "role": "Make Neesmo sellable", "short": "Product", "color": "#ffd166"},
-]
+# Without agents.json a product copy starts with no agents. The owner's own install keeps its setup in
+# private.json ({"agents": [...], "prompt": "..."}), a file that is never shipped.
+def _private() -> dict:
+    try:
+        d = json.loads((NEESMO_DIR / "private.json").read_text())
+        return d if isinstance(d, dict) else {}
+    except (OSError, ValueError):
+        return {}
+
+
+PRIVATE = _private()
+DEFAULTS = PRIVATE.get("agents") if isinstance(PRIVATE.get("agents"), list) else []
 _ID = re.compile(r"^[a-z0-9][a-z0-9-]{0,23}$")
 
 

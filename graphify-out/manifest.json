@@ -3888,9 +3888,9 @@
     "semantic_hash": ""
   },
   "vega/agents.py": {
-    "mtime": 1794775730.8242772,
-    "seen": 1794775937.538169,
-    "ast_hash": "075b9afbaea1ad8e22df265f4d330331",
+    "mtime": 1794832430.1515803,
+    "seen": 1794832521.74803,
+    "ast_hash": "831bfb501c5390feff4df79be59d2b06",
     "semantic_hash": ""
   },
   "vega/approval_hook.py": {
@@ -3912,9 +3912,9 @@
     "semantic_hash": ""
   },
   "vega/server.py": {
-    "mtime": 1794830205.2243707,
-    "seen": 1794830345.4875035,
-    "ast_hash": "578216dec5fbc77d6970af43aa6c25cd",
+    "mtime": 1794832430.1505804,
+    "seen": 1794832521.7480493,
+    "ast_hash": "80d98df0ea0cc3b8d0f39c85b0c52521",
     "semantic_hash": ""
   },
   "vega/static/sw.js": {
@@ -16020,9 +16020,9 @@
     "semantic_hash": ""
   },
   "vega/auth.py": {
-    "mtime": 1794758448.1981175,
-    "seen": 1794759608.2722676,
-    "ast_hash": "8f8cc3a1cbb4bc02e0a40d7bd503d07d",
+    "mtime": 1794832421.1186235,
+    "seen": 1794832521.7480361,
+    "ast_hash": "ea3206405d5cbd5512090334e3430cdf",
     "semantic_hash": ""
   },
   "vega/install.sh": {
@@ -16062,9 +16062,9 @@
     "semantic_hash": ""
   },
   "vega/license.py": {
-    "mtime": 1794786922.5224082,
-    "seen": 1794786968.995276,
-    "ast_hash": "6780af694497edf87e96c18d328448c4",
+    "mtime": 1794832421.1196234,
+    "seen": 1794832521.7480428,
+    "ast_hash": "50b05f95089b1bc381e52135b715e711",
     "semantic_hash": ""
   },
   "vega/static/guide.html": {

@@ -109,7 +109,10 @@ def _load() -> dict:
 
 def _save(d: dict) -> None:
     DIR.mkdir(parents=True, exist_ok=True)
-    FILE.write_text(json.dumps(d, indent=1))
+    tmp = FILE.with_suffix(".tmp")   # holds the license key: owner-only, like auth.json
+    with os.fdopen(os.open(tmp, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600), "w") as f:
+        json.dump(d, f, indent=1)
+    os.replace(tmp, FILE)
 
 
 def _age(day) -> int:

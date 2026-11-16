@@ -54,19 +54,7 @@ HERE = Path(__file__).parent
 UPLOADER = HERE.parent / "shorts" / "uploader"   # its token.json is the channel login
 JOB_LOGS = Path.home() / "neesmo-jobs"
 
-SYSTEM_PROMPT = (
-    "You are Neesmo, a calm, witty personal assistant speaking through a voice interface. "
-    "Your replies are read aloud, so answer in one to three short spoken sentences: "
-    "no markdown, lists, code, emoji or URLs. Address the user as 'sir' or 'ma'am' only if they ask you to. "
-    "For questions about the Glazier of Terra YouTube channel, call the channel_stats tool and answer from its numbers only. "
-    "The user's project sessions run on this same server, named Setup & uploader, Glazier of Terra, Warhammer 40K comics, "
-    "GTA6 clips and shorts, Fable physics, Roblox games and Neesmo product (each tagged server). To talk to one, find it with ListAgents and message it with "
-    "SendMessage; its reply arrives later as a new message, which you then summarise aloud. "
-    "Only if a session is not listed, fall back to run_channel with setup, glazier, comics, gta6, physics, roblox or product. "
-    "Write every task as a clear, complete instruction. "
-    "Before starting anything that changes, uploads or deletes something, repeat the task back in one sentence and wait for a yes. "
-    "Jobs run in the background: say it started, and use channel_jobs when asked how they are going."
-)
+SYSTEM_PROMPT = agents.PRIVATE.get("prompt", "")   # the owner's own install only; a product copy builds its prompt from the agents
 
 def _channel_stats() -> dict:
     """Read-only snapshot of the channel signed in through the uploader."""
@@ -95,7 +83,7 @@ def _channel_stats() -> dict:
     }
 
 
-@tool("channel_stats", "Glazier of Terra YouTube channel: subscribers, views, last 28 days analytics and the latest videos", {})
+@tool("channel_stats", "The owner's YouTube channel: subscribers, views, last 28 days analytics and the latest videos", {})
 async def channel_stats(_args):
     try:
         data = await _cached_stats()  # same 10-minute copy as the side cards: no YouTube call per question
@@ -108,7 +96,7 @@ async def channel_stats(_args):
 
 def system_prompt() -> str:
     """Private install (no agents.json): the original prompt. Product install: built from the configured agents."""
-    if not agents.configured():
+    if not agents.configured() and SYSTEM_PROMPT:
         return SYSTEM_PROMPT
     items = [a for a in agents.load()]
     roster = "; ".join(f"{a['id']} = {a['name']} ({a.get('role') or 'general'})" for a in items)
@@ -117,8 +105,10 @@ def system_prompt() -> str:
     return (
         "You are Neesmo, a calm, witty assistant speaking through a voice interface. "
         "Your replies are read aloud, so answer in one to three short spoken sentences: no markdown, lists, code, emoji or URLs. "
-        + yt +
-        f"The owner has dedicated agents, each with its own folder: {roster}. "
+        + yt
+        + (f"The owner has dedicated agents, each with its own folder: {roster}. " if items
+           else "No agents are set up yet; if asked for one, say it can be added in Settings, Agents. ")
+        +
         "To give one a job, call run_channel with its id and a clear, complete instruction; it works in the background "
         "and finishes the job on its own. Use channel_jobs when asked how jobs are going. "
         "Before starting anything that changes, uploads or deletes something, repeat the task back in one sentence and wait for a yes."
@@ -190,6 +180,16 @@ PUBLIC = {"/welcome", "/login", "/api/login", "/api/setup", "/api/auth/state", "
 
 
 _PAID = re.compile(r"^/+api/+(chat|speak|transcribe|upload|agents/+[^/]+/+chat(/+key)?)/*$")
+
+
+@app.middleware("http")
+async def safe_headers(request: Request, call_next):
+    """No framing by other sites (clickjacking), no content sniffing, no address leaks to linked pages."""
+    r = await call_next(request)
+    r.headers.setdefault("X-Frame-Options", "DENY")
+    r.headers.setdefault("X-Content-Type-Options", "nosniff")
+    r.headers.setdefault("Referrer-Policy", "same-origin")
+    return r
 
 
 @app.middleware("http")
@@ -320,9 +320,10 @@ class PasswordIn(BaseModel):
 
 
 @app.post("/api/password")
-def auth_password(body: PasswordIn):
+def auth_password(body: PasswordIn, request: Request):
     try:
-        auth.change_password(body.old, body.new)
+        dev = auth.device_for(request.cookies.get(auth.COOKIE))
+        auth.change_password(body.old, body.new, dev and dev["id"])
     except ValueError as e:
         raise HTTPException(400, str(e))
     return {"ok": True}

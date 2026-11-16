@@ -21,7 +21,7 @@ COOKIE = "neesmo_device"
 DEVICE_DAYS = int(os.environ.get("NEESMO_DEVICE_DAYS", 365))
 _lock = threading.Lock()
 _fails: dict[str, list[float]] = {}
-SETUP_CODE = secrets.token_hex(4) if ENABLED else ""
+SETUP_CODE = secrets.token_hex(6) if ENABLED else ""
 
 
 def _load() -> dict:
@@ -82,7 +82,10 @@ def setup(code: str, pw: str, name: str) -> str:
         d = _load()
         if d.get("password"):
             raise ValueError("password already set")
-        if not hmac.compare_digest(code.strip().lower(), SETUP_CODE):
+        if limited("setup"):   # one shared counter: the code can't be guessed from many addresses
+            raise ValueError("too many tries, wait 10 minutes")
+        if not hmac.compare_digest(code.strip().lower().encode(), SETUP_CODE.encode()):
+            _fails.setdefault("setup", []).append(time.time())
             raise ValueError("wrong setup code (see the Neesmo server log)")
         d["password"] = _hash_pw(pw)
         tok = _new_device(d, name)
@@ -133,14 +136,19 @@ def forget(dev_id: str) -> bool:
         return len(d["devices"]) < n
 
 
-def change_password(old: str, new: str) -> None:
+def change_password(old: str, new: str, keep: str | None = None) -> None:
+    """Sets a new password and signs out every device except `keep` (the one changing it)."""
     if len(new) < 8:
         raise ValueError("use at least 8 characters")
+    if limited("password"):
+        raise ValueError("too many tries, wait 10 minutes")
     with _lock:
         d = _load()
-        if not _check_pw(old, d["password"]):
+        if not d.get("password") or not _check_pw(old, d["password"]):
+            _fails.setdefault("password", []).append(time.time())
             raise ValueError("wrong password")
         d["password"] = _hash_pw(new)
+        d["devices"] = [x for x in d["devices"] if x["id"] == keep]
         _save(d)
 
 
@@ -160,5 +168,11 @@ if __name__ == "__main__":  # self-check: python3 auth.py
         except ValueError: pass
     assert limited("2.2.2.2")
     assert forget(device_for(t)["id"]) and device_for(t) is None
-    change_password("longpassword", "newpassword1"); login("3.3.3.3", "newpassword1", "")
+    change_password("longpassword", "newpassword1", device_for(t2)["id"]); login("3.3.3.3", "newpassword1", "")
+    assert device_for(t2) and len(devices(None)) == 2
+    change_password("newpassword1", "newpassword2"); assert device_for(t2) is None
+    for _ in range(5):
+        try: change_password("wrong", "newpassword3")
+        except ValueError: pass
+    assert limited("password")
     print("ok")
