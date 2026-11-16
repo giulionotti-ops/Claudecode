@@ -171,6 +171,11 @@ def plugins(fresh: bool = False) -> list[dict]:
     names = {o["name"] for o in out}
     out += [{"id": f"{n}@{OFFICIAL}", "name": n, "on": False, "version": "", "license": "", "description": d,
              "suggested": True} for n, d in SUGGESTED.items() if n not in names]
+    # Universal plugins suit every chat. Job plugins (code, git, GitHub, web) belong in each agent's
+    # settings; an installed one still shows here, marked, so it can be switched off for every chat.
+    for o in out:
+        o["job"] = "general" not in TAGS.get(o["name"], {"general"})
+    out = [o for o in out if not (o["job"] and o.get("suggested"))]
     _plugins_cache = (time.time(), out)
     return out
 

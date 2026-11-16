@@ -896,13 +896,21 @@ def notifications_clear():
     return {"removed": notes.remove()}
 
 
+_speak_gate = asyncio.Semaphore(2)   # VoiceStudio answers 429 to more than two requests at once
+
+
 @app.post("/api/speak")
 async def speak(body: SpeakIn):
-    r = await _vs("POST", "/v1/audio/speech", json={
-        "model": "tts-1", "voice": body.voice or DEFAULT_VOICE,
-        "input": body.text, "response_format": "wav",
-    })
-    return Response(r.content, media_type="audio/wav")
+    payload = {"model": "tts-1", "voice": body.voice or DEFAULT_VOICE, "input": body.text, "response_format": "wav"}
+    for wait in (0.4, 0.8, 1.6, 0):
+        try:
+            async with _speak_gate:
+                r = await _vs("POST", "/v1/audio/speech", json=payload)
+            return Response(r.content, media_type="audio/wav")
+        except HTTPException as e:
+            if e.status_code != 429 or not wait:
+                raise
+            await asyncio.sleep(wait)
 
 
 @app.post("/api/transcribe")
