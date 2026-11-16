@@ -138,6 +138,42 @@ def _choices(screen: str) -> dict | None:
     return {"question": q, "options": [{"key": m.group(1), "label": m.group(2)} for _, m in found]}
 
 
+MEDIA = {"mp4": "video", "mov": "video", "m4v": "video", "webm": "video", "mkv": "video",
+         "mp3": "audio", "wav": "audio", "m4a": "audio", "ogg": "audio", "opus": "audio", "flac": "audio", "aac": "audio",
+         "png": "image", "jpg": "image", "jpeg": "image", "gif": "image", "webp": "image"}
+_MEDIA_RE = re.compile(r"""(?:[`'"]([^`'"\n]+\.(?:%s))[`'"])|((?:~|\.{0,2}/)?[\w@%%+=:,./-]+\.(?:%s))\b""" % ("|".join(MEDIA), "|".join(MEDIA)), re.I)
+
+
+def media_roots(folder: Path) -> list[Path]:
+    """Where chat media may be served from: the agent's own folder and Neesmo's uploads."""
+    import auth
+    return [folder.resolve(), (auth.DIR / "uploads").resolve()]
+
+
+def media_path(folder: Path, raw: str) -> Path | None:
+    """An existing video, audio or image file inside the allowed folders, else None."""
+    path = Path(os.path.expanduser(raw.strip()))
+    if not path.is_absolute():
+        path = folder / path
+    try:
+        path = path.resolve(strict=True)
+    except (OSError, RuntimeError):
+        return None
+    if path.suffix.lower().lstrip(".") not in MEDIA or not path.is_file():
+        return None
+    return path if any(path.is_relative_to(r) for r in media_roots(folder)) else None
+
+
+def _media(folder: Path, text: str) -> list[dict]:
+    """Files a message names (a finished render, a voice line, an attached photo), to play in the chat."""
+    out: list[dict] = []
+    for m in _MEDIA_RE.finditer(text):
+        p = media_path(folder, m.group(1) or m.group(2))
+        if p and all(x["path"] != str(p) for x in out):
+            out.append({"path": str(p), "name": p.name, "kind": MEDIA[p.suffix.lower().lstrip(".")]})
+    return out[:6]
+
+
 _SKIP = ("<command-", "<local-command", "<system-reminder", "Caveat:", "[Request interrupted")
 
 
@@ -192,7 +228,11 @@ def _messages(folder: Path) -> tuple[list[dict], bool]:
             out[-1]["text"] = x["text"]
         else:
             out.append(dict(x))
-    return out[-KEEP:], busy
+    out = out[-KEEP:]
+    for x in out:
+        if x["who"] in ("you", "agent") and (md := _media(folder, x["text"])):
+            x["media"] = md
+    return out, busy
 
 
 def thread(aid: str) -> dict:

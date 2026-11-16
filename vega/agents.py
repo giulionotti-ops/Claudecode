@@ -117,8 +117,28 @@ TAIL_BYTES = 6 * 1024 * 1024   # enough for today's activity without reading who
 _cache: dict[str, tuple[float, dict]] = {}
 
 
+def _live_session(folder: Path) -> str | None:
+    """Id of the conversation a running interactive Claude session (terminal or Claude app) has open in this folder,
+    so Neesmo shows the same conversation the app shows. The most recently active one wins."""
+    best = None
+    for f in (HOME / ".claude" / "sessions").glob("*.json"):
+        try:
+            d = json.loads(f.read_text())
+            if d.get("cwd") != str(folder) or d.get("kind") != "interactive" or not Path(f"/proc/{d['pid']}").exists():
+                continue
+            key = int(d.get("updatedAt") or d.get("startedAt") or 0)
+        except (OSError, ValueError, KeyError, TypeError):
+            continue
+        if d.get("sessionId") and (best is None or key > best[0]):
+            best = (key, d["sessionId"])
+    return best[1] if best else None
+
+
 def _log_file(folder: Path) -> Path | None:
     d = HOME / ".claude" / "projects" / ("-" + str(folder).strip("/").replace("/", "-"))
+    sid = _live_session(folder)
+    if sid and (d / f"{sid}.jsonl").is_file():
+        return d / f"{sid}.jsonl"
     logs = sorted(d.glob("*.jsonl"), key=lambda p: p.stat().st_mtime, reverse=True) if d.exists() else []
     for p in logs:  # skip the nightly chat-refresh helper's own chats
         with open(p, "rb") as f:

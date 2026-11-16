@@ -287,6 +287,10 @@
   #r-stop { color: var(--err); border-color: var(--err); }
   .thread p.tool { align-self: flex-start; font: 11.5px/1.4 var(--mono); color: var(--dim); padding: 3px 9px; border-left: 2px solid rgba(var(--rgb),.3); }
   .thread p.tool small { display: inline; margin-left: 6px; }
+  .thread .cmedia { display: block; margin-top: 8px; }
+  .thread .cmedia video, .thread .cmedia img { display: block; max-width: 100%; max-height: 420px; border-radius: 10px; background: #000; }
+  .thread .cmedia audio { display: block; width: 100%; max-width: 360px; }
+  .thread .cmedia em { display: block; font: 11px/1.3 var(--mono); color: var(--dim); font-style: normal; margin-top: 3px; overflow-wrap: anywhere; }
   .thread .ask { border: 1px solid var(--a); border-radius: 12px; padding: 10px 12px; display: grid; gap: 8px; }
   .thread .ask b { font-weight: 600; } .thread .ask button { text-align: left; padding: 8px 12px; font-size: 13px; border-radius: 10px; letter-spacing: 0; }
   .rlink { font: 10.5px var(--mono); color: var(--dim); align-self: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -802,6 +806,13 @@ async function openReport(id) {
 const rq = $('#r-q'); let rPending = [], rBusy = false, rPoll = null, rSeen = '';
 const rkey = k => api(`/api/agents/${encodeURIComponent(reportFor)}/chat/key`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: k }) })
   .then(() => setTimeout(() => reportFor && loadThread(reportFor, true), 600)).catch(e => alert(e.message));
+// videos, voice lines and pictures a message names play right in the chat
+const rMedia = (id, list) => (list || []).map(f => {
+  const u = `/api/agents/${encodeURIComponent(id)}/chat/media?p=${encodeURIComponent(f.path)}`;
+  return `<span class="cmedia">${f.kind === 'video' ? `<video controls playsinline preload="metadata" src="${esc(u)}"></video>`
+    : f.kind === 'audio' ? `<audio controls preload="metadata" src="${esc(u)}"></audio>`
+    : `<a href="${esc(u)}" target="_blank" rel="noopener"><img loading="lazy" alt="${esc(f.name)}" src="${esc(u)}"></a>`}<em>${esc(f.name)}</em></span>`;
+}).join('');
 async function loadThread(id, force) {
   try {
     const d = await (await api(`/api/agents/${encodeURIComponent(id)}/chat`)).json(); if (reportFor !== id) return;
@@ -814,7 +825,7 @@ async function loadThread(id, force) {
     const th = $('#r-thread'), near = th.scrollHeight - th.scrollTop - th.clientHeight < 80;
     th.innerHTML = d.messages.map(m => m.who === 'note' ? `<p class="tool">${esc(m.text)}</p>` : m.who === 'tool'
         ? `<p class="tool">▸ ${esc(m.text)}${m.steps > 1 ? ` <small>+${m.steps - 1} steps</small>` : ''}</p>`
-        : `<p class="${m.who === 'you' ? 'you' : 'agent'}">${m.who === 'you' ? esc(m.text) : md(m.text)}<small>${esc(m.at || '')}</small></p>`).join('')
+        : `<p class="${m.who === 'you' ? 'you' : 'agent'}">${m.who === 'you' ? esc(m.text) : md(m.text)}${rMedia(id, m.media)}<small>${esc(m.at || '')}</small></p>`).join('')
       + (d.ask ? `<div class="ask"><b>${esc(d.ask.question || 'Claude is asking')}</b>${d.ask.options.map(o => `<button type="button" data-k="${esc(o.key)}">${esc(o.key)}. ${esc(o.label)}</button>`).join('')}</div>`
         : d.busy ? '<div class="typing"><i></i><i></i><i></i> working… you can close this, Neesmo will notify you</div>' : '')
       + (d.mode === 'terminal' ? '<div class="empty">This session is open in a terminal outside tmux. You can read it here; run it inside tmux to type from Neesmo.</div>' : '')
