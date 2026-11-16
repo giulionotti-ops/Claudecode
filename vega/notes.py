@@ -128,6 +128,7 @@ def decide(nid: int, decision: str, note: str = "") -> dict:
         if note.strip():
             item["note"] = note.strip()[:2000]
         item["decided_at"] = datetime.datetime.now().strftime("%d %b %H:%M")
+        item["decided_ts"] = time.time()
         _save()
         return item
 

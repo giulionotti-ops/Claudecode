@@ -755,7 +755,9 @@ async function loadAgents() {
     const card = (a, i) => `<button type="button" class="card agent${AGENT_DEV.has(a.id) ? ' dev' : ''}" style="--a:${AGENT_COLORS[a.id] || '#3dff8f'};--i:${i}" data-id="${esc(a.id)}" aria-label="${esc(a.name)} report">
       <span class="st ${AGENT_DEV.has(a.id) ? 'dev' : esc(a.status)}">${AGENT_DEV.has(a.id) ? 'in dev' : esc(a.status)}<span class="ago"> · ${esc(a.last_active_ago || '—')}</span></span><b>${esc(AGENT_SHORT[a.id] || a.name)}</b>
       <small>${esc(a.last_reply || a.role)}</small></button>`;
-    $('#agents-l').innerHTML = agents.slice(0, half).map(card).join('');
+    $('#agents-l').innerHTML = agents.slice(0, half).map(card).join('')
+      || '<button type="button" class="card" id="first-agent" style="--a:#3dff8f"><span class="st">start here</span><b>Add an agent</b><small>An agent is a helper with its own folder and job. Tap to make your first one.</small></button>';
+    if ($('#first-agent')) $('#first-agent').onclick = e => { e.stopPropagation(); setTimeout(() => { if ($('#pop-s').hidden) $('#gear').click(); showTab('agents'); }, 0); };
     $('#agents-r').innerHTML = agents.slice(half).map((a, i) => card(a, i + .5)).join('');
     if (!loadAgents.done) { loadAgents.done = true; document.querySelectorAll('.agent b').forEach((b, i) => setTimeout(() => decode(b), 200 + i * 80)); setTimeout(() => document.body.classList.remove('boot'), 2500); }
     for (const a of agents) { const prev = loadAgents.seen?.[a.id]; if (prev && prev !== a.last_reply) document.querySelector(`.agent[data-id="${CSS.escape(a.id)}"]`)?.classList.add('flash'); }
@@ -810,7 +812,7 @@ async function loadThread(id, force) {
     clearTimeout(rPoll); rPoll = setTimeout(() => reportFor === id && loadThread(id), d.busy || d.ask ? 2000 : 6000);
     if (key === rSeen && !force) return; rSeen = key;
     const th = $('#r-thread'), near = th.scrollHeight - th.scrollTop - th.clientHeight < 80;
-    th.innerHTML = d.messages.map(m => m.who === 'tool'
+    th.innerHTML = d.messages.map(m => m.who === 'note' ? `<p class="tool">${esc(m.text)}</p>` : m.who === 'tool'
         ? `<p class="tool">▸ ${esc(m.text)}${m.steps > 1 ? ` <small>+${m.steps - 1} steps</small>` : ''}</p>`
         : `<p class="${m.who === 'you' ? 'you' : 'agent'}">${m.who === 'you' ? esc(m.text) : md(m.text)}<small>${esc(m.at || '')}</small></p>`).join('')
       + (d.ask ? `<div class="ask"><b>${esc(d.ask.question || 'Claude is asking')}</b>${d.ask.options.map(o => `<button type="button" data-k="${esc(o.key)}">${esc(o.key)}. ${esc(o.label)}</button>`).join('')}</div>`

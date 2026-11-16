@@ -3888,9 +3888,9 @@
     "semantic_hash": ""
   },
   "vega/agents.py": {
-    "mtime": 1794775730.8242772,
-    "seen": 1794775937.538169,
-    "ast_hash": "075b9afbaea1ad8e22df265f4d330331",
+    "mtime": 1794833034.1949577,
+    "seen": 1794833131.6464891,
+    "ast_hash": "7e3c427b0c04aa2610b08d48ff3d896a",
     "semantic_hash": ""
   },
   "vega/approval_hook.py": {
@@ -3900,9 +3900,9 @@
     "semantic_hash": ""
   },
   "vega/notes.py": {
-    "mtime": 1794755795.4219081,
-    "seen": 1794759608.272272,
-    "ast_hash": "31281881300d705b1b14107fb8aeb419",
+    "mtime": 1794832955.0921087,
+    "seen": 1794833131.6465075,
+    "ast_hash": "c4b6a991eb058f89798f9e0a46b24dca",
     "semantic_hash": ""
   },
   "vega/push.py": {
@@ -3912,9 +3912,9 @@
     "semantic_hash": ""
   },
   "vega/server.py": {
-    "mtime": 1794830205.2243707,
-    "seen": 1794830345.4875035,
-    "ast_hash": "578216dec5fbc77d6970af43aa6c25cd",
+    "mtime": 1794832955.2491105,
+    "seen": 1794833131.6465132,
+    "ast_hash": "8edc24bb3627d94494cf7d81803d753d",
     "semantic_hash": ""
   },
   "vega/static/sw.js": {
@@ -8586,9 +8586,9 @@
     "semantic_hash": ""
   },
   "vega/index.html": {
-    "mtime": 1794830205.2393706,
-    "seen": 1794830345.4890344,
-    "ast_hash": "82a36be4ab8ee0eacd950b5c292f78ce",
+    "mtime": 1794833058.4991899,
+    "seen": 1794833131.6492658,
+    "ast_hash": "f938d609191213226e926f65864ce080",
     "semantic_hash": ""
   },
   "vega/requirements.txt": {
@@ -16020,9 +16020,9 @@
     "semantic_hash": ""
   },
   "vega/auth.py": {
-    "mtime": 1794758448.1981175,
-    "seen": 1794759608.2722676,
-    "ast_hash": "8f8cc3a1cbb4bc02e0a40d7bd503d07d",
+    "mtime": 1794832421.1186235,
+    "seen": 1794832521.7480361,
+    "ast_hash": "ea3206405d5cbd5512090334e3430cdf",
     "semantic_hash": ""
   },
   "vega/install.sh": {
@@ -16056,21 +16056,21 @@
     "semantic_hash": ""
   },
   "vega/agent_chat.py": {
-    "mtime": 1794773894.4214363,
-    "seen": 1794774024.8551996,
-    "ast_hash": "394bc6643fad382ca019d011e9f0d532",
+    "mtime": 1794832942.3789577,
+    "seen": 1794833131.646484,
+    "ast_hash": "f172dade0228ae83d6031eecfa96fe84",
     "semantic_hash": ""
   },
   "vega/license.py": {
-    "mtime": 1794786922.5224082,
-    "seen": 1794786968.995276,
-    "ast_hash": "6780af694497edf87e96c18d328448c4",
+    "mtime": 1794832920.340686,
+    "seen": 1794833131.6465044,
+    "ast_hash": "7e80a8f9e8c06d2cff7ddb96d847dc84",
     "semantic_hash": ""
   },
   "vega/static/guide.html": {
-    "mtime": 1794830296.5459406,
-    "seen": 1794830345.489047,
-    "ast_hash": "93c19279d6c98edb894b16aeae3c95bf",
+    "mtime": 1794832971.913302,
+    "seen": 1794833131.649282,
+    "ast_hash": "1431596d2e0973a3ab2503bf4bac476b",
     "semantic_hash": ""
   },
   "vega/static/landing.html": {

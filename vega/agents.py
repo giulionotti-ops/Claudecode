@@ -17,16 +17,18 @@ NEESMO_DIR = Path(os.environ.get("NEESMO_DIR", HOME / ".config" / "neesmo"))
 CONFIG = NEESMO_DIR / "agents.json"   # made by the setup wizard / Settings → Agents
 AGENT_HOME = Path(os.environ.get("NEESMO_AGENT_HOME", HOME / "neesmo-agents"))  # default folder for new agents
 COLORS = ["#ff6b6b", "#ff7ac6", "#5cc8ff", "#b388ff", "#ffd166", "#3dff8f", "#ff9f43", "#7ee8fa"]
-# Without agents.json: the original private setup, unchanged.
-DEFAULTS = [
-    {"id": "setup", "name": "Setup & uploader", "folder": str(HOME / "Claudecode"), "role": "Server setup, uploader, Neesmo", "short": "Setup", "color": "#3dff8f", "hidden": True},
-    {"id": "glazier", "name": "Glazier of Terra", "folder": str(HOME / "glazier-40k"), "role": "40k lore shorts", "short": "YouTube", "color": "#7d8a83", "dev": True},
-    {"id": "comics", "name": "Warhammer 40K comics", "folder": str(HOME / "comics-40k"), "role": "Comic shorts", "short": "Comics", "color": "#ff6b6b"},
-    {"id": "gta6", "name": "GTA6 clips", "folder": str(HOME / "gta6"), "role": "Clips and shorts", "short": "Clips", "color": "#ff7ac6"},
-    {"id": "physics", "name": "Fable physics", "folder": str(HOME / "physics-channel"), "role": "Physics shorts", "short": "Physics", "color": "#5cc8ff"},
-    {"id": "roblox", "name": "Roblox games", "folder": str(HOME / "roblox"), "role": "Roblox games", "short": "Roblox", "color": "#b388ff"},
-    {"id": "product", "name": "Neesmo product", "folder": str(HOME / "neesmo-product"), "role": "Make Neesmo sellable", "short": "Product", "color": "#ffd166"},
-]
+# Without agents.json a product copy starts with no agents. The owner's own install keeps its setup in
+# private.json ({"agents": [...], "prompt": "..."}), a file that is never shipped.
+def _private() -> dict:
+    try:
+        d = json.loads((NEESMO_DIR / "private.json").read_text())
+        return d if isinstance(d, dict) else {}
+    except (OSError, ValueError):
+        return {}
+
+
+PRIVATE = _private()
+DEFAULTS = PRIVATE.get("agents") if isinstance(PRIVATE.get("agents"), list) else []
 _ID = re.compile(r"^[a-z0-9][a-z0-9-]{0,23}$")
 
 
@@ -181,19 +183,42 @@ def _text(content) -> str:
     return ""
 
 
-def _clean_prompt(t: str) -> str:
+def _note(t: str) -> str | None:
+    """Claude Code's own machine messages (a helper finished, another session wrote) as one plain line. None for the owner's words."""
     t = t.strip()
-    if t.startswith("[Image"):
-        return "(sent an image)"
+    if t.startswith("<task-notification"):
+        m = re.search(r"<summary>(.*?)</summary>", t, re.S)
+        s = m.group(1).strip() if m else ""
+        bad = bool(re.search(r"\b(failed|error|killed|terminated|exit code [1-9])", s))
+        job = re.match(r'Agent "(.*?)"', s)
+        if job:
+            return ("Helper stopped early: " if bad else "Helper finished: ") + job.group(1)[:120]
+        return "A background task failed" if bad else "A background task finished"
+    if t.startswith("Another Claude session sent a message:") or t.startswith("<agent-message"):
+        return "A helper reported back" if "[Subagent hand-back]" in t else "Another agent sent a message"
     if t.startswith("<cross-session-message"):
         body = t.split("\n\n", 1)[-1].rsplit("</cross-session-message>", 1)[0].strip()
-        return "[from another session] " + body
+        return "Message from another agent: " + body[:600]
+    if t.startswith("This session is being continued from a previous conversation"):
+        return "Long chat tidied up to save memory"
+    if re.match(r"<[a-z][a-z-]*[ >]", t):   # any other tagged block is the tool talking to itself
+        return ""
+    return None
+
+
+def _clean_prompt(t: str) -> str:
+    """The owner's own words, or "" for anything Claude Code wrote into the conversation itself."""
+    t = t.strip()
+    if _note(t) is not None:
+        return ""
+    if t.startswith("[Image"):
+        return "(sent an image)"
     return t
 
 
 def _tool_label(b: dict) -> str:
     i = b.get("input") or {}
-    detail = i.get("description") or i.get("file_path") or i.get("pattern") or i.get("query") or i.get("url") or ""
+    detail = i.get("description") or Path(i.get("file_path") or "").name or i.get("pattern") or i.get("query") or i.get("url") or ""
     return f"{b.get('name', '?')}: {str(detail)[:90]}".rstrip(": ")
 
 
@@ -225,7 +250,10 @@ def _summarise(aid: str, name: str, folder: Path, role: str) -> dict:
             if isinstance(content, list) and any(isinstance(b, dict) and b.get("type") == "tool_result" for b in content):
                 continue
             txt = _clean_prompt(_text(content))
-            if not txt or txt.startswith("<") and not txt.startswith("[from"):
+            relayed = _note(_text(content)) or ""
+            if relayed.startswith("Message from another agent: "):   # a job passed on by Neesmo counts as a request
+                txt = relayed.split(": ", 1)[1]
+            if not txt:
                 continue
             last_request, last_request_at = txt, ts
             requests.append({"at": ts.strftime("%d %b %H:%M") if ts else "", "text": txt[:400]})
