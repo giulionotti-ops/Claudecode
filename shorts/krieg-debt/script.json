@@ -1,0 +1,162 @@
+{
+ "layout": {
+  "page1": [
+   [
+    0.33,
+    [
+     1
+    ]
+   ],
+   [
+    0.31,
+    [
+     0.45,
+     0.55
+    ]
+   ],
+   [
+    0.36,
+    [
+     0.6,
+     0.4
+    ]
+   ]
+  ],
+  "page2": [
+   [
+    0.3,
+    [
+     1
+    ]
+   ],
+   [
+    0.34,
+    [
+     0.5,
+     0.5
+    ]
+   ],
+   [
+    0.36,
+    [
+     1
+    ]
+   ]
+  ]
+ },
+ "voices": {
+  "rookie": "TX3LPaxmHKxFdv7VOQHJ",
+  "sarge": "M5E055lOUxMi0kJpGyE9",
+  "commissar": "onwK4e9ZLuTAKqWW03F9"
+ },
+ "voice_fx": {},
+ "lines": [
+  {
+   "id": "l01",
+   "who": "sarge",
+   "say": "[gravelly, tired] Krieg's world burned itself to ash... and its soldiers STILL die for the Emperor.",
+   "text": "KRIEG'S WORLD BURNED ITSELF TO ASH... AND ITS SOLDIERS STILL DIE FOR THE EMPEROR."
+  },
+  {
+   "id": "l02",
+   "who": "rookie",
+   "say": "[curious] Why?! Did he save them?",
+   "text": "WHY?! DID HE SAVE THEM?"
+  },
+  {
+   "id": "l03",
+   "who": "sarge",
+   "say": "[grim] No. They rebelled against him five hundred years ago. And lost.",
+   "text": "NO. THEY REBELLED AGAINST HIM FIVE HUNDRED YEARS AGO. AND LOST."
+  },
+  {
+   "id": "l04",
+   "who": "rookie",
+   "say": "[confused] Then why fight for him now?",
+   "text": "THEN WHY FIGHT FOR HIM NOW?"
+  },
+  {
+   "id": "l05",
+   "who": "sarge",
+   "say": "[grim] Penance. Every Kriegsman owes a debt, and pays it by dying in battle.",
+   "text": "PENANCE. EVERY KRIEGSMAN OWES A DEBT, AND PAYS IT BY DYING IN BATTLE."
+  },
+  {
+   "id": "l06",
+   "who": "rookie",
+   "say": "[shocked] They WANT to die?!",
+   "text": "THEY WANT TO DIE?!"
+  },
+  {
+   "id": "l07",
+   "who": "commissar",
+   "say": "[coldly] Imagine an army that fears nothing. Not death. Not you. Not me.",
+   "text": "IMAGINE AN ARMY THAT FEARS NOTHING. NOT DEATH. NOT YOU. NOT ME."
+  },
+  {
+   "id": "l08",
+   "who": "rookie",
+   "say": "[quietly] And the Emperor just... accepts that?",
+   "text": "AND THE EMPEROR JUST... ACCEPTS THAT?"
+  },
+  {
+   "id": "l09",
+   "who": "sarge",
+   "say": "[gently] He accepts everything, kid.",
+   "text": "HE ACCEPTS EVERYTHING, KID."
+  },
+  {
+   "id": "l10",
+   "who": "rookie",
+   "say": "[sheepish] ...So what do I owe him?",
+   "text": "...SO WHAT DO I OWE HIM?"
+  },
+  {
+   "id": "l11",
+   "who": "commissar",
+   "say": "[dry, unimpressed] Everything, Private. Krieg just keeps the receipt.",
+   "text": "EVERYTHING, PRIVATE. KRIEG JUST KEEPS THE RECEIPT."
+  },
+  {
+   "id": "l12",
+   "who": "rookie",
+   "say": "[small voice] ...Sarge? Why does he still fight for the Emperor?",
+   "text": "...SARGE? WHY DOES HE STILL FIGHT FOR THE EMPEROR?"
+  }
+ ],
+ "sfx": {
+  "hum": [
+   "Low distant war drone and rumbling, ominous",
+   2.5
+  ],
+  "zap": [
+   "Distant explosion boom with ringing echo, short",
+   1.5
+  ],
+  "puff": [
+   "Man exhales a long puff of cigar smoke, slow breath",
+   1.5
+  ],
+  "wind": [
+   "Soft desert wind at dusk",
+   2.0
+  ],
+  "gasp": [
+   "Single man gasps in shock",
+   0.8
+  ],
+  "boing": [
+   "Cartoon spring boing, comedic",
+   0.8
+  ],
+  "page": [
+   "Comic book page turning quickly, paper whoosh",
+   1.0
+  ],
+  "whoosh": [
+   "Quick soft camera whoosh swipe transition",
+   0.6
+  ]
+ },
+ "music": "Slow melancholy gothic choir and low cello, grim then darkly comic, sparse, instrumental, no vocals, 70 bpm"
+}

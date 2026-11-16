@@ -1,0 +1,11 @@
+Image 1 is the exact PAGE LAYOUT: draw a comic page with exactly these 4 panels, in exactly these positions and sizes, thick black panel borders, white gutters. Do not draw the numbers.
+Image 2 is the previous page of the same comic: keep the identical drawing style and the identical characters (skinny eager rookie with huge round eyes, oversized olive helmet, green greatcoat; big grizzled sergeant with battered helmet, scar, grey stubble, cigar, dusty flak armour; the gas-masked Death Korps of Krieg trooper in a long grey-brown greatcoat).
+New character: the COMMISSAR, a tall stern man in a long black coat with a peaked cap with skull badge, red sash, cold stare.
+
+Style: flat cartoon webcomic, thick uniform black outlines, flat colours with one shadow tone, warm orange-yellow dusk sky, dusty brown ground, grimdark sci-fi drawn funny. Every panel keeps EMPTY plain sky or plain background in its TOP 30% for speech bubbles added later.
+ABSOLUTELY NO text, letters, numbers, speech bubbles, sound effects or logos anywhere.
+
+Panel 1 (top, full width): the commissar on the left, stern, arms behind his back; the rookie small on the right looking nervous; far behind them the gas-masked Krieg trooper standing at attention. Dusk sky.
+Panel 2 (middle left): the rookie (left) gazing sadly at the motionless gas-masked Krieg trooper (right), seen from the side.
+Panel 3 (middle right): close-up of the big sergeant, tired, gentle, cigar in mouth.
+Panel 4 (bottom, full width): the commissar on the left, deadpan and unimpressed; the rookie on the right, small and sheepish, looking down; the sergeant between them smoking; the gas-masked Krieg trooper small and still behind them.
