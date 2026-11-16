@@ -3888,9 +3888,9 @@
     "semantic_hash": ""
   },
   "vega/agents.py": {
-    "mtime": 1794843024.4568095,
-    "seen": 1794845800.059583,
-    "ast_hash": "05989f9eb45dbc2729cde69addbd82d6",
+    "mtime": 1794864888.5294569,
+    "seen": 1794864993.159174,
+    "ast_hash": "61ad110d6966ba3115e5aefc204f6d54",
     "semantic_hash": ""
   },
   "vega/approval_hook.py": {
@@ -3912,9 +3912,9 @@
     "semantic_hash": ""
   },
   "vega/server.py": {
-    "mtime": 1794843055.753726,
-    "seen": 1794845800.0595994,
-    "ast_hash": "5655170deb595eb248d9deb4678cfe55",
+    "mtime": 1794864909.7660441,
+    "seen": 1794864993.1591961,
+    "ast_hash": "48f74ab1d490d3010716228974edafd6",
     "semantic_hash": ""
   },
   "vega/static/sw.js": {
@@ -8586,9 +8586,9 @@
     "semantic_hash": ""
   },
   "vega/index.html": {
-    "mtime": 1794843024.5128095,
-    "seen": 1794845800.06148,
-    "ast_hash": "d6bf76c27e774a8872e89e5746aa0991",
+    "mtime": 1794864920.5358398,
+    "seen": 1794864993.1634254,
+    "ast_hash": "8c995b5ff65ed563385ab3a816875ac6",
     "semantic_hash": ""
   },
   "vega/requirements.txt": {
@@ -16056,9 +16056,9 @@
     "semantic_hash": ""
   },
   "vega/agent_chat.py": {
-    "mtime": 1794845769.8642523,
-    "seen": 1794845800.059581,
-    "ast_hash": "bc74daf75d19f2b55709a2e5a202f5b4",
+    "mtime": 1794864909.7660441,
+    "seen": 1794864993.159169,
+    "ast_hash": "a4972724ae93b3422354279b7d669918",
     "semantic_hash": ""
   },
   "vega/license.py": {
@@ -16068,9 +16068,9 @@
     "semantic_hash": ""
   },
   "vega/static/guide.html": {
-    "mtime": 1794845769.8682523,
-    "seen": 1794845800.0614948,
-    "ast_hash": "f2fb365a0dbf0b63744f4100a2adee19",
+    "mtime": 1794849095.0007355,
+    "seen": 1794849147.7067037,
+    "ast_hash": "a69e65a8d9acf3b9b857aa078e04349a",
     "semantic_hash": ""
   },
   "vega/static/landing.html": {

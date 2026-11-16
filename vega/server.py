@@ -620,6 +620,16 @@ def agent_thread(aid: str):
     return d
 
 
+@app.get("/api/agents/{aid}/chat/media")
+def agent_media(aid: str, p: str):
+    """A video, audio or image file named in this agent's chat; only from the agent's folder or Neesmo's uploads."""
+    _agent_or_404(aid)
+    path = agent_chat.media_path(agents.folders()[aid], p)
+    if path is None:
+        raise HTTPException(404, "no such file")
+    return FileResponse(path)
+
+
 class AgentKey(BaseModel):
     key: str
 
