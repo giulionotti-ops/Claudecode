@@ -58,6 +58,27 @@ const mother = makeActor(gDragon, 3.2, { base: 'Flying' });
 const baby = makeActor(gDragon, 3.2, { base: 'Flying' });
 const RIGHT = Math.PI / 2;
 const flap = (A, t, rate = 1) => pose(A, 'Flying', t * rate);
+// ground pose for the mother: the glide pose with the wings folded (forearms bent back), feet planted, plus idle motion (breathing, head bob, tail sway, wing twitch)
+const bone = (A, n) => { if (!A.bones) A.bones = {}; if (!(n in A.bones)) { let r = null; A.root.traverse(o => { if (o.isBone && new RegExp('^' + n + '\\d').test(o.name)) r = o; }); A.bones[n] = r; } return A.bones[n]; };
+const turn = (A, n, x, y, z) => { const b = bone(A, n); if (b) b.quaternion.multiply(new THREE.Quaternion().setFromEuler(new THREE.Euler(x, y, z))); };
+const chain = (A, pre, from, to, fn) => { for (let i = from; i <= to; i++) { const [x, y, z] = fn(i); turn(A, pre + String(i).padStart(2, '0'), x, y, z); } };
+const feet = new THREE.Vector3();
+function perch(A, t, x, z, yaw, s = 1, press = 0) {
+  pose(A, 'Flying', 2.6);
+  for (const sd of ['l_', 'r_']) {
+    turn(A, sd + 'forearm', 0, 0, 2 + Math.sin(t * 1.1 + (sd === 'l_' ? 0 : 1.3)) * .06);      // wings folded, with a slow twitch
+    turn(A, sd + 'shoulder', 0, Math.sin(t * .9 + (sd === 'l_' ? 0 : 2)) * .04, 0);
+  }
+  chain(A, 'spine_', 1, 8, i => [0, 0, Math.sin(t * 1.7) * .012]);                              // breathing
+  chain(A, 'neck_', 1, 11, i => [0, Math.sin(t * .7 + i * .1) * .03, Math.sin(t * .9 + i * .15) * .018 - press * .03]);   // head bob and look
+  chain(A, 'tail_', 1, 30, i => [0, Math.sin(t * 1.2 - i * .35) * .035, 0]);                    // tail sway, a wave along its length
+  turn(A, 'jaw_01', 0, 0, Math.max(0, Math.sin(t * 1.5)) * .08);
+  A.root.updateMatrixWorld(true);
+  A.holder.rotation.set(0, yaw, 0); A.holder.scale.setScalar(s); A.holder.position.set(0, 0, 0); A.holder.updateMatrixWorld(true);
+  let low = 1e9, cx = 0, cz = 0, n = 0;
+  for (const nm of ['l_ball', 'r_ball', 'l_toeA', 'r_toeA']) { bone(A, nm).getWorldPosition(feet); low = Math.min(low, feet.y); cx += feet.x; cz += feet.z; n++; }
+  A.holder.position.set(x - cx / n, -low, z - cz / n); A.holder.visible = true;
+}
 const GLIDE = 2.6;
 const glide = (A, t) => pose(A, 'Flying', GLIDE + Math.sin(t * 1.3) * .05);
 
@@ -206,7 +227,7 @@ window.render = (t) => {
     // the egg on a warm stone nest, the volcano behind, the mother circling over it
     world.visible = true;
     setEgg(heroEgg, V(0, .85, 0), 1, tt * .1); warm.position.set(0, .7, .8); warm.intensity = 6 + Math.sin(tt * 3) * 1.5;
-    mother.holder.visible = true; place(mother, lerp(-3, 3, k), 5.4 + Math.sin(tt * 1.9) * .2, -19, RIGHT - .3, .05, 0, 1.0); flap(mother, tt + 1);
+    perch(mother, tt, 1.3, -4.6, -.5, .85);
     cam(V(lerp(.5, -.1, k), 1.05, lerp(3.9, 3.6, k)), V(0, 1.05, -10), 50); focus = V(0, 0, 0);
   };
   if (!opening.rock) { opening.rock = new THREE.Mesh(new THREE.CylinderGeometry(.55, .85, .5, 7), new THREE.MeshStandardMaterial({ color: 0x3e3532, roughness: 1, flatShading: true })); opening.rock.position.y = .25; opening.rock.castShadow = opening.rock.receiveShadow = true; scene.add(opening.rock); }
@@ -223,7 +244,7 @@ window.render = (t) => {
     const drop = t > T.cant - .25 ? eio(seg(t, T.cant - .25, T.cant + .05)) * (1 - eio(seg(t, T.imagine - .4, T.imagine + .2))) : 0;
     const squash = t > T.cant - .05 ? 1 : 0;
     nestEggs.forEach((e, i) => { setEgg(e, V((i - 1) * 1.1, .56, i === 1 ? -.4 : 0), 1.6, i); if (squash) { e.g.scale.set(EGG_H * 2.1, EGG_H * .5, EGG_H * 2.1); e.g.position.y = .17; eggColor(e, .25); } else eggColor(e, 0); });
-    mother.holder.visible = true; place(mother, -.4, lerp(3.6, 1.6, drop) + Math.sin(t * 3) * .12 * (1 - drop), -1.6, RIGHT - .9, 0, 0, .72); flap(mother, t * (1 + drop));
+    perch(mother, t, lerp(.3, .8, drop), -3.6, -.4, .75, drop);
     cam(V(1.0, 1.9, 10), V(-.2, 1.9, 0), 50); focus = V(0, 0, 0);
     dust(0, 0, t, drop * .9, 1.5);
     after = () => {
@@ -308,7 +329,7 @@ window.render = (t) => {
     // 8. payoff: the volcano does the sitting; ends on the opening shot, so the loop is seamless
     opening(eio(seg(t, S.h, S.end + (S.b - 0))) * 0, t);
     const k = eio(seg(t, S.h, S.end));
-    place(mother, lerp(-6, -3, k), 5.4 + Math.sin(t * 1.9) * .2, -19, RIGHT - .3, .05, 0, 1.0);
+    perch(mother, t, 1.3, -4.6, -.5, .85);
     cam(V(lerp(1.0, .5, k), 1.05, lerp(4.4, 3.9, k)), V(0, 1.05, -10), 50);
     after = () => {
       showChip('THE VOLCANO DOES THE SITTING', S.h + .1, S.end, t);
