@@ -1,7 +1,7 @@
 """An agent's chat box is its real Claude Code session.
 
 Each agent is an interactive `claude` running in a tmux pane in the agent's folder: the same session you would get by
-opening a terminal there. Neesmo finds that pane (or starts one: `tmux new-session -s neesmo-<id> claude --continue`),
+opening a terminal there. Neesmo finds that pane (or starts one: `tmux new-session -s neesmo-<id> claude --resume <its last conversation>`),
 types your message into it, and shows the conversation from the session's own transcript
 (~/.claude/projects/<folder>/<session>.jsonl). You can attach to the same session in a terminal at any time
 (`tmux attach -t neesmo-<id>`), and the chat box and the terminal stay in step.
@@ -100,7 +100,8 @@ def _start(aid: str, folder: Path, name: str) -> str:
     if not shutil.which("tmux"):
         raise RuntimeError("tmux is not installed on the server (needed to run agent sessions)")
     claude = shutil.which("claude") or str(Path.home() / ".local/bin/claude")
-    cmd = [claude] + (["--continue"] if agents._log_file(folder) else [])
+    log = agents._log_file(folder)  # the conversation Neesmo shows; --continue would skip ones the Claude app started
+    cmd = [claude] + (["--resume", log.stem] if log else [])
     if os.environ.get("NEESMO_RC") == "1":
         cmd += ["--remote-control", name]
     sess = f"neesmo-{aid}"
