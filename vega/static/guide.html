@@ -78,7 +78,8 @@
 <p>On iPhone, open Neesmo in Safari, tap Share → Add to Home Screen, then open it from the home screen and turn on notifications from the bell. On Android, use the browser menu → Install app.</p>
 
 <h2 id="access">Access and login</h2>
-<p>Neesmo listens on <code>127.0.0.1</code>. To reach it from anywhere, put it behind a Cloudflare Tunnel (<code>./install.sh --tunnel</code> shows how) or your own private network. Each device signs in once and is remembered for a year. See and sign out devices in Settings → Devices.</p>
+<p>Neesmo listens on <code>127.0.0.1</code>. To reach it from anywhere, put it behind a Cloudflare Tunnel (<code>./install.sh --tunnel</code> shows how) or your own private network. Each device signs in once and is remembered for a year. See and sign out devices in Settings → Devices. Changing the password signs out every other device.</p>
+<p>If you turn login off (<code>NEESMO_AUTH=0</code>), Neesmo answers only to an IP address, a local name or a Tailscale name. Add any other name to <code>NEESMO_HOSTS</code> in <code>~/.config/neesmo/neesmo.env</code>. Keep login on whenever Neesmo is reachable from the internet.</p>
 
 <h2 id="bundle">Bundle</h2>
 <ul>

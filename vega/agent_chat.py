@@ -153,15 +153,21 @@ def _messages(folder: Path) -> tuple[list[dict], bool]:
             c = m.get("content")
             if isinstance(c, list) and any(isinstance(b, dict) and b.get("type") == "tool_result" for b in c):
                 continue
-            text = agents._clean_prompt(agents._text(c))
-            if text.startswith("<command-name>"):
-                cmd = re.search(r"<command-name>(.*?)</command-name>", text)
+            raw = agents._text(c).strip()
+            if raw.startswith("<command-name>"):
+                cmd = re.search(r"<command-name>(.*?)</command-name>", raw)
                 if cmd and cmd.group(1).strip() == "/clear":
                     msgs = []
                 continue
-            if not text or text.startswith(_SKIP):
+            if raw.startswith(_SKIP):
                 continue
-            msgs.append({"who": "you", "text": text, "at": at})
+            note = agents._note(raw)
+            if note:
+                msgs.append({"who": "note", "text": note, "at": at, "ts": ts.timestamp() if ts else 0})
+            text = agents._clean_prompt(raw)
+            if not text:
+                continue
+            msgs.append({"who": "you", "text": text, "at": at, "ts": ts.timestamp() if ts else 0})
             busy = True
         elif t == "assistant":
             for b in m.get("content") or []:
@@ -171,9 +177,9 @@ def _messages(folder: Path) -> tuple[list[dict], bool]:
                     if msgs and msgs[-1]["who"] == "agent":
                         msgs[-1]["text"] += "\n\n" + b["text"]
                     else:
-                        msgs.append({"who": "agent", "text": b["text"], "at": at})
+                        msgs.append({"who": "agent", "text": b["text"], "at": at, "ts": ts.timestamp() if ts else 0})
                 elif b.get("type") == "tool_use":
-                    msgs.append({"who": "tool", "text": agents._tool_label(b), "at": at})
+                    msgs.append({"who": "tool", "text": agents._tool_label(b), "at": at, "ts": ts.timestamp() if ts else 0})
             busy = m.get("stop_reason") not in ("end_turn", "stop_sequence", None) or (
                 m.get("stop_reason") is None and any(b.get("type") == "tool_use" for b in m.get("content") or [] if isinstance(b, dict)))
     # fold runs of tool steps into one line so the chat stays readable

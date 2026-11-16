@@ -192,6 +192,21 @@ async def safe_headers(request: Request, call_next):
     return r
 
 
+_LOCAL_HOST = re.compile(r"^(localhost|[^.]+|[0-9.]+|\[[0-9a-f:]+\]|.+\.ts\.net|.+\.local)$")
+_HOSTS = {h.strip().lower() for h in os.environ.get("NEESMO_HOSTS", "").split(",") if h.strip()}
+
+
+@app.middleware("http")
+async def local_names_only(request: Request, call_next):
+    """With login off, answer only to an address, a local name or a private-network name, so a web page elsewhere
+    cannot reach this server through the browser by pointing its own domain at it. Other names go in NEESMO_HOSTS."""
+    if not auth.ENABLED:
+        host = re.sub(r":\d+$", "", request.headers.get("host", "").lower())
+        if host and host not in _HOSTS and not _LOCAL_HOST.match(host):
+            return JSONResponse({"detail": "this name is not allowed; add it to NEESMO_HOSTS"}, status_code=403)
+    return await call_next(request)
+
+
 @app.middleware("http")
 async def require_license(request: Request, call_next):
     """A product copy whose trial ended keeps its settings, license and guide pages, but stops doing work."""
@@ -590,7 +605,17 @@ async def agent_send(aid: str, body: AgentMsg):
 @app.get("/api/agents/{aid}/chat")
 def agent_thread(aid: str):
     _agent_or_404(aid)
-    return agent_chat.thread(aid)
+    d = agent_chat.thread(aid)
+    # what the owner answered on this agent's review requests belongs in its chat too
+    first = d["messages"][0].get("ts", 0) if d["messages"] else 0
+    for n in notes.history():
+        if n.get("agent") == aid and n.get("kind") == "review" and n.get("decided_ts", 0) > first and n.get("status") in ("approved", "changes asked"):
+            text = (f"Changes asked on \"{n.get('body', '')}\": {n.get('note', '')}" if n["status"] == "changes asked"
+                    else f"Approved \"{n.get('body', '')}\"" + (f": {n['note']}" if n.get("note") else ""))
+            d["messages"].append({"who": "you", "text": text, "at": datetime.datetime.fromtimestamp(n["decided_ts"]).strftime("%H:%M"),
+                                  "ts": n["decided_ts"]})
+    d["messages"].sort(key=lambda m: m.get("ts", 0))
+    return d
 
 
 class AgentKey(BaseModel):

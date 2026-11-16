@@ -4,8 +4,8 @@ A key is "NEESMO-<payload>.<signature>" (base64url). The payload is JSON like {"
 "issued": "2026-11-15"}; the signature is Ed25519 over the payload bytes. Only the seller holds the private key, so the
 app can check a key with no server to call.
 
-Nothing is locked without a key: the Settings menu shows the trial or license state. The owner's own copy (no
-NEESMO_AUTH=1, the private setup) is shown as "Owner copy".
+Every copy runs as a trial until it has a key. The seller's own server holds an owner key (owner.key): a signed key
+tied to that one machine, so it works nowhere else and nobody without the private key can make one.
 
 Two kinds of key:
 - Store keys (a UUID from Lemon Squeezy, which takes the payment and sends the key). Activated once online on this
@@ -39,11 +39,31 @@ STORE_PRODUCT = os.environ.get("NEESMO_STORE_PRODUCT", "")   # Lemon Squeezy pro
 BUY_URL = os.environ.get("NEESMO_BUY_URL", "")               # the checkout page, shown as "Buy a key" in Settings
 RECHECK_DAYS, GRACE_DAYS = 7, 30
 _UUID = __import__("re").compile(r"^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$")
-PRODUCT = os.environ.get("NEESMO_AUTH", "") == "1"
+OWNER_FILE = DIR / "owner.key"
+MARK = Path.home() / ".local" / "state" / "neesmo" / "first"   # second copy of the trial start, outside the settings folder
+
+
+def _host() -> str:
+    """A fingerprint of this machine, so an owner key copied to another server is refused."""
+    import hashlib
+    for f in ("/etc/machine-id", "/var/lib/dbus/machine-id"):
+        try:
+            return hashlib.sha256(("neesmo:" + Path(f).read_text().strip()).encode()).hexdigest()[:24]
+        except OSError:
+            pass
+    return ""
 
 
 def _b64d(s: str) -> bytes:
     return base64.urlsafe_b64decode(s + "=" * (-len(s) % 4))
+
+
+def _owner() -> bool:
+    try:
+        p = verify(OWNER_FILE.read_text().strip())
+        return p.get("plan") == "owner" and bool(p.get("host"))
+    except (OSError, ValueError):
+        return False
 
 
 def _b64e(b: bytes) -> str:
@@ -66,7 +86,12 @@ def verify(key: str) -> dict:
         raise ValueError("this key is not valid")
     if data.get("expires") and data["expires"] < datetime.date.today().isoformat():
         raise ValueError(f"this key expired on {data['expires']}")
+    if data.get("host") and data["host"] != _host():
+        raise ValueError("this key belongs to another server")
     return data
+
+
+PRODUCT = not _owner()   # every copy is a product copy unless it holds the seller's owner key for this machine
 
 
 def _store(action: str, **form) -> dict:
@@ -166,11 +191,29 @@ def _status() -> dict:
             return {"state": "invalid", "error": str(e)}
     if not PRODUCT:
         return {"state": "owner"}
-    if "first_run" not in d:
-        d["first_run"] = datetime.date.today().isoformat()
-        _save(d)
-    left = TRIAL_DAYS - (datetime.date.today() - datetime.date.fromisoformat(d["first_run"])).days
+    left = TRIAL_DAYS - _age(_first_run(d))
     return {"state": "trial" if left > 0 else "expired", "days_left": max(0, left)}
+
+
+def _first_run(d: dict) -> str:
+    """The day the trial began: the earliest of the two saved copies, so deleting one does not restart it."""
+    days = []
+    for v in (d.get("first_run"), MARK.read_text().strip() if MARK.is_file() else None):
+        try:
+            days.append(datetime.date.fromisoformat(v).isoformat())
+        except (TypeError, ValueError):
+            pass
+    first = min(days) if days else _today()
+    if d.get("first_run") != first:
+        d["first_run"] = first
+        _save(d)
+    try:
+        if not MARK.is_file() or MARK.read_text().strip() != first:
+            MARK.parent.mkdir(parents=True, exist_ok=True)
+            MARK.write_text(first)
+    except OSError:
+        pass
+    return first
 
 
 def activate(key: str) -> dict:
@@ -233,13 +276,15 @@ def allowed() -> bool:
     return status()["state"] in ("owner", "licensed", "trial")
 
 
-def issue(plan: str, to: str, expires: str | None = None) -> str:
+def issue(plan: str, to: str, expires: str | None = None, host: str = "") -> str:
     import secrets
     from cryptography.hazmat.primitives import serialization
     k = serialization.load_pem_private_key(PRIVATE_KEY.read_bytes(), password=None)
     p = {"id": secrets.token_hex(4), "plan": plan, "to": to, "issued": datetime.date.today().isoformat()}
     if expires:
         p["expires"] = expires
+    if host:
+        p["host"] = host
     raw = json.dumps(p, separators=(",", ":")).encode()
     return "NEESMO-" + _b64e(raw) + "." + _b64e(k.sign(raw))
 
@@ -251,10 +296,16 @@ if __name__ == "__main__":
     i = sub.add_parser("issue"); i.add_argument("--plan", default="pro"); i.add_argument("--to", default="")
     i.add_argument("--expires", help="YYYY-MM-DD, leave out for a lifetime key")
     c = sub.add_parser("check"); c.add_argument("key")
+    sub.add_parser("owner", help="make this server the owner's copy (needs the private key)")
     sub.add_parser("selftest")
     a = ap.parse_args()
     if a.cmd == "issue":
         print(issue(a.plan, a.to, a.expires))
+    elif a.cmd == "owner":
+        DIR.mkdir(parents=True, exist_ok=True)
+        with os.fdopen(os.open(OWNER_FILE, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600), "w") as f:
+            f.write(issue("owner", "Owner", host=_host()))
+        print("owner key written to", OWNER_FILE)
     elif a.cmd == "check":
         try:
             print(verify(a.key))
@@ -263,6 +314,18 @@ if __name__ == "__main__":
     else:
         k = issue("pro", "Test")
         assert verify(k)["to"] == "Test"
+        try:
+            verify(issue("owner", "x", host="another-machine")); sys.exit("owner key accepted on the wrong machine")
+        except ValueError:
+            pass
+        import tempfile
+        t = Path(tempfile.mkdtemp()); FILE = t / "license.json"; MARK = t / "mark"
+        old = (datetime.date.today() - datetime.timedelta(days=20)).isoformat()
+        assert _first_run({}) == _today()
+        MARK.write_text(old); FILE.unlink()
+        assert _first_run({}) == old and json.loads(FILE.read_text())["first_run"] == old
+        MARK.unlink()
+        assert _first_run(_load()) == old and MARK.read_text() == old
         bad = k[:-4] + ("AAAA" if not k.endswith("AAAA") else "BBBB")
         for b in (bad, "hello", "NEESMO-x.y"):
             try:
