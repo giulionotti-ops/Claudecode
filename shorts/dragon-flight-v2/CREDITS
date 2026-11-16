@@ -1,0 +1,16 @@
+How Could a 3-Tonne Dragon Actually Fly? (remake): third-party material
+
+Fonts
+- Lilita One and Fredoka, SIL Open Font License 1.1 (subsets from the Lemo-Opuscar library, core/fonts/OFL.md).
+
+Voice
+- Kitten TTS (local, via VoiceStudio), generated for this film; word times by faster-whisper.
+
+Tools
+- Lemo-Opuscar (MIT) by Lemomo: rendering, sound helpers. three.js (MIT).
+
+3D models
+- "Animated Dragon Three Motion Loops" by LasquetiSpice (https://sketchfab.com/LasquetiSpice), CC Attribution, https://sketchfab.com/3d-models/animated-dragon-three-motion-loops-eca98cf6cd084c1596cecf716e110c29
+- Rocks, stumps and logs: Nature Kit by Kenney (kenney.nl), CC0.
+
+Everything else (volcano, smoke, bone cutaway, music, sound effects, overlays) was made in code for this film.
