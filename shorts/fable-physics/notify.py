@@ -44,6 +44,26 @@ def send_review(e):
     return r['id']
 
 
+def rendered(slug, src):
+    """True only for a finished render: no build running for this short, file untouched for 10 min, and ffprobe reads it whole."""
+    import time
+    if time.time() - os.path.getmtime(src) < 600:
+        return False
+    folder = os.path.dirname(src)
+    for pid in os.listdir('/proc'):   # a build.sh / ffmpeg / blender working in this short's folder = still rendering
+        try:
+            args = open(f'/proc/{pid}/cmdline', 'rb').read().replace(b'\0', b' ').decode(errors='ignore')
+            cwd = os.readlink(f'/proc/{pid}/cwd')
+        except (OSError, ValueError):
+            continue
+        if any(k in args for k in ('build.sh', 'ffmpeg', 'blender')) and (cwd == folder or cwd.startswith(folder + '/') or folder in args):
+            return False
+    r = subprocess.run(['ffprobe', '-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', src],
+                       capture_output=True, text=True)
+    try: return r.returncode == 0 and float(r.stdout.strip()) > 1
+    except ValueError: return False
+
+
 def pending():
     q = load(QUEUE, []); st = load(STATE, {})
     for e in q:
@@ -53,6 +73,8 @@ def pending():
         mtime = os.path.getmtime(os.path.join(SHORTS, e['video']))
         if s and (s.get('fixing') or (s.get('nid') and s.get('video_mtime') == mtime)):
             continue   # its review is still open (or being fixed)
+        if not rendered(e['name'], os.path.join(SHORTS, e['video'])):
+            continue   # still rendering (or just written): send the review once it is finished
         if s and s.get('nid'):
             try: api(f"/api/approvals/{s['nid']}/expire", {})   # the short changed: the old review is closed
             except Exception: pass
