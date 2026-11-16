@@ -20,3 +20,4 @@ Creature-science shorts: one mythical creature per short, worked out with real b
 | 5 | `../kappa` | kappa (physics: crocodile ambush, softshell-turtle breathing, water-holding-frog water storage, the spilled dish) |
 | 6 | `../yeti` | yeti (Himalaya · folklore; physics: snowshoe-hare feet, yak altitude genes, brown-bear hibernation, the 2017 DNA twist: eight Asian bears and a dog) |
 | 7 | `../dragon-flight-v2` | dragon (how it flies, remake in the game-model style; replaces `dragon-flight`) |
+| 8 | `../dragon-eggs-v2` | dragon (eggs in a volcano, remake in the game-model style; replaces `dragon-eggs`) |
