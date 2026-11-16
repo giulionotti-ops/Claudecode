@@ -1,7 +1,7 @@
 # Graph Report - neesmo-product  (2026-11-16)
 
 ## Corpus Check
-- 1295 files · ~1,829,988 words
+- 1295 files · ~1,830,255 words
 - Verdict: corpus is large enough that graph structure adds value.
 - Unclassified: 147 file(s) not represented in the graph (top: .css 102, (none) 17, .ttf 14)
 
@@ -11,7 +11,7 @@
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `617cf11c`
+- Built from commit: `e863f866`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -3792,7 +3792,7 @@ Nodes (3): files, here, glslProblems()
 _Questions this graph is uniquely positioned to answer:_
 
 - **Why does `w()` connect `d` to `vendor/motion.js`, `site/assets/components/fx-map/bake.mjs`, `mount`?**
-  _High betweenness centrality (0.040) - this node is a cross-community bridge._
+  _High betweenness centrality (0.046) - this node is a cross-community bridge._
 - **Are the 51 inferred relationships involving `lib()` (e.g. with `arrive()` and `audit()`) actually correct?**
   _`lib()` has 51 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `{ color, normalizePalette, readPalette, GLSL_LIB }`, `PATH`, `{ color, normalizePalette, readPalette, GLSL_LIB }` to the rest of the system?**
@@ -3800,8 +3800,8 @@ _Questions this graph is uniquely positioned to answer:_
 - **Should `validate-skill-bundle.py` be split into smaller, more focused modules?**
   _Cohesion score 0.03974358974358974 - nodes in this community are weakly interconnected._
 - **Why does `lib()` connect `lib` to `consistency.mjs`?**
-  _High betweenness centrality (0.016) - this node is a cross-community bridge._
+  _High betweenness centrality (0.015) - this node is a cross-community bridge._
 - **Should `lib` be split into smaller, more focused modules?**
   _Cohesion score 0.05791505791505792 - nodes in this community are weakly interconnected._
-- **Why does `sub()` connect `build.js` to `init`?**
-  _High betweenness centrality (0.014) - this node is a cross-community bridge._
+- **Why does `el()` connect `site/assets/components/shared.js` to `site/assets/components/fx-map/bake.mjs`, `rng`, `site/assets/effects/duotone-grade/effect.js`, `mountProduct`?**
+  _High betweenness centrality (0.013) - this node is a cross-community bridge._
