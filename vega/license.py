@@ -7,6 +7,14 @@ app can check a key with no server to call.
 Nothing is locked without a key: the Settings menu shows the trial or license state. The owner's own copy (no
 NEESMO_AUTH=1, the private setup) is shown as "Owner copy".
 
+Two kinds of key:
+- Store keys (a UUID from Lemon Squeezy, which takes the payment and sends the key). Activated once online on this
+  server (one seat; the store sets how many servers a key may use), then re-checked about once a week. If the store
+  can't be reached the copy keeps working for 30 days. Removing the key frees the seat for another server.
+- Signed keys (below) for gifts, press and manual sales; checked offline, never call home.
+
+Early-access buyers keep their key for good: every update, including the full release, is free.
+
 Seller side (keep the private key off the repo):
     python3 license.py issue --plan pro --to "Buyer name"        # prints a key
     python3 license.py check NEESMO-...                          # checks one
@@ -16,6 +24,8 @@ import datetime
 import json
 import os
 import sys
+import threading
+import time
 from pathlib import Path
 
 PUBLIC_KEY = "6q10xKeKwpPQR9GmAD5KbimjDo1xa2G28RUclx7oEwI="
@@ -23,6 +33,12 @@ PRIVATE_KEY = Path(os.environ.get("NEESMO_SELLER_KEY", Path.home() / ".config" /
 DIR = Path(os.environ.get("NEESMO_DIR", Path.home() / ".config" / "neesmo"))
 FILE = DIR / "license.json"
 TRIAL_DAYS = 14
+STORE = "https://api.lemonsqueezy.com/v1/licenses"
+# Seller: fill these two in once the store exists (see SELLING.md).
+STORE_PRODUCT = os.environ.get("NEESMO_STORE_PRODUCT", "")   # Lemon Squeezy product id; keys for other products are refused
+BUY_URL = os.environ.get("NEESMO_BUY_URL", "")               # the checkout page, shown as "Buy a key" in Settings
+RECHECK_DAYS, GRACE_DAYS = 7, 30
+_UUID = __import__("re").compile(r"^[0-9A-Fa-f]{8}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{4}-[0-9A-Fa-f]{12}$")
 PRODUCT = os.environ.get("NEESMO_AUTH", "") == "1"
 
 
@@ -53,6 +69,37 @@ def verify(key: str) -> dict:
     return data
 
 
+def _store(action: str, **form) -> dict:
+    """One call to the store's license API. ValueError with a plain message on a refusal, OSError when offline."""
+    import httpx
+    try:
+        r = httpx.post(f"{STORE}/{action}", data=form, headers={"Accept": "application/json"}, timeout=15)
+    except httpx.HTTPError as e:
+        raise OSError(f"could not reach the store: {e}") from e
+    try:
+        d = r.json()
+    except ValueError:
+        raise OSError(f"the store answered {r.status_code}")
+    if r.status_code >= 500 or r.status_code in (401, 403, 408, 429):   # store trouble, not a verdict on the key
+        raise OSError(f"the store answered {r.status_code}")
+    if d.get("error") or not d.get("valid", d.get("activated", d.get("deactivated", False))):
+        raise ValueError(d.get("error") or "this key is not valid")
+    if action != "deactivate" and d.get("meta") and str(d["meta"].get("product_id", "")) != STORE_PRODUCT:
+        raise ValueError("this key is for another product")
+    if (d.get("license_key") or {}).get("status") in ("disabled", "expired"):
+        raise ValueError(f"this key is {d['license_key']['status']}")
+    return d
+
+
+def _plan(meta: dict) -> str:
+    v = f"{meta.get('variant_name', '')} {meta.get('product_name', '')}".lower()
+    return "early access" if "early" in v else "pro"
+
+
+def _today() -> str:
+    return datetime.date.today().isoformat()
+
+
 def _load() -> dict:
     try:
         return json.loads(FILE.read_text())
@@ -65,8 +112,48 @@ def _save(d: dict) -> None:
     FILE.write_text(json.dumps(d, indent=1))
 
 
+def _age(day) -> int:
+    """Days since an ISO date; a missing or edited value counts as very old. A clock set back counts as old too."""
+    try:
+        n = (datetime.date.today() - datetime.date.fromisoformat(day)).days
+    except (TypeError, ValueError):
+        return 9999
+    return n if n >= 0 else 9999
+
+
+_lock = threading.Lock()
+
+
+def _store_status(d: dict) -> dict:
+    s = d["store"]
+    if _age(s.get("checked")) >= RECHECK_DAYS and time.time() - s.get("last_try", 0) > 3600:   # at most one try an hour
+        s["last_try"] = time.time()
+        try:
+            r = _store("validate", license_key=d["key"], instance_id=s["instance"])
+            s.update(checked=_today(), plan=_plan(r.get("meta") or {}), to=(r.get("meta") or {}).get("customer_name", s.get("to", "")))
+            s.pop("error", None)
+        except ValueError as e:   # refunded, disabled, seat removed in the store
+            s["error"] = str(e)
+        except OSError:
+            pass   # offline: keep going inside the grace period
+        _save(d)
+    if s.get("error"):
+        return {"state": "invalid", "error": s["error"]}
+    if _age(s.get("checked")) > GRACE_DAYS:
+        return {"state": "invalid", "error": "could not check the key with the store for 30 days; check the internet connection"}
+    return {"state": "licensed", "plan": s.get("plan", "pro"), "to": s.get("to", ""), "id": s.get("instance", "")[:8],
+            "expires": None, "key_end": d["key"][-6:], "store": True}
+
+
 def status() -> dict:
+    with _lock:
+        return _status()
+
+
+def _status() -> dict:
     d = _load()
+    if d.get("key") and d.get("store"):
+        return _store_status(d)
     if d.get("key"):
         try:
             p = verify(d["key"])
@@ -84,18 +171,63 @@ def status() -> dict:
 
 
 def activate(key: str) -> dict:
-    verify(key)
-    d = _load()
-    d["key"] = "".join(key.split())
-    _save(d)
+    with _lock:
+        _activate(key)
     return status()
+
+
+def _activate(key: str) -> None:
+    key = "".join(key.split())
+    d = _load()
+    if _UUID.match(key):
+        import socket
+        if not STORE_PRODUCT:
+            raise ValueError("this copy is not set up for store keys yet")
+        if d.get("key") == key and d.get("store", {}).get("instance"):   # already this server's seat: just re-check it
+            d["store"]["checked"] = "2000-01-01"
+            d["store"].pop("last_try", None)
+            _save(d)
+            return
+        try:
+            r = _store("activate", license_key=key, instance_name=f"neesmo@{socket.gethostname()}"[:100])
+        except OSError as e:
+            raise ValueError(f"{e}. Activation needs the internet once.")
+        meta = r.get("meta") or {}
+        if not (r.get("instance") or {}).get("id"):
+            raise ValueError("the store did not register this server; try again")
+        _release(d)
+        d["key"], d["store"] = key, {"instance": (r.get("instance") or {}).get("id", ""), "checked": _today(),
+                                     "plan": _plan(meta), "to": meta.get("customer_name", "")}
+    else:
+        verify(key)
+        _release(d)
+        d["key"] = key
+        d.pop("store", None)
+    _save(d)
+
+
+def _release(d: dict) -> None:
+    """Free this server's seat in the store (best effort)."""
+    if d.get("key") and d.get("store", {}).get("instance"):
+        try:
+            _store("deactivate", license_key=d["key"], instance_id=d["store"]["instance"])
+        except (OSError, ValueError):
+            pass
 
 
 def remove() -> dict:
-    d = _load()
-    d.pop("key", None)
-    _save(d)
+    with _lock:
+        d = _load()
+        _release(d)
+        d.pop("key", None)
+        d.pop("store", None)
+        _save(d)
     return status()
+
+
+def allowed() -> bool:
+    """False only for a product copy whose trial ended with no working key."""
+    return status()["state"] in ("owner", "licensed", "trial")
 
 
 def issue(plan: str, to: str, expires: str | None = None) -> str:

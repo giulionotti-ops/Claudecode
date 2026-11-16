@@ -189,6 +189,18 @@ app.mount("/static", StaticFiles(directory=HERE / "static"), name="static")
 PUBLIC = {"/welcome", "/login", "/api/login", "/api/setup", "/api/auth/state", "/manifest.webmanifest", "/sw.js"}
 
 
+_PAID = re.compile(r"^/+api/+(chat|speak|transcribe|upload|agents/+[^/]+/+chat(/+key)?)/*$")
+
+
+@app.middleware("http")
+async def require_license(request: Request, call_next):
+    """A product copy whose trial ended keeps its settings, license and guide pages, but stops doing work."""
+    if license.PRODUCT and request.method == "POST" and _PAID.match(request.url.path) \
+            and not await asyncio.to_thread(license.allowed):
+        return JSONResponse({"detail": "Your Neesmo trial has ended. Add a key in Settings → License."}, status_code=402)
+    return await call_next(request)
+
+
 @app.middleware("http")
 async def require_login(request: Request, call_next):
     if not auth.ENABLED or request.url.path in PUBLIC or request.url.path.startswith("/static/"):
@@ -257,7 +269,7 @@ class LicenseIn(BaseModel):
 
 @app.get("/api/license")
 def license_get():
-    return license.status()
+    return {**license.status(), "buy": license.BUY_URL}
 
 
 @app.post("/api/license")

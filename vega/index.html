@@ -282,7 +282,7 @@
   .rlink { font: 10.5px var(--mono); color: var(--dim); align-self: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   .licf { display: flex; gap: 6px; margin: 6px 0 2px; position: static; max-width: none; } .licf input { flex: 1; min-width: 0; padding: 7px 8px; font-size: max(16px, 1em); }
   .licf button { padding: 6px 10px; } .licf[hidden] { display: none; } .licmsg { display: block; min-height: 1em; color: var(--err); }
-  .links { display: flex; gap: 14px; margin-top: 4px; font-size: 12px; } .links a { color: var(--c2); }
+  .links { display: flex; gap: 14px; margin: 4px 0 8px; font-size: 12px; } .links a { color: var(--c2); }
 
   /* motion (ideas from remocn: staggered reveals, text decode, count-ups, springy panels, light sweeps) */
   .boot .agent { animation: cardin .7s cubic-bezier(.2,.9,.25,1.15) both; animation-delay: calc(var(--i, 0) * 80ms + 150ms); }
@@ -345,6 +345,7 @@
     <ul class="nlist aglist" id="aglist"></ul>
   </section>
   <section class="tab" data-tab="system" role="tabpanel" hidden>
+    <div class="links"><a href="/guide" target="_blank" rel="noopener">Guide</a><a href="/welcome" target="_blank" rel="noopener">Website</a><a href="#notices" id="to-notices">Licenses</a></div>
     <h3>Plugins</h3>
     <ul class="xlist" id="plist"><li><small>loading…</small></li></ul>
     <h3>Skills</h3>
@@ -354,16 +355,16 @@
       <div class="nhead"><h3>Devices</h3><button type="button" id="logout">Sign out</button></div>
       <ul class="nlist" id="devlist"></ul>
     </div>
+    <h3>Open-source licenses</h3>
+    <small class="sub">Everything Neesmo ships or installs, and the license each one uses.</small>
+    <div id="notices"><small>loading…</small></div>
   </section>
   <section class="tab" data-tab="license" role="tabpanel" hidden>
     <h3>Your key</h3>
     <div class="row"><small>Status</small><small id="lic-state">…</small></div>
     <form id="lic-form" class="licf" hidden><input id="lic-key" placeholder="License key" aria-label="License key" autocomplete="off" spellcheck="false"><button type="submit">Activate</button></form>
     <small id="lic-msg" class="licmsg"></small>
-    <div class="links"><a href="/guide" target="_blank" rel="noopener">Guide</a><a href="/welcome" target="_blank" rel="noopener">Website</a><a href="#" id="lic-rm" hidden>Remove key</a></div>
-    <h3>Open-source licenses</h3>
-    <small class="sub">Everything Neesmo ships or installs, and the license each one uses.</small>
-    <div id="notices"><small>loading…</small></div>
+    <div class="links"><a href="#" id="lic-buy" target="_blank" rel="noopener" hidden>Buy a key</a><a href="#" id="lic-rm" hidden>Remove key</a></div>
   </section>
 </div>
 <div class="pop" id="pop-n" hidden role="dialog" aria-label="Notifications">
@@ -854,7 +855,7 @@ function togglePop(btn, pop, open = pop.hidden) {
   pop.hidden = !open; btn.setAttribute('aria-expanded', String(open));
   if (open && pop.id === 'pop-n') { loadNotes(); pushState().catch(() => {}); }
 }
-$('#gear').onclick = () => { togglePop($('#gear'), $('#pop-s')); if (!$('#pop-s').hidden) showTab(settingsTab); };
+$('#gear').onclick = () => { togglePop($('#gear'), $('#pop-s')); if (!$('#pop-s').hidden) { loadLicense(); showTab(settingsTab); } };
 // ── agents editor ──
 let agCfg = { agents: [], colors: [] }, agEdit = -1, agColor = '';
 async function loadAgentCfg() {
@@ -888,15 +889,16 @@ function showTab(t) {
   for (const b of document.querySelectorAll('.tabs [data-tab]')) b.setAttribute('aria-selected', String(b.dataset.tab === t));
   document.querySelector(`.tabs [data-tab="${t}"]`)?.scrollIntoView({ block: "nearest", inline: "nearest" });
   for (const p of document.querySelectorAll('.tab')) p.hidden = p.dataset.tab !== t;
-  ({ general: welPreview, agents: loadAgentCfg, system: () => { loadExtensions(); loadDevices(); }, license: () => { loadLicense(); loadNotices(); } }[t] || (() => {}))();
+  ({ general: welPreview, agents: loadAgentCfg, system: () => { loadExtensions(); loadDevices(); loadNotices(); }, license: loadLicense }[t] || (() => {}))();
 }
+$('#to-notices').onclick = e => { e.preventDefault(); $('#notices').scrollIntoView({ behavior: 'smooth', block: 'start' }); };
 $('.tabs').onclick = e => { const b = e.target.closest('[data-tab]'); if (b) showTab(b.dataset.tab); };
 // ── skills and plugins (Settings → System) ──
 async function loadExtensions() {
   let x; try { x = await (await api('/api/extensions')).json(); } catch (e) { $('#plist').innerHTML = $('#slist').innerHTML = `<li><small>${esc(e.message)}</small></li>`; return; }
   const row = (kind, id, name, on, desc, lic) => `<li><div class="xi"><b>${esc(name)}</b>${lic ? `<span class="lchip">${esc(lic)}</span>` : ''}${desc ? `<span class="xd">${esc(desc)}</span>` : ''}</div>
     <button type="button" class="tog" role="switch" aria-checked="${on}" aria-label="${esc(name)}" data-kind="${kind}" data-x="${esc(id)}"></button></li>`;
-  $('#plist').innerHTML = x.plugins.map(p => row('plugins', p.id, p.name, p.on, p.version ? 'v' + p.version : '', p.license)).join('') || '<li><small>No user-wide plugins installed.</small></li>';
+  $('#plist').innerHTML = x.plugins.map(p => row('plugins', p.id, p.name, p.on, p.suggested ? p.description + ' · installs when switched on' : (p.version ? 'v' + p.version : ''), p.license)).join('') || '<li><small>No user-wide plugins installed.</small></li>';
   $('#slist').innerHTML = x.skills.map(k => row('skills', k.name, k.name, k.on, k.description, k.license)).join('')
     || `<li><small>No general skills in ${esc(x.skills_dir)}. Skills inside a project folder belong to that project.</small></li>`;
 }
@@ -904,6 +906,7 @@ document.querySelector('#pop-s').addEventListener('click', async e => {
   const t = e.target.closest('.tog[data-x]'); if (!t) return;
   const on = t.getAttribute('aria-checked') !== 'true';
   t.setAttribute('aria-busy', 'true'); t.setAttribute('aria-checked', String(on));
+  if (on && t.closest('li')?.textContent.includes('installs when')) $('#x-note').textContent = `Installing ${t.getAttribute('aria-label')}… this can take a minute.`;
   try { await api(`/api/${t.dataset.kind}/${encodeURIComponent(t.dataset.x)}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ on }) });
     $('#x-note').textContent = `${t.getAttribute('aria-label')} ${on ? 'on' : 'off'}. New Claude sessions pick it up; running ones keep what they started with.`; }
   catch (err) { t.setAttribute('aria-checked', String(!on)); $('#x-note').textContent = err.message; }
@@ -1047,6 +1050,10 @@ function showLicense(l) {
   const txt = { owner: 'Owner copy · no key needed', licensed: `Licensed · ${l.plan || 'pro'}${l.to ? ' · ' + l.to : ''}${l.expires ? ' · until ' + l.expires : ''}`,
     trial: `Trial · ${l.days_left} day${l.days_left === 1 ? '' : 's'} left`, expired: 'Trial ended · add a key', invalid: 'Key problem: ' + (l.error || '') };
   $('#lic-state').textContent = txt[l.state] || l.state;
+  $('.tabs [data-tab="license"]').hidden = l.state === 'owner';
+  if (l.state === 'owner' && settingsTab === 'license' && !$('#pop-s').hidden) showTab('system');
+  if (l.state === 'licensed' && /early/.test(l.plan || '')) $('#lic-state').textContent += ' · thank you for backing Neesmo early. Every update is yours, free.';
+  const buy = $('#lic-buy'); buy.hidden = !l.buy || !['trial', 'expired', 'invalid'].includes(l.state); if (l.buy) buy.href = l.buy;
   $('#lic-form').hidden = l.state === 'owner' || l.state === 'licensed'; $('#lic-rm').hidden = l.state !== 'licensed' && l.state !== 'invalid';
 }
 async function loadLicense() { try { showLicense(await (await api('/api/license')).json()); } catch { $('#lic-state').textContent = 'unknown'; } }
@@ -1211,7 +1218,7 @@ function layoutHud() {
   if (document.body.classList.contains('chat')) {   // chat open: the ring sits large and dim behind the conversation
     const vv = window.visualViewport, vt = vv ? vv.offsetTop : 0, cs = getComputedStyle(document.documentElement);
     const kb = parseFloat(cs.getPropertyValue('--kb')) || 0, vh = Math.max(200, innerHeight - kb - vt);   // the part of the screen above the keyboard
-    hud.tR = Math.min(innerWidth, vh) * .3; hud.tcy = vt + vh / 2; $('#wordmark').style.top = `${hud.tcy}px`; return;
+    hud.tR = Math.min(innerWidth, vh) * .3; hud.tcy = vt + vh / 2; return;
   }
   const top = narrow ? $('.corner.tr').getBoundingClientRect().bottom + 6 : 0;
   const cards = $('#agents-l'), cardTop = cards.children.length ? cards.getBoundingClientRect().top : innerHeight - 160;
@@ -1219,8 +1226,13 @@ function layoutHud() {
   const avail = Math.max(120, bottom - top - gap);
   hud.tR = Math.max(40, Math.min(Math.min(innerWidth, innerHeight) * .22, avail / 3.4, innerWidth / 3.6));
   hud.tcy = top + avail / 2;
-  statusEl.style.top = `${hud.tcy + hud.tR * 1.45}px`;
-  $('#wordmark').style.top = `${hud.tcy}px`;
+}
+// The wordmark and status line ride on the ring's glide, so all three move together.
+let markY = -1, statY = -1;
+function followRing() {
+  const y = Math.round(hud.cy * 2) / 2, sy = Math.round((hud.cy + hud.R * 1.45) * 2) / 2;
+  if (y !== markY) { markY = y; $('#wordmark').style.top = `${y}px`; }
+  if (sy !== statY && !document.body.classList.contains('chat')) { statY = sy; statusEl.style.top = `${sy}px`; }
 }
 // Wordmark: measured so the slanted word fills ~94% of a phone's width (62% on desktop), centred.
 function fitWordmark() {
@@ -1234,7 +1246,7 @@ addEventListener('resize', layoutHud); setInterval(layoutHud, 1000); layoutHud()
 function frame(t) {
   if (!hud.init && hud.tR) { hud.cy = hud.tcy; hud.R = hud.tR; hud.init = true; }
   const k = reduce ? 1 : .09;   // glide, never jump
-  hud.cy += (hud.tcy - hud.cy) * k; hud.R += (hud.tR - hud.R) * k;
+  hud.cy += (hud.tcy - hud.cy) * k; hud.R += (hud.tR - hud.R) * k; followRing();
   t = reduce ? 0 : t / 1000;
   if (analyser && mode !== 'idle' && mode !== 'thinking') { analyser.getByteFrequencyData(data); level += (data.reduce((a, b) => a + b, 0) / data.length / 255 * 2.2 - level) * .3; }
   else level *= .9;

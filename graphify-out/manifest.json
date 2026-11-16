@@ -3912,9 +3912,9 @@
     "semantic_hash": ""
   },
   "vega/server.py": {
-    "mtime": 1794775024.2282631,
-    "seen": 1794775937.5381927,
-    "ast_hash": "51522dfe0f2e5352e30f5078693ea338",
+    "mtime": 1794786922.5234082,
+    "seen": 1794786968.9952817,
+    "ast_hash": "51eae9c66a1e5c4dd0380ed106c4c041",
     "semantic_hash": ""
   },
   "vega/static/sw.js": {
@@ -8586,9 +8586,9 @@
     "semantic_hash": ""
   },
   "vega/index.html": {
-    "mtime": 1794775706.8383443,
-    "seen": 1794775937.5406027,
-    "ast_hash": "abdf58e17faef9436c381f1ed36140bf",
+    "mtime": 1794818767.1337702,
+    "seen": 1794818801.5110874,
+    "ast_hash": "5c52f9367fa27fb71164f2757ef374e0",
     "semantic_hash": ""
   },
   "vega/requirements.txt": {
@@ -16062,15 +16062,15 @@
     "semantic_hash": ""
   },
   "vega/license.py": {
-    "mtime": 1794768075.0989404,
-    "seen": 1794768453.0056338,
-    "ast_hash": "ad68e59da3c721112462618c58286607",
+    "mtime": 1794786922.5224082,
+    "seen": 1794786968.995276,
+    "ast_hash": "6780af694497edf87e96c18d328448c4",
     "semantic_hash": ""
   },
   "vega/static/guide.html": {
-    "mtime": 1794776498.7721348,
-    "seen": 1794776527.9196413,
-    "ast_hash": "3dc160bd8840450b9fb848658c8e1997",
+    "mtime": 1794818769.1507561,
+    "seen": 1794818801.511098,
+    "ast_hash": "f8351932b8f7f5d3b5dad73b39b27b57",
     "semantic_hash": ""
   },
   "vega/static/landing.html": {
@@ -16098,9 +16098,123 @@
     "semantic_hash": ""
   },
   "vega/extensions.py": {
-    "mtime": 1794775730.8252773,
-    "seen": 1794775937.5381782,
-    "ast_hash": "65e4d075df99bf4368cd3ae74c492073",
+    "mtime": 1794818678.5024035,
+    "seen": 1794818801.5094664,
+    "ast_hash": "a40a7daca97b2bb40f2ec554176304c8",
+    "semantic_hash": ""
+  },
+  "site/assets/backgrounds/backgrounds.js": {
+    "mtime": 1794786620.1390226,
+    "seen": 1794786830.5591533,
+    "ast_hash": "addbc522bccf5b00d644bf02377d0192",
+    "semantic_hash": ""
+  },
+  "site/assets/layout/layout.js": {
+    "mtime": 1794786621.1410196,
+    "seen": 1794786830.5606785,
+    "ast_hash": "80c8e3b5876e2b0d8394f50e825b5b33",
+    "semantic_hash": ""
+  },
+  "site/assets/moments/letters-assemble/moment.js": {
+    "mtime": 1794786621.1940196,
+    "seen": 1794786830.5607102,
+    "ast_hash": "da799242b4e9881fe81a2284e4f333b4",
+    "semantic_hash": ""
+  },
+  "site/assets/moments/lib.js": {
+    "mtime": 1794786621.1940196,
+    "seen": 1794786830.5607119,
+    "ast_hash": "73f48dd375df1de26fcc71349cd93ed5",
+    "semantic_hash": ""
+  },
+  "site/assets/moments/moments.js": {
+    "mtime": 1794786621.2090194,
+    "seen": 1794786830.5607285,
+    "ast_hash": "274702695c122c8cc5f884f0ef6ea414",
+    "semantic_hash": ""
+  },
+  "site/assets/motion/motion.js": {
+    "mtime": 1794786621.2850192,
+    "seen": 1794786830.5607502,
+    "ast_hash": "37f5401f9ea77424bd9f3f81ce8a8581",
+    "semantic_hash": ""
+  },
+  "site/assets/system.js": {
+    "mtime": 1794786621.9120173,
+    "seen": 1794786830.5608864,
+    "ast_hash": "8e0053b10e34e7162f77014b193144cc",
+    "semantic_hash": ""
+  },
+  "site/assets/ui/ui.js": {
+    "mtime": 1794786622.1490166,
+    "seen": 1794786830.5609698,
+    "ast_hash": "b89ec13bdecccd4094cec5278b476c5d",
+    "semantic_hash": ""
+  },
+  "docs/neesmo-selling.md": {
+    "mtime": 1794789085.5292187,
+    "seen": 1794789100.6038735,
+    "ast_hash": "c4c0d6316b5772c2f5c94c761f9cc6c0",
+    "semantic_hash": ""
+  },
+  "site/assets/icons/android.svg": {
+    "mtime": 1794787240.8639114,
+    "seen": 1794789100.6073802,
+    "ast_hash": "43e9856af5d3b33f09a5da2542e95246",
+    "semantic_hash": ""
+  },
+  "site/assets/icons/apple.svg": {
+    "mtime": 1794787240.8119116,
+    "seen": 1794789100.6073835,
+    "ast_hash": "661ac793103ef0d63ee576ad928999fe",
+    "semantic_hash": ""
+  },
+  "site/assets/icons/claude-code.svg": {
+    "mtime": 1794787240.8829112,
+    "seen": 1794789100.6073866,
+    "ast_hash": "328f1e77685c99b562733d49dd37ec56",
+    "semantic_hash": ""
+  },
+  "site/assets/icons/cloudflare.svg": {
+    "mtime": 1794787240.8659112,
+    "seen": 1794789100.6073892,
+    "ast_hash": "ca670f08865709b0862c3e259e62ee49",
+    "semantic_hash": ""
+  },
+  "site/assets/icons/linux-tux.svg": {
+    "mtime": 1794787240.8789113,
+    "seen": 1794789100.6073918,
+    "ast_hash": "b1e7a761eb4e4a2c5f12119fcc076091",
+    "semantic_hash": ""
+  },
+  "site/img/hud-phone.webp": {
+    "mtime": 1794786913.7914882,
+    "seen": 1794786969.0027108,
+    "ast_hash": "ff7447517cb44dfe6a7f46d7d90ba32e",
+    "semantic_hash": ""
+  },
+  "site/index.html": {
+    "mtime": 1794789014.6928997,
+    "seen": 1794789100.6039567,
+    "ast_hash": "3e53e8d4c380e0a5e4a59721b74f8a24",
+    "semantic_hash": ""
+  },
+  "site/assets/icons/tmux.svg": {
+    "mtime": 1794786941.021241,
+    "seen": 1794789100.6073945,
+    "ast_hash": "658b0cd346d9e56716bcf5d94e84eb96",
+    "semantic_hash": ""
+  },
+  "site/favicon.svg": {
+    "mtime": 1794787069.7431614,
+    "seen": 1794789100.6073976,
+    "ast_hash": "443e3cd5e22512b5928ee39d4db4e1c5",
+    "semantic_hash": ""
+  },
+  "site/share.jpg": {
+    "mtime": 1794788922.6023684,
+    "seen": 1794789100.6074047,
+    "ast_hash": "8069620aa94487b29ca69c78234815f0",
     "semantic_hash": ""
   }
 }
