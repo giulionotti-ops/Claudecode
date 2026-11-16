@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Neesmo: a voice command centre for Claude Code on your own server</title>
-<meta name="description" content="Neesmo is a command centre for Claude Code on your own Linux server: one voice ring, one card per agent. Early access is $49 once, with a 14-day free trial.">
+<title>Neesmo: a voice command centre for Claude Code on your own computer</title>
+<meta name="description" content="Neesmo is a command centre for Claude Code on your own Linux PC or server: one voice ring, one card per agent. Early access is $49 once, with a 14-day free trial.">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Neesmo: a voice command centre for Claude Code on your own server">
-<meta property="og:description" content="One voice ring, one card per agent, running on your own Linux server. Early access $49 once.">
+<meta property="og:title" content="Neesmo: a voice command centre for Claude Code on your own computer">
+<meta property="og:description" content="One voice ring, one card per agent, running on your own Linux PC or server. Early access $49 once.">
 <meta property="og:image" content="share.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="favicon.svg" type="image/svg+xml">
@@ -153,7 +153,7 @@
       <div class="hero__c">
         <a class="pill" href="#pricing"><span>Early access</span><span class="muted"><span data-assumed>$49</span> once, half the full price</span></a>
         <h1 id="hero-h" aria-label="A voice command centre for Claude Code"><span class="ly-mark" aria-hidden="true"></span> A voice command centre for Claude Code</h1>
-        <p class="hero__lead">Talk to one screen and Neesmo passes the job to the right agent. It runs on your own Linux server, free for 14 days.</p>
+        <p class="hero__lead">Talk to one screen and Neesmo passes the job to the right agent. It runs on your own Linux PC or server, free for 14 days.</p>
         <div class="btn-row"><a class="btn btn--primary" href="#pricing">Buy early access</a><a class="btn btn--secondary" href="#how">Read the guide</a></div>
       </div>
       <div class="hero__window" role="img" aria-label="The Neesmo screen: a glowing voice ring, agent cards on both sides, and Neesmo answering what every agent is doing">
@@ -200,7 +200,7 @@
         </article>
         <article class="card card--row card--open span-6">
           <h3>Answer from the Neesmo agent card</h3>
-          <p>An agent's questions and permission prompts show up as buttons. You can tmux attach to the same session, or open it in the Claude app.</p>
+          <p>An agent's questions and permission prompts show up as buttons. The chat is the same conversation as in the Claude app, both ways, and videos, audio and pictures the agent makes play right in it. Hold a message to copy it or hear it read aloud.</p>
           <div class="panel" role="img" aria-label="A chat with the Website agent: a permission prompt with Allow and Deny buttons">
             <div class="stage"><div class="at-rise fit"><div class="ui ui-panel ui-chat" aria-hidden="true">
               <div class="ui-head"><span class="ui-agent" aria-hidden="true"></span><div class="ui-title">Website</div><span class="ui-chat__online">Working</span></div>
@@ -260,7 +260,7 @@
     <div class="wrap">
       <div class="section-head">
         <h2 id="bundle-h">The Neesmo installer</h2>
-        <p>Run ./install.sh on your Linux server. It sets up Neesmo and the open-source tools around it.</p>
+        <p>Run ./install.sh on your Linux PC or server. It sets up Neesmo and the open-source tools around it.</p>
       </div>
       <div class="grid grid--top">
         <div class="span-6" role="img" aria-label="The installer printing a tick for each part">
@@ -304,7 +304,7 @@
           <ul class="checks">
             <li>Every update, including the full release</li>
             <li>14-day free trial first</li>
-            <li>One key works on 2 servers</li>
+            <li>One key works on 2 computers</li>
           </ul>
           <!-- client: replace with the Lemon Squeezy checkout URL -->
           <a class="btn btn--primary" href="https://neesmo.example/buy">Buy early access<svg class="m-arrow" viewBox="0 0 12 12" aria-hidden="true"><path class="m-arrow__stem" d="M1 6h8"/><path class="m-arrow__head" d="M4.5 2.5 8 6l-3.5 3.5"/></svg></a>
@@ -312,7 +312,7 @@
         <article class="card card--row span-6">
           <h3>Neesmo requirements</h3>
           <ul class="checks">
-            <li>A Linux server</li>
+            <li>A Linux PC or server (Windows works through WSL)</li>
             <li>Claude Code signed in with your own Claude plan or API key</li>
             <li>tmux, which the installer adds</li>
           </ul>
@@ -329,7 +329,8 @@
       <div class="section-head span-6"><h2 id="faq-h">Neesmo questions before you buy</h2>
         <div class="logos"><img class="ic" data-icon="claude-code" src="assets/icons/claude-code.svg" alt="Claude Code" width="40" height="25"><img class="ic" data-icon="tmux" src="assets/icons/tmux.svg" alt="tmux" width="40" height="40"><img class="ic" data-icon="linux-tux" src="assets/icons/linux-tux.svg" alt="Linux" width="34" height="40"></div></div>
       <div class="faq span-6 start-7">
-        <div class="faq__item"><h3>How does the Neesmo license check work?</h3><p>Your own server checks the key. It checks in with the store about once a week, and a key works on 2 servers.</p></div>
+        <div class="faq__item"><h3>Do I need a VPS for Neesmo?</h3><p>No. A home PC running Linux works, and so does Windows through WSL. Agents only work while it is switched on, so a small VPS suits you if you want them running all day.</p></div>
+        <div class="faq__item"><h3>How does the Neesmo license check work?</h3><p>Your own computer checks the key. It checks in with the store about once a week, and a key works on 2 computers.</p></div>
         <div class="faq__item"><h3>Is Claude usage included in Neesmo?</h3><p>No. Neesmo runs on your Claude Code, signed in with your own Claude plan or API key.</p></div>
         <div class="faq__item"><h3>Do I pay again for Neesmo updates?</h3><p>No. Early access keeps every update for free, including the full release.</p></div>
         <div class="faq__item"><h3>Can I try Neesmo first?</h3><p>Yes, for 14 days, free.</p></div>
@@ -352,7 +353,7 @@
       <div class="grid">
         <div class="span-4 stack-4">
           <a class="nav__logo" href="#top">Neesmo</a>
-          <p class="footer__lede">A command centre for Claude Code, on your own server.</p>
+          <p class="footer__lede">A command centre for Claude Code, on your own computer.</p>
         </div>
         <div class="span-2 start-7 footer__col"><h3>Product</h3><ul><li><a href="#how">How it works</a></li><li><a href="#approvals">Approvals</a></li><li><a href="#bundle">Installer</a></li></ul></div>
         <div class="span-2 footer__col"><h3>Buy</h3><ul><li><a href="#pricing">Pricing</a></li><li><a href="#faq">FAQ</a></li></ul></div>
