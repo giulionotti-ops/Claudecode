@@ -4,8 +4,8 @@ import json, base64, os, urllib.request
 HERE = os.path.dirname(os.path.abspath(__file__))
 VOICE = 'TX3LPaxmHKxFdv7VOQHJ'   # Liam - Energetic, Social Media Creator
 text = open(os.path.join(HERE, 'script.txt')).read().strip()
-body = json.dumps({'text': text, 'model_id': 'eleven_multilingual_v2',
-                   'voice_settings': {'stability': .5, 'similarity_boost': .8, 'style': .3, 'speed': 1.05}}).encode()
+body = json.dumps({'text': text, 'model_id': 'eleven_v3',   # Liam v3: the owner's pick (more human than multilingual v2)
+                   'voice_settings': {'stability': .5, 'similarity_boost': .8}}).encode()
 req = urllib.request.Request(f'https://api.elevenlabs.io/v1/text-to-speech/{VOICE}/with-timestamps', body,
                              {'Content-Type': 'application/json', 'xi-api-key': os.environ.get('ELEVENLABS_API_KEY', 'proxy-injected')})
 r = json.load(urllib.request.urlopen(req, timeout=300))
