@@ -7,3 +7,4 @@ Props and backgrounds: Kenney (kenney.nl), CC0.
 "Animated Free Bison" by Anees Animates (https://sketchfab.com/AneesAnimates), CC Attribution, https://sketchfab.com/3d-models/animated-free-bison-be2dcd97db1c4b9c91a7728d9bc89925 (stands in for the yak, shaggy highland bovine, recolored)
 "European Dragon" by Regina Cachoa (https://sketchfab.com/ReginaCachoa), CC Attribution, https://sketchfab.com/3d-models/european-dragon-82f393a2e6c048ad80c171ce3b3a7b87
 "Animated Megatherium (Free)" by Anees Animates (https://sketchfab.com/AneesAnimates), CC Attribution, https://sketchfab.com/3d-models/animated-megatherium-free-ec0cb6a41c2e498780136e3d89fa1516
+"Low Poly Giant Sloth" by rkuhlf (https://sketchfab.com/rkuhlf), CC Attribution, https://sketchfab.com/3d-models/low-poly-giant-sloth-897500582c5c4c81b01271a7f0c2e322
