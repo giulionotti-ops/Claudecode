@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Neesmo Guide</title>
+<link rel="icon" type="image/png" href="/static/icon-192.png">
+<meta name="theme-color" content="#02070d">
+<style>
+  :root { --rgb: 61,255,143; --c: rgb(var(--rgb)); --c2: #c6ff4a; --bg: #02070d; --txt: #cfeedd; --mute: #8fb8a2; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--txt); font: 15px/1.65 ui-monospace, "SF Mono", Menlo, Consolas, monospace; }
+  .wrap { width: min(860px, 100% - 32px); margin: 0 auto; padding: 28px 0 60px; display: grid; grid-template-columns: 190px 1fr; gap: 40px; }
+  aside { position: sticky; top: 20px; align-self: start; font-size: 13px; }
+  aside b { display: block; letter-spacing: .35em; color: var(--c); margin-bottom: 14px; }
+  aside a { display: block; color: var(--mute); text-decoration: none; padding: 3px 0; } aside a:hover { color: var(--c); }
+  h1 { margin: 0 0 6px; font-size: 26px; color: #eafff2; } h1 + p { color: var(--mute); margin-top: 0; }
+  h2 { margin: 40px 0 10px; font-size: 13px; letter-spacing: .25em; text-transform: uppercase; color: var(--c); scroll-margin-top: 20px; }
+  p, li { color: var(--txt); } li { margin: 4px 0; }
+  code { background: rgba(var(--rgb),.12); padding: 1px 6px; border-radius: 4px; color: var(--c2); }
+  pre { background: rgba(0,0,0,.5); border: 1px solid rgba(var(--rgb),.2); border-radius: 8px; padding: 12px 14px; overflow-x: auto; }
+  pre code { background: none; padding: 0; }
+  a { color: var(--c); }
+  kbd { border: 1px solid rgba(var(--rgb),.4); border-radius: 4px; padding: 0 5px; font-size: 12px; }
+  @media (max-width: 700px) { .wrap { grid-template-columns: 1fr; gap: 10px; } aside { position: static; display: flex; flex-wrap: wrap; gap: 4px 14px; } aside b { width: 100%; margin: 0; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+<aside><b>NEESMO</b><a href="/">← Back to Neesmo</a><a href="#start">Getting started</a><a href="#commands">Commands</a><a href="#chat">Chat screen</a><a href="#agents">Agents</a><a href="#settings">Settings</a><a href="#approvals">Approvals</a><a href="#phone">Phone app</a><a href="#access">Access and login</a><a href="#bundle">Bundle</a><a href="#license">License</a><a href="#trouble">Troubleshooting</a></aside>
+<main>
+<h1>Neesmo guide</h1>
+<p>Everything you need to run Claude Code from one screen.</p>
+
+<h2 id="start">Getting started</h2>
+<ol>
+  <li>On your server, sign in to Claude Code once: <code>claude</code>.</li>
+  <li>Run the installer from the Neesmo folder: <code>./install.sh</code> (add <code>--all</code> to install every extra without questions).</li>
+  <li>Open Neesmo. The first visit asks for the setup code from the server log and a password you choose:
+<pre><code>journalctl -u neesmo | grep -i "setup code"</code></pre></li>
+  <li>Open Settings (the gear) and add your agents.</li>
+</ol>
+
+<h2 id="commands">Commands</h2>
+<p>Hold the mic or type in the bar at the bottom. Neesmo answers, and passes jobs to the right agent. Ask things like:</p>
+<ul><li>"What is every agent doing right now?"</li><li>"Ask the website agent to fix the contact form."</li><li>"Summarise today's commits."</li></ul>
+
+<h2 id="chat">Chat screen</h2>
+<p>Tap the command bar to open the chat. The cards step aside and the HUD stays. Typed answers can use lists and code. Use the paperclip to attach files (up to 50 MB each), <b>New chat</b> to start fresh, and <b>← Back</b> or <kbd>Esc</kbd> to return.</p>
+
+<h2 id="agents">Agents</h2>
+<p>An agent is a Claude Code session with its own folder and job brief. Each one is a card on the main screen.</p>
+<ul>
+  <li><b>Add or edit:</b> Settings → Agents. Give it a name, a folder (inside your home folder) and a short job description.</li>
+  <li><b>Open a card</b> to see its status, today's numbers and what it's doing now. <b>Details</b> shows requests, activity, tools and commits.</li>
+  <li><b>Chat with it</b> from the card. The chat is the agent's real Claude Code session: an interactive <code>claude</code> running in a tmux session in the agent's folder, the same thing you'd get in a terminal there. Neesmo starts it the first time you write (continuing the folder's last conversation), types your messages into it and shows the replies (the tool steps in between are left out). Close the card any time: it keeps working and Neesmo notifies you when it replies.</li>
+  <li><b>Questions and permissions:</b> when Claude asks you to pick an option, the choices show up as buttons in the chat.</li>
+  <li><b>Use a terminal too:</b> the card shows the command, for example <code>tmux attach -t neesmo-website</code>. Whatever you type there shows up in Neesmo, and the other way round.</li>
+  <li><b>Stop</b> presses Esc in the session; <b>New thread</b> runs <code>/clear</code>.</li>
+  <li><b>Agent settings:</b> the gear in an agent's chat (or its row in Settings → Agents) opens three tabs. <b>Appearance:</b> name, card label and colour. <b>Job:</b> what it works on, its folder and how it should work. <b>Plugins:</b> only the plugins that fit its job (a video agent doesn't get code-review tools); switches apply to that agent's folder alone, and its next session picks them up.</li>
+  <li><b>Claude app:</b> the sessions Neesmo starts also join Remote Control, so you can open the same chat in the Claude app on your phone or desktop (the installer sets <code>NEESMO_RC=1</code>; it needs a Claude.ai login, so set it to <code>0</code> in <code>~/.config/neesmo/neesmo.env</code> if you use an API key). A folder already run by <code>claude remote-control</code> works too: what you type in Neesmo is handed to that session and shows up in the app, and the other way round. Only Stop and New thread need the app there.</li>
+</ul>
+
+<h2 id="settings">Settings</h2>
+<p>Tap the gear. Settings are split into tabs:</p>
+<ul>
+  <li><b>General:</b> the welcome greeting Neesmo shows (and can say out loud) when you open it. It is saved on the server, so every device greets the same way. Set your name and the message; <code>{greeting}</code>, <code>{name}</code> and <code>{busy}</code> are filled in for you. Also the voice.</li>
+  <li><b>Appearance:</b> colour, text size, the big NEESMO lettering, scan lines (thin lines over the screen like an old CRT monitor) and calm motion. Saved per device.</li>
+  <li><b>Agents:</b> add, edit and reorder agents. Drag a row, or drag the cards on the home screen; on a phone, hold a card for a moment, then move it. It snaps into place and the order is saved on the server.</li>
+  <li><b>System:</b> links to this guide, the website and the open-source licenses, and switches for the universal Claude Code plugins and skills (the ones every session on the server gets). Job plugins (code, git, GitHub, web) sit in a folded group below: switched on there they run in every chat, so it is better to switch them on per agent. Popular plugins from the official store are listed too and install when you switch them on. Changes apply to sessions started afterwards. Skills inside a project folder belong to that project and are not listed.</li>
+  <li><b>License:</b> your key, and every open-source part Neesmo ships or installs with its license.</li>
+</ul>
+
+<h2 id="approvals">Approvals</h2>
+<p>When an agent needs permission for something, Neesmo sends a notification. Approve, deny, or ignore it right from the notification list without opening it. Ignored requests time out on their own.</p>
+
+<h2 id="phone">Phone app</h2>
+<p>On iPhone, open Neesmo in Safari, tap Share → Add to Home Screen, then open it from the home screen and turn on notifications from the bell. On Android, use the browser menu → Install app.</p>
+
+<h2 id="access">Access and login</h2>
+<p>Neesmo listens on <code>127.0.0.1</code>. To reach it from anywhere, put it behind a Cloudflare Tunnel (<code>./install.sh --tunnel</code> shows how) or your own private network. Each device signs in once and is remembered for a year. See and sign out devices in Settings → Devices. Changing the password signs out every other device.</p>
+<p>If you turn login off (<code>NEESMO_AUTH=0</code>), Neesmo answers only to an IP address, a local name or a Tailscale name. Add any other name to <code>NEESMO_HOSTS</code> in <code>~/.config/neesmo/neesmo.env</code>. Keep login on whenever Neesmo is reachable from the internet.</p>
+
+<h2 id="bundle">Bundle</h2>
+<ul>
+  <li><b>OmniRoute</b>: a local gateway to free models, for cheap text jobs. Add providers with <code>omniroute providers add</code>.</li>
+  <li><b>graphify</b>: builds a knowledge graph of a codebase so agents find code faster.</li>
+  <li><b>claude-mem</b>: long-term memory across Claude Code sessions.</li>
+  <li><b>caveman</b>: a plugin that makes Claude answer short and plain while keeping every technical detail. Turn it off in Settings → System if you prefer long answers.</li>
+  <li><b>Skill pack</b>: 55 skills for engineering, code review, video making, reading links and finding the right skill for a job.</li>
+</ul>
+
+<h2 id="license">License</h2>
+<p>Neesmo runs as a 14-day trial. When it ends, your settings and agents stay, but Neesmo stops answering until you add a key. Paste your key in Settings → License.</p>
+<ul>
+  <li><b>Store keys</b> (from the purchase email) are activated once over the internet, then checked with the store about once a week. If the store can't be reached, Neesmo keeps working for 30 days.</li>
+  <li>A key works on 2 servers. <b>Remove key</b> frees the seat, so you can move Neesmo to a new server.</li>
+  <li><b>Early access:</b> buy once, and every update is yours for free, including the full release.</li>
+</ul>
+
+<h2 id="trouble">Troubleshooting</h2>
+<ul>
+  <li><b>Agents show offline:</b> they come online when you first write to them. Check that Claude Code is signed in on the server (<code>claude</code>) and that tmux is installed.</li>
+  <li><b>No notifications on iPhone:</b> they only work in the home-screen app, not in Safari.</li>
+  <li><b>Service logs:</b> <code>journalctl -u neesmo -f</code> (add <code>--user</code> if you installed without root).</li>
+  <li><b>Forgot the password:</b> stop the service, delete <code>~/.config/neesmo/auth.json</code>, start it again and use the new setup code.</li>
+</ul>
+</main>
+</div>
+</body>
+</html>

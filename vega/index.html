@@ -1,0 +1,1444 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+<title>Neesmo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/static/icon-180.png">
+<link rel="icon" type="image/png" href="/static/icon-192.png">
+<meta name="theme-color" content="#02070d">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Neesmo">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<style>
+  @font-face { font-family: "Geist"; src: url(/static/fonts/geist.woff2) format("woff2"); font-weight: 100 900; font-display: swap; }
+  @font-face { font-family: "Geist Mono"; src: url(/static/fonts/geist-mono.woff2) format("woff2"); font-weight: 100 900; font-display: swap; }
+  :root { --sans: "Geist", system-ui, -apple-system, "Segoe UI", sans-serif; --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace; --rgb: 61,255,143; --c: rgb(var(--rgb)); --c2: #c6ff4a; --bg: #02070d; --dim: rgba(var(--rgb),.35); --err: #ff5f6d; --fs: 14px; }
+  * { box-sizing: border-box; }
+  html { touch-action: manipulation; -webkit-text-size-adjust: 100%; }  /* no double-tap zoom */
+  html { background-color: #02070d; min-height: 100lvh; }  /* iPhone home-screen app paints the area under the page with this */
+  html, body { margin: 0; height: 100%; background: var(--bg) radial-gradient(ellipse at center, rgba(var(--rgb),.13) 0%, var(--bg) 70%) no-repeat fixed; color: var(--c);
+    font: var(--fs)/1.45 var(--sans); overflow: hidden; -webkit-font-smoothing: antialiased; }
+  .corner, #status, .st, .chip, .mono, .kpi span, .card span, code, pre, kbd, #chathead h2 { font-family: var(--mono); }
+  body::after { content: ""; position: fixed; inset: 0; pointer-events: none;
+    background: repeating-linear-gradient(0deg, rgba(var(--rgb),.03) 0 1px, transparent 1px 3px); }
+  canvas { position: fixed; inset: 0; width: 100%; height: 100%; }
+  /* Big faded wordmark far behind the ring: heavy condensed italic, tight letters, soft blur for depth */
+  #wordmark { position: fixed; left: 50%; top: 0; translate: 0 50vh; will-change: translate; transform: translate(-50%, -50%) skewX(-11deg); pointer-events: none; white-space: nowrap;
+    font: 400 min(26vw, 380px)/.78 "Anton", Impact, "Arial Narrow", sans-serif; letter-spacing: -.045em;
+    background: linear-gradient(180deg, rgba(var(--rgb),.26), rgba(var(--rgb),.05) 85%); -webkit-background-clip: text; background-clip: text; color: transparent;
+    filter: blur(1.6px); animation: drift 9s ease-in-out infinite alternate; }
+  @keyframes drift { to { transform: translate(-50%, -50%) skewX(-11deg) scale(1.03); filter: blur(2.2px); } }
+  @media (prefers-reduced-motion: reduce) { #wordmark { animation: none; } }
+  .corner { position: fixed; padding: 16px; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); }
+  .tl { top: calc(var(--vvt, 0px) + env(safe-area-inset-top)); left: env(safe-area-inset-left); } .tr { top: calc(var(--vvt, 0px) + env(safe-area-inset-top)); right: env(safe-area-inset-right); text-align: right; }
+  .corner b { color: var(--c); font-weight: 600; }
+  #status { position: fixed; left: 0; right: 0; top: calc(50% + min(26vmin, 210px)); text-align: center;
+    letter-spacing: .4em; text-transform: uppercase; font-size: 13px; text-shadow: 0 0 8px var(--c); }
+  #status.err { color: var(--err); text-shadow: 0 0 8px var(--err); letter-spacing: .1em; }
+  #log { position: fixed; left: 16px; bottom: calc(84px + env(safe-area-inset-bottom)); width: min(420px, calc(100% - 32px)); max-height: 30vh; overflow-y: auto;
+    display: flex; flex-direction: column; gap: 6px; mask-image: linear-gradient(transparent, #000 30%); padding-top: 24px; }
+  #log p { margin: 0; padding: 6px 10px; border-left: 2px solid var(--dim); background: rgba(var(--rgb),.05); }
+  #log p.you { border-color: var(--c2); color: var(--c2); }
+  form { transition: bottom .32s cubic-bezier(.2,.8,.2,1); } form.kb-snap { transition: none; }
+  form { position: fixed; left: 16px; right: 16px; bottom: max(calc(16px + env(safe-area-inset-bottom)), calc(var(--kb, 0px) + 10px)); display: flex; gap: 8px; max-width: 720px; margin: 0 auto; }
+  input, select, button { font: inherit; color: var(--c); background: rgba(2,20,30,.8); border: 1px solid var(--dim); border-radius: 4px; }
+  input { flex: 1; min-width: 0; padding: 12px; outline: none; font-size: max(16px, 1em); }
+  #f > * { border-radius: 12px; } #q { padding-inline: 16px; } ::placeholder { color: rgba(var(--rgb),.45); }
+  #q:focus { border-color: var(--c); box-shadow: 0 0 0 3px rgba(var(--rgb),.12), 0 0 18px rgba(var(--rgb),.18); }  /* 16px+: iOS zooms in on smaller inputs */
+  input:focus, select:focus, button:focus-visible { border-color: var(--c); box-shadow: 0 0 10px var(--dim); outline: none; }
+  button { padding: 0 16px; cursor: pointer; letter-spacing: .02em; font-weight: 500; }
+  #mic { width: 48px; padding: 0; display: grid; place-items: center; }
+  #mic svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  #mic.on { color: var(--bg); background: var(--c2); border-color: var(--c2); box-shadow: 0 0 16px var(--c2); }
+  select { padding: 4px; max-width: 180px; }
+  html.no-scan body::after, html.no-mark #wordmark { display: none; }
+  .icons { display: flex; gap: 8px; justify-content: flex-end; }
+  .ic { position: relative; width: 40px; height: 40px; padding: 0; display: grid; place-items: center; }
+  .ic svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .badge { position: absolute; top: -6px; right: -6px; min-width: 18px; height: 18px; padding: 0 4px; border-radius: 9px; background: var(--err);
+    color: #fff; font-size: 11px; line-height: 18px; letter-spacing: 0; }
+  .badge[hidden] { display: none; }
+  .pop { position: fixed; top: calc(64px + env(safe-area-inset-top)); right: calc(16px + env(safe-area-inset-right)); width: min(360px, calc(100vw - 32px));
+    max-height: calc(100dvh - 160px); overflow: auto; z-index: 20; padding: 14px; border: 1px solid var(--dim); border-radius: 10px;
+    background: rgba(2,14,10,.97); box-shadow: 0 0 30px rgba(var(--rgb),.15); text-transform: none; letter-spacing: normal; text-align: left; }
+  .pop[hidden] { display: none; }
+  .pop.wide { width: min(520px, calc(100vw - 32px)); padding-top: 0; }
+  .tabs { position: sticky; top: 0; z-index: 2; display: flex; gap: 2px; margin: 0 -14px 10px; padding: 10px 10px 0; background: rgba(2,14,10,.98);
+    border-bottom: 1px solid rgba(var(--rgb),.18); overflow-x: auto; scrollbar-width: none; }
+  .tabs button { flex: none; border: 0; border-bottom: 2px solid transparent; border-radius: 0; padding: 8px 10px; background: none; color: var(--dim);
+    font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
+  .tabs button[aria-selected="true"] { color: var(--c); border-bottom-color: var(--c); }
+  .tab[hidden] { display: none; } .tab h3 { margin-top: 14px; } .tab h3:first-child { margin-top: 4px; }
+  .pop .sub { display: block; font-size: 11.5px; line-height: 1.35; margin-top: 2px; }
+  .pop .row.col { flex-direction: column; align-items: stretch; gap: 4px; }
+  .tin { min-width: 0; flex: 1; max-width: 240px; padding: 7px 8px; font: inherit; font-size: max(16px, 1em); color: var(--c); background: rgba(0,0,0,.35); border: 1px solid rgba(var(--rgb),.35); border-radius: 6px; }
+  .row.col .tin { max-width: none; }
+  .xlist { list-style: none; margin: 6px 0 0; padding: 0; display: flex; flex-direction: column; }
+  .xlist li { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-top: 1px solid rgba(var(--rgb),.1); }
+  .xlist li:first-child { border-top: 0; } .xlist .xi { flex: 1; min-width: 0; }
+  .xlist b { font-weight: 600; } .xlist .xd { display: block; color: var(--dim); font-size: 11.5px; line-height: 1.3; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  .lchip { display: inline-block; margin-left: 6px; padding: 0 6px; border: 1px solid rgba(var(--rgb),.35); border-radius: 9px; font: 10.5px/16px var(--mono); color: var(--c2); white-space: nowrap; max-width: 100%; }
+  #notices .lchip { white-space: normal; overflow-wrap: anywhere; text-align: left; margin-left: 0; }
+  #notices { scroll-margin-top: 64px; }
+  #pop-s { overflow-x: hidden; overscroll-behavior-x: none; touch-action: pan-y; }
+  .tog[aria-busy="true"] { opacity: .5; pointer-events: none; }
+  #notices h4 { margin: 12px 0 4px; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--c); font-weight: 600; }
+  #notices table { width: 100%; table-layout: fixed; border-collapse: collapse; font-size: 12px; } #notices td { padding: 4px 0; border-top: 1px solid rgba(var(--rgb),.1); vertical-align: top; }
+  #notices td:first-child { width: 58%; overflow-wrap: anywhere; } #notices td:last-child { text-align: right; padding-left: 8px; } #notices td small { display: block; color: var(--dim); word-break: break-all; }
+  #notices p { margin: 4px 0; font-size: 12px; color: var(--dim); }
+  /* drag to reorder */
+  .agent, .aglist li { -webkit-touch-callout: none; -webkit-user-select: none; user-select: none; }
+  .dragging { position: relative; z-index: 30; pointer-events: none; opacity: .95; box-shadow: 0 10px 30px rgba(0,0,0,.6), 0 0 18px rgba(var(--rgb),.45); }
+  .agent.dragging { scale: 1.06; } .drag-armed { outline: 1px solid var(--c); outline-offset: 2px; }
+  .aglist li > button[data-ag]::after { content: "⠿"; margin-left: auto; color: var(--dim); font-size: 16px; }
+  /* welcome */
+  #welcome { position: fixed; left: 50%; top: 50%; translate: -50% -50%; z-index: 15; width: min(560px, calc(100vw - 48px)); text-align: center; pointer-events: none;
+    font: 600 clamp(22px, 4.4vw, 34px)/1.2 var(--sans); color: #eafff2; text-shadow: 0 0 24px rgba(var(--rgb),.6); letter-spacing: -.01em; }
+  #welcome small { display: block; margin-top: 10px; font: 12px/1.4 var(--mono); letter-spacing: .3em; text-transform: uppercase; color: var(--c); text-shadow: 0 0 8px var(--c); }
+  #welcome[hidden] { display: none; }
+  .pop h3 { margin: 0 0 10px; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); }
+  .pop .row { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 8px 0; border-top: 1px solid rgba(var(--rgb),.12); }
+  .pop .row:first-of-type { border-top: 0; } .pop label { color: var(--c); } .pop small { color: var(--dim); }
+  .swatches { display: flex; gap: 6px; } .sw { width: 26px; height: 26px; padding: 0; border-radius: 50%; background: var(--s); border: 2px solid transparent; }
+  .sw[aria-pressed="true"] { border-color: #fff; box-shadow: 0 0 10px var(--s); }
+  .tog { width: 44px; height: 24px; padding: 2px; border-radius: 12px; position: relative; flex: none; }
+  .tog::after { content: ""; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; border-radius: 50%; background: var(--dim); transition: transform .15s; }
+  .tog[aria-checked="true"] { background: rgba(var(--rgb),.25); border-color: var(--c); } .tog[aria-checked="true"]::after { transform: translateX(20px); background: var(--c); }
+  .tog:disabled { opacity: .4; }
+  .nlist { list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+  .nlist button { width: 100%; text-align: left; padding: 8px 10px; display: block; letter-spacing: normal; border-left: 3px solid var(--a, var(--dim)); }
+  .nlist b { display: block; font-weight: 600; } .nlist span { display: block; color: var(--dim); font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .chip { float: right; font-size: 10px; letter-spacing: .1em; text-transform: uppercase; padding: 1px 6px; border-radius: 8px; border: 1px solid currentColor; }
+  .chip.pending { color: var(--c2); } .chip.approved { color: var(--c); } .chip.denied, .chip.expired, .chip.ignored { color: #7d8a83; } .chip.changes { color: var(--c2); }
+  .nlist li { position: relative; } .nlist .x.ign { width: auto; padding: 0 8px; font-size: 11px; } .nlist .x { position: absolute; top: 4px; right: 4px; width: 26px; height: 26px; padding: 0; border: 0; border-left: 0; text-align: center; opacity: .6; }
+  .nlist li > button[data-n] { padding-right: 34px; } .nlist li:has(.ign) > button[data-n] { padding-right: 70px; } .nlist .chip { margin-right: 4px; }
+  .nhead { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; } .nhead h3 { margin: 0; }
+  #nclear, #logout, #ag-add { padding: 3px 10px; font-size: 11px; }
+  .nlist .unread b::before { content: "● "; color: var(--c2); }
+  dialog#ap { --a: var(--c); width: min(720px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); padding: 0; border: 1px solid var(--dim);
+    border-top: 3px solid var(--a); border-radius: 10px; background: rgba(2,14,10,.98); color: var(--c); }
+  dialog#ag { --a: var(--c); width: min(560px, calc(100vw - 24px)); padding: 0; border: 1px solid var(--dim); border-top: 3px solid var(--a); border-radius: 10px; background: rgba(2,14,10,.98); color: var(--c); }
+  dialog#ag::backdrop, dialog#ap::backdrop { background: rgba(0,0,0,.7); backdrop-filter: blur(3px); }
+  #ap .rp h2 { color: var(--a); } #ap .what { font-size: 16px; } #ap .pre { max-height: 45dvh; border: 1px solid rgba(var(--rgb),.2); border-radius: 6px; padding: 10px; background: rgba(0,0,0,.35); font-size: 12px; }
+  #ap .btns { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; } #ap .btns button { padding: 12px 20px; }
+  #ap-media video, #ap-media img { display: block; width: 100%; max-height: 60vh; object-fit: contain; background: #000; border-radius: 10px; margin: 0 0 10px; }
+  #ap-btns[hidden] { display: none; }
+  #ap-note { width: 100%; box-sizing: border-box; margin: 0 0 10px; padding: 10px; font: inherit; color: var(--c); background: rgba(0,0,0,.35); border: 1px solid rgba(var(--rgb),.35); border-radius: 6px; }
+  #ap-media small { display: block; margin: -4px 0 10px; opacity: .7; }
+  #ap-yes { background: var(--c); color: var(--bg); border-color: var(--c); font-weight: 600; } #ap-no { border-color: var(--err); color: var(--err); }
+  .cards { position: fixed; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 10px; width: 190px; }
+  .cards.l { left: 16px; } .cards.r { right: 16px; }
+  .card { padding: 10px 12px; border: 1px solid var(--dim); border-radius: 6px; background: rgba(2,26,14,.6); }
+  .card span { display: block; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); }
+  .card b { display: block; font-size: 22px; font-weight: 600; text-shadow: 0 0 8px var(--dim); }
+  .card small { color: var(--dim); font-size: 11px; }
+  .agent { text-align: left; cursor: pointer; font: inherit; color: var(--c); width: 100%; }
+  .agent { --a: var(--c); border-color: color-mix(in srgb, var(--a) 45%, transparent); border-left: 3px solid var(--a);
+    background: linear-gradient(90deg, color-mix(in srgb, var(--a) 14%, transparent), rgba(2,26,14,.6) 70%); }
+  .agent b { color: var(--a); text-shadow: 0 0 8px color-mix(in srgb, var(--a) 50%, transparent) !important; }
+  .agent:hover, .agent:focus-visible { border-color: var(--a); box-shadow: 0 0 14px color-mix(in srgb, var(--a) 45%, transparent); outline: none; }
+  .agent b { font-size: 15px !important; font-weight: 600; letter-spacing: -.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .agent .st { font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .agent .st .ago { display: inline; }
+  .agent.dev { opacity: .5; filter: grayscale(1); } .agent.dev:hover, .agent.dev:focus-visible { opacity: .8; }
+  .st.dev { color: #7d8a83; } .st.dev::before { content: "◌ "; }
+  .st.working { color: var(--c2); text-shadow: 0 0 8px var(--c2); } .st.idle { color: var(--c); } .st.offline { color: var(--err); }
+  .st.working::before { content: "● "; animation: pulse 1.2s infinite; } .st.idle::before { content: "● "; } .st.offline::before { content: "○ "; }
+  @keyframes pulse { 50% { opacity: .2; } }
+  .agent small { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-top: 2px; }
+  dialog#report { --a: var(--c); border-top: 3px solid var(--a) !important; width: min(1100px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); padding: 0; border: 1px solid var(--dim); border-radius: 10px;
+    background: rgba(2,14,10,.97); color: var(--c); box-shadow: 0 0 40px rgba(var(--rgb),.15); }
+  /* dialogs start below the iPhone island / status bar and end above the home bar */
+  dialog#ap, dialog#report, dialog#ag { position: fixed; inset: 0; margin: calc(env(safe-area-inset-top, 0px) + 8px) auto calc(env(safe-area-inset-bottom, 0px) + 8px) !important;
+    max-height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 16px) !important; overflow-y: auto; overscroll-behavior: contain; }
+  /* title and ✕ stay pinned at the top of the panel while its content scrolls */
+  #ap .rp > header, #report .rp > header, #ag .rp > header { position: sticky; top: -18px; z-index: 2; margin: -18px -18px 0; padding: 18px;
+    background: rgba(2,14,10,.98); border-bottom: 1px solid rgba(var(--rgb),.15); }
+  #ag form { position: static; max-width: none; margin: 0; display: flex; flex-direction: column; gap: 6px; } #ag label { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); margin-top: 6px; }
+  #ag input, #ag textarea { width: 100%; padding: 10px; font: inherit; font-size: 16px; color: var(--c); background: rgba(0,0,0,.35); border: 1px solid rgba(var(--rgb),.35); border-radius: 6px; }
+  #ag textarea { font-size: 13px; } #ag .btns { display: flex; gap: 10px; justify-content: space-between; margin-top: 10px; } #ag-save { margin-left: auto; } #ag .btns button { padding: 12px 18px; }
+  #ag-save { background: var(--c); color: var(--bg); font-weight: 600; } #ag-del { border-color: var(--err); color: var(--err); } #ag-err { color: var(--err); min-height: 1.2em; }
+  .aglist li button[data-ag] { display: flex; align-items: center; gap: 8px; } .aglist i { width: 10px; height: 10px; border-radius: 50%; background: var(--a); flex: none; }
+  #ag-close { flex: none; min-width: 44px; min-height: 44px; }
+  #ap-close, #r-close, #r-gear { flex: none; min-width: 44px; min-height: 44px; }
+  #r-gear { margin-left: auto; padding: 6px 10px; display: grid; place-items: center; }
+  #r-gear svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+  #report .rp > header { gap: 6px; }
+  #ag .tabs { position: static; margin: 0 0 6px; padding: 0; background: none; } #ag-btns[hidden] { display: none; }
+  .agtab[hidden] { display: none; } .agtab { display: flex; flex-direction: column; gap: 6px; }
+  #wel-row small { flex: 1; min-width: 0; } #wel-try { flex: none; white-space: nowrap; }
+  #ag-pother summary, #pjob summary { cursor: pointer; color: var(--dim); font-size: 12px; margin-top: 10px; }
+  dialog#report::backdrop { background: rgba(0,0,0,.7); backdrop-filter: blur(3px); }
+  .rp { padding: 18px; display: flex; flex-direction: column; gap: 14px; }
+  .rp header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+  .rp h2 { color: var(--a); margin: 0; font-size: 20px; letter-spacing: .12em; text-transform: uppercase; text-shadow: 0 0 10px var(--dim); }
+  .rp h3 { margin: 0 0 8px; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); }
+  .rp small { color: var(--dim); } #r-close { padding: 6px 12px; font-size: 16px; }
+  .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+  .kpi { border: 1px solid var(--dim); border-radius: 6px; padding: 10px 12px; background: rgba(2,26,14,.6); }
+  .kpi span { display: block; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); }
+  .kpi b { display: block; font-size: 22px; font-variant-numeric: tabular-nums; text-shadow: 0 0 8px var(--dim); }
+  .kpi i { display: block; height: 4px; margin-top: 6px; background: rgba(var(--rgb),.15); border-radius: 2px; overflow: hidden; }
+  .kpi i::after { content: ""; display: block; height: 100%; width: var(--w, 0%); background: var(--a, var(--c)); }
+  #report .kpi { border-color: color-mix(in srgb, var(--a) 40%, transparent); } #report .kpi b { color: var(--a); }
+  #report .grid section { border-color: color-mix(in srgb, var(--a) 25%, transparent); } #report .list li { border-left-color: color-mix(in srgb, var(--a) 60%, transparent); }
+  .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
+  .grid section { border: 1px solid rgba(var(--rgb),.2); border-radius: 6px; padding: 12px; background: rgba(2,20,12,.5); min-width: 0; }
+  .grid .wide { grid-column: 1 / -1; }
+  .pre { white-space: pre-wrap; margin: 0; max-height: 220px; overflow: auto; line-height: 1.5; }
+  .list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; max-height: 220px; overflow: auto; }
+  .list li { border-left: 2px solid var(--dim); padding: 2px 8px; overflow-wrap: anywhere; }
+  .list li em { font-style: normal; color: var(--dim); margin-right: 6px; } .mono li { font-size: 12px; }
+  .bar { display: grid; grid-template-columns: 90px 1fr 34px; gap: 8px; align-items: center; font-size: 12px; margin-bottom: 6px; }
+  .bar i { height: 8px; background: rgba(var(--rgb),.15); border-radius: 4px; overflow: hidden; }
+  .bar i::after { content: ""; display: block; height: 100%; width: var(--w); background: var(--a, var(--c2)); }
+  .actions { display: flex; justify-content: flex-end; } .actions button { padding: 10px 16px; }
+  @media (max-width: 700px) { .grid { grid-template-columns: 1fr; } .rp { padding: 14px; } #ap .rp > header, #report .rp > header, #ag .rp > header { top: -14px; margin: -14px -14px 0; padding: 14px; } .kpis { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+    .kpi { padding: 8px; } .kpi b { font-size: 16px; } .kpi span { font-size: 9px; } .agent .st .ago { display: none; } .agent .st { font-size: 10px; } }
+  @media (max-width: 900px) {  /* phones and narrow windows: two scrolling strips under the clock */
+    .cards { flex-direction: row; transform: none; left: 16px; right: 16px; width: auto; overflow-x: auto; gap: 8px; }
+    /* phones: the circle moves up, agent cards sit below it in two rows above the input */
+    .cards { top: auto; overflow: visible; }
+    .cards.l { bottom: calc(138px + env(safe-area-inset-bottom)); } .cards.r { bottom: calc(76px + env(safe-area-inset-bottom)); }
+    .card { flex: 1 1 0; min-width: 0; padding: 6px 10px; } .card b { font-size: 15px; } .card small { display: none; }
+    #log { bottom: calc(204px + env(safe-area-inset-bottom)); max-height: 16vh; }
+  }
+
+  /* ── chat screen: opens from the command bar; cards step aside, the HUD stays behind ── */
+  .cards, #status, #hud, #log { transition: opacity .45s cubic-bezier(.2,.8,.2,1), filter .45s, translate .45s cubic-bezier(.2,.8,.2,1); }
+  body.chat .cards { opacity: 0; filter: blur(6px); pointer-events: none; }
+  body.chat .cards.l { translate: -40px 0; } body.chat .cards.r { translate: 40px 0; }
+  body.chat #status { opacity: 0 !important; }   /* beats the inline opacity the status animation leaves */
+  body.chat #hud { opacity: .32; }
+  #chathead { display: none; }
+  body.chat #chathead { display: flex; position: fixed; z-index: 5; top: calc(var(--vvt, 0px) + 14px + env(safe-area-inset-top)); left: 50%; translate: -50% 0;
+    gap: 8px; align-items: center; animation: fadein .35s both; }
+  #chathead button { height: 36px; font-size: 12px; } #chathead h2 { margin: 0 8px; font-size: 13px; letter-spacing: .35em; font-weight: 600; }
+  @media (max-width: 900px) { body.chat #chathead { left: 16px; translate: none; } body.chat .corner.tl { opacity: 0; pointer-events: none; } }
+  .corner.tl { transition: opacity .3s; }
+  body.chat #log { left: 50%; translate: -50% 0; width: min(760px, calc(100% - 32px)); top: calc(var(--vvt, 0px) + 64px + env(safe-area-inset-top));
+    bottom: calc(max(calc(16px + env(safe-area-inset-bottom)), calc(var(--kb, 0px) + 10px)) + 64px + var(--att, 0px)); max-height: none; mask-image: linear-gradient(transparent, #000 24px);
+    gap: 14px; padding: 24px 2px 8px; overscroll-behavior: contain; }
+  body:not(.chat) #log { display: none; }   /* replies live in the chat screen, not as text over the home screen */
+  /* home screen: only the newest line, two rows at most; the full conversation lives in the chat screen */
+  body:not(.chat) #log p:not(:last-of-type), body:not(.chat) #log .typing { display: none; }
+  body:not(.chat) #log p { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; cursor: pointer;
+    padding-block: 0; border-top: 6px solid transparent; border-bottom: 6px solid transparent; }
+  body:not(.chat) #log p pre, body:not(.chat) #log p img, body:not(.chat) #log p .file { display: none; }
+  body.chat #log p { border: 0; background: none; padding: 0; animation: msg .35s cubic-bezier(.2,.8,.2,1) both; line-height: 1.55; }
+  body.chat #log p.you { align-self: flex-end; max-width: 82%; padding: 10px 14px; border-radius: 14px 14px 4px 14px;
+    background: rgba(var(--rgb),.12); border: 1px solid var(--dim); color: var(--c); white-space: pre-wrap; }
+  body.chat #log p.vega { color: #d9ffe9; color: color-mix(in srgb, var(--c) 35%, #fff); }
+  @keyframes msg { from { opacity: 0; translate: 0 10px; filter: blur(3px); } }
+  @keyframes fadein { from { opacity: 0; } }
+  #log p code { background: rgba(var(--rgb),.12); padding: 1px 5px; border-radius: 4px; font-size: .92em; }
+  #log p pre { margin: 8px 0; padding: 10px 12px; background: rgba(0,0,0,.45); border: 1px solid rgba(var(--rgb),.2); border-radius: 8px; overflow-x: auto; white-space: pre; }
+  #log p pre code { background: none; padding: 0; }
+  #log p a { color: var(--c2); }
+  #log p img.att { display: block; max-width: 220px; max-height: 220px; border-radius: 8px; margin-top: 8px; }
+  #log p .file { display: inline-block; margin-top: 6px; padding: 3px 8px; border: 1px solid var(--dim); border-radius: 6px; font-size: .85em; }
+  #log .typing { display: flex; gap: 5px; padding: 4px 0; } #log .typing i { width: 7px; height: 7px; border-radius: 50%; background: var(--c);
+    animation: blink 1.2s infinite ease-in-out both; } #log .typing i:nth-child(2) { animation-delay: .15s; } #log .typing i:nth-child(3) { animation-delay: .3s; }
+  @keyframes blink { 0%, 80%, 100% { opacity: .2; scale: .7; } 40% { opacity: 1; scale: 1; } }
+  #attach { display: none; width: 44px; padding: 0; } body.chat #attach { display: grid; place-items: center; }
+  #attach svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  #atts { position: fixed; left: 50%; translate: -50% 0; width: min(720px, calc(100% - 32px)); bottom: calc(70px + env(safe-area-inset-bottom));
+    display: flex; flex-wrap: wrap; gap: 6px; } #atts:empty { display: none; }
+  #atts span { display: flex; align-items: center; gap: 6px; padding: 4px 4px 4px 10px; border: 1px solid var(--dim); border-radius: 14px; font-size: 12px;
+    background: rgba(2,20,30,.9); max-width: 240px; } #atts span b { font-weight: 400; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  #atts button { border: 0; background: none; padding: 0 6px; height: 20px; }
+  body.chat form#f { max-width: 760px; }
+  @media (prefers-reduced-motion: reduce) { body.chat #log p, #chathead { animation: none !important; } }
+
+  /* agent box: a slim header, one line of numbers, then a chat with that agent */
+  dialog#report { width: min(780px, calc(100vw - 24px)); height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 16px); overflow: hidden !important; }
+  #report .rp { height: 100%; box-sizing: border-box; gap: 10px; }
+  #report .rp > header { position: static; margin: 0; padding: 0; background: none; }
+  .strip { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12px; color: var(--dim); }
+  .strip b { color: var(--a); font-weight: 600; } .strip .now { flex-basis: 100%; color: var(--c); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  #r-more summary { cursor: pointer; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); }
+  #r-more[open] { max-height: 42dvh; overflow: auto; } #r-more .kpis { margin: 10px 0; }
+  /* slim header: the chat gets the room; numbers and "Now" live under Details */
+  #report .rp > header > div { min-width: 0; flex: 1; }
+  #report .rp > header h2 { font-size: 17px; line-height: 1.2; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #r-sub { display: block; font-size: 11px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #report #r-close, #report #r-gear { min-width: 40px; min-height: 40px; padding: 4px 8px; }
+  #r-more { margin-top: -4px; } #r-more .strip { margin-top: 8px; }
+  .thread > * { flex-shrink: 0; } /* long replies were squeezed to zero height */
+  .thread { flex: 1; min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 12px; padding: 10px 2px; border-top: 1px solid rgba(var(--rgb),.15);
+    overscroll-behavior: contain; }
+  .thread p { margin: 0; line-height: 1.55; overflow-wrap: anywhere; animation: msg .35s cubic-bezier(.2,.8,.2,1) both; }
+  .thread p.you { align-self: flex-end; max-width: 85%; padding: 9px 13px; border-radius: 14px 14px 4px 14px; white-space: pre-wrap;
+    background: color-mix(in srgb, var(--a) 14%, transparent); border: 1px solid color-mix(in srgb, var(--a) 45%, transparent); }
+  .thread p.bot { color: color-mix(in srgb, var(--c) 35%, #fff); } .thread p.err { color: var(--err); }
+  .thread p small { display: block; font-size: 10px; margin-top: 3px; opacity: .7; } .thread p.you small { text-align: right; }
+  .thread .empty { margin: auto; text-align: center; color: var(--dim); font-size: 13px; max-width: 340px; }
+  .thread p code { background: rgba(var(--rgb),.12); padding: 1px 5px; border-radius: 4px; } .thread p a { color: var(--c2); }
+  .thread p pre { margin: 8px 0; padding: 10px 12px; background: rgba(0,0,0,.45); border: 1px solid rgba(var(--rgb),.2); border-radius: 8px; overflow-x: auto; white-space: pre; }
+  .thread .typing { display: flex; gap: 5px; align-items: center; color: var(--dim); font-size: 12px; } .thread .typing i { width: 6px; height: 6px; border-radius: 50%;
+    background: var(--a); animation: blink 1.2s infinite ease-in-out both; } .thread .typing i:nth-child(2) { animation-delay: .15s; } .thread .typing i:nth-child(3) { animation-delay: .3s; }
+  #report form.composer { position: static; display: flex; gap: 8px; max-width: none; margin: 0; align-items: flex-end; }
+  #r-q { flex: 1; min-width: 0; resize: none; max-height: 30dvh; padding: 11px 12px; font: inherit; font-size: max(16px, 1em); color: var(--c); background: rgba(2,20,30,.8);
+    border: 1px solid var(--dim); border-radius: 4px; outline: none; } #r-q:focus { border-color: var(--a); box-shadow: 0 0 10px var(--dim); }
+  #r-attach, #r-send { height: 46px; } #r-attach { width: 44px; padding: 0; display: grid; place-items: center; }
+  #r-attach svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+  .ratts { display: flex; flex-wrap: wrap; gap: 6px; } .ratts:empty { display: none; }
+  .ratts span { display: flex; align-items: center; gap: 4px; padding: 3px 4px 3px 10px; border: 1px solid var(--dim); border-radius: 14px; font-size: 12px; }
+  .ratts button { border: 0; background: none; padding: 0 6px; height: 20px; }
+  .rfoot { display: flex; justify-content: space-between; gap: 8px; } .rfoot button { padding: 5px 12px; font-size: 11px; }
+  #r-stop { color: var(--err); border-color: var(--err); }
+  .thread p.tool { align-self: flex-start; font: 11.5px/1.4 var(--mono); color: var(--dim); padding: 3px 9px; border-left: 2px solid rgba(var(--rgb),.3); }
+  .thread p.tool small { display: inline; margin-left: 6px; }
+  .thread .cmedia { display: block; margin-top: 8px; }
+  .thread p.you, .thread p.bot { -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; }
+  .thread p.held { animation: held .6s cubic-bezier(.2,.9,.25,1.2); }
+  @keyframes held { 0% { scale: 1; } 35% { scale: .96; box-shadow: 0 0 22px 2px color-mix(in srgb, var(--c) 55%, transparent); } 100% { scale: 1; box-shadow: none; } }
+  #msgmenu { position: fixed; z-index: 50; display: flex; gap: 4px; padding: 4px; border-radius: 12px; background: rgba(10,12,18,.96); border: 1px solid rgba(var(--rgb),.35); box-shadow: 0 8px 28px rgba(0,0,0,.5); }
+  #msgmenu[hidden] { display: none; }
+  #msgmenu button { font: inherit; font-size: 14px; color: var(--c); background: none; border: 0; padding: 9px 14px; border-radius: 8px; cursor: pointer; }
+  #msgmenu button:hover, #msgmenu button:focus-visible { background: rgba(var(--rgb),.15); outline: none; }
+  .thread .cmedia video, .thread .cmedia img { display: block; max-width: 100%; max-height: 420px; border-radius: 10px; background: #000; }
+  .thread .cmedia audio { display: block; width: 100%; max-width: 360px; }
+  .thread .cmedia em { display: block; font: 11px/1.3 var(--mono); color: var(--dim); font-style: normal; margin-top: 3px; overflow-wrap: anywhere; }
+  .thread .ask { border: 1px solid var(--a); border-radius: 12px; padding: 10px 12px; display: grid; gap: 8px; }
+  .thread .ask b { font-weight: 600; } .thread .ask button { text-align: left; padding: 8px 12px; font-size: 13px; border-radius: 10px; letter-spacing: 0; }
+  .rlink { font: 10.5px var(--mono); color: var(--dim); align-self: center; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .licf { display: flex; gap: 6px; margin: 6px 0 2px; position: static; max-width: none; } .licf input { flex: 1; min-width: 0; padding: 7px 8px; font-size: max(16px, 1em); }
+  .licf button { padding: 6px 10px; } .licf[hidden] { display: none; } .licmsg { display: block; min-height: 1em; color: var(--err); }
+  .links { display: flex; gap: 14px; margin: 4px 0 8px; font-size: 12px; } .links a { color: var(--c2); }
+
+  /* motion (ideas from remocn: staggered reveals, text decode, count-ups, springy panels, light sweeps) */
+  .boot .agent { animation: cardin .7s cubic-bezier(.2,.9,.25,1.15) both; animation-delay: calc(var(--i, 0) * 80ms + 150ms); }
+  @keyframes cardin { from { opacity: 0; translate: var(--from, -24px) 0; filter: blur(6px); clip-path: inset(0 100% 0 0); } 60% { clip-path: inset(0 0 0 0); } }
+  #agents-r .agent { --from: 24px; }
+  .boot #wordmark { animation: markin 1.4s cubic-bezier(.2,.8,.2,1) both; }
+  @keyframes markin { from { opacity: 0; letter-spacing: .2em; filter: blur(12px); } }
+  .boot form#f, .boot > form { animation: rise .7s .5s cubic-bezier(.2,.8,.2,1) both; }
+  @keyframes rise { from { opacity: 0; translate: 0 20px; } }
+  .agent { position: relative; overflow: hidden; }
+  .agent::after { content: ""; position: absolute; inset: 0; pointer-events: none; translate: -110% 0;
+    background: linear-gradient(100deg, transparent 30%, color-mix(in srgb, var(--a) 22%, transparent) 50%, transparent 70%); }
+  .agent:hover::after, .agent:focus-visible::after { translate: 110% 0; transition: translate .8s cubic-bezier(.2,.8,.2,1); }
+  .agent.flash { animation: flash 1.2s ease-out; } @keyframes flash { 0% { box-shadow: 0 0 0 0 var(--a); } 30% { box-shadow: 0 0 24px 2px var(--a); } }
+  dialog[open] > .rp { animation: panel .5s cubic-bezier(.2,1.25,.3,1) both; }
+  @keyframes panel { from { opacity: 0; scale: .94; translate: 0 18px; filter: blur(4px); } }
+  dialog[open]::backdrop { animation: fadein .3s ease both; }
+  .pop:not([hidden]) { animation: drop .28s cubic-bezier(.2,1.2,.3,1) both; transform-origin: top right; }
+  @keyframes drop { from { opacity: 0; scale: .92; translate: 0 -8px; } }
+  .strip b { display: inline-block; min-width: 1ch; }
+  .calm *, .calm *::before, .calm *::after { animation-duration: .01ms !important; animation-delay: 0s !important; transition-duration: .01ms !important; }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-delay: 0s !important; transition-duration: .01ms !important; } }
+</style>
+</head>
+<body class="boot">
+<div id="wordmark" aria-hidden="true">NEESMO</div>
+<canvas id="hud" aria-hidden="true"></canvas>
+<div class="corner tl">Neesmo // online<br><b id="clock">--:--:--</b><br><span id="date"></span></div>
+<div class="corner tr"><div class="icons">
+  <button type="button" class="ic" id="bell" aria-label="Notifications" aria-expanded="false" aria-controls="pop-n"><svg viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg><span class="badge" id="badge" hidden>0</span></button>
+  <button type="button" class="ic" id="gear" aria-label="Settings" aria-expanded="false" aria-controls="pop-s"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+</div></div>
+<div class="pop wide" id="pop-s" hidden role="dialog" aria-label="Settings">
+  <div class="tabs" role="tablist" aria-label="Settings sections">
+    <button type="button" role="tab" data-tab="general" aria-selected="true">General</button><button type="button" role="tab" data-tab="look" aria-selected="false">Appearance</button><button type="button" role="tab" data-tab="agents" aria-selected="false">Agents</button><button type="button" role="tab" data-tab="system" aria-selected="false">System</button><button type="button" role="tab" data-tab="license" aria-selected="false">License</button>
+  </div>
+  <section class="tab" data-tab="general" role="tabpanel">
+    <h3>Welcome</h3>
+    <div class="row"><div><label id="l-wel">Greet me when Neesmo opens</label></div><button type="button" class="tog" role="switch" id="t-wel" aria-labelledby="l-wel"></button></div>
+    <div class="row"><label for="wel-name">Your name</label><input id="wel-name" class="tin" maxlength="30" placeholder="optional" autocomplete="given-name"></div>
+    <div class="row col"><label for="wel-text">Message</label><input id="wel-text" class="tin" maxlength="160"><small>Use {greeting} (good morning…), {name} and {busy} (what your agents are doing).</small></div>
+    <div class="row"><div><label id="l-welv">Say it out loud</label><small class="sub">If the browser blocks sound, it speaks on your first tap.</small></div><button type="button" class="tog" role="switch" id="t-welv" aria-labelledby="l-welv"></button></div>
+    <div class="row" id="wel-row"><small id="wel-prev"></small><button type="button" id="wel-try">Try it</button></div>
+    <h3>Voice</h3>
+    <div class="row"><label for="voice">Voice</label><select id="voice"><option>loading…</option></select></div>
+    <div class="row"><small>Status</small><small id="vs">voice: …</small></div>
+  </section>
+  <section class="tab" data-tab="look" role="tabpanel" hidden>
+    <h3>Appearance</h3>
+    <div class="row"><label>Colour</label><div class="swatches" id="swatches"></div></div>
+    <div class="row"><label for="fsize">Text size</label><select id="fsize"><option value="13px">Small</option><option value="14px">Medium</option><option value="16px">Large</option></select></div>
+    <div class="row"><div><label id="l-mark">NEESMO lettering</label><small class="sub">The big faded name behind the ring.</small></div><button type="button" class="tog" role="switch" id="t-mark" aria-labelledby="l-mark"></button></div>
+    <div class="row"><div><label id="l-scan">Scan lines</label><small class="sub">Thin horizontal lines over the screen, like an old CRT monitor. Turn off for a cleaner look.</small></div><button type="button" class="tog" role="switch" id="t-scan" aria-labelledby="l-scan"></button></div>
+    <div class="row"><div><label id="l-calm">Calm motion</label><small class="sub">Fewer and shorter animations.</small></div><button type="button" class="tog" role="switch" id="t-calm" aria-labelledby="l-calm"></button></div>
+    <small class="sub">Saved on this device only.</small>
+  </section>
+  <section class="tab" data-tab="agents" role="tabpanel" hidden>
+    <div class="nhead"><h3>Agents</h3><button type="button" id="ag-add">+ Add</button></div>
+    <small class="sub">Tap to edit. Drag to change the order (hold, then move on a phone). You can also drag the cards on the home screen.</small>
+    <ul class="nlist aglist" id="aglist"></ul>
+  </section>
+  <section class="tab" data-tab="system" role="tabpanel" hidden>
+    <div class="links"><a href="/guide" target="_blank" rel="noopener">Guide</a><a href="/welcome" target="_blank" rel="noopener">Website</a><a href="#notices" id="to-notices">Licenses</a></div>
+    <h3>Plugins</h3>
+    <ul class="xlist" id="plist"><li><small>loading…</small></li></ul>
+    <details id="pjob" hidden><summary></summary><small class="sub">Made for some jobs only (code, git, GitHub, web). Switched on here, they run in every chat. Better: switch them off here and on for the agents that need them (agent chat → gear → Plugins).</small><ul class="xlist" id="plist2"></ul></details>
+    <h3>Skills</h3>
+    <ul class="xlist" id="slist"><li><small>loading…</small></li></ul>
+    <small class="sub" id="x-note">The list on top is the universal ones every Claude session on this server gets. Changes apply to sessions started after the switch.</small>
+    <div id="acct" hidden>
+      <div class="nhead"><h3>Devices</h3><button type="button" id="logout">Sign out</button></div>
+      <ul class="nlist" id="devlist"></ul>
+    </div>
+    <h3>Open-source licenses</h3>
+    <small class="sub">Everything Neesmo ships or installs, and the license each one uses.</small>
+    <div id="notices"><small>loading…</small></div>
+  </section>
+  <section class="tab" data-tab="license" role="tabpanel" hidden>
+    <h3>Your key</h3>
+    <div class="row"><small>Status</small><small id="lic-state">…</small></div>
+    <form id="lic-form" class="licf" hidden><input id="lic-key" placeholder="License key" aria-label="License key" autocomplete="off" spellcheck="false"><button type="submit">Activate</button></form>
+    <small id="lic-msg" class="licmsg"></small>
+    <div class="links"><a href="#" id="lic-buy" target="_blank" rel="noopener" hidden>Buy a key</a><a href="#" id="lic-rm" hidden>Remove key</a></div>
+  </section>
+</div>
+<div class="pop" id="pop-n" hidden role="dialog" aria-label="Notifications">
+  <div class="row"><label id="l-push">Notifications</label><button type="button" class="tog" role="switch" id="t-push" aria-labelledby="l-push"></button></div>
+  <small id="push-note"></small>
+  <div class="nhead"><h3>History</h3><button type="button" id="nclear">Clear all</button></div>
+  <ul class="nlist" id="nlist"><li><small>Nothing yet</small></li></ul>
+</div>
+<dialog id="ap" aria-labelledby="ap-title"><div class="rp">
+  <header><div><h2 id="ap-title">Approval</h2><small id="ap-sub"></small></div><button type="button" id="ap-close" aria-label="Close">✕</button></header>
+  <p class="what" id="ap-what"></p>
+  <div id="ap-media"></div>
+  <pre class="pre" id="ap-details"></pre>
+  <textarea id="ap-note" rows="3" placeholder="What should change? e.g. lower the music, new title…" hidden></textarea>
+  <p id="ap-state"></p>
+  <div class="btns" id="ap-btns"><button type="button" id="ap-no">Deny</button><button type="button" id="ap-yes">Approve</button></div>
+</div></dialog>
+<div class="cards l" id="agents-l" aria-label="Agents"></div>
+<div class="cards r" id="agents-r" aria-label="Agents"></div>
+<dialog id="ag" aria-labelledby="ag-title"><div class="rp">
+  <header><div><h2 id="ag-title">Agent</h2><small>A box on the home screen with its own folder and its own dedicated agent.</small></div><button type="button" id="ag-close" aria-label="Close">✕</button></header>
+  <div class="tabs" role="tablist" aria-label="Agent settings" id="ag-tabs">
+    <button type="button" role="tab" data-agtab="look" aria-selected="true">Appearance</button><button type="button" role="tab" data-agtab="job" aria-selected="false">Job</button><button type="button" role="tab" data-agtab="plugins" aria-selected="false">Plugins</button>
+  </div>
+  <form id="ag-form">
+    <div class="agtab" data-agtab="look" role="tabpanel">
+      <label for="ag-name">Name</label><input id="ag-name" required maxlength="40" placeholder="e.g. Shop website">
+      <label for="ag-short">Card label (one word)</label><input id="ag-short" maxlength="10" placeholder="e.g. Shop">
+      <label>Colour</label><div class="swatches" id="ag-colors"></div>
+    </div>
+    <div class="agtab" data-agtab="job" role="tabpanel" hidden>
+      <label for="ag-role">What it works on</label><input id="ag-role" maxlength="120" placeholder="e.g. builds and fixes my Shopify theme">
+      <label for="ag-folder">Folder (empty = a new one in ~/neesmo-agents)</label><input id="ag-folder" autocapitalize="off" placeholder="~/projects/shop">
+      <label for="ag-inst">How it should work (optional)</label><textarea id="ag-inst" rows="5"></textarea>
+    </div>
+    <div class="agtab" data-agtab="plugins" role="tabpanel" hidden>
+      <small class="sub" id="ag-pnote">Plugins that fit this agent's job. Switches apply only to this agent's folder; the next session it starts picks them up.</small>
+      <ul class="xlist" id="ag-plist"><li><small>loading…</small></li></ul>
+      <details id="ag-pother" hidden><summary>On, but not needed for this job</summary><ul class="xlist" id="ag-plist2"></ul></details>
+    </div>
+    <div id="ag-err" role="alert"></div>
+    <div class="btns" id="ag-btns"><button type="button" id="ag-del">Delete</button><button type="submit" id="ag-save">Save</button></div>
+  </form>
+</div></dialog>
+<dialog id="report" aria-labelledby="r-name"><div class="rp">
+  <header><div><h2 id="r-name">Agent</h2><small id="r-sub"></small></div><button type="button" id="r-gear" aria-label="Agent settings" title="Agent settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button><button type="button" id="r-close" aria-label="Close">✕</button></header>
+  <details id="r-more"><summary>Details</summary>
+    <div class="strip" id="r-strip"></div>
+    <div class="kpis" id="r-kpis"></div>
+    <div class="grid">
+      <section><h3>Recent requests</h3><ol id="r-reqs" class="list"></ol></section>
+      <section><h3>Activity</h3><ol id="r-tools" class="list mono"></ol></section>
+      <section><h3>Tools used today</h3><div id="r-toolbars"></div></section>
+      <section><h3>Commits <small id="r-branch"></small></h3><ol id="r-commits" class="list"></ol></section>
+    </div>
+  </details>
+  <div class="thread" id="r-thread" aria-live="polite"></div>
+  <div class="ratts" id="r-atts"></div>
+  <form class="composer" id="r-form">
+    <button type="button" id="r-attach" aria-label="Attach files" title="Attach files"><svg viewBox="0 0 24 24"><path d="M21 11.5 12.6 20a5.5 5.5 0 0 1-7.8-7.8l8.5-8.5a3.7 3.7 0 0 1 5.2 5.2l-8.5 8.5a1.8 1.8 0 0 1-2.6-2.6L15.2 7"/></svg></button>
+    <input type="file" id="r-files" multiple hidden>
+    <textarea id="r-q" rows="1" placeholder="Reply…" aria-label="Message for this agent"></textarea>
+    <button type="submit" id="r-send">Send</button>
+  </form>
+  <div class="rfoot"><button type="button" id="r-new">New thread</button><span class="rlink" id="r-link"></span><button type="button" id="r-stop" hidden>Stop</button></div>
+</div></dialog>
+<div id="welcome" hidden aria-hidden="true"></div>
+<div id="status" role="status" aria-live="polite">Standby</div>
+<div id="chathead"><button type="button" id="chat-back" aria-label="Back to the home screen">← Back</button><h2>CHAT</h2><button type="button" id="chat-new">New chat</button></div>
+<div id="log" aria-live="polite"></div>
+<div id="atts" aria-label="Attached files"></div>
+<form id="f">
+  <button type="button" id="mic" title="Talk (or hold Space)" aria-label="Talk"><svg viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg></button>
+  <button type="button" id="attach" aria-label="Attach files" title="Attach files"><svg viewBox="0 0 24 24"><path d="M21 11.5 12.6 20a5.5 5.5 0 0 1-7.8-7.8l8.5-8.5a3.7 3.7 0 0 1 5.2 5.2l-8.5 8.5a1.8 1.8 0 0 1-2.6-2.6L15.2 7"/></svg></button>
+  <input type="file" id="files" multiple hidden>
+  <input id="q" autocomplete="off" placeholder="Ask Neesmo anything" aria-label="Message">
+  <button>Send</button>
+</form>
+<script src="/static/vendor/motion.js"></script>
+<script>
+const $ = s => document.querySelector(s);
+const statusEl = $('#status'), logEl = $('#log'), voiceSel = $('#voice');
+let ac, analyser, level = 0, mode = 'idle', rec, chunks = [], micStream, micSrc;
+
+function setStatus(t, err) {
+  statusEl.textContent = t; statusEl.classList.toggle('err', !!err); clearTimeout(setStatus.t);
+  if (t === 'Heard nothing') setStatus.t = setTimeout(() => { if (statusEl.textContent === t && mode === 'idle') setStatus('Standby'); }, 2500);
+}
+// Replies: a small, safe markdown subset (code, bold, links, lists). Everything is escaped first.
+function md(t) {
+  const esc = x => x.replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+  const blocks = [];
+  t = esc(t).replace(/```\w*\n?([\s\S]*?)```/g, (_, c) => `\u0000${blocks.push(c.replace(/\n$/, '')) - 1}\u0000`);
+  t = t.replace(/`([^`\n]+)`/g, '<code>$1</code>').replace(/\*\*([^*\n]+)\*\*/g, '<b>$1</b>')
+    .replace(/(^|[\s(])(https?:\/\/[^\s<)]+)/g, '$1<a href="$2" target="_blank" rel="noopener">$2</a>')
+    .replace(/^\s*[-*] /gm, '• ').replace(/\n/g, '<br>');
+  return t.replace(/(<br>)*(\u0000\d+\u0000)(<br>)*/g, '$2').replace(/\u0000(\d+)\u0000/g, (_, i) => `<pre><code>${blocks[i]}</code></pre>`);
+}
+const CHAT_KEY = 'neesmo-chat';
+let chatLog = [];
+try { chatLog = JSON.parse(localStorage.getItem(CHAT_KEY) || '[]'); } catch {}
+function say(text, who, opts = {}) {
+  const p = document.createElement('p'); p.className = who;
+  if (who === 'you') p.textContent = text; else p.innerHTML = md(text);
+  for (const f of opts.files || []) {
+    if (f.url && /^image\//.test(f.type)) { const im = new Image(); im.className = 'att'; im.src = f.url; im.alt = f.name; p.append(im); }
+    else { const s = document.createElement('span'); s.className = 'file'; s.textContent = '📎 ' + f.name; p.append(document.createElement('br'), s); }
+  }
+  logEl.append(p); logEl.scrollTop = 1e9;
+  if (!opts.restore) {
+    chatLog.push({ who, text, files: (opts.files || []).map(f => ({ name: f.name, type: f.type })) });
+    chatLog = chatLog.slice(-80);
+    try { localStorage.setItem(CHAT_KEY, JSON.stringify(chatLog)); } catch {}
+  }
+}
+for (const h of chatLog) say(h.text, h.who, { restore: true, files: h.files });
+let typingEl = null;
+function typing(on) {
+  if (on && !typingEl) { typingEl = document.createElement('div'); typingEl.className = 'typing'; typingEl.innerHTML = '<i></i><i></i><i></i>'; logEl.append(typingEl); logEl.scrollTop = 1e9; }
+  if (!on && typingEl) { typingEl.remove(); typingEl = null; }
+}
+async function api(path, opts) {
+  const r = await fetch(path, opts);
+  if (r.status === 401) { location.replace('/login'); throw new Error('login required'); }
+  if (!r.ok) throw new Error((await r.json().catch(() => ({}))).detail || r.statusText);
+  return r;
+}
+function audio() {
+  if (!ac) { ac = new AudioContext(); analyser = ac.createAnalyser(); analyser.fftSize = 256; analyser.smoothingTimeConstant = .55; }
+  return ac;
+}
+
+// ── appearance settings (this device only) ──
+const THEMES = { green: ['#3dff8f', '61,255,143', '#c6ff4a'], cyan: ['#3fe0ff', '63,224,255', '#ffb547'], amber: ['#ffb547', '255,181,71', '#ff6b3d'],
+  violet: ['#b388ff', '179,136,255', '#ff7ac6'], red: ['#ff5f6d', '255,95,109', '#ffd166'] };
+let PREFS = { theme: 'green', fs: '14px', mark: true, scan: true, calm: false, wel: true, welName: '', welText: '{greeting}, {name}. {busy}', welVoice: false };
+try { Object.assign(PREFS, JSON.parse(localStorage.getItem('neesmo-prefs') || '{}')); } catch {}
+const THEME = {};
+// The greeting (on/off, name, message, spoken) is kept on the server, so every device greets the same way.
+const WEL_KEYS = ['wel', 'welName', 'welText', 'welVoice'];
+let welSent = null;
+const welNow = () => JSON.stringify(Object.fromEntries(WEL_KEYS.map(k => [k, PREFS[k]])));
+function syncWelcome() {
+  if (welSent === null || welNow() === welSent) return;   // not loaded yet, or nothing changed
+  clearTimeout(syncWelcome.t);
+  syncWelcome.t = setTimeout(() => { welSent = welNow(); api('/api/welcome', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: welSent }).catch(() => {}); }, 600);
+}
+const welLoaded = fetch('/api/welcome').then(r => r.ok ? r.json() : {}).catch(() => ({})).then(w => {
+  Object.assign(PREFS, w); welSent = welNow(); if (typeof applyPrefs === 'function') applyPrefs();
+});
+function applyPrefs() {
+  const [hex, rgb, c2] = THEMES[PREFS.theme] || THEMES.green, root = document.documentElement;
+  Object.assign(THEME, { hex, rgb, c2 });
+  root.style.setProperty('--rgb', rgb); root.style.setProperty('--c2', c2); root.style.setProperty('--fs', PREFS.fs);
+  root.classList.toggle('no-mark', !PREFS.mark); root.classList.toggle('calm', !!PREFS.calm); root.classList.toggle('no-scan', !PREFS.scan);
+  for (const [k, id] of [['mark', '#t-mark'], ['scan', '#t-scan'], ['calm', '#t-calm'], ['wel', '#t-wel'], ['welVoice', '#t-welv']]) $(id).setAttribute('aria-checked', String(!!PREFS[k]));
+  $('#fsize').value = PREFS.fs;
+  for (const b of document.querySelectorAll('#swatches .sw')) b.setAttribute('aria-pressed', String(b.dataset.t === PREFS.theme));
+  try { localStorage.setItem('neesmo-prefs', JSON.stringify(PREFS)); } catch {}
+  syncWelcome();
+  if (typeof reduce !== 'undefined') reduce = matchMedia('(prefers-reduced-motion: reduce)').matches || PREFS.calm;
+}
+$('#swatches').innerHTML = Object.entries(THEMES).map(([k, [hex]]) => `<button type="button" class="sw" data-t="${k}" style="--s:${hex}" aria-label="${k}"></button>`).join('');
+$('#swatches').onclick = e => { const b = e.target.closest('.sw'); if (b) { PREFS.theme = b.dataset.t; applyPrefs(); } };
+$('#fsize').onchange = e => { PREFS.fs = e.target.value; applyPrefs(); };
+for (const [k, id] of [['mark', '#t-mark'], ['scan', '#t-scan'], ['calm', '#t-calm'], ['wel', '#t-wel'], ['welVoice', '#t-welv']]) $(id).onclick = () => { PREFS[k] = !PREFS[k]; applyPrefs(); };
+applyPrefs();
+
+// ── voices ──
+(async () => {
+  const cfg = await (await fetch('/api/config')).json();
+  try {
+    const { voices } = await (await api('/api/voices')).json();
+    voiceSel.innerHTML = '';
+    for (const v of voices) voiceSel.add(new Option(`${v.name}${v.type === 'profile' ? '' : ' (alias)'}`, v.id));
+    voiceSel.value = localStorage.getItem('neesmo-voice-v2') || cfg.voice;
+    if (!voiceSel.value) voiceSel.selectedIndex = 0;
+    $('#vs').textContent = 'voice: linked';
+  } catch (e) {
+    voiceSel.innerHTML = `<option value="${cfg.voice}">${cfg.voice}</option>`;
+    $('#vs').textContent = 'voice: offline';
+    setStatus('Voice offline — text only', true);
+  }
+})();
+voiceSel.onchange = () => { try { localStorage.setItem('neesmo-voice-v2', voiceSel.value); } catch {} };
+
+// ── conversation ──
+async function ask(text, { typed = false } = {}) {
+  text = text.trim(); const files = pending.splice(0); renderAtts();
+  if ((!text && !files.length) || mode === 'thinking') return;
+  if (!typed) openChat();   // spoken: show the conversation the same way typing does
+  say(text, 'you', { files }); mode = 'thinking'; setStatus('Processing'); typing(true);
+  try {
+    const paths = [];
+    for (const f of files) {
+      const fd = new FormData(); fd.append('file', f.file, f.name);
+      paths.push((await (await api('/api/upload', { method: 'POST', body: fd })).json()).path);
+    }
+    const { reply } = await (await api('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ text, typed, files: paths }) })).json();
+    typing(false); say(reply, 'vega');
+    if (!typed) await speak(reply);   // spoken questions get a spoken answer; typed chat stays quiet
+  } catch (e) { typing(false); setStatus(e.message, true); if (chatOpen()) say('⚠ ' + e.message, 'vega', { restore: true }); }
+  finally { typing(false); if (mode !== 'idle') { mode = 'idle'; if (!statusEl.classList.contains('err')) setStatus('Standby'); } }
+}
+// ── chat screen ──
+const chatOpen = () => document.body.classList.contains('chat');
+const coarse = matchMedia('(pointer: coarse)').matches;
+// Keyboard: track the visible part of the screen so the top buttons, the input and the ring stay in view.
+let kbWait = 0;   // while the iPhone keyboard is on its way up, keep the predicted height
+function onViewport() {
+  const vv = window.visualViewport, top = vv ? vv.offsetTop : 0, h = vv ? vv.height : innerHeight, st = document.documentElement.style;
+  const kb = Math.max(0, innerHeight - h - top);
+  if (kb < 80 && Date.now() < kbWait) return;
+  if (kb > 120) { kbWait = 0; try { localStorage.setItem('neesmo-kb', String(Math.round(kb + top))); } catch {} }
+  st.setProperty('--vvt', `${Math.max(0, top)}px`); st.setProperty('--kb', `${kb}px`);
+  if (typeof layoutHud === 'function') layoutHud();
+}
+// iPhone pushes the whole page up when an input near the bottom gets focus, then we pull it back: a bounce.
+// Instead, put the input where it will sit above the keyboard *before* focusing, so iOS has nothing to scroll.
+const iOS = /iP(hone|ad|od)/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+if (iOS) $('#q').addEventListener('touchend', e => {
+  if (document.activeElement === $('#q')) return;
+  e.preventDefault();
+  let kb = 0; try { kb = +localStorage.getItem('neesmo-kb') || 0; } catch {}
+  kb = kb || Math.round(innerHeight * .45);
+  const f = $('#f'); f.classList.add('kb-snap');
+  document.documentElement.style.setProperty('--kb', `${kb}px`); kbWait = Date.now() + 1200;
+  f.offsetHeight;   // apply the new spot now, before focus
+  openChat(); $('#q').focus({ preventScroll: true });
+  f.animate?.([{ opacity: 0 }, { opacity: 1 }], { duration: 320, easing: 'ease-out' });
+  setTimeout(() => f.classList.remove('kb-snap'), 700);
+  setTimeout(onViewport, 1300);   // no keyboard came (hardware keyboard): use the real numbers
+}, { passive: false });
+window.visualViewport?.addEventListener('resize', onViewport); window.visualViewport?.addEventListener('scroll', onViewport);
+function openChat() {
+  if (chatOpen()) return;
+  const go = () => { document.body.classList.add('chat'); $('#q').placeholder = 'Message Neesmo…'; logEl.scrollTop = 1e9; layoutHud?.(); };
+  document.startViewTransition && !reduce && !coarse ? document.startViewTransition(go) : go();
+}
+function closeChat() {
+  if (!chatOpen()) return;
+  const go = () => { document.body.classList.remove('chat'); $('#q').placeholder = 'Ask Neesmo anything'; $('#q').blur(); layoutHud?.(); };
+  document.startViewTransition && !reduce && !coarse ? document.startViewTransition(go) : go();
+}
+$('#q').addEventListener('focus', openChat);
+logEl.addEventListener('click', e => { if (!chatOpen() && e.target.closest('p')) openChat(); });
+$('#chat-back').onclick = closeChat;
+addEventListener('keydown', e => { if (e.key === 'Escape' && chatOpen() && !document.querySelector('dialog[open]')) closeChat(); });
+$('#chat-new').onclick = async () => {
+  chatLog = []; try { localStorage.removeItem(CHAT_KEY); } catch {}
+  logEl.innerHTML = ''; await api('/api/chat/reset', { method: 'POST' }).catch(() => {}); $('#q').focus();
+};
+const pending = [];
+function renderAtts() {
+  const box = $('#atts'); box.innerHTML = '';
+  pending.forEach((f, i) => {
+    const s = document.createElement('span'); s.innerHTML = '<b></b><button type="button" aria-label="Remove">✕</button>';
+    s.querySelector('b').textContent = f.name; s.querySelector('button').onclick = () => { pending.splice(i, 1); renderAtts(); };
+    box.append(s);
+  });
+  document.body.style.setProperty('--att', pending.length ? box.offsetHeight + 8 + 'px' : '0px');
+}
+$('#attach').onclick = () => $('#files').click();
+$('#files').onchange = e => {
+  for (const file of e.target.files) {
+    if (file.size > 50 * 1024 * 1024) { setStatus(`${file.name}: files up to 50 MB`, true); continue; }
+    pending.push({ file, name: file.name, type: file.type, url: /^image\//.test(file.type) ? URL.createObjectURL(file) : '' });
+  }
+  e.target.value = ''; renderAtts(); $('#q').focus();
+};
+// Split into sentences (tiny ones joined to the next) so the first one plays while the rest are made.
+function sentences(text) {
+  const raw = text.match(/[^.!?…]+[.!?…]+["')\]]*\s*|[^.!?…]+$/g) || [text], out = [];
+  for (const r of raw.map(t => t.trim()).filter(Boolean)) {
+    if (out.length && out[out.length - 1].length < 25) out[out.length - 1] += ' ' + r; else out.push(r);
+  }
+  return out;
+}
+async function speak(text) {
+  const tts = t => api('/api/speak', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: t, voice: voiceSel.value }) }).then(r => r.arrayBuffer());
+  const jobs = sentences(text).map(tts);   // all requested at once; played in order as each one is ready
+  jobs.forEach(j => j.catch(() => {}));
+  try {
+    for (const job of jobs) {
+      const ctx = audio(), src = ctx.createBufferSource();
+      src.buffer = await ctx.decodeAudioData(await job);
+      src.connect(analyser); analyser.connect(ctx.destination);
+      mode = 'speaking'; setStatus('Speaking');
+      await new Promise(res => { src.onended = res; src.start(); });
+      analyser.disconnect();
+    }
+  } catch (e) { setStatus('Voice: ' + e.message, true); }
+  finally { try { analyser.disconnect(); } catch {} if (mode === 'speaking') { mode = 'idle'; setStatus('Standby'); } }
+}
+$('#f').onsubmit = e => { e.preventDefault(); ask($('#q').value, { typed: true }); $('#q').value = ''; };
+
+// ── microphone ──
+// Prefer the browser's own speech recognition (instant on iPhone); fall back to the server's Whisper.
+const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+let sr = null, useServerSTT = !SR;
+function startBrowserRec() {
+  if (sr || mode === 'thinking') return;
+  sr = new SR(); sr.lang = navigator.language || 'en-US'; sr.interimResults = false; sr.maxAlternatives = 1;
+  let heard = '';
+  sr.onresult = e => { heard = Array.from(e.results).map(r => r[0].transcript).join(' ').trim(); };
+  sr.onerror = e => {
+    if (['not-allowed', 'service-not-allowed', 'network', 'audio-capture'].includes(e.error)) useServerSTT = true;
+    if (e.error !== 'no-speech' && e.error !== 'aborted') setStatus('Switching to server listening', true);
+  };
+  sr.onend = () => { sr = null; meterOff(); $('#mic').classList.remove('on'); mode = 'idle'; heard ? ask(heard) : (statusEl.classList.contains('err') || setStatus('Heard nothing')); };
+  sr.start(); mode = 'listening'; setStatus('Listening'); $('#mic').classList.add('on'); meterOn();
+}
+// Mic level for the ring while the browser listens (its speech recognition gives no audio of its own).
+async function meterOn() {
+  try {
+    micStream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: true, noiseSuppression: true } });
+    if (!sr) return meterOff();   // already stopped
+    micSrc = audio().createMediaStreamSource(micStream); micSrc.connect(analyser);
+  } catch { /* no meter: the ring keeps its idle pulse */ }
+}
+function meterOff() { try { micSrc?.disconnect(); } catch {} micSrc = null; micStream?.getTracks().forEach(t => t.stop()); micStream = null; }
+async function startRec() {
+  if (rec?.state === 'recording' || mode === 'thinking') return;
+  try { micStream = await navigator.mediaDevices.getUserMedia({ audio: true }); }
+  catch { return setStatus('Microphone blocked', true); }
+  audio().createMediaStreamSource(micStream).connect(analyser);
+  chunks = []; rec = new MediaRecorder(micStream);
+  rec.ondataavailable = e => chunks.push(e.data);
+  rec.onstop = async () => {
+    micStream.getTracks().forEach(t => t.stop()); analyser.disconnect?.();
+    $('#mic').classList.remove('on'); mode = 'thinking'; setStatus('Transcribing');
+    const fd = new FormData(); fd.append('file', new Blob(chunks, { type: rec.mimeType }), 'speech.webm');
+    try { const { text } = await (await api('/api/transcribe', { method: 'POST', body: fd })).json(); mode = 'idle'; text ? ask(text) : setStatus('Heard nothing'); }
+    catch (e) { mode = 'idle'; setStatus(e.message, true); }
+  };
+  rec.start(); mode = 'listening'; setStatus('Listening'); $('#mic').classList.add('on');
+}
+const recording = () => !!sr || rec?.state === 'recording';
+const stopRec = () => { if (sr) sr.stop(); else if (rec?.state === 'recording') rec.stop(); };
+const listen = () => { audio().resume?.(); return useServerSTT ? startRec() : startBrowserRec(); };
+$('#mic').onclick = () => recording() ? stopRec() : listen();
+addEventListener('keydown', e => { if (e.code === 'Space' && e.target === document.body && !e.repeat) { e.preventDefault(); listen(); } });
+addEventListener('keyup', e => { if (e.code === 'Space' && e.target === document.body) stopRec(); });
+
+// ── agent cards + report ──
+// label, colour and "in development" come from the agent config on the server (Settings → Agents)
+const AGENT_SHORT = {}, AGENT_COLORS = {}, AGENT_DEV = new Set();
+function learnAgents(list) { for (const a of list) { AGENT_SHORT[a.id] = a.short || a.name; AGENT_COLORS[a.id] = a.color || '#3dff8f'; a.dev ? AGENT_DEV.add(a.id) : AGENT_DEV.delete(a.id); } }
+const fmt = n => n == null ? '—' : Number(n).toLocaleString();
+const kfmt = n => !n ? '0' : n >= 1e6 ? (n / 1e6).toFixed(1) + 'M' : n >= 1e3 ? Math.round(n / 1e3) + 'k' : String(n);
+const esc = t => String(t ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+// text decode: letters settle from random glyphs, left to right
+function decode(el, text = el.textContent, ms = 600) {
+  if (reduce || !text) { el.textContent = text; return; }
+  const G = '█▓▒░<>/\\|=+*#01', t0 = performance.now();
+  (function tick(now) {
+    const k = Math.min(1, (now - t0) / ms), n = Math.floor(k * text.length);
+    el.textContent = text.slice(0, n) + [...text.slice(n)].map(c => c === ' ' ? ' ' : G[Math.random() * G.length | 0]).join('');
+    if (k < 1) requestAnimationFrame(tick); else el.textContent = text;
+  })(t0);
+}
+// numbers count up from 0
+function countUp(root) {
+  for (const b of root.querySelectorAll('b[data-n]')) {
+    const end = +b.dataset.n, suf = b.dataset.s || '', t0 = performance.now();
+    if (reduce || !end) { b.textContent = end.toLocaleString() + suf; continue; }
+    (function tick(now) { const k = Math.min(1, (now - t0) / 700), e = 1 - (1 - k) ** 3;
+      b.textContent = Math.round(end * e).toLocaleString() + suf; if (k < 1) requestAnimationFrame(tick); })(t0);
+  }
+}
+async function loadAgents() {
+  if (dragOn) return;   // never re-render under a finger mid-drag
+  try {
+    const { agents } = await (await api('/api/agents')).json(), half = Math.ceil(agents.length / 2);
+    learnAgents(agents); lastAgents = agents;
+    const card = (a, i) => `<button type="button" class="card agent${AGENT_DEV.has(a.id) ? ' dev' : ''}" style="--a:${AGENT_COLORS[a.id] || '#3dff8f'};--i:${i}" data-id="${esc(a.id)}" aria-label="${esc(a.name)} report">
+      <span class="st ${AGENT_DEV.has(a.id) ? 'dev' : esc(a.status)}">${AGENT_DEV.has(a.id) ? 'in dev' : esc(a.status)}<span class="ago"> · ${esc(a.last_active_ago || '—')}</span></span><b>${esc(AGENT_SHORT[a.id] || a.name)}</b>
+      <small>${esc(a.last_reply || a.role)}</small></button>`;
+    $('#agents-l').innerHTML = agents.slice(0, half).map(card).join('')
+      || '<button type="button" class="card" id="first-agent" style="--a:#3dff8f"><span class="st">start here</span><b>Add an agent</b><small>An agent is a helper with its own folder and job. Tap to make your first one.</small></button>';
+    if ($('#first-agent')) $('#first-agent').onclick = e => { e.stopPropagation(); setTimeout(() => { if ($('#pop-s').hidden) $('#gear').click(); showTab('agents'); }, 0); };
+    $('#agents-r').innerHTML = agents.slice(half).map((a, i) => card(a, i + .5)).join('');
+    if (!loadAgents.done) { loadAgents.done = true; document.querySelectorAll('.agent b').forEach((b, i) => setTimeout(() => decode(b), 200 + i * 80)); setTimeout(() => document.body.classList.remove('boot'), 2500); }
+    for (const a of agents) { const prev = loadAgents.seen?.[a.id]; if (prev && prev !== a.last_reply) document.querySelector(`.agent[data-id="${CSS.escape(a.id)}"]`)?.classList.add('flash'); }
+    loadAgents.seen = Object.fromEntries(agents.map(a => [a.id, a.last_reply]));
+    layoutHud();
+  } catch (e) { $('#agents-l').innerHTML = '<div class="card"><span>Agents</span><small>offline</small></div>'; }
+}
+document.addEventListener('click', e => { if (dragEnded()) { e.preventDefault(); e.stopPropagation(); return; } }, true);
+document.addEventListener('click', e => { const b = e.target.closest('.agent'); if (b) { rSeen = ''; rPending = []; renderRAtts(); openReport(b.dataset.id); loadThread(b.dataset.id, true); } });
+let reportFor = null;
+async function openReport(id) {
+  reportFor = id; const dlg = $('#report');
+  if (!dlg.open) dlg.showModal();
+  try {
+    const r = await (await api('/api/agents/' + encodeURIComponent(id))).json(); if (reportFor !== id) return;
+    const t = r.today || {}, g = r.git || {}, ctxPct = Math.min(100, Math.round((r.context_tokens || 0) / 1e6 * 100));
+    $('#report').style.setProperty('--a', AGENT_COLORS[r.id] || '#3dff8f');
+    $('#r-name').textContent = AGENT_DEV.has(r.id) ? `${AGENT_SHORT[r.id]} (in development)` : r.name;
+    $('#r-sub').innerHTML = `<span class="st ${esc(r.status)}">${esc(r.status)}</span> · ${esc(r.role)} · last active ${esc(r.last_active_ago || '—')}${r.model ? ' · ' + esc(r.model) : ''}`;
+    const last = (g.commits || [])[0], now = (r.requests || [])[0];
+    const first = $('#report').dataset.shown !== id; $('#report').dataset.shown = id;
+    const nb = (n, suf = '') => `<b data-n="${n || 0}" data-s="${suf}">${fmt(n || 0)}${suf}</b>`;
+    $('#r-strip').innerHTML = `<span>${nb(t.requests)} requests today</span><span>${nb(ctxPct, '%')} context</span>`
+      + (g.uncommitted ? `<span>${nb(g.uncommitted)} unsaved</span>` : '') + (g.unpushed ? `<span>${nb(g.unpushed)} not pushed</span>` : '')
+      + (last ? `<span>last commit ${esc(last.ago)}</span>` : '') + (now ? `<span class="now" title="${esc(now.text)}">Now: ${esc(now.text)}</span>` : '');
+    if (first) { countUp($('#r-strip')); decode($('#r-name')); }
+    $('#r-q').placeholder = `Message ${AGENT_SHORT[r.id] || r.name}…`;
+    const kpi = (label, val, w) => `<div class="kpi"><span>${label}</span><b>${val}</b>${w != null ? `<i style="--w:${w}%"></i>` : ''}</div>`;
+    $('#r-kpis').innerHTML = kpi('Requests today', fmt(t.requests || 0)) + kpi('Tool calls today', fmt(t.tool_calls || 0))
+      + kpi('Tokens written today', kfmt(t.output_tokens)) + kpi('Tokens read today', kfmt((t.input_tokens || 0) + (t.cached_tokens || 0)))
+      + kpi('Context used', `${kfmt(r.context_tokens)} <small>/ 1M</small>`, ctxPct)
+      + kpi('Unsaved changes', fmt(g.uncommitted)) + kpi('Not pushed', g.unpushed == null ? '—' : fmt(g.unpushed));
+    $('#r-reqs').innerHTML = (r.requests || []).map(q => `<li><em>${esc(q.at)}</em>${esc(q.text)}</li>`).join('') || '<li>None yet</li>';
+    $('#r-tools').innerHTML = (r.tools || []).map(x => `<li><em>${esc(x.at)}</em>${esc(x.label)}</li>`).join('') || '<li>None yet</li>';
+    const max = Math.max(1, ...(r.tool_counts || []).map(x => x[1]));
+    $('#r-toolbars').innerHTML = (r.tool_counts || []).map(([n, c]) => `<div class="bar"><span>${esc(n)}</span><i style="--w:${Math.round(c / max * 100)}%"></i><span>${c}</span></div>`).join('') || '<small>No tools used today</small>';
+    $('#r-branch').textContent = g.branch || '';
+    $('#r-commits').innerHTML = (g.commits || []).map(c => `<li><em>${esc(c.ago)}</em>${esc(c.subject)}</li>`).join('') || '<li>None</li>';
+  } catch (e) { $('#r-strip').textContent = 'Could not load: ' + e.message; }
+}
+// chat with the agent: the box is the agent's real Claude Code session (a tmux pane on the server)
+const rq = $('#r-q'); let rPending = [], rBusy = false, rPoll = null, rSeen = '';
+const rkey = k => api(`/api/agents/${encodeURIComponent(reportFor)}/chat/key`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: k }) })
+  .then(() => setTimeout(() => reportFor && loadThread(reportFor, true), 600)).catch(e => alert(e.message));
+// videos, voice lines and pictures a message names play right in the chat
+const rMedia = (id, list) => (list || []).map(f => {
+  const u = `/api/agents/${encodeURIComponent(id)}/chat/media?p=${encodeURIComponent(f.path)}`;
+  return `<span class="cmedia">${f.kind === 'video' ? `<video controls playsinline preload="metadata" src="${esc(u)}"></video>`
+    : f.kind === 'audio' ? `<audio controls preload="metadata" src="${esc(u)}"></audio>`
+    : `<a href="${esc(u)}" target="_blank" rel="noopener"><img loading="lazy" alt="${esc(f.name)}" src="${esc(u)}"></a>`}<em>${esc(f.name)}</em></span>`;
+}).join('');
+async function loadThread(id, force) {
+  try {
+    const d = await (await api(`/api/agents/${encodeURIComponent(id)}/chat`)).json(); if (reportFor !== id) return;
+    const app = d.mode === 'terminal', key = JSON.stringify([d.messages.length, d.messages.at(-1)?.text?.length, d.busy, d.ask, d.mode]);
+    rBusy = d.busy; $('#r-stop').hidden = !d.busy || d.mode === 'app'; $('#r-send').disabled = app; rq.disabled = app; $('#r-new').disabled = app || d.mode === 'app';
+    $('#r-link').textContent = d.attach ? 'terminal: ' + d.attach : d.mode === 'app' ? 'also in the Claude app' : d.mode === 'terminal' ? 'open in a terminal' : '';
+    $('#r-link').title = d.attach || '';
+    clearTimeout(rPoll); rPoll = setTimeout(() => reportFor === id && loadThread(id), d.busy || d.ask ? 2000 : 6000);
+    if (key === rSeen && !force) return; rSeen = key;
+    const th = $('#r-thread'), near = th.scrollHeight - th.scrollTop - th.clientHeight < 80;
+    th.innerHTML = d.messages.map(m => m.who === 'note' ? `<p class="tool">${esc(m.text)}</p>` : m.who === 'tool'
+        ? `<p class="tool">▸ ${esc(m.text)}${m.steps > 1 ? ` <small>+${m.steps - 1} steps</small>` : ''}</p>`
+        : `<p class="${m.who === 'you' ? 'you' : 'bot'}">${m.who === 'you' ? esc(m.text) : md(m.text)}${rMedia(id, m.media)}<small>${esc(m.at || '')}</small></p>`).join('')
+      + (d.ask ? `<div class="ask"><b>${esc(d.ask.question || 'Claude is asking')}</b>${d.ask.options.map(o => `<button type="button" data-k="${esc(o.key)}">${esc(o.key)}. ${esc(o.label)}</button>`).join('')}</div>`
+        : d.busy ? '<div class="typing"><i></i><i></i><i></i> working… you can close this, Neesmo will notify you</div>' : '')
+      + (d.mode === 'terminal' ? '<div class="empty">This session is open in a terminal outside tmux. You can read it here; run it inside tmux to type from Neesmo.</div>' : '')
+      || `<div class="empty">This is the agent's own Claude Code session on your server, the same one you'd get in a terminal in its folder. Type to talk to it.</div>`;
+    th.querySelectorAll('.ask button').forEach(b => b.onclick = () => rkey(b.dataset.k));
+    if (near || force) th.scrollTop = th.scrollHeight;
+  } catch (e) { $('#r-thread').innerHTML = `<div class="empty">Could not load the chat: ${esc(e.message)}</div>`; clearTimeout(rPoll); rPoll = setTimeout(() => reportFor === id && loadThread(id), 6000); }
+}
+function renderRAtts() {
+  $('#r-atts').innerHTML = rPending.map((f, i) => `<span>${esc(f.name)}<button type="button" data-i="${i}" aria-label="Remove ${esc(f.name)}">✕</button></span>`).join('');
+}
+$('#r-atts').onclick = e => { const b = e.target.closest('button'); if (b) { rPending.splice(+b.dataset.i, 1); renderRAtts(); } };
+$('#r-attach').onclick = () => $('#r-files').click();
+$('#r-files').onchange = e => { for (const f of e.target.files) f.size > 50e6 ? alert(`${f.name} is over 50 MB`) : rPending.push(f); e.target.value = ''; renderRAtts(); };
+const grow = () => { rq.style.height = 'auto'; rq.style.height = rq.scrollHeight + 'px'; };
+rq.addEventListener('input', grow);
+rq.addEventListener('keydown', e => { if (e.key === 'Enter' && !e.shiftKey && !matchMedia('(pointer: coarse)').matches) { e.preventDefault(); $('#r-form').requestSubmit(); } });
+$('#r-form').onsubmit = async e => {
+  e.preventDefault(); const id = reportFor, text = rq.value.trim();
+  if (!id || rq.disabled || (!text && !rPending.length)) return;
+  $('#r-send').disabled = true;
+  try {
+    const files = [];
+    for (const f of rPending) { const fd = new FormData(); fd.append('file', f); files.push((await (await api('/api/upload', { method: 'POST', body: fd })).json()).path); }
+    await api(`/api/agents/${encodeURIComponent(id)}/chat`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text, files }) });
+    rq.value = ''; grow(); rPending = []; renderRAtts();
+  } catch (err) { alert('Could not send: ' + err.message); }
+  loadThread(id, true);
+};
+$('#r-stop').onclick = () => reportFor && api(`/api/agents/${encodeURIComponent(reportFor)}/chat/stop`, { method: 'POST' }).then(() => loadThread(reportFor, true));
+$('#r-new').onclick = async () => {
+  if (!reportFor || !confirm('Clear this session (/clear)? Claude forgets this conversation.')) return;
+  try { await api(`/api/agents/${encodeURIComponent(reportFor)}/chat/reset`, { method: 'POST' }); } catch (err) { alert(err.message); }
+  loadThread(reportFor, true);
+};
+$('#r-close').onclick = () => $('#report').close();
+$('#r-gear').onclick = async () => {   // this agent's settings, over its chat
+  if (!agCfg.agents.length) await loadAgentCfg();
+  const i = (agCfg?.agents || []).findIndex(a => a.id === reportFor); if (i >= 0) openAgentEditor(i);
+};
+$('#report').addEventListener('click', e => { if (e.target.id === 'report') e.target.close(); });
+$('#report').addEventListener('close', () => { reportFor = null; clearTimeout(rPoll); delete $('#report').dataset.shown; });
+loadAgents(); setInterval(() => { if (!document.hidden) { loadAgents(); if (reportFor) openReport(reportFor); } }, 15000);
+
+// ── home-screen app: notifications + replies that arrive on their own ──
+const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
+const b64 = s => Uint8Array.from(atob((s + '='.repeat((4 - s.length % 4) % 4)).replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0));
+// Notifications on/off lives in the bell menu; history + approvals below.
+let swReg = null;
+async function pushState() {
+  const t = $('#t-push'), note = $('#push-note');
+  if (!('serviceWorker' in navigator)) { t.disabled = true; note.textContent = 'Not supported in this browser.'; return; }
+  swReg = swReg || await navigator.serviceWorker.register('/sw.js');
+  if (!('PushManager' in window) || !('Notification' in window)) {   // iPhone: only inside the home-screen app
+    t.disabled = true; note.textContent = /iPhone|iPad/.test(navigator.userAgent) && !standalone ? 'Add Neesmo to your Home Screen first.' : 'Not supported here.'; return;
+  }
+  const on = Notification.permission === 'granted' && !!(await swReg.pushManager.getSubscription());
+  t.setAttribute('aria-checked', on); note.textContent = Notification.permission === 'denied' ? 'Blocked in system settings.' : '';
+}
+$('#t-push').onclick = async () => {   // must run from a tap on iPhone
+  const t = $('#t-push');
+  try {
+    if (t.getAttribute('aria-checked') === 'true') {
+      const sub = await swReg.pushManager.getSubscription();
+      if (sub) { await api('/api/push/unsubscribe', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ endpoint: sub.endpoint }) }); await sub.unsubscribe(); }
+    } else {
+      if (await Notification.requestPermission() !== 'granted') { $('#push-note').textContent = 'Blocked in system settings.'; return; }
+      const { key } = await (await api('/api/push/key')).json();
+      const sub = await swReg.pushManager.getSubscription() || await swReg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64(key) });
+      await api('/api/push/subscribe', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(sub) });
+    }
+  } catch (e) { $('#push-note').textContent = e.message; }
+  pushState();
+};
+pushState().catch(() => {});
+
+// ── popups (settings, notifications) ──
+function togglePop(btn, pop, open = pop.hidden) {
+  for (const [b, p] of [[$('#gear'), $('#pop-s')], [$('#bell'), $('#pop-n')]]) { p.hidden = true; b.setAttribute('aria-expanded', 'false'); }
+  pop.hidden = !open; btn.setAttribute('aria-expanded', String(open));
+  if (open && pop.id === 'pop-n') { loadNotes(); pushState().catch(() => {}); }
+}
+$('#gear').onclick = () => { togglePop($('#gear'), $('#pop-s')); if (!$('#pop-s').hidden) { loadLicense(); showTab(settingsTab); } };
+// ── agents editor ──
+let agCfg = { agents: [], colors: [] }, agEdit = -1, agColor = '';
+async function loadAgentCfg() {
+  try { agCfg = await (await api('/api/agents-config')).json(); } catch { return; }
+  learnAgents(agCfg.agents);
+  $('#aglist').innerHTML = agCfg.agents.map((a, i) => `<li><button type="button" data-ag="${i}" style="--a:${esc(a.color)}"><i></i><b>${esc(a.name)}</b><span>${esc(a.role || '')}${a.hidden ? ' · hidden' : ''}</span></button></li>`).join('') || '<li><small>No agents yet</small></li>';
+}
+function openAgentEditor(i) {
+  agEdit = i; const a = agCfg.agents[i] || {};
+  agColor = a.color || agCfg.colors[agCfg.agents.length % agCfg.colors.length] || '#3dff8f';
+  $('#ag-title').textContent = i < 0 ? 'New agent' : a.name;
+  $('#ag-name').value = a.name || ''; $('#ag-short').value = a.short || ''; $('#ag-role').value = a.role || '';
+  $('#ag-folder').value = a.folder || ''; $('#ag-inst').value = a.instructions || '';
+  $('#ag-inst').placeholder = (agCfg.default_instructions || {})[a.id] || 'Default: finish each job end to end, check it works, then report in 2-3 lines.';
+  $('#ag-del').hidden = i < 0; $('#ag-err').textContent = '';
+  const paint = () => { $('#ag').style.setProperty('--a', agColor); $('#ag-colors').innerHTML = agCfg.colors.map(c => `<button type="button" class="sw" style="--s:${c}" aria-pressed="${c === agColor}" data-c="${c}" aria-label="Colour ${c}"></button>`).join(''); };
+  paint(); $('#ag-colors').onclick = e => { const b = e.target.closest('[data-c]'); if (b) { agColor = b.dataset.c; paint(); } };
+  $('#ag-tabs [data-agtab="plugins"]').hidden = i < 0;
+  showAgTab('look'); $('#pop-s').hidden = true; if (!$('#ag').open) $('#ag').showModal();
+}
+// Agent settings tabs: Appearance and Job share the Save button; plugin switches apply at once.
+function showAgTab(t) {
+  for (const b of document.querySelectorAll('#ag-tabs [data-agtab]')) b.setAttribute('aria-selected', String(b.dataset.agtab === t));
+  for (const p of document.querySelectorAll('.agtab')) p.hidden = p.dataset.agtab !== t;
+  $('#ag-btns').hidden = t === 'plugins';
+  if (t === 'plugins') loadAgentPlugins();
+}
+$('#ag-tabs').onclick = e => { const b = e.target.closest('[data-agtab]'); if (b) showAgTab(b.dataset.agtab); };
+async function loadAgentPlugins() {
+  const a = agCfg.agents[agEdit]; if (!a) return;
+  $('#ag-plist').innerHTML = '<li><small>loading…</small></li>'; $('#ag-pother').hidden = true;
+  let d; try { d = await (await api(`/api/agents/${encodeURIComponent(a.id)}/plugins`)).json(); } catch (e) { $('#ag-plist').innerHTML = `<li><small>${esc(e.message)}</small></li>`; return; }
+  if (agCfg.agents[agEdit] !== a) return;
+  const row = p => `<li><div class="xi"><b>${esc(p.name)}</b>${p.description || p.suggested ? `<span class="xd">${esc(p.description || '')}${p.suggested ? ' · installs for this agent when switched on' : ''}</span>` : ''}</div>
+    <button type="button" class="tog" role="switch" aria-checked="${p.on}" aria-label="${esc(p.name)}" data-ap="${esc(p.id)}"></button></li>`;
+  const fit = d.plugins.filter(p => p.fits), other = d.plugins.filter(p => !p.fits && p.on);
+  $('#ag-plist').innerHTML = fit.map(row).join('') || '<li><small>No plugins fit this job yet.</small></li>';
+  $('#ag-plist2').innerHTML = other.map(row).join(''); $('#ag-pother').hidden = !other.length;
+}
+$('#ag').addEventListener('click', async e => {
+  const t = e.target.closest('.tog[data-ap]'), a = agCfg.agents[agEdit]; if (!t || !a || t.hasAttribute('aria-busy')) return;
+  const on = t.getAttribute('aria-checked') !== 'true', name = t.getAttribute('aria-label');
+  t.setAttribute('aria-busy', 'true'); t.setAttribute('aria-checked', String(on));
+  if (on && t.closest('li')?.textContent.includes('installs for')) $('#ag-pnote').textContent = `Installing ${name}… this can take a minute.`;
+  try { await api(`/api/agents/${encodeURIComponent(a.id)}/plugins/${encodeURIComponent(t.dataset.ap)}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ on }) });
+    $('#ag-pnote').textContent = `${name} ${on ? 'on' : 'off'} for ${a.name}. Its next session picks it up (New thread starts one).`; }
+  catch (err) { t.setAttribute('aria-checked', String(!on)); $('#ag-pnote').textContent = err.message; }
+  t.removeAttribute('aria-busy');
+});
+async function saveAgents(list) {
+  try { await api('/api/agents-config', { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(list) }); }
+  catch (e) { $('#ag-err').textContent = e.message; return false; }
+  await loadAgentCfg(); loadAgents(); return true;
+}
+// ── settings tabs ──
+let settingsTab = 'general';
+try { settingsTab = localStorage.getItem('neesmo-tab') || 'general'; } catch {}
+function showTab(t) {
+  if (!document.querySelector(`.tab[data-tab="${t}"]`)) t = 'general';
+  settingsTab = t; try { localStorage.setItem('neesmo-tab', t); } catch {}
+  for (const b of document.querySelectorAll('.tabs [data-tab]')) b.setAttribute('aria-selected', String(b.dataset.tab === t));
+  document.querySelector(`.tabs [data-tab="${t}"]`)?.scrollIntoView({ block: "nearest", inline: "nearest" });
+  for (const p of document.querySelectorAll('.tab')) p.hidden = p.dataset.tab !== t;
+  ({ general: welPreview, agents: loadAgentCfg, system: () => { loadExtensions(); loadDevices(); loadNotices(); }, license: loadLicense }[t] || (() => {}))();
+}
+$('#to-notices').onclick = e => { e.preventDefault(); $('#notices').scrollIntoView({ behavior: 'smooth', block: 'start' }); };
+$('.tabs').onclick = e => { const b = e.target.closest('[data-tab]'); if (b) showTab(b.dataset.tab); };
+// ── skills and plugins (Settings → System) ──
+async function loadExtensions() {
+  let x; try { x = await (await api('/api/extensions')).json(); } catch (e) { $('#plist').innerHTML = $('#slist').innerHTML = `<li><small>${esc(e.message)}</small></li>`; return; }
+  const row = (kind, id, name, on, desc, lic) => `<li><div class="xi"><b>${esc(name)}</b>${lic ? `<span class="lchip">${esc(lic)}</span>` : ''}${desc ? `<span class="xd">${esc(desc)}</span>` : ''}</div>
+    <button type="button" class="tog" role="switch" aria-checked="${on}" aria-label="${esc(name)}" data-kind="${kind}" data-x="${esc(id)}"></button></li>`;
+  const prow = p => row('plugins', p.id, p.name, p.on, p.suggested ? p.description + ' · installs when switched on' : (p.version ? 'v' + p.version : ''), p.license);
+  const job = x.plugins.filter(p => p.job), jobOn = job.filter(p => p.on).length;
+  $('#plist2').innerHTML = job.map(prow).join(''); $('#pjob').hidden = !job.length;
+  $('#pjob summary').textContent = `Job plugins (${job.length}${jobOn ? `, ${jobOn} on in every chat` : ''})`;
+  $('#plist').innerHTML = x.plugins.filter(p => !p.job).map(p => row('plugins', p.id, p.name, p.on, p.suggested ? p.description + ' · installs when switched on' : (p.version ? 'v' + p.version : ''), p.license)).join('') || '<li><small>No user-wide plugins installed.</small></li>';
+  $('#slist').innerHTML = x.skills.map(k => row('skills', k.name, k.name, k.on, k.description, k.license)).join('')
+    || `<li><small>No general skills in ${esc(x.skills_dir)}. Skills inside a project folder belong to that project.</small></li>`;
+}
+document.querySelector('#pop-s').addEventListener('click', async e => {
+  const t = e.target.closest('.tog[data-x]'); if (!t) return;
+  const on = t.getAttribute('aria-checked') !== 'true';
+  t.setAttribute('aria-busy', 'true'); t.setAttribute('aria-checked', String(on));
+  if (on && t.closest('li')?.textContent.includes('installs when')) $('#x-note').textContent = `Installing ${t.getAttribute('aria-label')}… this can take a minute.`;
+  try { await api(`/api/${t.dataset.kind}/${encodeURIComponent(t.dataset.x)}`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ on }) });
+    $('#x-note').textContent = `${t.getAttribute('aria-label')} ${on ? 'on' : 'off'}. New Claude sessions pick it up; running ones keep what they started with.`; }
+  catch (err) { t.setAttribute('aria-checked', String(!on)); $('#x-note').textContent = err.message; }
+  t.removeAttribute('aria-busy');
+});
+// ── open-source licenses (Settings → License) ──
+async function loadNotices() {
+  if (loadNotices.done) return;
+  let d; try { d = await (await api('/api/notices')).json(); } catch { return; }
+  loadNotices.done = true;
+  $('#notices').innerHTML = d.sections.map(s => `<h4>${esc(s.title)}</h4>${s.rows.length ? `<table>${s.rows.map(r => `<tr><td>${esc(r.item)}${r.source ? `<small>${esc(r.source)}</small>` : ''}</td><td><span class="lchip">${esc(r.license)}</span></td></tr>`).join('')}</table>` : ''}${s.notes.map(n => `<p>${esc(n)}</p>`).join('')}`).join('');
+}
+// ── welcome on open ──
+function welText(busy) {
+  const h = new Date().getHours(), greeting = h < 5 ? 'Good evening' : h < 12 ? 'Good morning' : h < 18 ? 'Good afternoon' : 'Good evening';
+  return (PREFS.welText || '{greeting}, {name}. {busy}').replace(/\{greeting\}/g, greeting).replace(/\{name\}/g, (PREFS.welName || '').trim()).replace(/\{busy\}/g, busy)
+    .replace(/,\s*(?=[.!?]|$)/g, '').replace(/\s+([.,!?])/g, '$1').replace(/\s{2,}/g, ' ').trim();
+}
+var lastAgents = null;
+async function welBusy() {
+  try {   // use the cards already loaded; never hold the greeting for more than 1.5 s
+    const agents = lastAgents || await Promise.race([api('/api/agents').then(r => r.json()).then(d => d.agents), new Promise((_, no) => setTimeout(no, 1500))]);
+    const working = agents.filter(a => /work|busy|run/i.test(a.status || ''));
+    if (!agents.length) return 'Add an agent in Settings to get started.';
+    if (!working.length) return `All ${agents.length} agents are standing by.`;
+    return working.length === 1 ? `${AGENT_SHORT[working[0].id] || working[0].name} is working.` : `${working.length} agents are working.`;
+  } catch { return 'Systems online.'; }
+}
+async function welPreview() { $('#wel-name').value = PREFS.welName || ''; $('#wel-text').value = PREFS.welText; $('#wel-prev').textContent = welText(await welBusy()); }
+$('#wel-name').oninput = $('#wel-text').oninput = async () => { PREFS.welName = $('#wel-name').value; PREFS.welText = $('#wel-text').value || '{greeting}, {name}. {busy}'; applyPrefs(); $('#wel-prev').textContent = welText(await welBusy()); };
+$('#wel-try').onclick = () => { try { audio().resume(); } catch {} togglePop($('#gear'), $('#pop-s'), false); welcome('voice'); };   // unlock sound inside the tap (iPhone), then say it
+async function welcome(force) {
+  const text = welText(await welBusy()), el = $('#welcome');
+  if (PREFS.welVoice || force === 'voice') {   // spoken: just say it, no text on screen
+    const go = () => speak(text).catch(() => {});
+    try { await audio().resume(); } catch {}
+    if (ac?.state === 'running') go(); else addEventListener('pointerdown', () => { audio().resume().then(go); }, { once: true });
+    return;
+  }
+  el.innerHTML = `<span></span><small>Neesmo online</small>`; el.hidden = false;
+  decode(el.firstChild, text, 900);
+  if (window.Motion && !reduce) Motion.animate(el, { opacity: [0, 1], scale: [.92, 1], filter: ['blur(8px)', 'blur(0px)'] }, { type: 'spring', stiffness: 220, damping: 20 });
+  clearTimeout(welcome.t);
+  welcome.t = setTimeout(() => {
+    const hide = () => { el.hidden = true; };
+    if (window.Motion && !reduce) Motion.animate(el, { opacity: 0, scale: 1.04, filter: 'blur(6px)' }, { duration: .5 }).then(hide); else hide();
+  }, 4200);
+}
+(() => { let seen = false; try { seen = sessionStorage.getItem('neesmo-welcomed'); sessionStorage.setItem('neesmo-welcomed', '1'); } catch {}
+  welLoaded.then(() => { if (PREFS.wel && !seen) setTimeout(() => welcome(), 1300); }); })();
+// ── drag to reorder (home cards and Settings → Agents), snaps into place on drop ──
+var dragOn = false, dragEndAt = 0;  // var: loadAgents() reads dragOn before this line runs
+const dragEnded = () => performance.now() - dragEndAt < 350;
+function flip(els, fn) {
+  const before = new Map(els.map(el => [el, el.getBoundingClientRect()]));
+  fn();
+  if (reduce) return;
+  for (const el of els) {
+    if (el.classList.contains('dragging')) continue;
+    const a = before.get(el), b = el.getBoundingClientRect(), dx = a.left - b.left, dy = a.top - b.top;
+    if (dx || dy) el.animate([{ transform: `translate(${dx}px,${dy}px)` }, { transform: 'none' }], { duration: 260, easing: 'cubic-bezier(.2,.9,.3,1.15)' });
+  }
+}
+function sortable(boxes, itemSel, onDrop) {
+  let el = null, start = null, armed = false, timer = 0, base = null;
+  const items = () => boxes.flatMap(b => [...b.querySelectorAll(itemSel)]);
+  const reset = () => { clearTimeout(timer); el?.classList.remove('drag-armed'); el = null; armed = false; };
+  const arm = () => { armed = dragOn = true; el.classList.remove('drag-armed'); el.classList.add('dragging'); base = el.getBoundingClientRect(); navigator.vibrate?.(12); };
+  for (const box of boxes) {
+    box.addEventListener('pointerdown', e => {
+      const it = e.target.closest(itemSel); if (!it || e.button > 0 || dragOn) return;
+      el = it; start = { x: e.clientX, y: e.clientY, touch: e.pointerType !== 'mouse' };
+      if (start.touch) { el.classList.add('drag-armed'); timer = setTimeout(() => { if (el) { arm(); } }, 380); }
+    });
+    box.addEventListener('touchmove', e => { if (armed) e.preventDefault(); }, { passive: false });
+    box.addEventListener('contextmenu', e => { if (el) e.preventDefault(); });
+  }
+  addEventListener('pointermove', e => {
+    if (!el) return;
+    const dx = e.clientX - start.x, dy = e.clientY - start.y;
+    if (!armed) {
+      if (Math.hypot(dx, dy) < 6) return;
+      if (start.touch) { reset(); return; }   // moved before the long press: a scroll, not a drag
+      arm();
+    }
+    e.preventDefault();
+    const r0 = el.getBoundingClientRect();
+    el.style.transform = 'none';
+    const home = el.getBoundingClientRect();
+    el.style.transform = `translate(${e.clientX - start.x + base.left - home.left}px,${e.clientY - start.y + base.top - home.top}px)`;
+    const over = document.elementFromPoint(e.clientX, e.clientY)?.closest(itemSel);
+    const box = over ? boxes.find(b => b.contains(over)) : boxes.find(b => { const r = b.getBoundingClientRect(); return e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom; });
+    if (!box || over === el) return;
+    const row = getComputedStyle(box).flexDirection.startsWith('row');
+    flip(items(), () => {
+      if (over) { const r = over.getBoundingClientRect(), after = row ? e.clientX > r.left + r.width / 2 : e.clientY > r.top + r.height / 2;
+        over.parentNode.insertBefore(el, after ? over.nextSibling : over); }
+      else if (!box.contains(el)) box.append(el);
+    });
+    void r0;
+  }, { passive: false });
+  const end = () => {
+    if (!el) return;
+    const done = el, was = armed; reset();
+    if (!was) return;
+    dragEndAt = performance.now();
+    const cur = done.style.transform; done.style.transform = '';
+    done.classList.remove('dragging');
+    if (!reduce && cur) done.animate([{ transform: cur + ' scale(1.06)' }, { transform: 'none' }], { duration: 380, easing: 'cubic-bezier(.2,1.4,.4,1)' });
+    dragOn = false;
+    onDrop(items());
+  };
+  addEventListener('pointerup', end); addEventListener('pointercancel', end);
+}
+async function saveOrder(ids) {
+  try { await api('/api/agents/order', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ids }) }); setStatus('Order saved'); }
+  catch (e) { setStatus('Order: ' + e.message, true); }
+}
+sortable([$('#agents-l'), $('#agents-r')], '.agent', async els => { await saveOrder(els.map(x => x.dataset.id)); setTimeout(loadAgents, 450); });
+sortable([$('#aglist')], 'li:has(> [data-ag])', async els => {
+  await saveOrder(els.map(li => agCfg.agents[+li.firstElementChild.dataset.ag]?.id).filter(Boolean)); await loadAgentCfg(); loadAgents();
+});
+$('#aglist').addEventListener('click', e => { const b = e.target.closest('[data-ag]'); if (b) openAgentEditor(+b.dataset.ag); });
+$('#ag-add').onclick = () => openAgentEditor(-1);
+$('#ag-close').onclick = () => $('#ag').close();
+$('#ag-form').onsubmit = async e => {
+  e.preventDefault();
+  const prev = agCfg.agents[agEdit] || {};
+  const a = { ...prev, name: $('#ag-name').value.trim(), short: $('#ag-short').value.trim(), role: $('#ag-role').value.trim(),
+    folder: $('#ag-folder').value.trim(), instructions: $('#ag-inst').value.trim(), color: agColor };
+  if (agEdit < 0) delete a.id;
+  const list = agCfg.agents.slice(); agEdit < 0 ? list.push(a) : (list[agEdit] = a);
+  if (await saveAgents(list)) { $('#ag').close(); if ($('#report').open) openReport(reportFor); }
+};
+$('#ag-del').onclick = async () => {
+  if (!confirm('Remove this agent from Neesmo? Its folder and files are kept.')) return;
+  if (await saveAgents(agCfg.agents.filter((_, i) => i !== agEdit))) { $('#ag').close(); if ($('#report').open) $('#report').close(); }
+};
+// ── remembered devices (only when login is on) ──
+function showLicense(l) {
+  const txt = { owner: 'Owner copy · no key needed', licensed: `Licensed · ${l.plan || 'pro'}${l.to ? ' · ' + l.to : ''}${l.expires ? ' · until ' + l.expires : ''}`,
+    trial: `Trial · ${l.days_left} day${l.days_left === 1 ? '' : 's'} left`, expired: 'Trial ended · add a key', invalid: 'Key problem: ' + (l.error || '') };
+  $('#lic-state').textContent = txt[l.state] || l.state;
+  $('.tabs [data-tab="license"]').hidden = l.state === 'owner';
+  if (l.state === 'owner' && settingsTab === 'license' && !$('#pop-s').hidden) showTab('system');
+  if (l.state === 'licensed' && /early/.test(l.plan || '')) $('#lic-state').textContent += ' · thank you for backing Neesmo early. Every update is yours, free.';
+  const buy = $('#lic-buy'); buy.hidden = !l.buy || !['trial', 'expired', 'invalid'].includes(l.state); if (l.buy) buy.href = l.buy;
+  $('#lic-form').hidden = l.state === 'owner' || l.state === 'licensed'; $('#lic-rm').hidden = l.state !== 'licensed' && l.state !== 'invalid';
+}
+async function loadLicense() { try { showLicense(await (await api('/api/license')).json()); } catch { $('#lic-state').textContent = 'unknown'; } }
+$('#lic-form').onsubmit = async e => {
+  e.preventDefault(); $('#lic-msg').textContent = '';
+  try { showLicense(await (await api('/api/license', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ key: $('#lic-key').value }) })).json()); $('#lic-key').value = ''; }
+  catch (err) { $('#lic-msg').textContent = err.message; }
+};
+$('#lic-rm').onclick = async e => { e.preventDefault(); if (confirm('Remove the license key from this server?')) showLicense(await (await api('/api/license', { method: 'DELETE' })).json()); };
+async function loadDevices() {
+  let d; try { d = await (await api('/api/devices')).json(); } catch { return; }
+  $('#acct').hidden = !d.enabled; if (!d.enabled) return;
+  $('#devlist').innerHTML = d.devices.map(x => `<li><button type="button" disabled><b>${esc(x.name)}${x.current ? ' · this one' : ''}</b><span>added ${esc(x.created)} · seen ${esc(x.seen)}</span></button>${x.current ? '' : `<button type="button" class="x" data-dev="${esc(x.id)}" aria-label="Sign out ${esc(x.name)}">✕</button>`}</li>`).join('');
+}
+$('#devlist').addEventListener('click', async e => { const b = e.target.closest('[data-dev]'); if (b) { await api('/api/devices/' + b.dataset.dev, { method: 'DELETE' }).catch(() => {}); loadDevices(); } });
+$('#logout').onclick = async () => { await api('/api/logout', { method: 'POST' }).catch(() => {}); location.replace('/login'); };
+$('#bell').onclick = () => togglePop($('#bell'), $('#pop-n'));
+document.addEventListener('click', e => { if (!e.target.closest('.pop, .ic, dialog')) { $('#pop-s').hidden = $('#pop-n').hidden = true; } });
+addEventListener('keydown', e => { if (e.key === 'Escape') { $('#pop-s').hidden = $('#pop-n').hidden = true; } });
+
+// ── notification history ──
+let notes = [], seenId = +(localStorage.getItem('neesmo-seen') || 0);
+const chipText = { pending: 'needs approval', approved: 'approved', denied: 'denied', expired: 'expired', ignored: 'ignored', 'changes asked': 'changes asked' };
+const asks = n => n.kind === 'approval' || n.kind === 'review';
+async function loadNotes() {
+  try { notes = (await (await api('/api/notifications')).json()).items; } catch { return; }
+  const pending = notes.filter(n => n.status === 'pending').length, unread = notes.filter(n => n.id > seenId).length;
+  const badge = $('#badge'); badge.hidden = !(pending || unread); badge.textContent = pending || unread;
+  try { (pending || unread) ? navigator.setAppBadge?.(pending || unread) : navigator.clearAppBadge?.(); } catch {}  // home-screen icon badge
+  $('#nlist').innerHTML = notes.map(n => `<li><button type="button" data-n="${n.id}" class="${n.id > seenId ? 'unread' : ''}" style="--a:${AGENT_COLORS[n.agent] || 'var(--dim)'}">
+    ${asks(n) ? `<em class="chip ${esc(n.status)}">${chipText[n.status] || esc(n.status)}</em>` : ''}<b>${esc(n.title)}</b><span>${esc(n.at)} · ${esc(n.body)}</span></button>${n.status === 'pending' ? `<button type="button" class="x ign" data-ign="${n.id}" aria-label="Ignore">Ignore</button>` : `<button type="button" class="x" data-del="${n.id}" aria-label="Delete">✕</button>`}</li>`).join('') || '<li><small>Nothing yet</small></li>';
+  if (!$('#pop-n').hidden && notes.length) { seenId = Math.max(seenId, notes[0].id); try { localStorage.setItem('neesmo-seen', seenId); } catch {} }
+}
+$('#nlist').addEventListener('click', async e => {
+  const g = e.target.closest('[data-ign]');
+  if (g) { await api('/api/notifications/' + g.dataset.ign + '/ignore', { method: 'POST' }).catch(() => {}); return loadNotes(); }
+  const d = e.target.closest('[data-del]');
+  if (d) { await api('/api/notifications/' + d.dataset.del, { method: 'DELETE' }).catch(() => {}); return loadNotes(); }
+  const b = e.target.closest('[data-n]'); if (b) openNote(+b.dataset.n);
+});
+$('#nclear').onclick = async () => { await api('/api/notifications', { method: 'DELETE' }).catch(() => {}); loadNotes(); };  // pending approvals stay
+loadNotes(); setInterval(() => { if (!document.hidden) loadNotes(); }, 10000);
+
+// ── approval / notification detail screen ──
+let apOpen = null;
+async function openNote(id) {
+  await loadNotes();
+  const n = notes.find(x => x.id === id); if (!n) return;
+  apOpen = id; const dlg = $('#ap');
+  dlg.style.setProperty('--a', AGENT_COLORS[n.agent] || 'var(--c)');
+  $('#ap-title').textContent = n.title;
+  const rv = n.kind === 'review';
+  $('#ap-sub').textContent = n.kind === 'approval' ? `${n.agent_name} · ${n.tool} · asked ${n.at}` : rv ? `${n.agent_name} · ${n.at}` : n.at;
+  $('#ap-what').textContent = n.kind === 'approval' ? `${n.agent_name} wants to ${n.action}:` : rv ? n.body : '';
+  $('#ap-details').textContent = asks(n) ? n.details : n.body;
+  $('#ap-details').hidden = !$('#ap-details').textContent;
+  $('#ap-no').textContent = rv ? 'Ask for changes' : 'Deny';
+  $('#ap-note').hidden = true; $('#ap-note').value = '';
+  const media = $('#ap-media'), was = media.dataset.for; media.dataset.for = id;
+  if (was != id) media.innerHTML = (n.media || []).map((m, i) => {   // a test render it wants to upload etc.
+    const src = `/api/approvals/${id}/media/${i}`;
+    return (m.video ? `<video src="${src}" controls playsinline preload="metadata"></video>` : `<img src="${src}" alt="">`) + `<small>${esc(m.name)}</small>`;
+  }).join('');
+  const pending = asks(n) && (n.status === 'pending' || (n.kind === 'review' && n.status === 'ignored'));
+  $('#ap-btns').hidden = !pending;
+  $('#ap-state').textContent = !asks(n) ? '' : pending ? 'Waiting for your answer.'
+    : n.note ? `You asked for changes${n.decided_at ? ' at ' + n.decided_at : ''}: ${n.note}`
+    : n.status === 'ignored' ? (n.kind === 'review' ? 'You ignored this. You can still answer it.' : 'You ignored this: answer it in the Claude app if it still needs you.')
+    : n.status === 'expired' ? 'No longer waiting here (over 2 days, or the chat moved on): answer it in the Claude app if it still needs you.' : `You ${n.status} this${n.decided_at ? ' at ' + n.decided_at : ''}.`;
+  if (!dlg.open) dlg.showModal();
+}
+async function decide(d, note = '') {
+  try { await api('/api/approvals/' + apOpen, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ decision: d, note }) }); }
+  catch (e) { $('#ap-state').textContent = e.message; }
+  openNote(apOpen);
+}
+$('#ap-yes').onclick = () => decide('allow');
+$('#ap-no').onclick = () => {
+  const n = notes.find(x => x.id === apOpen);
+  if (n?.kind !== 'review') return decide('deny');
+  const box = $('#ap-note');   // first tap opens the box, second tap sends what to change
+  if (box.hidden) { box.hidden = false; $('#ap-no').textContent = 'Send changes'; return box.focus(); }
+  if (!box.value.trim()) { $('#ap-state').textContent = 'Write what to change first.'; return box.focus(); }
+  decide('changes', box.value);
+};
+$('#ap-close').onclick = () => $('#ap').close();
+$('#ap').addEventListener('close', () => { $('#ap-media').innerHTML = ''; delete $('#ap-media').dataset.for; });
+$('#ap').addEventListener('click', e => { if (e.target.id === 'ap') e.target.close(); });
+// Opened from a push notification: /?n=<id>, or a message from the service worker when the app is already open.
+const openParam = +new URLSearchParams(location.search).get('n');
+if (openParam) { openNote(openParam); history.replaceState(null, '', '/'); }
+for (const ev of ['gesturestart', 'gesturechange']) document.addEventListener(ev, e => e.preventDefault(), { passive: false });  // no pinch zoom
+navigator.serviceWorker?.addEventListener('message', e => { if (e.data?.open) openNote(+e.data.open); });
+let inboxAfter = 0, inboxPrimed = false;
+async function pollInbox() {
+  try {
+    const { items } = await (await api('/api/inbox?after=' + inboxAfter)).json();
+    for (const i of inboxPrimed ? items : items.slice(-3).filter(i => !chatLog.some(h => h.text === `[${i.at}] ${i.text}`))) {   // on opening: the last few replies, quietly, not twice
+      say(`[${i.at}] ${i.text}`, 'vega');
+      if (inboxPrimed && mode === 'idle' && !document.hidden) await speak(i.text);
+    }
+    for (const i of items) inboxAfter = Math.max(inboxAfter, i.id);
+    inboxPrimed = true;
+  } catch {}
+}
+pollInbox(); setInterval(pollInbox, 10000);
+document.addEventListener('visibilitychange', () => { if (!document.hidden) { pollInbox(); loadAgents(); } });
+
+// ── motion: the Motion library (motion.dev, MIT) adds spring physics on top of the CSS entrances ──
+// presses give under the finger, new chat lines spring in, the cards spring back when the chat closes.
+if (window.Motion) {
+  const { animate, stagger, spring } = window.Motion, still = () => reduce || PREFS.calm;
+  const press = '.agent, #f button, .composer button, .rfoot button, #chathead button, .corner.tr button';
+  addEventListener('pointerdown', e => {
+    const el = e.target.closest(press); if (!el || still()) return;
+    animate(el, { scale: .94 }, { type: spring, stiffness: 700, damping: 32 });
+    const up = () => { animate(el, { scale: 1 }, { type: spring, stiffness: 520, damping: 13 }); removeEventListener('pointerup', up); removeEventListener('pointercancel', up); };
+    addEventListener('pointerup', up); addEventListener('pointercancel', up);
+  });
+  const springIn = el => animate(el, { opacity: [0, 1], y: [16, 0], scale: [.96, 1] }, { type: spring, stiffness: 360, damping: 24 });
+  for (const box of [$('#log'), $('#r-thread')]) {
+    let seen = box.children.length;
+    new MutationObserver(() => {   // a whole re-render or one new line: only the newest line springs in
+      const n = box.children.length, last = box.lastElementChild;
+      if (n > seen && last && !still()) springIn(last);
+      seen = n;
+    }).observe(box, { childList: true });
+  }
+  let wasChat = false;
+  new MutationObserver(() => {
+    const now = document.body.classList.contains('chat');
+    if (wasChat && !now && !still()) document.querySelectorAll('.cards').forEach(c => {
+      const dir = c.classList.contains('r') ? 40 : -40;
+      animate(c.querySelectorAll('.agent'), { opacity: [0, 1], x: [dir, 0], scale: [.9, 1] }, { delay: stagger(.05, { startDelay: .08 }), type: spring, stiffness: 300, damping: 22 });
+    });
+    wasChat = now;
+  }).observe(document.body, { attributes: true, attributeFilter: ['class'] });
+  // the status word under the ring pops when it changes
+  new MutationObserver(() => still() || animate(statusEl, { opacity: [.2, 1], y: [6, 0] }, { duration: .4, ease: [.2, .8, .2, 1] }))
+    .observe(statusEl, { childList: true, characterData: true, subtree: true });
+}
+
+// ── clock ──
+setInterval(() => { const d = new Date(); $('#clock').textContent = d.toLocaleTimeString(); $('#date').textContent = d.toDateString(); }, 1000);
+
+// ── HUD ──
+const cv = $('#hud'), g = cv.getContext('2d'), data = new Uint8Array(128);
+var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches || PREFS.calm;
+// Buffer sized from the canvas's real on-screen box (not innerWidth/innerHeight, which differ from it
+// on iPhone with the toolbar or as a home-screen app), so the ring is never stretched.
+function resize() {
+  const r = cv.getBoundingClientRect(), w = Math.round(r.width * devicePixelRatio), h = Math.round(r.height * devicePixelRatio);
+  if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h; }
+}
+addEventListener('resize', resize); window.ResizeObserver && new ResizeObserver(resize).observe(cv); resize();
+function arc(r, a0, a1, w, color, blur) { g.beginPath(); g.arc(0, 0, r, a0, a1); g.lineWidth = w; g.strokeStyle = color; g.shadowBlur = blur || 0; g.shadowColor = color; g.stroke(); }
+// Ring placement: centred in the free space (between the header and the cards on phones,
+// above the input on desktop), sized so the ring, its NEESMO lettering and the status line fit.
+const hud = { cy: innerHeight / 2, R: 100, tcy: 0, tR: 0, init: false };
+function layoutHud() {
+  const narrow = innerWidth <= 900, gap = 34;   // room for the status line under the ring
+  if (document.body.classList.contains('chat')) {   // chat open: the ring sits large and dim behind the conversation
+    const vv = window.visualViewport, vt = vv ? vv.offsetTop : 0, cs = getComputedStyle(document.documentElement);
+    const kb = parseFloat(cs.getPropertyValue('--kb')) || 0, vh = Math.max(200, innerHeight - kb - vt);   // the part of the screen above the keyboard
+    hud.tR = Math.min(innerWidth, vh) * .3; hud.tcy = vt + vh / 2; return;
+  }
+  const top = narrow ? $('.corner.tr').getBoundingClientRect().bottom + 6 : 0;
+  const cards = $('#agents-l'), cardTop = cards.children.length ? cards.getBoundingClientRect().top : innerHeight - 160;
+  const bottom = (narrow ? cardTop : $('#f').getBoundingClientRect().top) - 6;
+  const avail = Math.max(120, bottom - top - gap);
+  hud.tR = Math.max(40, Math.min(Math.min(innerWidth, innerHeight) * .22, avail / 3.4, innerWidth / 3.6));
+  hud.tcy = top + avail / 2;
+}
+// The wordmark and status line ride on the ring's glide, so all three move together.
+// The wordmark moves on the GPU (translate, sub-pixel), the status line snaps to whole pixels.
+let markY = -1, statY = -1;
+function followRing() {
+  const y = Math.round(hud.cy * 10) / 10, sy = Math.round(hud.cy + hud.R * 1.45);
+  if (y !== markY) { markY = y; $('#wordmark').style.translate = `0 ${y}px`; }
+  if (sy !== statY && !document.body.classList.contains('chat')) { statY = sy; statusEl.style.top = `${sy}px`; }
+}
+// A critically damped spring per value: smooth start, no overshoot, same speed at any frame rate,
+// and a retarget mid-glide (the keyboard's real height arriving) bends the path instead of jerking it.
+const spring = { vy: 0, vr: 0, last: 0 };
+function glide(now) {
+  const dt = Math.min(.05, spring.last ? (now - spring.last) / 1000 : .016); spring.last = now;
+  if (reduce) { hud.cy = hud.tcy; hud.R = hud.tR; return; }
+  const w = 11;   // stiffness: ~0.4 s to settle
+  spring.vy += (-2 * w * spring.vy - w * w * (hud.cy - hud.tcy)) * dt; hud.cy += spring.vy * dt;
+  spring.vr += (-2 * w * spring.vr - w * w * (hud.R - hud.tR)) * dt; hud.R += spring.vr * dt;
+}
+// Wordmark: measured so the slanted word fills ~94% of a phone's width (62% on desktop), centred.
+function fitWordmark() {
+  const el = $('#wordmark'); el.style.fontSize = '100px';
+  const perPx = el.getBoundingClientRect().width / 100 / 1.015;  // box already includes the slant; 1.015 = mid breathing zoom
+  const target = innerWidth <= 900 ? innerWidth * .94 : Math.min(innerWidth * .62, 1100);
+  el.style.fontSize = `${target / perPx}px`;
+}
+document.fonts?.ready.then(fitWordmark); addEventListener('resize', fitWordmark); fitWordmark();
+addEventListener('resize', layoutHud); setInterval(layoutHud, 1000); layoutHud();
+function frame(t) {
+  if (!hud.init && hud.tR) { hud.cy = hud.tcy; hud.R = hud.tR; hud.init = true; }
+  glide(t); followRing();
+  t = reduce ? 0 : t / 1000;
+  if (analyser && mode !== 'idle' && mode !== 'thinking') { analyser.getByteFrequencyData(data); level += (data.reduce((a, b) => a + b, 0) / data.length / 255 * 2.2 - level) * .3; }
+  else level *= .9;
+  const dpr = devicePixelRatio, R = hud.R * dpr * (1 + Math.min(level, 1.5) * .09), hot = mode === 'listening' ? THEME.c2 : THEME.hex;
+  g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, cv.width, cv.height);
+  g.translate(cv.width / 2, hud.cy * cv.height / (cv.clientHeight || innerHeight));   // layout coords, like the wordmark (iOS reports the rect shifted while the keyboard is up)
+  // core glow
+  const core = g.createRadialGradient(0, 0, 0, 0, 0, R * (.45 + level * .25));
+  core.addColorStop(0, '#f2fff6'); core.addColorStop(.25, hot); core.addColorStop(1, 'transparent');
+  g.fillStyle = core; g.beginPath(); g.arc(0, 0, R * (.45 + level * .25), 0, 7); g.fill();
+  // inner ring + spokes
+  arc(R * .32, 0, 7, 2, hot, 20);
+  for (let i = 0; i < 12; i++) { const a = i / 12 * 6.283 + t * .4; arc(R * .4, a, a + .3, 6, `rgba(${THEME.rgb},.7)`, 10); }
+  // audio-reactive bars
+  g.save(); g.shadowBlur = 12; g.shadowColor = hot; g.strokeStyle = hot; g.lineWidth = 2;
+  for (let i = 0; i < 96; i++) {
+    const a = i / 96 * 6.283 - t * .1, v = analyser && level > .02 ? data[i % 64] / 255 : (Math.sin(t * 2 + i * .5) + 1) * .04;
+    const r0 = R * .58, r1 = r0 + R * (.04 + v * .5);
+    g.beginPath(); g.moveTo(Math.cos(a) * r0, Math.sin(a) * r0); g.lineTo(Math.cos(a) * r1, Math.sin(a) * r1); g.stroke();
+  }
+  g.restore();
+  if (mode === 'listening' && analyser) {   // the voice itself, drawn round the core
+    const wav = new Uint8Array(analyser.fftSize); analyser.getByteTimeDomainData(wav);
+    g.beginPath();
+    for (let i = 0; i <= 128; i++) { const a = i / 128 * 6.283, v = (wav[(i * 2) % wav.length] - 128) / 128, r = R * (.8 + v * .35);
+      i ? g.lineTo(Math.cos(a) * r, Math.sin(a) * r) : g.moveTo(Math.cos(a) * r, Math.sin(a) * r); }
+    g.closePath(); g.lineWidth = 2; g.strokeStyle = THEME.c2; g.shadowBlur = 16; g.shadowColor = THEME.c2; g.stroke(); g.shadowBlur = 0;
+  }
+  // rotating segmented rings
+  for (let i = 0; i < 3; i++) { const a = t * -(.25 + level * .6) + i * 2.094; arc(R * 1.02, a, a + 1.5, 3, `rgba(${THEME.rgb},.8)`, 12); }
+  for (let i = 0; i < 4; i++) { const a = t * .15 + i * 1.571; arc(R * 1.15, a, a + 1.1, 1.5, `rgba(${THEME.rgb},.45)`); }
+  arc(R * 1.25, 0, 7, 1, `rgba(${THEME.rgb},.2)`);
+  // tick marks
+  g.strokeStyle = `rgba(${THEME.rgb},.4)`; g.lineWidth = 1; g.shadowBlur = 0;
+  for (let i = 0; i < 120; i++) { const a = i / 120 * 6.283 + t * .05, l = i % 10 ? 6 : 14, r = R * 1.32;
+    g.beginPath(); g.moveTo(Math.cos(a) * r, Math.sin(a) * r); g.lineTo(Math.cos(a) * (r + l), Math.sin(a) * (r + l)); g.stroke(); }
+  // thinking sweep
+  if (mode === 'thinking') { const a = t * 4; arc(R * .85, a, a + .8, 4, THEME.c2, 18); arc(R * .85, a + 3.14, a + 3.94, 4, THEME.c2, 18); }
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+
+// ── reply menu: hold a message (phone) or right-click it (PC) to copy it or hear it read aloud; a plain tap does nothing ──
+(() => {
+  const thread = $('#r-thread'), menu = document.createElement('div');
+  menu.id = 'msgmenu'; menu.hidden = true; menu.setAttribute('role', 'menu');
+  menu.innerHTML = '<button type="button" role="menuitem" data-act="copy">Copy</button><button type="button" role="menuitem" data-act="read">Read aloud</button>';
+  $('#report').append(menu);
+  let cur = null, timer = 0, sx = 0, sy = 0;
+  const textOf = p => { const c = p.cloneNode(true); c.querySelectorAll('small, .cmedia').forEach(x => x.remove()); return c.innerText.trim(); };
+  const close = () => { menu.hidden = true; cur = null; };
+  const open = (p, x, y) => {
+    cur = p; p.classList.remove('held'); void p.offsetWidth; p.classList.add('held');
+    navigator.vibrate?.(12); getSelection()?.removeAllRanges();
+    menu.hidden = false;
+    const w = menu.offsetWidth, h = menu.offsetHeight;
+    menu.style.left = Math.max(8, Math.min(x - w / 2, innerWidth - w - 8)) + 'px';
+    menu.style.top = (y - h - 14 < 8 ? y + 14 : y - h - 14) + 'px';
+  };
+  const msg = e => e.target.closest('#r-thread p.you, #r-thread p.bot');
+  thread.addEventListener('contextmenu', e => { const p = msg(e); if (!p || e.target.closest('a, video, audio')) return; e.preventDefault(); open(p, e.clientX, e.clientY); });
+  thread.addEventListener('pointerdown', e => {
+    if (e.pointerType === 'mouse') return; const p = msg(e); if (!p) return;
+    sx = e.clientX; sy = e.clientY; clearTimeout(timer);
+    timer = setTimeout(() => open(p, sx, sy), 450);
+  });
+  const cancel = () => clearTimeout(timer);
+  thread.addEventListener('pointermove', e => { if (Math.hypot(e.clientX - sx, e.clientY - sy) > 10) cancel(); });
+  for (const t of ['pointerup', 'pointercancel', 'scroll']) thread.addEventListener(t, cancel, { passive: true });
+  thread.addEventListener('animationend', e => e.target.classList.remove('held'));
+  thread.addEventListener('click', e => { if (!menu.hidden && msg(e)) { e.preventDefault(); e.stopPropagation(); } }, true);   // the release after a hold opens no link
+  menu.addEventListener('click', async e => {
+    const b = e.target.closest('button'); if (!b || !cur) return; const t = textOf(cur);
+    if (b.dataset.act === 'copy') { try { await navigator.clipboard.writeText(t); } catch { const a = document.createElement('textarea'); a.value = t; menu.append(a); a.select(); document.execCommand('copy'); a.remove(); } }
+    else speak(t);
+    close();
+  });
+  document.addEventListener('pointerdown', e => { if (!menu.hidden && !menu.contains(e.target)) close(); }, true);
+  document.addEventListener('keydown', e => { if (e.key === 'Escape' && !menu.hidden) { e.stopPropagation(); close(); } }, true);
+  $('#report').addEventListener('close', close);
+})();
+</script>
+</body>
+</html>
