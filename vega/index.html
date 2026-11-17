@@ -1211,7 +1211,7 @@ async function openNote(id) {
   $('#ap-what').textContent = n.kind === 'approval' ? `${n.agent_name} wants to ${n.action}:` : rv ? n.body : '';
   $('#ap-details').textContent = asks(n) ? n.details : n.body;
   $('#ap-details').hidden = !$('#ap-details').textContent;
-  $('#ap-no').textContent = rv ? 'Ask for changes' : 'Deny';
+  $('#ap-no').textContent = rv ? 'Ask for changes' : 'Deny'; $('#ap-yes').textContent = 'Approve';
   $('#ap-note').hidden = true; $('#ap-note').value = '';
   const media = $('#ap-media'), was = media.dataset.for; media.dataset.for = id;
   if (was != id) media.innerHTML = (n.media || []).map((m, i) => {   // a test render it wants to upload etc.
@@ -1231,14 +1231,26 @@ async function decide(d, note = '') {
   catch (e) { $('#ap-state').textContent = e.message; }
   openNote(apOpen);
 }
-$('#ap-yes').onclick = () => decide('allow');
+// A video review has two modes. Normal: Ask for changes / Approve. Typing changes: Back / Send changes (Back returns to the first, so you can still approve).
+function apEdit(on) {
+  const box = $('#ap-note'); box.hidden = !on;
+  $('#ap-yes').textContent = on ? 'Send changes' : 'Approve';
+  $('#ap-no').textContent = on ? 'Back' : 'Ask for changes';
+  $('#ap-btns').classList.toggle('editing', on);
+  if (on) box.focus(); else box.value = '';
+}
+$('#ap-yes').onclick = () => {
+  const n = notes.find(x => x.id === apOpen), box = $('#ap-note');
+  if (n?.kind === 'review' && !box.hidden) {
+    if (!box.value.trim()) { $('#ap-state').textContent = 'Write what to change first.'; return box.focus(); }
+    return decide('changes', box.value);
+  }
+  decide('allow');
+};
 $('#ap-no').onclick = () => {
   const n = notes.find(x => x.id === apOpen);
   if (n?.kind !== 'review') return decide('deny');
-  const box = $('#ap-note');   // first tap opens the box, second tap sends what to change
-  if (box.hidden) { box.hidden = false; $('#ap-no').textContent = 'Send changes'; return box.focus(); }
-  if (!box.value.trim()) { $('#ap-state').textContent = 'Write what to change first.'; return box.focus(); }
-  decide('changes', box.value);
+  apEdit($('#ap-note').hidden);
 };
 $('#ap-close').onclick = () => $('#ap').close();
 $('#ap').addEventListener('close', () => { $('#ap-media').innerHTML = ''; delete $('#ap-media').dataset.for; });
