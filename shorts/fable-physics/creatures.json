@@ -352,7 +352,9 @@
     "culture": "Brazil (Amazon)",
     "familiar": false,
     "intro": "mapinguari-intro",
-    "physics": []
+    "physics": [
+      "mapinguari"
+    ]
   },
   {
     "slug": "boitata",
