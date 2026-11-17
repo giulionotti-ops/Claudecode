@@ -351,7 +351,7 @@
     "name": "Mapinguari",
     "culture": "Brazil (Amazon)",
     "familiar": false,
-    "intro": null,
+    "intro": "mapinguari-intro",
     "physics": []
   },
   {
