@@ -1,0 +1,16 @@
+Could the Mapinguari be real? (physics short): third-party material
+
+Fonts
+- Lilita One and Fredoka, SIL Open Font License 1.1 (subsets from the Lemo-Opuscar library, core/fonts/OFL.md).
+
+Voice
+- ElevenLabs, voice "Liam" on the eleven_v3 model, generated for this film; word times from the ElevenLabs API.
+
+Tools
+- Lemo-Opuscar (MIT) by Lemomo: rendering, sound helpers. three.js (MIT).
+
+3D models
+- "Animated Megatherium (Free)" by Anees Animates (https://sketchfab.com/AneesAnimates), CC Attribution, https://sketchfab.com/3d-models/animated-megatherium-free-ec0cb6a41c2e498780136e3d89fa1516
+- Palms, trees, bushes, logs, flowers: Nature Kit by Kenney (kenney.nl), CC0.
+
+Everything else (overlays, bullets, skin cutaway, music, sound effects) was made in code for this film.

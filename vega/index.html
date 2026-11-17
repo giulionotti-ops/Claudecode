@@ -1,0 +1,173 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vega</title>
+<style>
+  :root { --c: #3fe0ff; --c2: #ffb547; --bg: #02070d; --dim: rgba(63,224,255,.35); --err: #ff5f6d; }
+  * { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; background: radial-gradient(ellipse at center, #062033 0%, var(--bg) 70%); color: var(--c);
+    font: 14px/1.4 ui-monospace, "SF Mono", Menlo, Consolas, monospace; overflow: hidden; }
+  body::after { content: ""; position: fixed; inset: 0; pointer-events: none;
+    background: repeating-linear-gradient(0deg, rgba(63,224,255,.03) 0 1px, transparent 1px 3px); }
+  canvas { position: fixed; inset: 0; width: 100%; height: 100%; }
+  .corner { position: fixed; padding: 16px; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); }
+  .tl { top: 0; left: 0; } .tr { top: 0; right: 0; text-align: right; }
+  .corner b { color: var(--c); font-weight: 600; }
+  #status { position: fixed; left: 0; right: 0; top: calc(50% + min(26vmin, 210px)); text-align: center;
+    letter-spacing: .4em; text-transform: uppercase; font-size: 13px; text-shadow: 0 0 8px var(--c); }
+  #status.err { color: var(--err); text-shadow: 0 0 8px var(--err); letter-spacing: .1em; }
+  #log { position: fixed; left: 16px; bottom: 84px; width: min(420px, calc(100% - 32px)); max-height: 30vh; overflow-y: auto;
+    display: flex; flex-direction: column; gap: 6px; mask-image: linear-gradient(transparent, #000 30%); padding-top: 24px; }
+  #log p { margin: 0; padding: 6px 10px; border-left: 2px solid var(--dim); background: rgba(63,224,255,.05); }
+  #log p.you { border-color: var(--c2); color: var(--c2); }
+  form { position: fixed; left: 16px; right: 16px; bottom: 16px; display: flex; gap: 8px; max-width: 720px; margin: 0 auto; }
+  input, select, button { font: inherit; color: var(--c); background: rgba(2,20,30,.8); border: 1px solid var(--dim); border-radius: 4px; }
+  input { flex: 1; min-width: 0; padding: 12px; outline: none; }
+  input:focus, select:focus, button:focus-visible { border-color: var(--c); box-shadow: 0 0 10px var(--dim); outline: none; }
+  button { padding: 0 16px; cursor: pointer; letter-spacing: .1em; }
+  #mic { width: 48px; padding: 0; font-size: 18px; }
+  #mic.on { color: var(--bg); background: var(--c2); border-color: var(--c2); box-shadow: 0 0 16px var(--c2); }
+  select { padding: 4px; max-width: 180px; }
+</style>
+</head>
+<body>
+<canvas id="hud" aria-hidden="true"></canvas>
+<div class="corner tl">Vega // online<br><b id="clock">--:--:--</b><br><span id="date"></span></div>
+<div class="corner tr"><label for="voice">Voice</label><br><select id="voice"><option>loading…</option></select><br><span id="vs">voicestudio: …</span></div>
+<div id="status" role="status" aria-live="polite">Standby</div>
+<div id="log" aria-live="polite"></div>
+<form id="f">
+  <button type="button" id="mic" title="Talk (or hold Space)" aria-label="Talk">●</button>
+  <input id="q" autocomplete="off" placeholder="Speak or type a command…" aria-label="Message">
+  <button>Send</button>
+</form>
+<script>
+const $ = s => document.querySelector(s);
+const statusEl = $('#status'), logEl = $('#log'), voiceSel = $('#voice');
+let ac, analyser, level = 0, mode = 'idle', rec, chunks = [], micStream;
+
+function setStatus(t, err) { statusEl.textContent = t; statusEl.classList.toggle('err', !!err); }
+function say(text, who) { const p = document.createElement('p'); p.className = who; p.textContent = text; logEl.append(p); logEl.scrollTop = 1e9; }
+async function api(path, opts) {
+  const r = await fetch(path, opts);
+  if (!r.ok) throw new Error((await r.json().catch(() => ({}))).detail || r.statusText);
+  return r;
+}
+function audio() {
+  if (!ac) { ac = new AudioContext(); analyser = ac.createAnalyser(); analyser.fftSize = 256; }
+  return ac;
+}
+
+// ── voices ──
+(async () => {
+  const cfg = await (await fetch('/api/config')).json();
+  try {
+    const { voices } = await (await api('/api/voices')).json();
+    voiceSel.innerHTML = '';
+    for (const v of voices) voiceSel.add(new Option(`${v.name}${v.type === 'profile' ? '' : ' (alias)'}`, v.id));
+    voiceSel.value = localStorage.getItem('vega-voice') || cfg.voice;
+    if (!voiceSel.value) voiceSel.selectedIndex = 0;
+    $('#vs').textContent = 'voicestudio: linked';
+  } catch (e) {
+    voiceSel.innerHTML = `<option value="${cfg.voice}">${cfg.voice}</option>`;
+    $('#vs').textContent = 'voicestudio: offline';
+    setStatus('VoiceStudio offline — text only', true);
+  }
+})();
+voiceSel.onchange = () => { try { localStorage.setItem('vega-voice', voiceSel.value); } catch {} };
+
+// ── conversation ──
+async function ask(text) {
+  text = text.trim(); if (!text || mode === 'thinking') return;
+  say(text, 'you'); mode = 'thinking'; setStatus('Processing');
+  try {
+    const { reply } = await (await api('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text }) })).json();
+    say(reply, 'vega');
+    await speak(reply);
+  } catch (e) { setStatus(e.message, true); }
+  finally { if (mode !== 'idle') { mode = 'idle'; if (!statusEl.classList.contains('err')) setStatus('Standby'); } }
+}
+async function speak(text) {
+  try {
+    const buf = await (await api('/api/speak', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text, voice: voiceSel.value }) })).arrayBuffer();
+    const ctx = audio(), src = ctx.createBufferSource();
+    src.buffer = await ctx.decodeAudioData(buf);
+    src.connect(analyser); analyser.connect(ctx.destination);
+    mode = 'speaking'; setStatus('Speaking');
+    await new Promise(res => { src.onended = res; src.start(); });
+    analyser.disconnect();
+  } catch (e) { setStatus('Voice: ' + e.message, true); }
+}
+$('#f').onsubmit = e => { e.preventDefault(); ask($('#q').value); $('#q').value = ''; };
+
+// ── microphone ──
+async function startRec() {
+  if (rec?.state === 'recording' || mode === 'thinking') return;
+  try { micStream = await navigator.mediaDevices.getUserMedia({ audio: true }); }
+  catch { return setStatus('Microphone blocked', true); }
+  audio().createMediaStreamSource(micStream).connect(analyser);
+  chunks = []; rec = new MediaRecorder(micStream);
+  rec.ondataavailable = e => chunks.push(e.data);
+  rec.onstop = async () => {
+    micStream.getTracks().forEach(t => t.stop()); analyser.disconnect?.();
+    $('#mic').classList.remove('on'); mode = 'thinking'; setStatus('Transcribing');
+    const fd = new FormData(); fd.append('file', new Blob(chunks, { type: rec.mimeType }), 'speech.webm');
+    try { const { text } = await (await api('/api/transcribe', { method: 'POST', body: fd })).json(); mode = 'idle'; text ? ask(text) : setStatus('Heard nothing'); }
+    catch (e) { mode = 'idle'; setStatus(e.message, true); }
+  };
+  rec.start(); mode = 'listening'; setStatus('Listening'); $('#mic').classList.add('on');
+}
+const stopRec = () => rec?.state === 'recording' && rec.stop();
+$('#mic').onclick = () => rec?.state === 'recording' ? stopRec() : startRec();
+addEventListener('keydown', e => { if (e.code === 'Space' && e.target === document.body && !e.repeat) { e.preventDefault(); startRec(); } });
+addEventListener('keyup', e => { if (e.code === 'Space' && e.target === document.body) stopRec(); });
+
+// ── clock ──
+setInterval(() => { const d = new Date(); $('#clock').textContent = d.toLocaleTimeString(); $('#date').textContent = d.toDateString(); }, 1000);
+
+// ── HUD ──
+const cv = $('#hud'), g = cv.getContext('2d'), data = new Uint8Array(128);
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+function resize() { cv.width = innerWidth * devicePixelRatio; cv.height = innerHeight * devicePixelRatio; }
+addEventListener('resize', resize); resize();
+function arc(r, a0, a1, w, color, blur) { g.beginPath(); g.arc(0, 0, r, a0, a1); g.lineWidth = w; g.strokeStyle = color; g.shadowBlur = blur || 0; g.shadowColor = color; g.stroke(); }
+function frame(t) {
+  t = reduce ? 0 : t / 1000;
+  if (analyser && mode !== 'idle' && mode !== 'thinking') { analyser.getByteFrequencyData(data); level += (data.reduce((a, b) => a + b, 0) / data.length / 255 * 2.2 - level) * .3; }
+  else level *= .9;
+  const R = Math.min(cv.width, cv.height) * .22, hot = mode === 'listening' ? '#ffb547' : '#3fe0ff';
+  g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, cv.width, cv.height);
+  g.translate(cv.width / 2, cv.height / 2 - R * .15);
+  // core glow
+  const core = g.createRadialGradient(0, 0, 0, 0, 0, R * (.45 + level * .25));
+  core.addColorStop(0, '#e9fdff'); core.addColorStop(.25, hot); core.addColorStop(1, 'transparent');
+  g.fillStyle = core; g.beginPath(); g.arc(0, 0, R * (.45 + level * .25), 0, 7); g.fill();
+  // inner ring + spokes
+  arc(R * .32, 0, 7, 2, hot, 20);
+  for (let i = 0; i < 12; i++) { const a = i / 12 * 6.283 + t * .4; arc(R * .4, a, a + .3, 6, 'rgba(63,224,255,.7)', 10); }
+  // audio-reactive bars
+  g.save(); g.shadowBlur = 12; g.shadowColor = hot; g.strokeStyle = hot; g.lineWidth = 2;
+  for (let i = 0; i < 96; i++) {
+    const a = i / 96 * 6.283 - t * .1, v = analyser && level > .02 ? data[i % 64] / 255 : (Math.sin(t * 2 + i * .5) + 1) * .04;
+    const r0 = R * .58, r1 = r0 + R * (.04 + v * .35);
+    g.beginPath(); g.moveTo(Math.cos(a) * r0, Math.sin(a) * r0); g.lineTo(Math.cos(a) * r1, Math.sin(a) * r1); g.stroke();
+  }
+  g.restore();
+  // rotating segmented rings
+  for (let i = 0; i < 3; i++) { const a = t * -.25 + i * 2.094; arc(R * 1.02, a, a + 1.5, 3, 'rgba(63,224,255,.8)', 12); }
+  for (let i = 0; i < 4; i++) { const a = t * .15 + i * 1.571; arc(R * 1.15, a, a + 1.1, 1.5, 'rgba(63,224,255,.45)'); }
+  arc(R * 1.25, 0, 7, 1, 'rgba(63,224,255,.2)');
+  // tick marks
+  g.strokeStyle = 'rgba(63,224,255,.4)'; g.lineWidth = 1; g.shadowBlur = 0;
+  for (let i = 0; i < 120; i++) { const a = i / 120 * 6.283 + t * .05, l = i % 10 ? 6 : 14, r = R * 1.32;
+    g.beginPath(); g.moveTo(Math.cos(a) * r, Math.sin(a) * r); g.lineTo(Math.cos(a) * (r + l), Math.sin(a) * (r + l)); g.stroke(); }
+  // thinking sweep
+  if (mode === 'thinking') { const a = t * 4; arc(R * .85, a, a + .8, 4, '#ffb547', 18); arc(R * .85, a + 3.14, a + 3.94, 4, '#ffb547', 18); }
+  requestAnimationFrame(frame);
+}
+requestAnimationFrame(frame);
+</script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+[
+ {
+  "id": "L1",
+  "text": "Before the Emperor faced Horus, one son reached him first.",
+  "voice": "bm_lewis",
+  "speed": 0.84,
+  "lang": "en-gb"
+ },
+ {
+  "id": "L2",
+  "text": "Sanguinius, the Angel, Primarch of the Blood Angels.",
+  "voice": "bm_lewis",
+  "speed": 0.84,
+  "lang": "en-gb",
+  "asr": "Sanguineus, the angel, Primark of the Blood Angels."
+ },
+ {
+  "id": "L3",
+  "text": "He had foreseen his own death, and went anyway.",
+  "voice": "bm_lewis",
+  "speed": 0.84,
+  "lang": "en-gb"
+ },
+ {
+  "id": "L4",
+  "text": "Aboard Horus's flagship, the two brothers met.",
+  "voice": "bm_lewis",
+  "speed": 0.84,
+  "lang": "en-gb",
+  "asr": "aboard Horace's flagship the two brothers met"
+ },
+ {
+  "id": "L5",
+  "text": "Horus offered him a place at his side.",
+  "voice": "bm_lewis",
+  "speed": 0.84,
+  "lang": "en-gb",
+  "asr": "Horace offered him a place at his side."
+ },
+ {
+  "id": "L6",
+  "text": "Sanguinius refused.",
+  "voice": "bm_lewis",
+  "speed": 0.84,
+  "lang": "en-gb",
+  "asr": "Sanguine is refused."
+ },
+ {
+  "id": "L7",
+  "text": "Horus broke him, and cast him down.",
+  "voice": "bm_lewis",
+  "speed": 0.84,
+  "lang": "en-gb",
+  "asr": "Horace broke him and cast him down."
+ },
+ {
+  "id": "L8",
+  "text": "But the Angel had struck true, and left a crack in Horus's armour.",
+  "voice": "bm_lewis",
+  "speed": 0.84,
+  "lang": "en-gb",
+  "asr": "But the angel had struck true and left a crack in Horus's armor."
+ },
+ {
+  "id": "L9",
+  "text": "Through it, the Emperor would end the Heresy.",
+  "voice": "bm_lewis",
+  "speed": 0.84,
+  "lang": "en-gb"
+ },
+ {
+  "id": "L10",
+  "text": "His sons still carry his death in their blood.",
+  "voice": "bm_lewis",
+  "speed": 0.84,
+  "lang": "en-gb",
+  "asr": "His son still carry his death in their blood."
+ }
+]

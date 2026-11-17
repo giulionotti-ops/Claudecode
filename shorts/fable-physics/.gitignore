@@ -1,0 +1,8 @@
+logs/
+PAUSE
+.daily.lock
+.reviews/
+.reviews.json
+.review_watch.lock
+assets-dl/
+models/*.glb
