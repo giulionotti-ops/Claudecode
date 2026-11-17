@@ -62,7 +62,7 @@ def rendered(slug, src):
             cwd = os.readlink(f'/proc/{pid}/cwd')
         except (OSError, ValueError):
             continue
-        if any(k in args for k in ('build.sh', 'ffmpeg', 'blender')) and (cwd == folder or cwd.startswith(folder + '/') or folder in args):
+        if any(k in args for k in ('build.sh', 'ffmpeg', 'blender')) and (cwd == folder or cwd.startswith(folder + '/') or re.search(re.escape(folder) + r'(/|\s|$)', args)):   # not a sibling like <name>-intro
             return False
     r = subprocess.run(['ffprobe', '-v', 'error', '-show_entries', 'format=duration', '-of', 'csv=p=0', src],
                        capture_output=True, text=True)
