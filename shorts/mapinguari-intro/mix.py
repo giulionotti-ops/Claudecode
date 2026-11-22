@@ -20,31 +20,24 @@ v = np.fromfile(wav, dtype='<f4').astype(float)
 v = hp(v, 90); v = sfx.compress(v, thr=.18, ratio=3.0)
 add(vo, v, 0.0, 1.0, 0)
 
-# ---- score: warm marimba-like figure in D minor pentatonic, 96 bpm
-BPM = 96; B = 60 / BPM
+# ---- score: grim storm. Low D drone, slow heartbeat drum, a cold minor pad every 4 bars
 mid = lambda m: 440 * 2 ** ((m - 69) / 12)
-def bell(f, d=1.0, v=1.0):
-    x = t_(d); e = np.exp(-x / .45) * np.minimum(1, x * 300)
-    return v * e * (np.sin(2 * np.pi * f * x) + .3 * np.sin(2 * np.pi * f * 2.76 * x) * np.exp(-x / .12) + .2 * np.sin(2 * np.pi * f * 2 * x))
-def bass(f, d, v=1.0):
-    x = t_(d); e = np.minimum(1, x * 30) * np.exp(-x / (d * .9))
-    return v * e * (np.sin(2 * np.pi * f * x) + .25 * np.sin(4 * np.pi * f * x))
 def pad(f, d, v=1.0, cut=900):
     x = t_(d); e = np.minimum(1, x / 1.2) * np.minimum(1, (d - x) / 1.2)
     s = sum(np.sin(2 * np.pi * f * k * x * (1 + .0015 * k) + k) / k for k in range(1, 6))
     return v * e * lp(s, cut)
-prog = [(38, [62, 65, 69, 65, 67, 65, 62, 60]), (34, [58, 62, 65, 62, 64, 62, 58, 57]), (41, [60, 64, 67, 64, 65, 64, 60, 57]), (36, [57, 60, 64, 60, 62, 60, 57, 55])]
-QUIET = (-1, -1)
-t = 0.0; bar = 0
-while t < DUR - 1.0:
-    root, fig = prog[(bar // 2) % 4]
-    q = QUIET[0] < t < QUIET[1]
-    if not q:
-        for i in range(8):
-            if i % 2 == 0 or bar % 2: add(music, bell(mid(fig[i]), 1.0, .17), t + i * B / 2, 1, -.4 + .8 * (i % 2))
-        add(music, bass(mid(root - 12), B * 3.8, .3), t, 1, 0)
-    if bar % 2 == 0: add(music, pad(mid(root), B * 8, .07), t, 1, 0)
-    t += 4 * B; bar += 1
+def drone(d, v=1.0):
+    x = t_(d); s = np.sin(2 * np.pi * mid(26) * x) + .6 * np.sin(2 * np.pi * mid(26) * 1.003 * x) + .35 * np.sin(2 * np.pi * mid(33) * x)
+    return v * lp(s * (1 + .25 * np.sin(2 * np.pi * .13 * x)), 220)
+def heart(v=1.0):
+    d = .5; x = t_(d); s = np.sin(2 * np.pi * (58 - 20 * x / d) * x) * np.exp(-x / .12) * np.minimum(1, x * 400); return v * s
+add(music, drone(DUR, .35), 0, 1, 0)
+B = 60 / 62; t = 1.0; bar = 0
+while t < DUR - 1.5:
+    add(music, heart(.8), t, 1, 0); add(music, heart(.5), t + .28, 1, 0)   # lub-dub
+    if bar % 4 == 0:
+        for m, pan in ((50, -.3), (53, .3), (57, 0)): add(music, pad(mid(m), B * 8, .06, 700), t, 1, pan)   # D minor, dark
+    t += 2 * B; bar += 1
 fade = np.ones(N); e0 = int((DUR - 2.2) * SR); fade[e0:] = np.linspace(1, 0, N - e0); music *= fade[:, None]
 
 # ---------------------------------------------------------------- foley from the picture's events
@@ -59,6 +52,19 @@ def snore(d=3.0, v=1.0):
         dd = 1.2; x = t_(dd); w = lp(noise(dd), 400) * np.sin(np.pi * x / dd) ** 2 * (1 + .5 * np.sin(2 * np.pi * 28 * x)); s = int(k * 1.5 * SR); out[s:s + len(w)] += w * v
     return out
 def swell(d=1.6, v=1.0): x = t_(d); return v * pad(mid(57), d, 1, 1800) * (x / d) ** 2
+def thunder(v=1.0):
+    d = 4.0; x = t_(d); crack = hp(noise(d), 1500) * np.exp(-x / .08)
+    roll = lp(noise(d), 160) * np.exp(-x / 1.4) * (1 + .6 * np.sin(2 * np.pi * 3.1 * x)) * np.minimum(1, x * 8)
+    return v * (crack * .6 + roll * 3.0)
+def rainbed(d, v=1.0):
+    n = bp(noise(d), 900, 6000) * .5 + lp(noise(d), 500) * .4; return v * n
+def clang(v=1.0):
+    d = .9; x = t_(d); return v * sum(np.sin(2 * np.pi * f * x) * np.exp(-x / (.25 / k)) for k, f in enumerate((640, 1530, 2470), 1)) * np.minimum(1, x * 900)
+def tick(v=1.0):
+    out = np.zeros(int(3.5 * SR))
+    for k in range(12): x = t_(.05); s = int(k * .3 * SR); out[s:s + len(x)] += v * np.sin(2 * np.pi * 2200 * x) * np.exp(-x / .01)
+    return out
+add(fx, rainbed(DUR, .35), 0, 1, 0)   # rain the whole way
 for e in ev['ev']:
     k, at = e['type'], e['t']
     if k == 'whoosh': add(fx, sfx.whoosh(.3, .45), at - .15, .5, 0)
@@ -69,6 +75,9 @@ for e in ev['ev']:
     elif k == 'buzz': add(fx, buzz(1), at, .5, 0)
     elif k == 'snore': add(fx, snore(3.0, .5), at, .5, 0)
     elif k == 'swell': add(fx, swell(1.4, .8), at - .2, .5, 0)
+    elif k == 'thunder': add(fx, thunder(1), at + .25, .9, -.2)
+    elif k == 'clang': add(fx, clang(1), at, .6, 0)
+    elif k == 'tick': add(fx, tick(.8), at, .5, .2)
     elif k == 'blip': add(fx, blip(1), at, .4, .2)
 
 venv = np.abs(vo[:, 0]); k = int(.25 * SR); venv = np.convolve(venv, np.ones(k) / k, 'same')
