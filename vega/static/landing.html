@@ -1,0 +1,132 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Neesmo</title>
+<meta name="description" content="A command centre for Claude Code on your own server: voice, agents, approvals and chat in one screen.">
+<link rel="icon" type="image/png" href="/static/icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#02070d">
+<style>
+  :root { --rgb: 61,255,143; --c: rgb(var(--rgb)); --c2: #c6ff4a; --bg: #02070d; --dim: rgba(var(--rgb),.4); --txt: #cfeedd; }
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { margin: 0; background: var(--bg); color: var(--txt); font: 16px/1.6 ui-monospace, "SF Mono", Menlo, Consolas, monospace; overflow-x: hidden; }
+  a { color: var(--c); }
+  .wrap { width: min(1080px, 100% - 32px); margin-inline: auto; }
+  nav { display: flex; justify-content: space-between; align-items: center; padding: 18px 0; }
+  nav b { letter-spacing: .35em; color: var(--c); }
+  nav a { text-decoration: none; font-size: 13px; letter-spacing: .12em; text-transform: uppercase; margin-left: 18px; }
+  .hero { position: relative; min-height: min(86vh, 760px); display: grid; place-items: center; text-align: center; padding: 40px 0 60px; }
+  #ring { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .75; pointer-events: none; }
+  .hero > div { position: relative; }
+  h1 { margin: 0; font: 400 clamp(44px, 9vw, 104px)/.95 "Anton", Impact, "Arial Narrow", sans-serif; letter-spacing: -.01em; color: #eafff2;
+    text-shadow: 0 0 40px rgba(var(--rgb),.35); }
+  h1 em { font-style: normal; color: var(--c); }
+  .sub { max-width: 620px; margin: 22px auto 30px; color: #9cc9b0; }
+  .btn { display: inline-block; padding: 14px 26px; background: var(--c); color: var(--bg); font-weight: 700; letter-spacing: .15em; text-decoration: none;
+    text-transform: uppercase; font-size: 14px; transition: transform .2s, box-shadow .2s; }
+  .btn:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(var(--rgb),.35); }
+  .btn.ghost { background: none; color: var(--c); border: 1px solid var(--dim); margin-left: 10px; }
+  section { padding: 70px 0; border-top: 1px solid rgba(var(--rgb),.12); }
+  h2 { margin: 0 0 30px; font-size: 13px; letter-spacing: .3em; text-transform: uppercase; color: var(--c); font-weight: 600; }
+  .feats { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1px; background: rgba(var(--rgb),.14); border: 1px solid rgba(var(--rgb),.14); }
+  .feats div { background: var(--bg); padding: 26px 22px; }
+  .feats b { display: block; color: #eafff2; margin-bottom: 6px; }
+  .feats p { margin: 0; color: #8fb8a2; font-size: 14px; }
+  .steps { counter-reset: s; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 26px; }
+  .steps div::before { counter-increment: s; content: "0" counter(s); display: block; font: 400 46px/1 "Anton", Impact, sans-serif; color: var(--c); margin-bottom: 8px; }
+  .steps p { margin: 0; color: #8fb8a2; }
+  code { background: rgba(var(--rgb),.12); padding: 2px 6px; border-radius: 4px; color: var(--c2); }
+  .bundle { display: flex; flex-wrap: wrap; gap: 10px; }
+  .bundle span { border: 1px solid var(--dim); padding: 8px 14px; border-radius: 20px; font-size: 14px; }
+  details { border-bottom: 1px solid rgba(var(--rgb),.14); padding: 16px 0; }
+  summary { cursor: pointer; color: #eafff2; }
+  details p { margin: 10px 0 0; color: #8fb8a2; }
+  .cta { text-align: center; }
+  footer { padding: 30px 0 50px; font-size: 12px; color: #5f8a73; border-top: 1px solid rgba(var(--rgb),.12); }
+  .reveal { opacity: 0; transform: translateY(18px); transition: opacity .7s cubic-bezier(.2,.8,.2,1), transform .7s cubic-bezier(.2,.8,.2,1); }
+  .reveal.in { opacity: 1; transform: none; }
+  @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
+  @media (max-width: 560px) { nav a:not(.btn) { display: none; } .btn, .btn.ghost { margin: 6px 4px; } }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <nav><b>NEESMO</b><span><a href="#features">Features</a><a href="#how">Install</a><a href="#faq">FAQ</a></span></nav>
+</div>
+<header class="hero">
+  <canvas id="ring" aria-hidden="true"></canvas>
+  <div class="wrap">
+    <h1>Run Claude Code<br>from <em>one screen</em></h1>
+    <p class="sub">Neesmo runs on your own server. Speak or type a job, hand it to an agent, approve its requests from your phone, and get a notification when it's done.</p>
+    <a class="btn" href="#buy">Get Neesmo</a><a class="btn ghost" href="#how">How it works</a>
+  </div>
+</header>
+<main class="wrap">
+  <section id="features" class="reveal">
+    <h2>What you get</h2>
+    <div class="feats">
+      <div><b>Voice or text</b><p>Speak or type a command. The assistant sends the job to the right agent.</p></div>
+      <div><b>Your real Claude Code sessions</b><p>Each card is a live Claude Code session on your server, in its own folder. Chat with it, answer its questions with a tap, or attach from a terminal: it is the same session.</p></div>
+      <div><b>Works while you're away</b><p>Agents keep going in the background. You get a push notification when they reply.</p></div>
+      <div><b>Approvals from your phone</b><p>When an agent asks for permission, approve, deny or ignore it straight from the notification.</p></div>
+      <div><b>A chat that feels like Claude</b><p>Markdown answers, file attachments and new chats, all on top of the live HUD.</p></div>
+      <div><b>Make it yours</b><p>A welcome greeting when you open it, drag-and-drop agent order, colours, and on/off switches for every plugin and skill.</p></div>
+      <div><b>Your server, your login</b><p>Password login with remembered devices. No VPN needed: put it behind a Cloudflare Tunnel.</p></div>
+    </div>
+  </section>
+  <section class="reveal">
+    <h2>Included in the box</h2>
+    <div class="bundle"><span>OmniRoute: free models for cheap text jobs</span><span>graphify: code knowledge graph</span><span>claude-mem: long-term memory</span><span>caveman: short, plain answers</span><span>55 skills: engineering, review, video, link reading, skill finder</span></div>
+  </section>
+  <section id="how" class="reveal">
+    <h2>Up in three steps</h2>
+    <div class="steps">
+      <div><p>Run <code>./install.sh</code> on a Linux PC or server. It sets up the app, the service and the extras you choose.</p></div>
+      <div><p>Open Neesmo in a browser, set your password, and add it to your phone's home screen.</p></div>
+      <div><p>Add your agents in Settings, give them jobs, and let them work.</p></div>
+    </div>
+  </section>
+  <section id="faq" class="reveal">
+    <h2>Questions</h2>
+    <details><summary>What do I need?</summary><p>A Linux PC or server (a home PC works; Windows through WSL; a small VPS keeps agents running all day) with Python 3.10+ and Node 20+, and Claude Code signed in with a Claude subscription or API key.</p></details>
+    <details><summary>Where does my data go?</summary><p>Nowhere new. Neesmo runs on your server and talks to Claude through your own Claude Code.</p></details>
+    <details><summary>Do I need a VPN?</summary><p>No. Use the built-in login and a Cloudflare Tunnel, or keep it on your private network.</p></details>
+    <details><summary>Is it made by Anthropic?</summary><p>No. Neesmo is an independent product that works with Claude Code.</p></details>
+  </section>
+  <section id="buy" class="cta reveal">
+    <h2>Get Neesmo</h2>
+    <p class="sub">One license key per server. Paste it in Settings → License.</p>
+    <a class="btn" href="mailto:?subject=Neesmo%20license">Ask for a license</a>
+  </section>
+</main>
+<footer class="wrap">Neesmo is not affiliated with Anthropic. Claude and Claude Code are trademarks of Anthropic, PBC. Third-party notices ship with the app.</footer>
+<script>
+const cv = document.getElementById('ring'), x = cv.getContext('2d'), calm = matchMedia('(prefers-reduced-motion: reduce)').matches;
+function size() { const r = cv.getBoundingClientRect(), d = devicePixelRatio || 1; cv.width = r.width * d; cv.height = r.height * d; x.setTransform(d, 0, 0, d, 0, 0); }
+size(); addEventListener('resize', size);
+function draw(t) {
+  const w = cv.clientWidth, h = cv.clientHeight, cx = w / 2, cy = h / 2, R = Math.min(w, h) * .38; t /= 1000;
+  x.clearRect(0, 0, w, h); x.lineCap = 'round';
+  for (let i = 0; i < 4; i++) {
+    const r = R * (1 - i * .16), a0 = t * (i % 2 ? -.3 : .22) * (i + 1), len = Math.PI * (.5 + i * .3);
+    x.strokeStyle = `rgba(61,255,143,${.5 - i * .1})`; x.lineWidth = 2 - i * .3;
+    x.beginPath(); x.arc(cx, cy, r, a0, a0 + len); x.stroke();
+    x.strokeStyle = `rgba(61,255,143,${.1})`; x.beginPath(); x.arc(cx, cy, r, 0, Math.PI * 2); x.stroke();
+  }
+  for (let k = 0; k < 72; k++) {
+    const a = k / 72 * Math.PI * 2, on = (Math.sin(t * 2 + k * .5) + 1) / 2;
+    x.strokeStyle = `rgba(198,255,74,${.08 + on * .35})`; x.lineWidth = 1;
+    x.beginPath(); x.moveTo(cx + Math.cos(a) * R * 1.06, cy + Math.sin(a) * R * 1.06); x.lineTo(cx + Math.cos(a) * R * (1.09 + on * .04), cy + Math.sin(a) * R * (1.09 + on * .04)); x.stroke();
+  }
+  if (!calm) requestAnimationFrame(draw);
+}
+requestAnimationFrame(draw);
+const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: .12 });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+</script>
+</body>
+</html>

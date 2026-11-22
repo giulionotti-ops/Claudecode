@@ -1,0 +1,384 @@
+<!doctype html>
+<html lang="en" data-type="software" data-radius="sharp" data-ground="sage" data-buttons="solid" data-motion>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Neesmo: a voice command centre for Claude Code on your own computer</title>
+<meta name="description" content="Neesmo is a command centre for Claude Code on your own Linux PC or server: one voice ring, one card per agent. Ready-made Claude Code setups for YouTube and Instagram, with Neesmo included. From €49.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Neesmo: a voice command centre for Claude Code on your own computer">
+<meta property="og:description" content="One voice ring, one card per agent, running on your own Linux PC or server. Setups for YouTube and Instagram from €49.">
+<meta property="og:image" content="share.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<meta name="theme-color" content="#f4f8f5">
+<!-- <link rel="canonical" href="https://neesmo.example/"> -->
+<meta name="site-kind" content="software">
+<meta name="page-type" content="software">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..700&family=Geist+Mono:wght@400..500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/system.css">
+<link rel="stylesheet" href="assets/ui/cards.css">
+<link rel="stylesheet" href="assets/motion/motion.css">
+<link rel="stylesheet" href="assets/backgrounds/backgrounds.css">
+<link rel="stylesheet" href="assets/layout/layout.css">
+<link rel="stylesheet" href="assets/icons/icon.css">
+<style>
+:root {
+  --p-bg: #f4f8f5; --p-surface: #e9f1ec; --p-ink: #06140d; --p-muted: #2f4538;
+  --p-accent: #087a3f; --p-accent-ink: #ffffff; --p-action: #087a3f; --p-action-ink: #ffffff;
+  --p-inv-bg: #06140d; --p-inv-surface: #13211a; --p-inv-ink: #f4f8f5; --p-inv-muted: #8f9893;
+  --p-inv-accent: #087a3f; --p-inv-accent-ink: #ffffff; --p-inv-action: #087a3f; --p-inv-action-ink: #ffffff;
+  --font-display: "Geist", system-ui, sans-serif;
+  --font-text: "Geist", system-ui, sans-serif;
+  --font-mono: "Geist Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
+  --display-weight: 500;
+  --display-tracking: -0.035em;
+  --display-tracking-xl: -0.045em;
+}
+</style>
+<link rel="stylesheet" href="assets/ui/base.css">
+<link rel="stylesheet" href="assets/ui/chat/fragment.css">
+<link rel="stylesheet" href="assets/ui/notify/fragment.css">
+<script>document.documentElement.classList.add('m-enter');setTimeout(()=>document.documentElement.classList.add('m-enter-done'),700)</script>
+<script src="assets/backgrounds/backgrounds.js"></script>
+<script>document.documentElement.classList.add('mo-js');setTimeout(()=>document.documentElement.classList.add('mo-safe'),2500)</script>
+<link rel="modulepreload" href="assets/moments/moments.js">
+<link rel="modulepreload" href="assets/moments/lib.js">
+<link rel="modulepreload" href="assets/moments/letters-assemble/moment.js">
+<style>
+/* the product's own look, inside the window and the feature frames: Neesmo's dark green HUD, #02070d and #3dff8f */
+.d-win { --ink: #e6f5ec; background: #02070d; color: #e6f5ec; border-radius: 0; overflow: hidden; font: 400 14px/1.4 var(--font-text);
+  box-shadow: 0 0 0 1px rgb(61 255 143 / .22), 0 30px 70px -30px rgb(0 0 0 / .8); }
+.d-win__bar { display: flex; align-items: center; gap: 10px; height: 40px; padding: 0 14px; border-bottom: 1px solid rgb(61 255 143 / .14); font: 400 13px/1 var(--font-mono); color: #8fb8a2; }
+.d-win__dots { display: flex; gap: 6px; } .d-win__dots i { width: 10px; height: 10px; border-radius: 50%; background: #1b3a2a; }
+.d-win__bar .sp { flex: 1; }
+.hud { position: relative; min-height: 0; display: grid; grid-template-columns: 190px minmax(0, 1fr) 190px; gap: 18px; padding: 16px 0; isolation: isolate; }
+.hud__clock { position: absolute; left: 0; top: 12px; font: 400 12px/1.5 var(--font-mono); color: #3dff8f; letter-spacing: .08em; }
+.hud__clock b { display: inline; margin-left: 8px; font-weight: 500; font-size: 14px; }
+.hud::after {content: "NEESMO";  position: absolute; left: 50%; top: 34%; transform: translate(-50%, -50%); font: 700 150px/1 var(--font-display); letter-spacing: -.045em; color: #3dff8f; opacity: .08; z-index: -2; white-space: nowrap; }
+.hud::before { content: ""; position: absolute; left: 50%; top: 38%; width: 300px; aspect-ratio: 1; transform: translate(-50%, -50%); z-index: -1; border-radius: 50%; border: 1.5px solid rgb(61 255 143 / .55);
+  background: radial-gradient(circle, #d6ffe6 0 4%, #3dff8f 9%, rgb(61 255 143 / .28) 26%, transparent 46%); box-shadow: 0 0 0 14px #02070d, 0 0 0 15px rgb(61 255 143 / .4); }
+.hud__cards { display: grid; gap: 10px; align-content: start; padding-top: 40px; }
+.hc { padding: 10px 12px; background: rgb(8 19 28 / .92); border: 1px solid rgb(61 255 143 / .16); border-left: 3px solid var(--c); display: grid; gap: 2px; }
+.hc small { font: 400 11px/1.4 var(--font-mono); letter-spacing: .1em; text-transform: uppercase; color: #8fb8a2; }
+.hc b { font-weight: 500; font-size: 15px; color: var(--c); }
+.hc span { font: 400 12px/1.4 var(--font-mono); color: #8fb8a2; }
+.hc--warn small { color: #ffc15a; }
+.d-chat { display: grid; gap: 8px; align-content: start; padding: 40px 0 0; font-size: 14px; }
+.d-msg { max-width: 92%; padding: 9px 13px; background: rgb(8 19 28 / .95); border: 1px solid rgb(61 255 143 / .2); line-height: 1.45; }
+.d-msg--me { justify-self: end; background: transparent; border-color: #3dff8f; color: #e6f5ec; }
+.d-msg--bot small { display: inline; margin-left: 6px; font-size: 12px; color: #8fb8a2; }
+.d-tool { display: flex; align-items: center; gap: 8px; font: 400 12px/1.4 var(--font-mono); color: #8fb8a2; }
+.d-tool::before { content: ""; width: 12px; height: 12px; border-radius: 50%; border: 2px solid #3dff8f; border-right-color: transparent; }
+.acts { display: flex; gap: 18px; } .acts span { font-size: 14px; font-weight: 500; color: #3dff8f; text-decoration: underline; text-underline-offset: 3px; }
+.acts span + span { color: #e6f5ec; }
+#how .stage > .at-rise.fit { --ax: 32px; }
+.ui-chat .ui-msg--me .ui-msg__text { border-radius: 0; }
+.close__word { line-height: 1.02; padding-top: .06em; }
+.hero__lead, .section-head p, .mo-la__sub { color: var(--ink); }
+.hero--centred .hero__window > .ly-piece { width: 100%; left: 0; transform: none; }
+.hero--centred { min-height: 100svh; }
+@media (max-width: 639px) { .mo-la__type { font-size: 22vw; } }
+.hero--centred .hero__window .d-win { max-height: none; }
+@media (max-width: 639px) {
+  .hud { grid-template-columns: 1fr; min-height: 360px; padding: 12px 0; }
+  .hud__cards { display: none; }
+  .hud::after { font-size: 80px; }
+  .hud::before { width: 240px; }
+  .d-chat { padding-top: 40px; font-size: 13px; }
+  .d-tool, .d-msg--bot small { display: none; }
+  .d-win__bar .sp ~ span { display: none; }
+}
+
+/* the feature frames: the same dark HUD, as pieces of it */
+.mk { background: #02070d; color: #e6f5ec; font: 400 14px/1.4 var(--font-text); padding: 14px; display: grid; gap: 10px; box-shadow: 0 0 0 1px rgb(61 255 143 / .22); }
+.mk .hc { width: 100%; }
+.mk__row { display: flex; gap: 8px; flex-wrap: wrap; }
+.mk__row span { height: 28px; padding: 0 12px; display: inline-flex; align-items: center; font-size: 13px; font-weight: 500; background: #3dff8f; color: #02070d; }
+.mk__row span + span { background: transparent; color: #e6f5ec; box-shadow: inset 0 0 0 1px rgb(61 255 143 / .4); }
+.mk__bar { height: 4px; background: #13211a; } .mk__bar i { display: block; height: 100%; width: var(--w); background: #3dff8f; }
+.mk__nums { display: flex; gap: 14px; font: 400 12px/1.4 var(--font-mono); color: #8fb8a2; }
+.mk__nums b { color: #e6f5ec; font-weight: 500; }
+.perm { display: grid; gap: 8px; padding: 10px 12px; background: #08131c; border: 1px solid rgb(61 255 143 / .2); font-size: 13px; }
+.panel .stage > .at-rise.fit > .ui-chat { width: min(400px, 100%); margin-inline: auto; }
+#approvals .panel, #how .panel { --p-h: 330px; }
+.ui-chat, .ui-notify { --fx-bg: #08131c; --fx-surface: #02070d; --fx-ink: #e6f5ec; --fx-muted: #8fb8a2; --fx-accent: #3dff8f; --fx-accent-ink: #02070d; }
+.rows .rows__name small { display: block; font-weight: 400; color: var(--muted); font-size: var(--t-small); }
+#pricing .price { font: var(--display-weight) 72px/1 var(--font-display); letter-spacing: var(--display-tracking-xl); margin: var(--s-4) 0 var(--s-2); color: var(--ink); }
+#pricing .price small { font-size: var(--t-lead); letter-spacing: 0; color: var(--muted); font-weight: 400; }
+#pricing .card .btn { margin-top: var(--s-6); align-self: start; }
+.phone-shot { width: 100%; height: 100%; object-fit: cover; object-position: top center; display: block; }
+.logos { display: flex; align-items: center; gap: var(--s-5); margin-top: var(--s-4); }
+.logos img { height: 28px; width: auto; }
+/* the installer, a terminal on the deep ground */
+.term { background: #02070d; color: #e6f5ec; font: 400 14px/1.7 var(--font-mono); padding: 18px 20px; box-shadow: 0 0 0 1px rgb(61 255 143 / .22); }
+.term p { margin: 0; } .term .ok { color: #3dff8f; } .term .dim { color: #8fb8a2; }
+.checks { list-style: none; margin: var(--s-5) 0 0; padding: 0; display: grid; gap: var(--s-3); }
+.checks li { display: flex; gap: var(--s-3); } .checks li::before { content: ""; flex: none; width: 8px; height: 8px; margin-top: .6em; background: var(--accent); }
+.price { font: var(--display-weight) 72px/1 var(--font-display); letter-spacing: var(--display-tracking-xl); margin: var(--s-4) 0 var(--s-2); }
+.price small { font-size: var(--t-lead); letter-spacing: 0; color: var(--muted); font-weight: 400; }
+#pricing .card { height: 100%; }
+.faq-grid { align-items: start; }
+@media (max-width: 639px) { #approvals .panel, #how .panel { --p-h: 260px; } .price, #pricing .price { font-size: 36px; } }
+</style>
+</head>
+<body>
+<!-- type: software. category: self-hosted voice command centre for Claude Code.
+     deal: hero centred, nav centre, close word, footer statement, rhythm space, buttons solid, mark wordmark, type geist, radius sharp, grounds deep + topglow (no effect beyond deep)
+     moments: letters-assemble in #talk ("Talk to your agents.")
+     plan 1: software page, one screen per section, light page ground with the client's green as a deeper accent
+     plan 2: centred hero with a big window running the loop (question, tool line, answer, actions); client palette through start.mjs brand; the page goes LIGHT (#f4f8f5, accent #087a3f) so the dark #02070d HUD with its #3dff8f glow stands out as the product inside every frame instead of dark UI on a dark ground; geist, sharp, solid buttons, wordmark, letters-assemble statement, deep + topglow grounds -->
+<header class="nav nav--centre">
+  <div class="wrap nav__bar">
+    <a class="skip-link" href="#top">Skip to content</a>
+    <a class="nav__logo" href="#top">Neesmo</a>
+    <nav class="nav__links" aria-label="Main">
+      <div class="nav__item"><a class="nav__link" href="#how">How it works</a></div>
+      <div class="nav__item"><a class="nav__link" href="#approvals">Approvals</a></div>
+      <div class="nav__item"><a class="nav__link" href="#bundle">Installer</a></div>
+      <div class="nav__item"><a class="nav__link" href="#pricing">Pricing</a></div>
+      <div class="nav__item"><a class="nav__link" href="#faq">FAQ</a></div>
+    </nav>
+    <div class="nav__actions">
+      <a class="btn btn--primary" href="#pricing">See the setups</a>
+    </div>
+    <button class="nav__toggle" type="button" aria-expanded="false" aria-label="Menu"><svg width="18" height="18" viewBox="0 0 18 18" aria-hidden="true"><path d="M2 5h14M2 13h14" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg></button>
+  </div>
+</header>
+<main id="top">
+  <section class="hero hero--centred bg-topglow" data-enter aria-labelledby="hero-h">
+    <div class="wrap"><div class="hero-text">
+      <div class="hero__c">
+        <a class="pill" href="#pricing"><span>Early build</span><span class="muted">YouTube or Instagram setup with Neesmo, <span data-assumed>€59</span></span></a>
+        <h1 id="hero-h" aria-label="A voice command centre for Claude Code"><span class="ly-mark" aria-hidden="true"></span> A voice command centre for Claude Code</h1>
+        <p class="hero__lead">Talk to one screen and Neesmo passes the job to the right agent. It runs on your own Linux PC or server, and you can get it with a ready-made YouTube or Instagram setup.</p>
+        <div class="btn-row"><a class="btn btn--primary" href="#pricing">See the setups</a><a class="btn btn--secondary" href="#how">Read the guide</a></div>
+      </div>
+      <div class="hero__window" role="img" aria-label="The Neesmo screen: a glowing voice ring, agent cards on both sides, and Neesmo answering what every agent is doing">
+        <div class="ly-piece d-win" aria-hidden="true">
+          <div class="d-win__bar"><span class="d-win__dots"><i></i><i></i><i></i></span><span>neesmo.local</span><span class="sp"></span><span>4 agents</span></div>
+          <div class="hud">
+            <div class="hud__clock">NEESMO // ONLINE<b>12:51</b></div>
+            <div class="hud__cards">
+              <div class="hc" style="--c:#3dff8f"><small>Working</small><b>Website</b><span>editing the pricing page</span></div>
+            </div>
+            <div class="convo">
+              <div class="d-chat" data-ly-steps="900">
+                <div class="d-msg d-msg--me">What is every agent doing?</div>
+                <div class="d-tool" data-step>Asking 4 agents</div>
+                <div class="d-msg d-msg--bot" data-step>Website and Research are working. Video is idle. Inbox needs your approval.<small>4 agents</small></div>
+                <div class="acts" data-step><span>Open Inbox</span><span>Later</span></div>
+              </div>
+            </div>
+            <div class="hud__cards">
+              <div class="hc" style="--c:#ffc15a"><small>Working</small><b>Research</b><span>reading the docs</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div></div>
+  </section>
+
+  <section class="section" id="how" aria-labelledby="how-h">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="how-h">How Neesmo works</h2>
+        <p>Hold the mic or type. Each agent is a real Claude Code session in its own folder, running in tmux.</p>
+      </div>
+      <div class="grid">
+        <article class="card card--row card--open span-6">
+          <h3>Neesmo shows every agent</h3>
+          <p>Status, today's numbers and what it is doing now. Close the card and the agent keeps working.</p>
+          <div class="panel" role="img" aria-label="Two agent cards: Website is working on the pricing page, Inbox needs approval">
+            <div class="stage"><div class="at-rise fit"><div class="mk" aria-hidden="true">
+              <div class="hc" style="--c:#3dff8f"><small>Working</small><b>Website</b><span>editing the pricing page</span><div class="mk__bar" style="--w:68%"><i></i></div><div class="mk__nums"><span><b>12</b> jobs today</span><span><b>3</b> files</span></div></div>
+              <div class="hc hc--warn" style="--c:#ff7a8a"><small>Needs approval</small><b>Inbox</b><span>asks to run a command</span><div class="mk__nums"><span><b>5</b> jobs today</span></div></div>
+            </div></div></div>
+          </div>
+        </article>
+        <article class="card card--row card--open span-6">
+          <h3>Answer from the Neesmo agent card</h3>
+          <p>An agent's questions and permission prompts show up as buttons. The chat is the same conversation as in the Claude app, both ways, and videos, audio and pictures the agent makes play right in it. Hold a message to copy it or hear it read aloud.</p>
+          <div class="panel" role="img" aria-label="A chat with the Website agent: a permission prompt with Allow and Deny buttons">
+            <div class="stage"><div class="at-rise fit"><div class="ui ui-panel ui-chat" aria-hidden="true">
+              <div class="ui-head"><span class="ui-agent" aria-hidden="true"></span><div class="ui-title">Website</div><span class="ui-chat__online">Working</span></div>
+              <div class="ui-chat__body">
+                <div class="ui-msg ui-msg--me"><span class="ui-msg__text">Update the pricing page</span></div>
+                <div class="ui-msg ui-msg--bot"><span class="ui-agent ui-msg__av" aria-hidden="true"></span><span class="ui-msg__col"><span class="ui-chat__answer">May I edit <b>pricing.html</b>?</span><span class="ui-chat__srcs"><span class="ui-btn ui-btn--sm ui-btn--accent">Allow</span><span class="ui-btn ui-btn--sm ui-btn--ghost">Deny</span></span></span></div>
+              </div>
+              <div class="ui-chat__input"><span class="ui-chat__ph">Write to Website</span></div>
+            </div></div></div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="approvals" aria-labelledby="approvals-h">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="approvals-h">Neesmo approvals</h2>
+        <p>When an agent needs permission you get a notification. Approve, deny or ignore it without opening it.</p>
+      </div>
+      <div class="grid">
+        <article class="card card--row card--open span-6">
+          <h3>Approve from the Neesmo notification list</h3>
+          <p>Neesmo notifies you when an agent replies or asks.</p>
+          <div class="panel" role="img" aria-label="A notification from Inbox asking for approval, with Approve and Deny buttons">
+            <div class="stage"><div class="at-rise fit"><div class="ui ui-notify" aria-hidden="true"><ul class="ui-notify__list">
+              <li class="ui-note"><span class="ui-agent ui-note__av" aria-hidden="true"></span><span class="ui-note__text"><span class="ui-note__title">Inbox needs approval<time>now</time></span><span class="ui-note__body">Run a command in its folder?</span></span><span class="ui-btn ui-btn--sm ui-btn--accent ui-note__btn">Approve</span><span class="ui-btn ui-btn--sm ui-btn--ghost ui-note__btn">Deny</span></li>
+              <li class="ui-note"><span class="ui-note__ico"><svg class="ui-icon" viewBox="0 0 16 16"><path d="m3.5 8.4 2.8 2.8 6.2-6.4"/></svg></span><span class="ui-note__text"><span class="ui-note__title">Research replied<time>4m</time></span><span class="ui-note__body">The summary is ready</span></span></li>
+            </ul></div></div></div>
+          </div>
+        </article>
+        <article class="card card--row card--open span-6">
+          <h3>Neesmo on your phone</h3>
+          <p>Add it to the iPhone home screen or install it on Android, with push notifications. Reach it through a Cloudflare Tunnel or your own private network. Each device signs in once, for a year.</p>
+          <div class="logos">
+            <img class="ic" data-icon="apple" src="assets/icons/apple.svg" alt="Apple" width="33" height="40">
+            <img class="ic" data-icon="android" src="assets/icons/android.svg" alt="Android" width="40" height="23">
+            <img class="ic" data-icon="cloudflare" src="assets/icons/cloudflare.svg" alt="Cloudflare" width="40" height="18">
+          </div>
+          <div class="panel" role="img" aria-label="Neesmo on an iPhone: the ring and the agent cards">
+            <div class="stage"><img class="phone-shot" src="img/hud-phone.webp" alt="" width="700" height="1192" loading="lazy"></div>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="talk" data-moment="letters-assemble" aria-label="Talk to your agents">
+    <div class="wrap">
+      <h2 class="mo-la__type">Talk to your agents.</h2>
+      <p class="mo-la__sub">Hold the mic or type. Neesmo answers and passes the job to the right agent.</p>
+    </div>
+  </section>
+
+  <section class="section bg-deep" id="bundle" aria-labelledby="bundle-h">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="bundle-h">The Neesmo installer</h2>
+        <p>Run ./install.sh on your Linux PC or server. It sets up Neesmo and the open-source tools around it.</p>
+      </div>
+      <div class="grid grid--top">
+        <div class="span-6" role="img" aria-label="The installer printing a tick for each part">
+          <div class="term" aria-hidden="true">
+            <p class="dim">$ ./install.sh</p>
+            <p><span class="ok">ok</span> tmux</p>
+            <p><span class="ok">ok</span> OmniRoute</p>
+            <p><span class="ok">ok</span> graphify</p>
+            <p><span class="ok">ok</span> claude-mem</p>
+            <p><span class="ok">ok</span> caveman</p>
+            <p><span class="ok">ok</span> 55 skills</p>
+            <p class="dim">Neesmo is running</p>
+          </div>
+        </div>
+        <ul class="rows span-6 start-7">
+          <li><span class="rows__name">OmniRoute<small>A local gateway to free models for cheap text jobs</small></span></li>
+          <li><span class="rows__name">graphify<small>A knowledge graph of your code, so agents find it faster</small></span></li>
+          <li><span class="rows__name">claude-mem<small>Long-term memory across sessions</small></span></li>
+          <li><span class="rows__name">caveman<small>Short, plain answers</small></span></li>
+          <li><span class="rows__name">55 skills<small>Every part is open source, with licenses listed in Settings</small></span></li>
+        </ul>
+      </div>
+      <div class="logos">
+        <img class="ic" data-icon="linux-tux" src="assets/icons/linux-tux.svg" alt="Linux" width="34" height="40">
+        <img class="ic" data-icon="claude-code" src="assets/icons/claude-code.svg" alt="Claude Code" width="40" height="25">
+        <img class="ic" data-icon="tmux" src="assets/icons/tmux.svg" alt="tmux" width="40" height="40">
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="pricing" aria-labelledby="pricing-h">
+    <div class="wrap">
+      <div class="section-head">
+        <h2 id="pricing-h">Pick a Neesmo setup</h2>
+        <p>Each setup is built for your channel, with Neesmo included to run it. The early-build price holds for everyone who buys now, and every update is free. No subscription.</p>
+      </div>
+      <div class="grid">
+        <article class="card card--row span-4">
+          <h3>YouTube setup with Neesmo</h3>
+          <p class="price"><span data-assumed>€59</span> <small>early build, then <span data-assumed>€99</span></small></p>
+          <ul class="checks">
+            <li>Claude Code agents set up for your YouTube channel</li>
+            <li>Neesmo to talk to them and approve each video</li>
+            <li>Every update, including the full release</li>
+          </ul>
+          <!-- client: replace with the Stripe checkout URL -->
+          <a class="btn btn--primary" href="https://neesmo.example/buy-youtube">Buy the YouTube setup<svg class="m-arrow" viewBox="0 0 12 12" aria-hidden="true"><path class="m-arrow__stem" d="M1 6h8"/><path class="m-arrow__head" d="M4.5 2.5 8 6l-3.5 3.5"/></svg></a>
+        </article>
+        <article class="card card--row span-4">
+          <h3>Instagram setup with Neesmo</h3>
+          <p class="price"><span data-assumed>€59</span> <small>early build, then <span data-assumed>€99</span></small></p>
+          <ul class="checks">
+            <li>Claude Code agents set up for your Instagram account</li>
+            <li>Neesmo to talk to them and approve each post</li>
+            <li>Every update, including the full release</li>
+          </ul>
+          <!-- client: replace with the Stripe checkout URL -->
+          <a class="btn btn--primary" href="https://neesmo.example/buy-instagram">Buy the Instagram setup<svg class="m-arrow" viewBox="0 0 12 12" aria-hidden="true"><path class="m-arrow__stem" d="M1 6h8"/><path class="m-arrow__head" d="M4.5 2.5 8 6l-3.5 3.5"/></svg></a>
+        </article>
+        <article class="card card--row span-4">
+          <h3>Setup only, without Neesmo</h3>
+          <p class="price"><span data-assumed>€49</span> <small>YouTube or Instagram</small></p>
+          <ul class="checks">
+            <li>The same agent setup for one platform</li>
+            <li>Works in the Claude app and the terminal</li>
+            <li>Add Neesmo later for the price difference</li>
+          </ul>
+          <!-- client: replace with the Stripe checkout URL -->
+          <a class="btn btn--secondary" href="https://neesmo.example/buy-setup">Buy a setup only<svg class="m-arrow" viewBox="0 0 12 12" aria-hidden="true"><path class="m-arrow__stem" d="M1 6h8"/><path class="m-arrow__head" d="M4.5 2.5 8 6l-3.5 3.5"/></svg></a>
+        </article>
+      </div>
+      <p class="muted" style="margin-top:20px">Needs a Linux PC or server (Windows works through WSL) and Claude Code signed in with your own Claude plan or API key. Claude usage is not included. A Roblox games setup is coming later.</p>
+    </div>
+  </section>
+
+  <section class="section" id="faq" aria-labelledby="faq-h">
+    <div class="wrap grid faq-grid">
+      <div class="section-head span-6"><h2 id="faq-h">Neesmo questions before you buy</h2>
+        <div class="logos"><img class="ic" data-icon="claude-code" src="assets/icons/claude-code.svg" alt="Claude Code" width="40" height="25"><img class="ic" data-icon="tmux" src="assets/icons/tmux.svg" alt="tmux" width="40" height="40"><img class="ic" data-icon="linux-tux" src="assets/icons/linux-tux.svg" alt="Linux" width="34" height="40"></div></div>
+      <div class="faq span-6 start-7">
+        <div class="faq__item"><h3>Do I need a VPS for Neesmo?</h3><p>No. A home PC running Linux works, and so does Windows through WSL. Agents only work while it is switched on, so a small VPS suits you if you want them running all day.</p></div>
+        <div class="faq__item"><h3>How does the Neesmo license check work?</h3><p>Your own computer checks the key. It checks in with the store about once a week, and a key works on 2 computers.</p></div>
+        <div class="faq__item"><h3>Is Claude usage included in Neesmo?</h3><p>No. Neesmo runs on your Claude Code, signed in with your own Claude plan or API key.</p></div>
+        <div class="faq__item"><h3>Do I pay again for Neesmo updates?</h3><p>No. Buy at the early-build price and every update is free, including the full release.</p></div>
+        <div class="faq__item"><h3>What about Neesmo refunds?</h3><p>Questions? <a class="link" href="mailto:hello@neesmo.example">Email us</a></p></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer closing footer--statement" id="contact" aria-labelledby="close-h">
+  <div class="wrap">
+    <div class="closing__cta close--word">
+      <div class="section-head--split">
+        <div><h2 id="close-h">Get your setup</h2><p class="t-lead">YouTube or Instagram, from €49. With Neesmo, €59 while the early build lasts.</p></div>
+        <a class="btn btn--primary" href="#pricing">See the setups<svg class="m-arrow" viewBox="0 0 12 12" aria-hidden="true"><path class="m-arrow__stem" d="M1 6h8"/><path class="m-arrow__head" d="M4.5 2.5 8 6l-3.5 3.5"/></svg></a>
+      </div>
+      <p class="close__word" aria-hidden="true">Neesmo</p>
+    </div>
+    <div class="closing__links">
+      <div class="grid">
+        <div class="span-4 stack-4">
+          <a class="nav__logo" href="#top">Neesmo</a>
+          <p class="footer__lede">A command centre for Claude Code, on your own computer.</p>
+        </div>
+        <div class="span-2 start-7 footer__col"><h3>Product</h3><ul><li><a href="#how">How it works</a></li><li><a href="#approvals">Approvals</a></li><li><a href="#bundle">Installer</a></li></ul></div>
+        <div class="span-2 footer__col"><h3>Buy</h3><ul><li><a href="#pricing">Pricing</a></li><li><a href="#faq">FAQ</a></li></ul></div>
+        <div class="span-2 footer__col"><h3>Help</h3><ul><li><a href="mailto:hello@neesmo.example">Email us</a></li></ul></div>
+      </div>
+      <div class="footer__legal">
+        <span>&copy; 2026 Neesmo</span>
+        <span>Product names and logos are trademarks of their owners.</span>
+      </div>
+    </div>
+  </div>
+</footer>
+<script type="module" src="assets/system.js"></script>
+<script type="module" src="assets/motion/motion.js"></script>
+<script type="module" src="assets/layout/layout.js"></script>
+</body>
+</html>
