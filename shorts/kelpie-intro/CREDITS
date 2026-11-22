@@ -1,0 +1,16 @@
+Meet the kelpie (intro short): third-party material
+
+Fonts
+- Lilita One and Fredoka, SIL Open Font License 1.1 (Lemo-Opuscar core/fonts/OFL.md).
+
+Voice
+- ElevenLabs, voice "Liam" on the eleven_v3 model, generated for this film; word times from the ElevenLabs API. Played 7% faster to fit 60 s.
+
+Tools
+- Lemo-Opuscar (MIT) by Lemomo: rendering, sound helpers. three.js (MIT).
+
+3D models
+- "Horse" by Henry S (https://sketchfab.com/henry_7), CC Attribution, https://sketchfab.com/3d-models/horse-a6f860e43e364619bccb174a1ac7d0c9
+- Rocks, trees, bushes, stones: Nature Kit by Kenney (kenney.nl), CC0.
+
+Everything else (people, castle wall, map, Burns page, overlays, music, sound effects) was made in code for this film.

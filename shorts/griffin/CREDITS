@@ -1,0 +1,19 @@
+Could a griffin actually fly? (physics short): third-party material
+
+Fonts
+- Lilita One and Fredoka, SIL Open Font License 1.1 (Lemo-Opuscar core/fonts/OFL.md).
+
+Voice
+- ElevenLabs, voice "Liam" on the eleven_v3 model, generated for this film; word times from the ElevenLabs API. Played 7% faster to fit 60 s.
+
+Tools
+- Lemo-Opuscar (MIT) by Lemomo: rendering, sound helpers. three.js (MIT).
+
+3D models
+- "Griffin Animated" by VitSh (https://sketchfab.com/VitSh), CC Attribution, https://sketchfab.com/3d-models/griffin-animated-a8852f113416426bb06e6bba49a525a9
+- "Quetzalcoatlus" by kenchoo (https://sketchfab.com/kenchoo), CC Attribution, https://sketchfab.com/3d-models/quetzalcoatlus-9c11a18eabe740e2850a0ab1c4c90eba
+- "Protoceratops" by kenchoo (https://sketchfab.com/kenchoo), CC Attribution, https://sketchfab.com/3d-models/protoceratops-2bdbfaab97d540edaf1ffd820398cfbf
+- "animated EAGLE" by Asim3d (https://sketchfab.com/Asim3d), CC Attribution, https://sketchfab.com/3d-models/animated-eagle-8fb150270adb45aa9653e857f3fa351b
+- Rocks, trees, bushes: Nature Kit by Kenney (kenney.nl), CC0.
+
+Everything else (overlays, keel cutaway, bat, scale, music, sound effects) was made in code for this film.

@@ -1,0 +1,16 @@
+Could the Mapinguari be real? (physics short): third-party material
+
+Fonts
+- Lilita One and Fredoka, SIL Open Font License 1.1 (subsets from the Lemo-Opuscar library, core/fonts/OFL.md).
+
+Voice
+- ElevenLabs, voice "Liam" on the eleven_v3 model, generated for this film; word times from the ElevenLabs API.
+
+Tools
+- Lemo-Opuscar (MIT) by Lemomo: rendering, sound helpers. three.js (MIT).
+
+3D models
+- "Low Poly Giant Sloth" by rkuhlf (https://sketchfab.com/rkuhlf), CC Attribution, https://sketchfab.com/3d-models/low-poly-giant-sloth-897500582c5c4c81b01271a7f0c2e322
+- Palms, trees, bushes, logs, flowers: Nature Kit by Kenney (kenney.nl), CC0.
+
+Everything else (overlays, bullets, skin cutaway, music, sound effects) was made in code for this film.
