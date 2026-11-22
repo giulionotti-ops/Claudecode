@@ -9,7 +9,7 @@
 <link rel="manifest" href="/manifest.webmanifest">
 <link rel="apple-touch-icon" href="/static/icon-180.png">
 <link rel="icon" type="image/png" href="/static/icon-192.png">
-<meta name="theme-color" content="#02070d">
+<meta name="theme-color" content="#D6CBC0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Neesmo">
@@ -20,7 +20,7 @@
   :root { --sans: "Geist", system-ui, -apple-system, "Segoe UI", sans-serif; --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace; --rgb: 61,255,143; --c: rgb(var(--rgb)); --c2: #c6ff4a; --bg: #02070d; --dim: rgba(var(--rgb),.35); --err: #ff5f6d; --fs: 14px; }
   * { box-sizing: border-box; }
   html { touch-action: manipulation; -webkit-text-size-adjust: 100%; }  /* no double-tap zoom */
-  html { background-color: #02070d; min-height: 100lvh; }  /* iPhone home-screen app paints the area under the page with this */
+  html { background-color: #D6CBC0; min-height: 100lvh; }  /* iPhone home-screen app paints the area under the page with this */
   html, body { margin: 0; height: 100%; background: var(--bg) radial-gradient(ellipse at center, rgba(var(--rgb),.13) 0%, var(--bg) 70%) no-repeat fixed; color: var(--c);
     font: var(--fs)/1.45 var(--sans); overflow: hidden; -webkit-font-smoothing: antialiased; }
   .corner, #status, .st, .chip, .mono, .kpi span, .card span, code, pre, kbd, #chathead h2 { font-family: var(--mono); }
@@ -210,11 +210,10 @@
   }
 
   /* ── chat screen: opens from the command bar; cards step aside, the HUD stays behind ── */
-  .cards, #status, #hud, #log { transition: opacity .45s cubic-bezier(.2,.8,.2,1), filter .45s, translate .45s cubic-bezier(.2,.8,.2,1); }
+  .cards, #status, #log { transition: opacity .45s cubic-bezier(.2,.8,.2,1), filter .45s, translate .45s cubic-bezier(.2,.8,.2,1); }
   body.chat .cards { opacity: 0; filter: blur(6px); pointer-events: none; }
   body.chat .cards.l { translate: -40px 0; } body.chat .cards.r { translate: 40px 0; }
   body.chat #status { opacity: 0 !important; }   /* beats the inline opacity the status animation leaves */
-  body.chat #hud { opacity: .32; }
   #chathead { display: none; }
   body.chat #chathead { display: flex; position: fixed; z-index: 5; top: calc(var(--vvt, 0px) + 14px + env(safe-area-inset-top)); left: 50%; translate: -50% 0;
     gap: 8px; align-items: center; animation: fadein .35s both; }
@@ -338,14 +337,13 @@
   html.robot { --c: #2B1D14; --bg: #D6CBC0; --dim: rgba(43,29,20,.6); background-color: #D6CBC0; }
   html.robot, html.robot body { background: radial-gradient(120% 90% at 50% 40%, #E6DDD3, #D6CBC0 55%, #BFB2A5) fixed; }
   html.robot body::after { background: repeating-linear-gradient(0deg, rgba(43,29,20,.07) 0 1px, transparent 1px 3px); }
-  html.robot #hud { visibility: hidden; }
   html.robot #wordmark { font: 900 italic min(24vw, 360px)/.8 "Archivo", sans-serif; letter-spacing: -.05em; color: #EF8746; background: none; filter: none; animation: none; transform: translate(-50%, -50%);
     text-shadow: 2px 2px 0 #D06C35, 4px 4px 0 #BC5E2B, 6px 6px 0 #A85021, 8px 8px 0 #944217, 30px 40px 50px rgba(60,35,20,.35); }
   html.robot :is(.card, #f > *, .pop, .tabs, #log p, .ic, dialog#ag, dialog#ap) { background: rgba(255,250,243,.45); -webkit-backdrop-filter: blur(18px) saturate(1.5); backdrop-filter: blur(18px) saturate(1.5);
     border: 1px solid rgba(255,255,255,.7); box-shadow: inset 0 1px 0 rgba(255,255,255,.85), inset 0 -1px 0 rgba(43,29,20,.08), 0 18px 36px -12px rgba(43,29,20,.4); color: var(--c); text-shadow: none; }
   html.robot :is(.pop, .tabs, dialog#ag, dialog#ap) { background: rgba(255,250,243,.82); }
   html.robot :is(.tin, #ap-note, #ap .pre, select) { background: rgba(255,255,255,.55); color: var(--c); }
-  html.robot :is(#status, .card b, #welcome, #welcome small) { text-shadow: none; color: var(--c); } html.robot #welcome { top: calc(var(--cy, 45%) + var(--R, 140px) * 1.25); } html.robot ::placeholder { color: rgba(43,29,20,.45); }
+  html.robot :is(#status, .card b, #welcome, #welcome small) { text-shadow: none; color: var(--c); } html.robot #welcome { top: calc(var(--cy, 45%) + var(--R, 140px) * 1.25); } html.robot body:has(#welcome:not([hidden])) #status { opacity: 0; } html.robot ::placeholder { color: rgba(43,29,20,.45); }
   html.robot .card { border-radius: 16px; } html.robot #f > * { border-radius: 999px; } html.robot #f button:last-child { background: #2B1D14; color: #FFF8EF; }
   html.robot .cards { top: auto; transform: none; flex-direction: row; width: auto; overflow-x: auto; bottom: calc(78px + env(safe-area-inset-bottom)); }
   html.robot .cards.l { left: 16px; right: 50%; justify-content: flex-end; } html.robot .cards.r { left: 50%; right: 16px; }
@@ -366,7 +364,6 @@
 </head>
 <body class="boot">
 <div id="wordmark" aria-hidden="true">NEESMO</div>
-<canvas id="hud" aria-hidden="true"></canvas>
 <div id="botring" aria-hidden="true"></div><div id="bot" aria-hidden="true"><img alt="" src="/static/robot/still.webp"></div>
 <div class="corner tl">Neesmo // online<br><b id="clock">--:--:--</b><br><span id="date"></span></div>
 <div class="corner tr"><div class="icons">
@@ -391,9 +388,8 @@
   </section>
   <section class="tab" data-tab="look" role="tabpanel" hidden>
     <h3>Appearance</h3>
-    <div class="row"><label>Colour</label><div class="swatches" id="swatches"></div></div>
     <div class="row"><label for="fsize">Text size</label><select id="fsize"><option value="13px">Small</option><option value="14px">Medium</option><option value="16px">Large</option></select></div>
-    <div class="row"><div><label id="l-mark">NEESMO lettering</label><small class="sub">The big faded name behind the ring.</small></div><button type="button" class="tog" role="switch" id="t-mark" aria-labelledby="l-mark"></button></div>
+    <div class="row"><div><label id="l-mark">NEESMO lettering</label><small class="sub">The big orange name behind the robot.</small></div><button type="button" class="tog" role="switch" id="t-mark" aria-labelledby="l-mark"></button></div>
     <div class="row"><div><label id="l-scan">Scan lines</label><small class="sub">Thin horizontal lines over the screen, like an old CRT monitor. Turn off for a cleaner look.</small></div><button type="button" class="tog" role="switch" id="t-scan" aria-labelledby="l-scan"></button></div>
     <div class="row"><div><label id="l-calm">Calm motion</label><small class="sub">Fewer and shorter animations.</small></div><button type="button" class="tog" role="switch" id="t-calm" aria-labelledby="l-calm"></button></div>
     <small class="sub">Saved on this device only.</small>
@@ -558,12 +554,10 @@ function audio() {
 }
 
 // ── appearance settings (this device only) ──
-const THEMES = { robot: ['#EF8746', '239,135,70', '#2F8F5B'], green: ['#3dff8f', '61,255,143', '#c6ff4a'], cyan: ['#3fe0ff', '63,224,255', '#ffb547'], amber: ['#ffb547', '255,181,71', '#ff6b3d'],
-  violet: ['#b388ff', '179,136,255', '#ff7ac6'], red: ['#ff5f6d', '255,95,109', '#ffd166'] };
+const THEMES = { robot: ['#EF8746', '239,135,70', '#2F8F5B'] };
 let PREFS = { theme: 'robot', fs: '14px', mark: true, scan: true, calm: false, wel: true, welName: '', welText: '{greeting}, {name}. {busy}', welVoice: false };
 try { Object.assign(PREFS, JSON.parse(localStorage.getItem('neesmo-prefs') || '{}')); } catch {}
-if (!PREFS.robot1) Object.assign(PREFS, { theme: 'robot', robot1: 1 });   // everyone gets the robot look once; the colour swatches can switch back
-const THEME = {};
+PREFS.theme = 'robot';
 // The greeting (on/off, name, message, spoken) is kept on the server, so every device greets the same way.
 const WEL_KEYS = ['wel', 'welName', 'welText', 'welVoice'];
 let welSent = null;
@@ -577,20 +571,16 @@ const welLoaded = fetch('/api/welcome').then(r => r.ok ? r.json() : {}).catch(()
   Object.assign(PREFS, w); welSent = welNow(); if (typeof applyPrefs === 'function') applyPrefs();
 });
 function applyPrefs() {
-  const [hex, rgb, c2] = THEMES[PREFS.theme] || THEMES.green, root = document.documentElement;
-  Object.assign(THEME, { hex, rgb, c2 });
+  const [hex, rgb, c2] = THEMES.robot, root = document.documentElement;
   root.style.setProperty('--rgb', rgb); root.style.setProperty('--c2', c2); root.style.setProperty('--fs', PREFS.fs);
-  root.classList.toggle('no-mark', !PREFS.mark); root.classList.toggle('calm', !!PREFS.calm); root.classList.toggle('no-scan', !PREFS.scan); root.classList.toggle('robot', PREFS.theme === 'robot');
+  root.classList.toggle('no-mark', !PREFS.mark); root.classList.toggle('calm', !!PREFS.calm); root.classList.toggle('no-scan', !PREFS.scan); root.classList.add('robot');
   $('#scanbtn').setAttribute('aria-pressed', String(!!PREFS.scan));
   for (const [k, id] of [['mark', '#t-mark'], ['scan', '#t-scan'], ['calm', '#t-calm'], ['wel', '#t-wel'], ['welVoice', '#t-welv']]) $(id).setAttribute('aria-checked', String(!!PREFS[k]));
   $('#fsize').value = PREFS.fs;
-  for (const b of document.querySelectorAll('#swatches .sw')) b.setAttribute('aria-pressed', String(b.dataset.t === PREFS.theme));
   try { localStorage.setItem('neesmo-prefs', JSON.stringify(PREFS)); } catch {}
   syncWelcome();
   if (typeof reduce !== 'undefined') reduce = matchMedia('(prefers-reduced-motion: reduce)').matches || PREFS.calm;
 }
-$('#swatches').innerHTML = Object.entries(THEMES).map(([k, [hex]]) => `<button type="button" class="sw" data-t="${k}" style="--s:${hex}" aria-label="${k}"></button>`).join('');
-$('#swatches').onclick = e => { const b = e.target.closest('.sw'); if (b) { PREFS.theme = b.dataset.t; applyPrefs(); } };
 $('#scanbtn').onclick = () => { PREFS.scan = !PREFS.scan; applyPrefs(); };
 $('#fsize').onchange = e => { PREFS.fs = e.target.value; applyPrefs(); };
 for (const [k, id] of [['mark', '#t-mark'], ['scan', '#t-scan'], ['calm', '#t-calm'], ['wel', '#t-wel'], ['welVoice', '#t-welv']]) $(id).onclick = () => { PREFS[k] = !PREFS[k]; applyPrefs(); };
@@ -1354,7 +1344,6 @@ function botShow(name, frame) {
   botImg.style.transform = frame == null ? '' : `translateX(-${frame * 12.5}%)`;
 }
 setInterval(() => {
-  if (PREFS.theme !== 'robot') return;
   const now = Date.now(), q = $('#q');
   const want = mode === 'listening' ? 'listening' : mode !== 'idle' ? 'working' : document.activeElement === q && q.value ? 'reading' : botPending ? 'approve' : '';
   if (botWas === 'working' && !want) { botAct = 'done'; botActEnd = now + 1800; }   // a reply just finished
@@ -1372,17 +1361,8 @@ setInterval(() => {
 // ── clock ──
 setInterval(() => { const d = new Date(); $('#clock').textContent = d.toLocaleTimeString(); $('#date').textContent = d.toDateString(); }, 1000);
 
-// ── HUD ──
-const cv = $('#hud'), g = cv.getContext('2d'), data = new Uint8Array(128);
+// ── layout: where the robot stands (between the header and the cards) ──
 var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches || PREFS.calm;
-// Buffer sized from the canvas's real on-screen box (not innerWidth/innerHeight, which differ from it
-// on iPhone with the toolbar or as a home-screen app), so the ring is never stretched.
-function resize() {
-  const r = cv.getBoundingClientRect(), w = Math.round(r.width * devicePixelRatio), h = Math.round(r.height * devicePixelRatio);
-  if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h; }
-}
-addEventListener('resize', resize); window.ResizeObserver && new ResizeObserver(resize).observe(cv); resize();
-function arc(r, a0, a1, w, color, blur) { g.beginPath(); g.arc(0, 0, r, a0, a1); g.lineWidth = w; g.strokeStyle = color; g.shadowBlur = blur || 0; g.shadowColor = color; g.stroke(); }
 // Ring placement: centred in the free space (between the header and the cards on phones,
 // above the input on desktop), sized so the ring, its NEESMO lettering and the status line fit.
 const hud = { cy: innerHeight / 2, R: 100, tcy: 0, tR: 0, init: false };
@@ -1432,44 +1412,6 @@ addEventListener('resize', layoutHud); setInterval(layoutHud, 1000); layoutHud()
 function frame(t) {
   if (!hud.init && hud.tR) { hud.cy = hud.tcy; hud.R = hud.tR; hud.init = true; }
   glide(t); followRing();
-  t = reduce ? 0 : t / 1000;
-  if (analyser && mode !== 'idle' && mode !== 'thinking') { analyser.getByteFrequencyData(data); level += (data.reduce((a, b) => a + b, 0) / data.length / 255 * 2.2 - level) * .3; }
-  else level *= .9;
-  const dpr = devicePixelRatio, R = hud.R * dpr * (1 + Math.min(level, 1.5) * .09), hot = mode === 'listening' ? THEME.c2 : THEME.hex;
-  g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, cv.width, cv.height);
-  g.translate(cv.width / 2, hud.cy * cv.height / (cv.clientHeight || innerHeight));   // layout coords, like the wordmark (iOS reports the rect shifted while the keyboard is up)
-  // core glow
-  const core = g.createRadialGradient(0, 0, 0, 0, 0, R * (.45 + level * .25));
-  core.addColorStop(0, '#f2fff6'); core.addColorStop(.25, hot); core.addColorStop(1, 'transparent');
-  g.fillStyle = core; g.beginPath(); g.arc(0, 0, R * (.45 + level * .25), 0, 7); g.fill();
-  // inner ring + spokes
-  arc(R * .32, 0, 7, 2, hot, 20);
-  for (let i = 0; i < 12; i++) { const a = i / 12 * 6.283 + t * .4; arc(R * .4, a, a + .3, 6, `rgba(${THEME.rgb},.7)`, 10); }
-  // audio-reactive bars
-  g.save(); g.shadowBlur = 12; g.shadowColor = hot; g.strokeStyle = hot; g.lineWidth = 2;
-  for (let i = 0; i < 96; i++) {
-    const a = i / 96 * 6.283 - t * .1, v = analyser && level > .02 ? data[i % 64] / 255 : (Math.sin(t * 2 + i * .5) + 1) * .04;
-    const r0 = R * .58, r1 = r0 + R * (.04 + v * .5);
-    g.beginPath(); g.moveTo(Math.cos(a) * r0, Math.sin(a) * r0); g.lineTo(Math.cos(a) * r1, Math.sin(a) * r1); g.stroke();
-  }
-  g.restore();
-  if (mode === 'listening' && analyser) {   // the voice itself, drawn round the core
-    const wav = new Uint8Array(analyser.fftSize); analyser.getByteTimeDomainData(wav);
-    g.beginPath();
-    for (let i = 0; i <= 128; i++) { const a = i / 128 * 6.283, v = (wav[(i * 2) % wav.length] - 128) / 128, r = R * (.8 + v * .35);
-      i ? g.lineTo(Math.cos(a) * r, Math.sin(a) * r) : g.moveTo(Math.cos(a) * r, Math.sin(a) * r); }
-    g.closePath(); g.lineWidth = 2; g.strokeStyle = THEME.c2; g.shadowBlur = 16; g.shadowColor = THEME.c2; g.stroke(); g.shadowBlur = 0;
-  }
-  // rotating segmented rings
-  for (let i = 0; i < 3; i++) { const a = t * -(.25 + level * .6) + i * 2.094; arc(R * 1.02, a, a + 1.5, 3, `rgba(${THEME.rgb},.8)`, 12); }
-  for (let i = 0; i < 4; i++) { const a = t * .15 + i * 1.571; arc(R * 1.15, a, a + 1.1, 1.5, `rgba(${THEME.rgb},.45)`); }
-  arc(R * 1.25, 0, 7, 1, `rgba(${THEME.rgb},.2)`);
-  // tick marks
-  g.strokeStyle = `rgba(${THEME.rgb},.4)`; g.lineWidth = 1; g.shadowBlur = 0;
-  for (let i = 0; i < 120; i++) { const a = i / 120 * 6.283 + t * .05, l = i % 10 ? 6 : 14, r = R * 1.32;
-    g.beginPath(); g.moveTo(Math.cos(a) * r, Math.sin(a) * r); g.lineTo(Math.cos(a) * (r + l), Math.sin(a) * (r + l)); g.stroke(); }
-  // thinking sweep
-  if (mode === 'thinking') { const a = t * 4; arc(R * .85, a, a + .8, 4, THEME.c2, 18); arc(R * .85, a + 3.14, a + 3.94, 4, THEME.c2, 18); }
   requestAnimationFrame(frame);
 }
 requestAnimationFrame(frame);

@@ -8586,9 +8586,9 @@
     "semantic_hash": ""
   },
   "vega/index.html": {
-    "mtime": 1795381772.7713313,
-    "seen": 1795381856.2082157,
-    "ast_hash": "1ca8556f96072e8477618e4f814dd034",
+    "mtime": 1795382501.0620806,
+    "seen": 1795382507.134327,
+    "ast_hash": "b5d3075b55271ea2d0591f7ad802cda6",
     "semantic_hash": ""
   },
   "vega/requirements.txt": {
@@ -15432,21 +15432,21 @@
     "semantic_hash": ""
   },
   "vega/static/icon-180.png": {
-    "mtime": 1795375720.0420532,
-    "seen": 1795381856.2102356,
-    "ast_hash": "c361afc849c54822c1d7d9d8a8d92d6f",
+    "mtime": 1795382481.8214362,
+    "seen": 1795382507.1362371,
+    "ast_hash": "3bcae4701767319f513ac891138029a3",
     "semantic_hash": ""
   },
   "vega/static/icon-192.png": {
-    "mtime": 1795375720.0420532,
-    "seen": 1795381856.210237,
-    "ast_hash": "c7b8b346d177b08eae1b5b406b1fc1da",
+    "mtime": 1795382481.8173428,
+    "seen": 1795382507.1362386,
+    "ast_hash": "c2fdf68383297a457d5437961f0abc7b",
     "semantic_hash": ""
   },
   "vega/static/icon-512.png": {
-    "mtime": 1795375720.0420532,
-    "seen": 1795381856.2102382,
-    "ast_hash": "4a3cf3ca8a1244e91c60b762d245748a",
+    "mtime": 1795382481.8095047,
+    "seen": 1795382507.1362398,
+    "ast_hash": "a9021f7c946c45b2cc1a8ab179b9ca12",
     "semantic_hash": ""
   },
   "vega/static/icon.svg": {
