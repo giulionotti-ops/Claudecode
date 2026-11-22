@@ -70,7 +70,9 @@
     "culture": "Ancient Greece / Persia",
     "familiar": true,
     "intro": null,
-    "physics": []
+    "physics": [
+      "griffin"
+    ]
   },
   {
     "slug": "hydra",

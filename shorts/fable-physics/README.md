@@ -23,3 +23,4 @@ Creature-science shorts: one mythical creature per short, worked out with real b
 | 8 | `../dragon-eggs-v2` | dragon (eggs in a volcano, remake in the game-model style; replaces `dragon-eggs`) |
 | 9 | `../mapinguari-intro` | mapinguari (Brazil · Amazon folklore; intro short: the legend, bulletproof skin, the giant ground sloths Megatherium and Mylodon) |
 | 10 | `../mapinguari` | mapinguari (Brazil · Amazon folklore; physics short: could a 4-tonne giant sloth hide? Megatherium, living sloths, Mylodon, island sloths) |
+| 11 | `../griffin` | griffin (Greece / Persia; physics short: weight, Quetzalcoatlus, keel, four-limb launch, six limbs, Protoceratops origin twist) |
