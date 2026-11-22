@@ -1,0 +1,181 @@
+{
+ "layout": {
+  "page1": [
+   [
+    0.33,
+    [
+     1
+    ]
+   ],
+   [
+    0.31,
+    [
+     0.45,
+     0.55
+    ]
+   ],
+   [
+    0.36,
+    [
+     0.6,
+     0.4
+    ]
+   ]
+  ],
+  "page2": [
+   [
+    0.3,
+    [
+     1
+    ]
+   ],
+   [
+    0.34,
+    [
+     0.5,
+     0.5
+    ]
+   ],
+   [
+    0.36,
+    [
+     1
+    ]
+   ]
+  ]
+ },
+ "voices": {
+  "narrator": "ybjoxm7ASLDUFh2pC2eM",
+  "kryptman": "pqHfZKP75CvOlQylNhV4",
+  "marine1": "SOYHLrjzK2X1ezoPC6cr",
+  "marine2": "jtE6dbPUTt2kchN89Uej",
+  "uriel": "pNInz6obpgDQGcFmaJgB"
+ },
+ "voice_fx": {
+  "marine1": "asetrate=44100*0.9,aresample=48000,atempo=1.06,highpass=f=130,lowpass=f=4300,equalizer=f=420:t=q:w=1.1:g=5,equalizer=f=1700:t=q:w=2.2:g=4,equalizer=f=3200:t=q:w=1:g=-4,acompressor=threshold=-22dB:ratio=4:attack=4:release=90:makeup=5,asoftclip=type=tanh,aecho=0.85:0.55:5|11:0.32|0.18",
+  "marine2": "asetrate=44100*0.94,aresample=48000,atempo=1.03,highpass=f=130,lowpass=f=4300,equalizer=f=420:t=q:w=1.1:g=5,equalizer=f=1700:t=q:w=2.2:g=4,equalizer=f=3200:t=q:w=1:g=-4,acompressor=threshold=-22dB:ratio=4:attack=4:release=90:makeup=5,asoftclip=type=tanh,aecho=0.85:0.55:5|11:0.32|0.18",
+  "uriel": "asetrate=44100*0.96,aresample=48000,atempo=1.02,highpass=f=130,lowpass=f=4300,equalizer=f=420:t=q:w=1.1:g=5,equalizer=f=1700:t=q:w=2.2:g=4,equalizer=f=3200:t=q:w=1:g=-4,acompressor=threshold=-22dB:ratio=4:attack=4:release=90:makeup=5,asoftclip=type=tanh,aecho=0.85:0.55:5|11:0.32|0.18",
+  "narrator": "atempo=1.12"
+ },
+ "lines": [
+  {
+   "id": "l01",
+   "who": "narrator",
+   "say": "[grim] To kill a billion Tyranids, the Deathwatch needed just one of them. Alive.",
+   "text": "TO KILL A BILLION TYRANIDS, THE DEATHWATCH NEEDED JUST ONE OF THEM. ALIVE."
+  },
+  {
+   "id": "l02",
+   "who": "kryptman",
+   "say": "[cold, old voice] Bring me a Lictor. Breathing.",
+   "text": "BRING ME A LICTOR. BREATHING."
+  },
+  {
+   "id": "l03",
+   "who": "narrator",
+   "say": "[grim] You'd think the Deathwatch only kills xenos. The smart ones study them first.",
+   "text": "YOU'D THINK THE DEATHWATCH ONLY KILLS XENOS. THE SMART ONES STUDY THEM FIRST."
+  },
+  {
+   "id": "l04",
+   "who": "marine1",
+   "say": "[gruff, strained] Lictor's down. Still twitching.",
+   "text": "LICTOR'S DOWN. STILL TWITCHING."
+  },
+  {
+   "id": "l05",
+   "who": "narrator",
+   "say": "[grim] From its genes, a Magos brewed a poison. One dose. For the Norn Queen.",
+   "text": "FROM ITS GENES, A MAGOS BREWED A POISON. ONE DOSE. FOR THE NORN QUEEN."
+  },
+  {
+   "id": "l06",
+   "who": "narrator",
+   "say": "[grim] But she hid inside the last hive ship. And their captain, Bannon, had already died taking another.",
+   "text": "BUT SHE HID INSIDE THE LAST HIVE SHIP. AND THEIR CAPTAIN, BANNON, HAD ALREADY DIED TAKING ANOTHER."
+  },
+  {
+   "id": "l07",
+   "who": "uriel",
+   "say": "[steady, commanding] Then we board. I lead.",
+   "text": "THEN WE BOARD. I LEAD."
+  },
+  {
+   "id": "l08",
+   "who": "narrator",
+   "say": "[low, tense] Imagine it. The corridors breathe. The walls are hungry.",
+   "text": "IMAGINE IT. THE CORRIDORS BREATHE. THE WALLS ARE HUNGRY."
+  },
+  {
+   "id": "l09",
+   "who": "marine2",
+   "say": "[tense] Acid on the floor. Keep moving.",
+   "text": "ACID ON THE FLOOR. KEEP MOVING."
+  },
+  {
+   "id": "l10",
+   "who": "marine1",
+   "say": "[shouting] THERE! THE QUEEN!",
+   "text": "THERE! THE QUEEN!"
+  },
+  {
+   "id": "l11",
+   "who": "narrator",
+   "say": "[grim] One shot of poison. And the swarm lost its mind, and tore itself apart.",
+   "text": "ONE SHOT OF POISON. AND THE SWARM LOST ITS MIND, AND TORE ITSELF APART."
+  },
+  {
+   "id": "l12",
+   "who": "narrator",
+   "say": "[quiet, grim] That is the Deathwatch. To kill a billion... you start with one.",
+   "text": "THAT IS THE DEATHWATCH. TO KILL A BILLION... YOU START WITH ONE."
+  }
+ ],
+ "sfx": {
+  "drone": [
+   "deep ominous space drone with distant organic groans of a giant alien creature",
+   6
+  ],
+  "hiss": [
+   "alien creature hissing and clicking, wet, menacing",
+   2
+  ],
+  "bolter": [
+   "three heavy bolter gun shots, loud, sci-fi",
+   2
+  ],
+  "heartbeat": [
+   "huge slow organic heartbeat echoing in a flesh cavern",
+   4
+  ],
+  "drip": [
+   "acid dripping and sizzling on metal armour",
+   3
+  ],
+  "boom": [
+   "massive muffled explosion in space with deep rumble",
+   3
+  ],
+  "screech": [
+   "monstrous alien queen screech, huge, echoing",
+   2.5
+  ],
+  "page": [
+   "comic book page turn, paper swoosh",
+   1
+  ],
+  "whoosh": [
+   "fast cinematic whoosh",
+   1
+  ],
+  "servo": [
+   "power armour servo whirr and heavy metal footstep",
+   1.5
+  ],
+  "bell": [
+   "single distant cathedral bell toll, sombre",
+   3
+  ]
+ },
+ "music": "dark grimdark orchestral ambient, low choir, slow war drums, tense strings building to a sombre end, instrumental, no vocals, sci-fi gothic"
+}

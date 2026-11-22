@@ -91,6 +91,7 @@ def bubble(box, tip, kind, fs, text, nvis=None, chars=False):
     """Returns (sprite RGBA at K scale, (x,y) page-K position, centre)."""
     S = 2 * K                                      # supersample
     x0, y0, x1, y1 = box; tx, ty = tip
+    if kind == 'caption': tx, ty = (x0 + x1) / 2, (y0 + y1) / 2   # no tail: keep the sprite box-sized
     m = 20
     bx0, by0, bx1, by1 = min(x0, tx) - m, min(y0, ty) - m, max(x1, tx) + m, max(y1, ty) + m
     W, H = int((bx1 - bx0) * S), int((by1 - by0) * S)
@@ -105,7 +106,9 @@ def bubble(box, tip, kind, fs, text, nvis=None, chars=False):
     spread = 0.22 if kind == 'round' else 0.16
     b1, b2 = edge(ang - spread), edge(ang + spread)
     tail = [P(*b1), P(tx, ty), P(*b2)]
-    if kind == 'shout':
+    if kind == 'caption':                            # narration box: no tail, parchment yellow, square corners
+        d.rectangle([P(x0, y0), P(x1, y1)], fill=(246, 226, 160), outline=INK, width=lw)
+    elif kind == 'shout':
         n, pts = 22, []
         for k in range(n * 2):
             a = math.pi * k / n; r = 1.0 if k % 2 == 0 else 0.84
@@ -115,10 +118,11 @@ def bubble(box, tip, kind, fs, text, nvis=None, chars=False):
         d.ellipse([P(x0, y0), P(x1, y1)], fill='white', outline=INK, width=lw)
     else:
         d.rounded_rectangle([P(x0, y0), P(x1, y1)], radius=int(min(rx, ry) * 0.75 * S), fill='white', outline=INK, width=lw)
-    d.polygon(tail, fill='white', outline=INK, width=lw)
-    i1, i2 = edge(ang - spread * 0.8, 0.8), edge(ang + spread * 0.8, 0.8)
-    tip_in = (b1[0] + b2[0]) / 2 + (tx - (b1[0] + b2[0]) / 2) * 0.12, (b1[1] + b2[1]) / 2 + (ty - (b1[1] + b2[1]) / 2) * 0.12
-    d.polygon([P(*i1), P(*tip_in), P(*i2), P(cx, cy)], fill='white')
+    if kind != 'caption':
+        d.polygon(tail, fill='white', outline=INK, width=lw)
+        i1, i2 = edge(ang - spread * 0.8, 0.8), edge(ang + spread * 0.8, 0.8)
+        tip_in = (b1[0] + b2[0]) / 2 + (tx - (b1[0] + b2[0]) / 2) * 0.12, (b1[1] + b2[1]) / 2 + (ty - (b1[1] + b2[1]) / 2) * 0.12
+        d.polygon([P(*i1), P(*tip_in), P(*i2), P(cx, cy)], fill='white')
     # text
     if kind == 'shout':
         font = ImageFont.truetype(BANG, int(fs * S)); lh = fs * 1.0; maxw = (x1 - x0) * 0.72
@@ -198,7 +202,7 @@ def render_view(pg, view, t, dx, dy):
     x0, y0 = (cx - vw / 2 + dx) * K, (cy - vh / 2 + dy) * K
     ix0, iy0 = int(math.floor(x0)) - 2, int(math.floor(y0)) - 2
     ix1, iy1 = int(math.ceil(x0 + vw * K)) + 2, int(math.ceil(y0 + vh * K)) + 2
-    crop = page(pg).crop((ix0, iy0, ix1, iy1))
+    crop = draw_fx(page(pg).crop((ix0, iy0, ix1, iy1)), pg, ix0, iy0, t)
     for at, kind, states, pos, ctr in sprites.get(pg, []):
         if t < at: continue
         spr = empty_bubble.get(id(states)) or states[0][1]
@@ -212,6 +216,64 @@ def render_view(pg, view, t, dx, dy):
         crop.paste(spr, (int(px - ix0), int(py - iy0)), spr)
     sc = vw * K / OW
     return crop.transform((OW, OH), Image.AFFINE, (sc, 0, x0 - ix0, 0, sc, y0 - iy0), resample=Image.BICUBIC)
+# ---------- in-panel animation (optional FX list in shots.py) ----------
+# FX = [dict(page=P1, box=[x0,y0,x1,y1], kind=..., ...)]  page pixels; drawn under the bubbles, clipped to box.
+#   embers/ash/spores/snow: drifting particles (n, col, size, vx, vy)   glow: pulsing light at pts (col, r, hz)
+#   flicker: random light flashes over the box (col, a, rate)           drip: falling drops from top edge (n, col)
+#   smoke: slow soft puffs rising (n, col, size)
+FX = getattr(_shots, 'FX', [])
+import random
+def _rnd(seed): r = random.Random(seed); return [r.random() for _ in range(6)]
+FXR = [[_rnd(k * 1000 + i) for i in range(fx.get('n', 30))] for k, fx in enumerate(FX)]
+def draw_fx(crop, pg, ix0, iy0, t):
+    act = [(k, fx) for k, fx in enumerate(FX) if fx['page'] == pg]
+    if not act: return crop
+    W, H = crop.size
+    lay = Image.new('RGBA', (W, H), (0, 0, 0, 0)); d = ImageDraw.Draw(lay)
+    for k, fx in act:
+        x0, y0, x1, y1 = (v * K for v in fx['box']); bw, bh = x1 - x0, y1 - y0
+        if x1 < ix0 or y1 < iy0 or x0 > ix0 + W or y0 > iy0 + H: continue
+        kind, col = fx['kind'], tuple(fx.get('col', (255, 150, 60)))
+        if kind in ('embers', 'ash', 'spores', 'snow', 'drip'):
+            vx, vy = fx.get('vx', {'embers': 8, 'ash': 10, 'spores': 4, 'snow': 6, 'drip': 0}[kind]), fx.get('vy', {'embers': -40, 'ash': 22, 'spores': -12, 'snow': 30, 'drip': 160}[kind])
+            sz = fx.get('size', {'embers': 3, 'ash': 3, 'spores': 5, 'snow': 3, 'drip': 3}[kind]) * K
+            for u, v, a, b, c, e in FXR[k]:
+                sp = 0.6 + 0.8 * a
+                x = x0 + (u * bw + (vx * sp * t + math.sin(t * (1 + b) + c * 6) * 10) * K) % bw
+                y = y0 + (v * bh + vy * sp * t * K) % bh
+                r = sz * (0.6 + b)
+                al = int(255 * fx.get('a', 0.85) * (0.5 + 0.5 * math.sin(t * (2 + 3 * c) + e * 6)) if kind in ('embers', 'spores') else 255 * fx.get('a', 0.8))
+                X, Y = x - ix0, y - iy0
+                if kind == 'drip': d.ellipse([X - r * 0.6, Y - r * 2, X + r * 0.6, Y + r], fill=col + (al,))
+                else: d.ellipse([X - r, Y - r, X + r, Y + r], fill=col + (al,))
+        elif kind == 'glow':
+            hz, r0 = fx.get('hz', 0.8), fx.get('r', 18) * K
+            p = 0.55 + 0.45 * math.sin(t * hz * 2 * math.pi)
+            for px, py in fx['pts']:
+                X, Y = px * K - ix0, py * K - iy0
+                for ring in range(4, 0, -1):
+                    rr = r0 * ring / 2 * (0.8 + 0.4 * p)
+                    d.ellipse([X - rr, Y - rr, X + rr, Y + rr], fill=col + (int(60 * p / ring),))
+        elif kind == 'flicker':
+            rate = fx.get('rate', 9); n = int(t * rate)
+            r = random.Random(k * 7919 + n).random()
+            if r < fx.get('chance', 0.35):
+                d.rectangle([x0 - ix0, y0 - iy0, x1 - ix0, y1 - iy0], fill=col + (int(255 * fx.get('a', 0.18) * (0.4 + r)),))
+        elif kind == 'smoke':
+            sz = fx.get('size', 60) * K
+            for u, v, a, b, c, e in FXR[k]:
+                life = (t * 0.15 * (0.6 + a) + v) % 1
+                x = x0 + u * bw + math.sin(t * 0.7 + c * 6) * 20 * K
+                y = y1 - life * bh
+                r = sz * (0.5 + life)
+                al = int(70 * fx.get('a', 1) * math.sin(life * math.pi))
+                d.ellipse([x - r - ix0, y - r - iy0, x + r - ix0, y + r - iy0], fill=col + (al,))
+    # clip each effect to its panel: mask = union of boxes
+    mask = Image.new('L', (W, H), 0); md = ImageDraw.Draw(mask)
+    for k, fx in act:
+        x0, y0, x1, y1 = (v * K for v in fx['box']); md.rectangle([x0 - ix0, y0 - iy0, x1 - ix0, y1 - iy0], fill=255)
+    a = lay.getchannel('A'); from PIL import ImageChops; lay.putalpha(ImageChops.multiply(a, mask))
+    base = crop.convert('RGBA'); base.alpha_composite(lay); return base.convert('RGB')
 end_mark = None
 hook_img = None
 def hook_overlay(out, t):

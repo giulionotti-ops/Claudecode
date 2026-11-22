@@ -1,0 +1,17 @@
+Image 1 is the exact PAGE LAYOUT: draw a comic page with exactly these 5 panels, in exactly these positions and sizes, thick black panel borders, white gutters. Do not draw the numbers.
+Image 2 is the STYLE reference from the same comic: keep the identical drawing style (flat cartoon webcomic, thick uniform black outlines, flat colours with one shadow tone, chunky expressive characters) and the identical Deathwatch Space Marine design. Do NOT draw the small human soldiers from image 2; this page has NO ordinary human soldiers.
+
+NEW for this page: RICHLY DETAILED BACKGROUNDS in the same cartoon line style, like a high-end grimdark comic: gothic Imperial architecture, skulls, cables, candles, frost, alien organic textures. NO orange sky, NO plain dusty ground. Moody palettes: cold blue-grey, sickly green, deep purple, candle gold.
+
+DEATHWATCH MARINES (huge, armoured, helmets ON): all wear BLACK power armour with a SILVER LEFT ARM and a silver left shoulder pad that is clearly ENGRAVED with a skull and scroll lines and a letter "I" shape (Inquisition mark, engraved emblem). Each one's RIGHT shoulder pad shows his home Chapter, icon clearly recognisable:
+ Space Wolves: grey-blue pad with a white snarling wolf head.  Black Templars: white pad with a bold black cross.  Imperial Fists: yellow pad with a black clenched fist.  Salamanders: green pad with a black-and-gold dragon/salamander head.  Blood Angels: red pad with a white blood drop with small wings.
+Mix armour marks: Mk VII Aquila (eagle chest), Mk X Tacticus (smooth Primaris), Mk VI Corvus (beaky helmet), Mk IV Maximus. Glowing green eye-lenses.
+
+Every panel keeps a band of calm darker background in its TOP 25% for text boxes added later.
+ABSOLUTELY NO text, letters, numbers, speech bubbles, sound effects or logos anywhere.
+
+Panel 1 (top, full width): deep space above an icy blue-white planet with frozen gothic hive cities glowing on its surface. A colossal TYRANID HIVE FLEET fills the right half: giant organic hive ships like armoured sea creatures with ribbed purple-and-bone shells and trailing tentacles, swarms of tiny bio-ships. A few small gothic Imperial warships on the left, dwarfed.
+Panel 2 (middle left): the bridge of a gothic Imperial strike cruiser: stained glass windows showing the stars, candles, brass consoles, servo-skulls. An old stern INQUISITOR, bald, white beard, long dark red coat with a big Inquisition "I" rosette pendant (no letters), one bionic eye, pointing forward, cold expression.
+Panel 3 (middle right): a frozen ruined Imperial city street at night, snow, broken gothic statues. Three Deathwatch Marines (Space Wolf, Black Templar, Imperial Fist) pin down a captured LICTOR, a tall lean Tyranid hunter with chameleon green-grey skin, long scything claws and face tentacles, wrapped in heavy chains on the snowy ground.
+Panel 4 (bottom left, wide): a dark Adeptus Mechanicus laboratory: the dead Lictor strapped to a metal slab, mechanical arms, cables, green-lit vats. A hooded red-robed Tech-Priest MAGOS with metal face and many mechanical arms holds up a single glowing GREEN glass vial of poison.
+Panel 5 (bottom right): a Deathwatch captain in ornate black Terminator-like armour with a silver arm, inside a burning fleshy purple organic chamber, holding a glowing melta charge, fire and flames rising all around, heroic and doomed.
