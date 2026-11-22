@@ -297,7 +297,7 @@
     "name": "Kelpie",
     "culture": "Scotland",
     "familiar": false,
-    "intro": null,
+    "intro": "kelpie-intro",
     "physics": []
   },
   {

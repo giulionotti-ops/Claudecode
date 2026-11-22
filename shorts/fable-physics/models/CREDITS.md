@@ -12,3 +12,4 @@ Props and backgrounds: Kenney (kenney.nl), CC0.
 "Quetzalcoatlus" by kenchoo (https://sketchfab.com/kenchoo), CC Attribution, https://sketchfab.com/3d-models/quetzalcoatlus-9c11a18eabe740e2850a0ab1c4c90eba
 "Protoceratops" by kenchoo (https://sketchfab.com/kenchoo), CC Attribution, https://sketchfab.com/3d-models/protoceratops-2bdbfaab97d540edaf1ffd820398cfbf
 "animated EAGLE" by Asim3d (https://sketchfab.com/Asim3d), CC Attribution, https://sketchfab.com/3d-models/animated-eagle-8fb150270adb45aa9653e857f3fa351b (stands in for a big flying bird)
+"Horse" by Henry S (https://sketchfab.com/henry_7), CC Attribution, https://sketchfab.com/3d-models/horse-a6f860e43e364619bccb174a1ac7d0c9

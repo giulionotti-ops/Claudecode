@@ -24,3 +24,4 @@ Creature-science shorts: one mythical creature per short, worked out with real b
 | 9 | `../mapinguari-intro` | mapinguari (Brazil · Amazon folklore; intro short: the legend, bulletproof skin, the giant ground sloths Megatherium and Mylodon) |
 | 10 | `../mapinguari` | mapinguari (Brazil · Amazon folklore; physics short: could a 4-tonne giant sloth hide? Megatherium, living sloths, Mylodon, island sloths) |
 | 11 | `../griffin` | griffin (Greece / Persia; physics short: weight, Quetzalcoatlus, keel, four-limb launch, six limbs, Protoceratops origin twist) |
+| 12 | `../kelpie-intro` | kelpie (Scotland · folklore; intro short: grey water horse, drowns riders, shape-shift and weed in hair, Laird of Morphie's bridle, Burns 1786, warning for children) |
