@@ -1,17 +1,17 @@
 # Graph Report - neesmo-product  (2026-11-23)
 
 ## Corpus Check
-- 1717 files · ~2,540,169 words
+- 1722 files · ~2,545,941 words
 - Verdict: corpus is large enough that graph structure adds value.
-- Unclassified: 198 file(s) not represented in the graph (top: .css 103, .woff 45, (none) 21)
+- Unclassified: 199 file(s) not represented in the graph (top: .css 103, .woff 45, (none) 22)
 
 ## Summary
-- 25336 nodes · 44972 edges · 1457 communities (915 shown, 542 thin omitted)
-- Extraction: 93% EXTRACTED · 7% INFERRED · 0% AMBIGUOUS · INFERRED: 3350 edges (avg confidence: 0.85)
+- 25399 nodes · 45062 edges · 1455 communities (916 shown, 539 thin omitted)
+- Extraction: 93% EXTRACTED · 7% INFERRED · 0% AMBIGUOUS · INFERRED: 3355 edges (avg confidence: 0.85)
 - Token cost: 0 input · 0 output
 
 ## Graph Freshness
-- Built from commit: `0efb571c`
+- Built from commit: `9d9c7919`
 - Run `git rev-parse HEAD` and compare to check if the graph is stale.
 - Run `graphify update .` after code changes (no API cost).
 
@@ -129,7 +129,7 @@
 - Frontend UI Engineering
 - server.py
 - angron/win.js
-- dn
+- qe
 - the-angel/win.js
 - agent/skills/caveman-compress/README.md
 - CI/CD and Automation
@@ -165,7 +165,7 @@
 - Rules
 - Code Simplification
 - Debugging and Error Recovery
-- qe
+- Ot
 - Ot
 - Skill Authoring — structure, taxonomy, licensing, confidentiality, editing rules
 - jn
@@ -223,7 +223,7 @@
 - the-angel/film.js
 - React Composition Patterns
 - agent/skills/vercel-optimize/scripts/render-report.mjs
-- di
+- Me
 - agent/skills/vercel-optimize/scripts/collect-sub-agent-outputs.mjs
 - agent/skills/vercel-optimize/scripts/merge-signals.mjs
 - di
@@ -340,10 +340,10 @@
 - Copy moves
 - Effects beyond backgrounds
 - Be
-- bh
+- Ph
 - Contributor Covenant Code of Conduct
 - Scanning cheaply
-- test_storyboard_lint.py
+- BulletWall
 - The Horus Heresy in 60 seconds: treatment
 - Pass
 - Pass
@@ -370,10 +370,10 @@
 - html_renderer.py
 - agent/skills/caveman-explore/package.json
 - agent/skills/caveman-learn/package.json
-- du
+- .copy
 - React Composition Patterns
 - agent/skills/vercel-optimize/SKILL.md
-- Ja
+- parseObject
 - agent/skills/vercel-optimize/references/scoring.md
 - Pipeline
 - React Best Practices
@@ -418,12 +418,12 @@
 - Manage eval-gated experiments
 - agent/skills/caveman-setup/SKILL.md
 - vT
-- hc
+- parseObject
 - 16_2026.js
 - agent/skills/vercel-optimize/references/docs-library.json
 - di
 - Pi
-- Implementation Workflow
+- jE
 - license.py
 - Review Caveman evidence
 - Manage eval-gated experiments
@@ -433,7 +433,7 @@
 - .agents/skills/vercel-optimize/references/docs-library.json
 - Verification
 - Vercel Optimize
-- Mi
+- hf
 - Implementation Workflow
 - Fu
 - edge-glow/effect.js
@@ -464,13 +464,13 @@
 - .agents/skills/vercel-optimize/lib/framework-support.mjs
 - huashu-art-motion/README.md
 - .agents/skills/vercel-optimize/lib/scanners/edge-heavy-import.mjs
-- .agents/skills/vercel-optimize/lib/scanners/turbo-force-bypass.mjs
+- art.py
 - fc
 - Observability Plus Stop-And-Ask
 - 1. Eliminating Waterfalls
 - 2. Bundle Size Optimization
 - Instructions for Claude
-- time
+- Lr
 - install.sh
 - definePrint
 - Copy tells
@@ -633,7 +633,7 @@
 - Web Interface Guidelines
 - Writing Guidelines
 - picture-develops/moment.js
-- test_clip_theme.py
+- run
 - Price and questions
 - Footers
 - Navigation
@@ -948,7 +948,7 @@
 - bridge/package.json
 - properties
 - design-taste-frontend/assets/effects/contour-lines/effect.js
-- is
+- tn
 - ln
 - dn
 - design-taste-frontend/assets/effects/god-rays/effect.js
@@ -1002,7 +1002,7 @@
 - aa
 - hf
 - Selling Neesmo (owner notes)
-- tu
+- agent/skills/vercel-optimize/lib/display-labels.mjs
 - 协议（按顺序，每一步有产物）
 - Hi
 - t2_keynote_ui · 发布会式界面与渐变动效
@@ -1023,14 +1023,14 @@
 - 51_persian_miniature · 波斯细密画：层叠空间与精密叙事
 - 52_south_park · 南方公园：数字剪纸与有限表演
 - properties
-- svg-kit.js
+- .generateTextureLod
 - spacex_lin/scenes/s12.js
 - rockets.js
 - spacex/scenes/s06.js
 - 06_renaissance.js
 - 27_kirby.js
-- migrate-log.py
-- decision_matrix.py
+- argparse
+- BootFails
 - Motion
 - readHtml
 - 18 · 媒介层：同一个场景换画法，角色也一起被重画
@@ -1048,7 +1048,7 @@
 - xl
 - Anti-PPT — hukum desain adegan
 - 口播整片与经验回流
-- 参考实现：同一个房间，十六种画法（2026-11-09）
+- tex
 - film2.js
 - 13_pop.js
 - scenes/14_8bit.js
@@ -1062,7 +1062,7 @@
 - 02_egypt · 公元前1350年埃及墓室壁画（纯代码）
 - segments/28_monet.js
 - $C
-- Yn
+- Part 2: Visual Grammar
 - draw
 - draw
 - 26_vaporwave.js
@@ -1091,7 +1091,7 @@
 - ze
 - ao
 - Ue
-- gu
+- RE
 - silk-folds/effect.js
 - 08 · 风格作者规范（通用版，给写 scene 的人和派出去的 agent）
 - 可选语音：配置、跳过与已有素材
@@ -1145,12 +1145,12 @@
 - y1_kurzgesagt.js
 - y2_vox.js
 - y3_whiteboard.js
-- tr
+- Fs
 - Nm
 - .getDataFromNode
 - .getUniformFromNode
 - draw
-- 32_rembrandt.js
+- .agents/skills/vercel-optimize/lib/budget-summary.mjs
 - draw
 - build
 - Ot
@@ -1198,8 +1198,7 @@
 - nE
 - fa
 - Hr
-- Er
-- agent/skills/vercel-optimize/scripts/scan-codebase.mjs
+- Vox-Style Explainer Video Pipeline
 - ia
 - $C
 - Rr
@@ -1214,7 +1213,7 @@
 - Rm
 - jT
 - pN
-- Lr
+- Rm
 - Nm
 - uh
 - tr
@@ -1227,24 +1226,24 @@
 - Ip
 - ka
 - Diagram
-- WC
-- cw
+- agent/skills/vercel-optimize/lib/impact-label.mjs
+- wM
 - tE
 - _N
-- n
-- fn
+- e
+- wa
 - xl
 - U_
-- xN
+- img
 - Cr
 - hM
 - xv
 - the-angel/angel.js
 - studio.js
-- youtube.py
-- ss
+- kw
+- pv
 - Dt
-- tD
+- ca
 - Hardening Patterns
 - Hardening Patterns
 - the-angel/figures2.js
@@ -1255,40 +1254,40 @@
 - Pn
 - withLoop
 - fa
-- pick.mjs
+- s
 - bakeDraw
 - ia
 - nh
-- Ax
-- cw
+- ca
+- ffmpeg Assembly Recipes
 - Sm
 - brand/figures2.js
 - Pass
 - gy
 - I_
-- font_subset.py
-- wM
+- agent/skills/vercel-optimize/lib/scanners/large-static-asset.mjs
+- Implementation Workflow
 - jT
 - pN
 - wa
 - bs
-- .agents/skills/vercel-optimize/lib/sanitizers/count-correct.mjs
+- .agents/skills/vercel-optimize/lib/scanners/large-static-asset.mjs
 - Product render (`assets/objects/product-render`)
 - Pass
 - yn
 - init
-- xl
-- agent/skills/vercel-optimize/lib/sanitizers/count-correct.mjs
+- lintRead
+- Ng
 - zM
 - Ip
 - Neesmo viral rules
-- k_
+- Ng
 - Verification
 - Vercel Optimize
 - agent/skills/vercel-optimize/lib/gates/scanner-driven.mjs
 - WC
 - Observability Plus Stop-And-Ask
-- agent/skills/vercel-optimize/lib/scanners/middleware-broad-matcher.mjs
+- ci
 - .agents/skills/caveman-compress/scripts/benchmark.py
 - Copy
 - Effects
@@ -1297,21 +1296,21 @@
 - CameraRhythm
 - Role: Marketer (hooks, topic, script, title)
 - Role: Producer (voice, picture, sound, render)
-- agent/skills/vercel-optimize/lib/scanners/cache-components-suspense-dedupe.mjs
+- vox-explainer
 - Objects and prints (`assets/objects`)
 - U_
-- agent/skills/vercel-optimize/lib/scanners/use-cache-date-stamp.mjs
+- pw
 - 55_dunhuang · 敦煌壁画（北朝）：干泥壁上的矿物色与横飞的线
 - Voice
-- .agents/skills/vercel-optimize/lib/gates/platform-bot-protection.mjs
+- .agents/skills/vercel-optimize/lib/gates/external-api-slow.mjs
 - vu
 - ScriptNumbers
 - Product renders
 - te
-- mw
-- gA
-- pw
-- mM
+- Atlas Cloud API Reference
+- xN
+- nR
+- agent/skills/vercel-optimize/lib/gates/usage-spike-triage.mjs
 - Role: Analyst (learn from the numbers)
 - Role: Supervisor (the main agent's check)
 - audit.py
@@ -1320,18 +1319,15 @@
 - .resume
 - EndingAndEmpty
 - nR
-- agent/skills/vercel-optimize/lib/gates/external-api-slow.mjs
-- agent/skills/vercel-optimize/lib/gates/platform-bot-protection.mjs
-- agent/skills/vercel-optimize/lib/gates/platform-fluid-compute.mjs
-- .agents/skills/vercel-optimize/lib/gates/external-api-slow.mjs
+- .agents/skills/vercel-optimize/lib/gates/types.d.ts
+- tpAdd
+- FlatStyleCharacters
+- hM
 - 兼容性与验证范围
 - scipy_signal
-- Y_
+- fh
 - ValidationResult
-- agent/skills/vercel-optimize/lib/gates/build-minutes-fanout.mjs
-- agent/skills/vercel-optimize/lib/gates/cold-start.mjs
-- agent/skills/vercel-optimize/lib/gates/isr-overrevalidation.mjs
-- agent/skills/vercel-optimize/lib/gates/middleware-heavy.mjs
+- TemplateExample
 - ValidationResult
 - chat/fragment.js
 
@@ -1348,8 +1344,6 @@
 10. `Fw` - 109 edges
 
 ## Surprising Connections (you probably didn't know these)
-- `Personal or hard-coded (must change before selling)` --references--> `channel_stats()`  [INFERRED]
-  docs/product/AUDIT.md → vega/server.py
 - `View Transition Events` --references--> `onUpdate()`  [INFERRED]
   agent/skills/vercel-react-view-transitions/AGENTS.md → .claude/skills/huashu-art-motion/scripts/engine/reference_films/rick_morty/svg-kit.js
 - `View Transition Events` --references--> `onUpdate()`  [INFERRED]
@@ -1358,11 +1352,13 @@
   .agents/skills/vercel-react-view-transitions/AGENTS.md → .claude/skills/huashu-art-motion/scripts/engine/reference_films/rick_morty/svg-kit.js
 - `View Transition Events` --references--> `onUpdate()`  [INFERRED]
   .agents/skills/vercel-react-view-transitions/references/patterns.md → .claude/skills/huashu-art-motion/scripts/engine/reference_films/rick_morty/svg-kit.js
+- `Personal or hard-coded (must change before selling)` --references--> `channel_stats()`  [INFERRED]
+  docs/product/AUDIT.md → vega/server.py
 
 ## Import Cycles
 - None detected.
 
-## Communities (1457 total, 542 thin omitted)
+## Communities (1455 total, 539 thin omitted)
 
 ### Community 0 - "validate-skill-bundle.py"
 Cohesion: 0.03
@@ -1377,8 +1373,8 @@ Cohesion: 0.04
 Nodes (44): main(), AnthropicSdkUnavailable, backup_dir_for(), _body_candidate_error(), build_compress_prompt(), build_fix_prompt(), call_anthropic_sdk(), call_claude() (+36 more)
 
 ### Community 3 - "json"
-Cohesion: 0.03
-Nodes (57): col(), rig(), add(), frames(), probe(), absolutize(), en(), main() (+49 more)
+Cohesion: 0.02
+Nodes (89): col(), rig(), add(), frames(), probe(), absolutize(), en(), main() (+81 more)
 
 ### Community 4 - "numpy"
 Cohesion: 0.07
@@ -1405,8 +1401,8 @@ Cohesion: 0.06
 Nodes (69): ALIAS, argv, byId, cmdPath(), craftFits(), craftOf(), CRAFTS, credit() (+61 more)
 
 ### Community 10 - "agent/skills/vercel-optimize/lib/render-report.mjs"
-Cohesion: 0.06
-Nodes (75): classifyService(), computeCostCoverage(), escapeCell(), renderCostCoverageMarkdown(), SERVICE_DIMENSION, formatCandidateLabel(), formatCandidateLine(), formatKind() (+67 more)
+Cohesion: 0.08
+Nodes (62): classifyService(), computeCostCoverage(), escapeCell(), renderCostCoverageMarkdown(), SERVICE_DIMENSION, formatCandidateLabel(), formatCandidateLine(), formatKind() (+54 more)
 
 ### Community 11 - ".agents/skills/vercel-optimize/lib/extract-claims.mjs"
 Cohesion: 0.18
@@ -1421,12 +1417,12 @@ Cohesion: 0.08
 Nodes (54): ALIAS, argv, CACHE, checkCmd(), clean(), colours(), contentBox(), fetchCached() (+46 more)
 
 ### Community 14 - "agent/skills/vercel-optimize/lib/workspace-resolver.mjs"
-Cohesion: 0.11
-Nodes (34): buildPackageLookup(), DEFAULT_RESOLVE_OPTIONS, escapeRegExp(), expandParts(), expandResolvedSpecifier(), expandPureBarrel(), expandSuffixFanout(), expandWorkspaceGlob() (+26 more)
+Cohesion: 0.07
+Nodes (54): buildPackageLookup(), buildResolver(), DEFAULT_RESOLVE_OPTIONS, detectMonorepoRoot(), escapeRegExp(), expandParts(), expandResolvedSpecifier(), expandPureBarrel() (+46 more)
 
 ### Community 15 - "build.js"
-Cohesion: 0.07
-Nodes (51): add(), AXES, axisAngle(), axisOf(), build(), BUILTIN, checkSpec(), colorOf() (+43 more)
+Cohesion: 0.08
+Nodes (49): add(), AXES, axisAngle(), axisOf(), build(), BUILTIN, checkSpec(), colorOf() (+41 more)
 
 ### Community 16 - "agent/skills/vercel-optimize/lib/verify-claim.mjs"
 Cohesion: 0.06
@@ -1434,7 +1430,7 @@ Nodes (86): isKnownUrl(), findRecContradictions(), asArray(), buildScriptHasMigr
 
 ### Community 17 - "design-taste-frontend/assets/objects/_print-core/print3d.js"
 Cohesion: 0.05
-Nodes (44): EFFECT_LABEL, PAPERS, acquire(), atlas, CELL, colMajor(), COMMON_PARAMS, config (+36 more)
+Nodes (59): EFFECT_LABEL, PAPERS, acquire(), atlas, CELL, clamp(), colMajor(), COMMON_PARAMS (+51 more)
 
 ### Community 18 - "dotted-globe/effect.js"
 Cohesion: 0.09
@@ -1457,16 +1453,16 @@ Cohesion: 0.07
 Nodes (47): BASE_UNIFORMS, CALM_SPOTS, clamp(), compose(), cssToHex(), DEFAULT_PALETTE, enforceBudget(), FOCAL (+39 more)
 
 ### Community 23 - "agent/skills/vercel-optimize/lib/gates/index.mjs"
-Cohesion: 0.09
-Nodes (26): DEFAULT_MAX_CODE_CANDIDATES, GATE_VERSION, gates, MAX_CODE_CANDIDATES, gate(), metadata, sumBilled(), metadata (+18 more)
+Cohesion: 0.04
+Nodes (51): gate(), metadata, unique(), extractColdStarts(), gate(), metadata, extractCallCounts(), extractExternalApis() (+43 more)
 
 ### Community 24 - ".agents/skills/vercel-optimize/lib/render-report.mjs"
 Cohesion: 0.08
-Nodes (60): classifyService(), computeCostCoverage(), escapeCell(), renderCostCoverageMarkdown(), SERVICE_DIMENSION, formatCandidateLabel(), formatKind(), formatPublicText() (+52 more)
+Nodes (62): classifyService(), computeCostCoverage(), escapeCell(), renderCostCoverageMarkdown(), SERVICE_DIMENSION, formatCandidateLabel(), formatCandidateLine(), formatKind() (+54 more)
 
 ### Community 25 - "copy-lint.mjs"
 Cohesion: 0.07
-Nodes (35): APART, args, BLOCK, CAST, CAST_CO, COINED, cross, ENT (+27 more)
+Nodes (26): APART, args, BLOCK, CAST, CAST_CO, COINED, cross, ENT (+18 more)
 
 ### Community 26 - "Budget Impact Analysis: Hiring 3 Senior Engineers"
 Cohesion: 0.04
@@ -1490,7 +1486,7 @@ Nodes (38): addRing(), area(), args, bb, BOX, chains(), clipLine(), clipRing() (
 
 ### Community 31 - "three.min.js"
 Cohesion: 0.02
-Nodes (116): aa(), _activateAction(), _addInactiveAction(), _addInactiveBinding(), As(), at(), ba(), bind() (+108 more)
+Nodes (130): aa(), _activateAction(), _addInactiveAction(), _addInactiveBinding(), As(), at(), ba(), bind() (+122 more)
 
 ### Community 32 - ".agents/skills/vercel-optimize/lib/workspace-resolver.mjs"
 Cohesion: 0.10
@@ -1509,8 +1505,8 @@ Cohesion: 0.07
 Nodes (34): ABADDON, band(), face(), fold(), A, band(), face(), FATHER2 (+26 more)
 
 ### Community 36 - "agent/skills/vercel-optimize/scripts/gate-investigations.mjs"
-Cohesion: 0.10
-Nodes (31): applyAuthDisqualifier(), AUTH_ROUTE_REGEX, isAuthRoute(), CandidateContractError, candidateLabel(), nonEmptyString(), VALID_SCOPES, validateCandidate() (+23 more)
+Cohesion: 0.09
+Nodes (32): applyAuthDisqualifier(), AUTH_ROUTE_REGEX, isAuthRoute(), CandidateContractError, candidateLabel(), nonEmptyString(), VALID_SCOPES, validateCandidate() (+24 more)
 
 ### Community 37 - "duotone-grade/effect.js"
 Cohesion: 0.13
@@ -1534,7 +1530,7 @@ Nodes (35): batPaint(), ABADDON, band(), face(), fold(), A, band(), face() (+27 
 
 ### Community 42 - "$_"
 Cohesion: 0.01
-Nodes (134): $_, Ad(), al(), Ao(), Au(), bA(), bd(), bE() (+126 more)
+Nodes (123): $_, Ad(), al(), Ao(), Au(), bA(), bd(), bE() (+115 more)
 
 ### Community 43 - "perf.mjs"
 Cohesion: 0.08
@@ -1558,7 +1554,7 @@ Nodes (31): lerpPose(), stepPose(), CAM, camAt(), chars(), CR1, CR2, DAWN (+23 m
 
 ### Community 48 - "diagrams/diagram.js"
 Cohesion: 0.08
-Nodes (38): api, auto(), CAPS, clamp(), cleanName(), ease(), fallbackList(), h() (+30 more)
+Nodes (39): api, auto(), CAPS, clamp(), cleanName(), ease(), fallbackList(), h() (+31 more)
 
 ### Community 49 - "moments/lib.js"
 Cohesion: 0.12
@@ -1586,7 +1582,7 @@ Nodes (31): asArray(), cacheRecommendationFiles(), extractClaims(), isCacheCandi
 
 ### Community 55 - "robot/three.min.js"
 Cohesion: 0.02
-Nodes (105): fr(), ps(), _activateAction(), _addInactiveAction(), _addInactiveBinding(), Ar(), At(), bind() (+97 more)
+Nodes (116): dl(), wn(), _activateAction(), _addInactiveAction(), _addInactiveBinding(), al(), Ar(), At() (+108 more)
 
 ### Community 56 - "agent/skills/vercel-optimize/lib/budget-summary.mjs"
 Cohesion: 0.33
@@ -1621,8 +1617,8 @@ Cohesion: 0.07
 Nodes (29): Browser Testing with DevTools, Common Rationalizations, DAMP Over DRY in Tests, Decision Guide, Discover the Stack First, Name Tests Descriptively, One Assertion Per Concept, Overview (+21 more)
 
 ### Community 64 - "agent/skills/vercel-optimize/lib/sanitizers/index.mjs"
-Cohesion: 0.06
-Nodes (36): computeImpactLabel(), cwvIssue(), formatCwvIssue(), formatInteger(), joinEnglish(), parseSigNumber(), round1(), round2() (+28 more)
+Cohesion: 0.07
+Nodes (27): sanitizeCitations(), applyDollarStrip(), stripDollarLiterals(), metadata, STRING_FIELDS, metadata, STRING_FIELDS, metadata (+19 more)
 
 ### Community 65 - "Code Review and Quality"
 Cohesion: 0.07
@@ -1653,8 +1649,8 @@ Cohesion: 0.07
 Nodes (28): A) `VERCEL_TOKEN` is already set in the environment, About `.vercel/` Directory, Authentication error, B) Token is in a `.env` file under `VERCEL_TOKEN`, Build failure, C) Token is in a `.env` file under a different name, Check project state first, CLI not installed (+20 more)
 
 ### Community 72 - "un"
-Cohesion: 0.03
-Nodes (21): ap(), computeLineDistances(), dp(), Dr, fr(), ip(), JN(), mp() (+13 more)
+Cohesion: 0.02
+Nodes (17): ap(), computeLineDistances(), dp(), Dr, ep(), fr(), op(), pp() (+9 more)
 
 ### Community 73 - "scripts/shoot.mjs"
 Cohesion: 0.09
@@ -1669,16 +1665,16 @@ Cohesion: 0.08
 Nodes (41): byRoute(), gate(), metadata, ratioOverThreshold(), round2(), sumRows(), extractErrors(), extractFromStatusRows() (+33 more)
 
 ### Community 76 - "agent/skills/vercel-optimize/lib/vercel.mjs"
-Cohesion: 0.08
-Nodes (62): classifyFrameworkSupport(), CORE_SUPPORTED_FRAMEWORKS, frameworkLabel(), LABELS, LIMITED_FRAMEWORKS, normalizeFramework(), defaultNormalize(), normalizeColdStart() (+54 more)
+Cohesion: 0.07
+Nodes (63): classifyFrameworkSupport(), CORE_SUPPORTED_FRAMEWORKS, frameworkLabel(), LABELS, LIMITED_FRAMEWORKS, normalizeFramework(), defaultNormalize(), normalizeColdStart() (+55 more)
 
 ### Community 77 - "React View Transitions"
 Cohesion: 0.06
 Nodes (32): Accessibility, Animation Triggers, Availability, Choosing Animation Style, Common Patterns, Composing Shared Elements with List Identity, Core Concepts, Critical Placement Rule (+24 more)
 
 ### Community 78 - "withRouteShapeWarnings"
-Cohesion: 0.08
-Nodes (41): byRoute(), gate(), metadata, ratioOverThreshold(), round2(), sumRows(), extractErrors(), extractFromStatusRows() (+33 more)
+Cohesion: 0.09
+Nodes (37): byRoute(), gate(), metadata, ratioOverThreshold(), round2(), sumRows(), extractErrors(), extractFromStatusRows() (+29 more)
 
 ### Community 79 - "React View Transitions"
 Cohesion: 0.06
@@ -1690,7 +1686,7 @@ Nodes (21): allIds, args, boxIds, by, child, defaultProfile(), fails, guard (+13
 
 ### Community 81 - "routes.py"
 Cohesion: 0.03
-Nodes (118): _notify(), studio_prompt(), _studio_start(), add_request(), backup(), board_post(), _claude_settings(), create() (+110 more)
+Nodes (118): add_request(), backup(), board_post(), _claude_settings(), create(), event(), events(), _git_init() (+110 more)
 
 ### Community 82 - "effects.mjs"
 Cohesion: 0.07
@@ -1710,7 +1706,7 @@ Nodes (13): cache, COL, INK, LEAD, makeTex(), MAT, Pass, pat() (+5 more)
 
 ### Community 86 - "ref_node_path"
 Cohesion: 0.06
-Nodes (31): md, skillFile, skill, [tool, file, ...extra], formatBytes(), metadata, scan(), shouldSkip() (+23 more)
+Nodes (26): md, skillFile, skill, [tool, file, ...extra], md, skillFile, skill, [outDir, ...times] (+18 more)
 
 ### Community 87 - "ref_node_fs"
 Cohesion: 0.08
@@ -1726,7 +1722,7 @@ Nodes (25): Connection Pool Exhaustion, Large Bundle Size, Missing Caching (Back
 
 ### Community 90 - "agent/skills/vercel-optimize/lib/support-topics.mjs"
 Cohesion: 0.08
-Nodes (44): compareVersion(), HERE, LIBRARY_PATH, libraryForStack(), loadLibrary(), lookupSkillRule(), lookupUrl(), matchesFrameworkVersion() (+36 more)
+Nodes (43): compareVersion(), HERE, LIBRARY_PATH, libraryForStack(), loadLibrary(), lookupSkillRule(), lookupUrl(), matchesFrameworkVersion() (+35 more)
 
 ### Community 91 - "Git Workflow and Versioning"
 Cohesion: 0.07
@@ -1810,15 +1806,15 @@ Nodes (24): Accessibility (WCAG 2.1 AA), ARIA Labels, Avoid the AI Aesthetic, Co
 
 ### Community 111 - "server.py"
 Cohesion: 0.02
-Nodes (117): Neesmo product audit (step a), No auth (blocker), Personal or hard-coded (must change before selling), Reusable as is, Single user by design, configured(), instructions(), add() (+109 more)
+Nodes (124): Neesmo product audit (step a), No auth (blocker), Personal or hard-coded (must change before selling), Reusable as is, Single user by design, configured(), instructions(), load() (+116 more)
 
 ### Community 112 - "angron/win.js"
 Cohesion: 0.13
 Nodes (23): SKY, COL, softPoly(), camMatrix(), H, renderScene(), W, APEX (+15 more)
 
-### Community 113 - "dn"
-Cohesion: 0.04
-Nodes (7): dn, gr, jh, ko, ml, tl, qo()
+### Community 113 - "qe"
+Cohesion: 0.02
+Nodes (16): dn, Fo, getCenter(), getParameter(), gr, ko, ml, pl() (+8 more)
 
 ### Community 114 - "the-angel/win.js"
 Cohesion: 0.13
@@ -1837,8 +1833,8 @@ Cohesion: 0.08
 Nodes (23): Adapter Pattern, Code Is a Liability, Common Rationalizations, Compulsory vs Advisory Deprecation, Core Principles, Database Schema Migrations (Expand/Contract), Deprecation and Migration, Deprecation Planning Starts at Design Time (+15 more)
 
 ### Community 118 - "agent/skills/vercel-optimize/lib/investigation-brief.mjs"
-Cohesion: 0.12
-Nodes (38): absoluteBriefPath(), briefRoots(), buildBrief(), cachePolicyGuidance(), capBriefFiles(), citationSubset(), closestAncestorLayoutFiles(), inferFrameworkPlaybook() (+30 more)
+Cohesion: 0.11
+Nodes (39): absoluteBriefPath(), briefRoots(), buildBrief(), cachePolicyGuidance(), capBriefFiles(), citationSubset(), closestAncestorLayoutFiles(), inferFrameworkPlaybook() (+31 more)
 
 ### Community 119 - ".agents/skills/caveman-compress/README.md"
 Cohesion: 0.08
@@ -1857,8 +1853,8 @@ Cohesion: 0.11
 Nodes (39): absoluteBriefPath(), briefRoots(), buildBrief(), cachePolicyGuidance(), capBriefFiles(), citationSubset(), closestAncestorLayoutFiles(), inferFrameworkPlaybook() (+31 more)
 
 ### Community 123 - "$_"
-Cohesion: 0.02
-Nodes (122): Ia(), _cleanup(), $_, Ad(), al(), Ao(), bd(), bE() (+114 more)
+Cohesion: 0.01
+Nodes (126): $_, Ad(), al(), Ao(), bd(), bE(), bh(), bL() (+118 more)
 
 ### Community 124 - "Agent Reach"
 Cohesion: 0.08
@@ -1882,7 +1878,7 @@ Nodes (22): Common Rationalizations, Contract-First Slicing, Implementation Rule
 
 ### Community 129 - "vendor/motion.js"
 Cohesion: 0.03
-Nodes (90): Ki(), le(), ml(), Ac(), Ai(), animateValues(), ao(), At() (+82 more)
+Nodes (98): le(), parseTextures(), setFromObject(), setTime(), update(), ml(), Ac(), ao() (+90 more)
 
 ### Community 130 - "Documentation and ADRs"
 Cohesion: 0.09
@@ -1898,7 +1894,7 @@ Nodes (27): sanitizeCitations(), applyDollarStrip(), stripDollarLiterals(), meta
 
 ### Community 133 - "un"
 Cohesion: 0.03
-Nodes (11): ap(), computeLineDistances(), dp(), op(), pp(), TP, _u(), un (+3 more)
+Nodes (20): ap(), computeLineDistances(), dp(), Dr, ep(), fr(), JN(), mp() (+12 more)
 
 ### Community 134 - "mount"
 Cohesion: 0.15
@@ -1910,11 +1906,11 @@ Nodes (33): args, child, chrome, defaultProfile(), guard, here, { heroes }, kill
 
 ### Community 136 - "t"
 Cohesion: 0.02
-Nodes (112): _a(), r(), T(), b(), l(), o(), u(), bu() (+104 more)
+Nodes (114): _a(), r(), T(), b(), bs, l(), o(), u() (+106 more)
 
 ### Community 137 - "li"
 Cohesion: 0.02
-Nodes (17): bh(), Fe(), Ge(), Ve(), an, Ca, Cc, Da (+9 more)
+Nodes (13): Fe(), Ge(), Ve(), an, Ca, Cc, Da, La (+5 more)
 
 ### Community 138 - "style-samples2/figures.js"
 Cohesion: 0.11
@@ -1942,11 +1938,11 @@ Nodes (21): Build Failure Triage, Common Rationalizations, Debugging and Error R
 
 ### Community 144 - "W"
 Cohesion: 0.04
-Nodes (96): 一、总览, ⑥ 代码实现要点, ⑥ 代码实现要点, ⑥ 代码实现要点, ⑥ 代码实现要点, 转场 `transitions_b.js`, 转场（`transitions_c.js`）, 转场（`transitions.js` 末尾 D 段） (+88 more)
+Nodes (91): 一、总览, ⑥ 代码实现要点, ⑥ 代码实现要点, ⑥ 代码实现要点, ⑥ 代码实现要点, 转场 `transitions_b.js`, 转场（`transitions_c.js`）, 转场（`transitions.js` 末尾 D 段） (+83 more)
 
 ### Community 145 - "lf"
-Cohesion: 0.02
-Nodes (25): af, ag, By, cv, df, dv, Ev, _f (+17 more)
+Cohesion: 0.04
+Nodes (11): ag, dv, Iy, lf, lg, Mb, og, Py (+3 more)
 
 ### Community 146 - "Rules"
 Cohesion: 0.09
@@ -1960,13 +1956,13 @@ Nodes (21): 1. Preserve Behavior Exactly, 2. Follow Project Conventions, 3. Pref
 Cohesion: 0.09
 Nodes (21): Build Failure Triage, Common Rationalizations, Debugging and Error Recovery, Error-Specific Patterns, Instrumentation Guidelines, Overview, Red Flags, Runtime Error Triage (+13 more)
 
-### Community 149 - "qe"
-Cohesion: 0.06
-Nodes (9): Aa, Fo, getCenter(), getParameter(), qe, Ra, updateMatrixWorld(), rn() (+1 more)
+### Community 149 - "Ot"
+Cohesion: 0.04
+Nodes (28): $a(), i(), n(), Aa, Ar(), Ca(), Cr(), _e() (+20 more)
 
 ### Community 150 - "Ot"
-Cohesion: 0.04
-Nodes (6): Ca(), u(), Hr, la, Ot, W_
+Cohesion: 0.03
+Nodes (13): Ax, Ca(), u(), Hr, kr, la, Ot, raycast() (+5 more)
 
 ### Community 151 - "Skill Authoring — structure, taxonomy, licensing, confidentiality, editing rules"
 Cohesion: 0.09
@@ -1974,7 +1970,7 @@ Nodes (22): Author Attribution Template, Confidentiality layers, Configuration v
 
 ### Community 152 - "jn"
 Cohesion: 0.02
-Nodes (14): be(), eu, In, jn, r(), lr, Mn, pl() (+6 more)
+Nodes (13): eu, jn, r(), lr, Mn, rr, Vo, wn() (+5 more)
 
 ### Community 153 - "angron/cadia.js"
 Cohesion: 0.23
@@ -2002,7 +1998,7 @@ Nodes (24): arrayAt(), deploymentRegressionDecision(), dropWithObservation(), fo
 
 ### Community 159 - "t"
 Cohesion: 0.02
-Nodes (106): _a(), r(), T(), Au(), b(), l(), o(), u() (+98 more)
+Nodes (112): _a(), r(), T(), Au(), b(), l(), o(), u() (+104 more)
 
 ### Community 160 - "norm"
 Cohesion: 0.15
@@ -2017,8 +2013,8 @@ Cohesion: 0.08
 Nodes (24): AI / LLM features, Always Do (No Exceptions), Ask First (Requires Human Approval), Authentication and sessions, Common Rationalizations, Dependencies and supply chain, Destructive operations on derived paths, Hardening Controls (+16 more)
 
 ### Community 163 - "qa.py"
-Cohesion: 0.04
-Nodes (30): NoCacheHandler, Q, Srv, LocalServer, Q, _dir_frames(), _file(), localize() (+22 more)
+Cohesion: 0.03
+Nodes (45): NoCacheHandler, ahash(), api(), get(), main(), palette(), search(), Q (+37 more)
 
 ### Community 164 - "ka"
 Cohesion: 0.05
@@ -2046,7 +2042,7 @@ Nodes (18): mount(), params, makeTexture(), photoGL(), adapt(), bindTextures(), 
 
 ### Community 170 - "We"
 Cohesion: 0.03
-Nodes (8): gh(), pc, ri, We, yn, gn(), mn(), uc()
+Nodes (9): gh(), ln(), pc, ri, We, yn, gn(), mn() (+1 more)
 
 ### Community 171 - "task-observer - One Skill to Rule Them All"
 Cohesion: 0.10
@@ -2086,7 +2082,7 @@ Nodes (18): Common Rationalizations, Output Files, Overview, Parallelization Opp
 
 ### Community 180 - "_b"
 Cohesion: 0.02
-Nodes (22): _b, bb, CT, Db, Fb, Gx, HT, jb (+14 more)
+Nodes (24): _b, bb, CT, Db, Fb, Gx, HT, jb (+16 more)
 
 ### Community 181 - "Deploy to Vercel"
 Cohesion: 0.11
@@ -2101,8 +2097,8 @@ Cohesion: 0.11
 Nodes (17): Anti-patterns to Avoid, Common Rationalizations, Detailed Instructions, How It Works, Idea Refine, Output, Overview, Phase 1: Understand & Expand (Divergent) (+9 more)
 
 ### Community 184 - "lineOf"
-Cohesion: 0.09
-Nodes (27): apply(), metadata, apply(), metadata, MODE_PATTERNS, isApplicable(), metadata, scan() (+19 more)
+Cohesion: 0.06
+Nodes (47): apply(), COUNT_CLAIM_TYPES, metadata, rewriteCount(), apply(), metadata, apply(), metadata (+39 more)
 
 ### Community 185 - "Gates"
 Cohesion: 0.11
@@ -2178,7 +2174,7 @@ Nodes (12): makeComp(), render(), comp, F(), L, Lc, lerpMap(), Q (+4 more)
 
 ### Community 203 - "Zt"
 Cohesion: 0.03
-Nodes (30): Wt(), $a, bc, bi, bl, distanceToPoint(), Dl, fc (+22 more)
+Nodes (24): Wt(), _a(), $a, bi, bl, distanceToPoint(), Dl, Fl (+16 more)
 
 ### Community 204 - "the-angel/film.js"
 Cohesion: 0.14
@@ -2192,6 +2188,10 @@ Nodes (16): 1.1 Avoid Boolean Prop Proliferation, 1.2 Use Compound Components, 1
 Cohesion: 0.14
 Nodes (32): candidateTarget(), contradictsNoChangeReason(), evidenceText(), hasImplementationGradeObservationAction(), hasStaleNextCacheApiObservation(), hasUnsafeBotProtectionObservation(), hasUnsupportedCacheLifeCdnClaim(), hasUnsupportedCacheLifeCdnText() (+24 more)
 
+### Community 207 - "Me"
+Cohesion: 0.09
+Nodes (3): di, Me, ye()
+
 ### Community 208 - "agent/skills/vercel-optimize/scripts/collect-sub-agent-outputs.mjs"
 Cohesion: 0.24
 Nodes (16): collectInputFiles(), escapeRegExp(), extractFenceBlocks(), extractJsonValue(), findBalancedJsonSpans(), inferCandidateRefFromFile(), isRecordObject(), log() (+8 more)
@@ -2201,24 +2201,24 @@ Cohesion: 0.23
 Nodes (16): annotateCodebaseScan(), annotateFinding(), assertObject(), bestRouteSummary(), buildRouteMetricIndex(), exists(), formatRouteSignal(), hasTraffic() (+8 more)
 
 ### Community 210 - "di"
-Cohesion: 0.03
-Nodes (9): br, di, r(), ea, js, kn, Qs, Gn() (+1 more)
+Cohesion: 0.02
+Nodes (12): br, di, r(), ea, js, kn, ks, na (+4 more)
 
 ### Community 211 - "React Composition Patterns"
 Cohesion: 0.12
 Nodes (16): 1.1 Avoid Boolean Prop Proliferation, 1.2 Use Compound Components, 1. Component Architecture, 2.1 Decouple State Management from UI, 2.2 Define Generic Context Interfaces for Dependency Injection, 2.3 Lift State into Provider Components, 2. State Management, 3.1 Create Explicit Component Variants (+8 more)
 
 ### Community 212 - ".agents/skills/vercel-optimize/lib/display-labels.mjs"
-Cohesion: 0.12
-Nodes (25): buildBudgetSummary(), buildChatPreview(), buildExactChatMessage(), buildOptions(), buildPrintCheck(), buildQuestionPayload(), buildQuestionText(), renderBudgetSummaryMarkdown() (+17 more)
+Cohesion: 0.19
+Nodes (13): formatNumberLike(), formatSignalPart(), formatSignalValue(), humanizeKey(), KIND_LABELS, normalizeObservedWindowUnits(), PUBLIC_ASSIGNMENT_LABELS, REQUEST_COUNT_KINDS (+5 more)
 
 ### Community 213 - ".constructor"
-Cohesion: 0.03
-Nodes (49): Ar(), $c, cr, Cr(), _e(), D(), Ge, he() (+41 more)
+Cohesion: 0.06
+Nodes (21): cr, Ge, Hr, $i, ir, Ji, jr(), ka() (+13 more)
 
 ### Community 214 - "me"
-Cohesion: 0.03
-Nodes (9): ec, ic, mc, me, moveTo(), Nl, Ol, tc (+1 more)
+Cohesion: 0.02
+Nodes (13): bo, ch, ec, ic, jh, mc, me, moveTo() (+5 more)
 
 ### Community 215 - ".agents/skills/vercel-optimize/scripts/merge-signals.mjs"
 Cohesion: 0.23
@@ -2257,8 +2257,8 @@ Cohesion: 0.15
 Nodes (13): cache, COL, INK, LEAD, line(), makeTex(), MAT, pat() (+5 more)
 
 ### Community 224 - "capabilities.py"
-Cohesion: 0.04
-Nodes (71): font(), main(), config_path(), ConfigError, credentials(), effective(), note(), inspect_audio() (+63 more)
+Cohesion: 0.09
+Nodes (48): config_path(), ConfigError, credentials(), effective(), note(), inspect_audio(), locked(), main() (+40 more)
 
 ### Community 225 - "Doubt-Driven Development"
 Cohesion: 0.12
@@ -2289,12 +2289,12 @@ Cohesion: 0.12
 Nodes (15): 1. Define "working" before instrumenting, 2. Pick the right signal for each question, 3. Structured logging, 4. Metrics, 5. Distributed tracing, 6. Alerting, 7. Verify the telemetry itself, Common Rationalizations (+7 more)
 
 ### Community 232 - "_b"
-Cohesion: 0.02
-Nodes (24): _b, bb, CT, Db, Fb, Gx, HT, jb (+16 more)
+Cohesion: 0.04
+Nodes (12): _b, Db, Fb, Gx, HT, jb, pb, Ub (+4 more)
 
 ### Community 233 - "mountPrint"
-Cohesion: 0.11
-Nodes (45): clamp(), cssHex(), filmicInv(), filmicJs(), fromOklab(), gam22(), groundPalette(), hexRgb() (+37 more)
+Cohesion: 0.16
+Nodes (28): formShader(), isDarkPaper(), mountPrint(), adapt(), advance(), applyNarrow(), ensureGlyphs(), fit() (+20 more)
 
 ### Community 234 - "5. Re-render Optimization"
 Cohesion: 0.12
@@ -2325,8 +2325,8 @@ Cohesion: 0.13
 Nodes (13): Common changes, Contributing to `vercel-optimize`, Output contracts, Rules, Contributing, Install, License, Requirements (+5 more)
 
 ### Community 241 - "agent/skills/vercel-optimize/scripts/verify-and-regen.mjs"
-Cohesion: 0.17
-Nodes (23): summarizeClaimResults(), applyQualityFloor(), grade(), gradeRecommendation(), isAccountScope(), roundTo(), scoreActionability(), scoreEvidence() (+15 more)
+Cohesion: 0.18
+Nodes (22): summarizeClaimResults(), applyQualityFloor(), grade(), gradeRecommendation(), isAccountScope(), roundTo(), scoreActionability(), scoreEvidence() (+14 more)
 
 ### Community 243 - "Recommendations"
 Cohesion: 0.13
@@ -2393,8 +2393,8 @@ Cohesion: 0.19
 Nodes (15): apply(), ATTRS, cache, claimed, json(), mountAll(), optsOf(), placeOf() (+7 more)
 
 ### Community 260 - "Pi"
-Cohesion: 0.03
-Nodes (16): as, Cs, Ds, Fr, ks, Li, ms, na (+8 more)
+Cohesion: 0.02
+Nodes (19): as, Cs, Ds, Fr, gs, Li, ms, Ni() (+11 more)
 
 ### Community 261 - "CLAUDE.md - Chief of Staff Context"
 Cohesion: 0.13
@@ -2461,12 +2461,12 @@ Cohesion: 0.14
 Nodes (14): Layout-Level ViewTransition, `loading.tsx` as Suspense Boundary, Next.js Implementation Additions, Programmatic Navigation, Routing-Driven Tabs, Same-Route Dynamic Segment Transitions, Server Components, Server-Side Filtering with `router.replace` (+6 more)
 
 ### Community 277 - "Patterns and Guidelines"
-Cohesion: 0.15
-Nodes (13): Animation Timing, Card Expand/Collapse with `startTransition`, Composing with Activity, Cross-Fade Without Remount, Exclude Elements with `useOptimistic`, Isolate Elements from Parent Animations, Layout Displacement Morph, Patterns and Guidelines (+5 more)
+Cohesion: 0.11
+Nodes (19): View Transition Events, View Transition Events, View Transition Events, Animation Timing, Card Expand/Collapse with `startTransition`, Composing with Activity, Cross-Fade Without Remount, Exclude Elements with `useOptimistic` (+11 more)
 
 ### Community 278 - "cu"
-Cohesion: 0.02
-Nodes (39): au, bindSkeletons(), bo, cu, i(), De, Gh, c() (+31 more)
+Cohesion: 0.04
+Nodes (32): au, bindSkeletons(), clone(), cu, i(), Gh, c(), l() (+24 more)
 
 ### Community 279 - "4. Place"
 Cohesion: 0.14
@@ -2481,8 +2481,8 @@ Cohesion: 0.15
 Nodes (22): bySev(), clean(), cropTo(), deadIoPass(), glFallbackPass(), groupLike(), hiddenNow(), hiddenWalk() (+14 more)
 
 ### Community 282 - "sf"
-Cohesion: 0.02
-Nodes (13): av, hf, k_, Lx, Nf, of, ov, pf (+5 more)
+Cohesion: 0.03
+Nodes (9): av, k_, Lx, of, ov, rv, sb, sf (+1 more)
 
 ### Community 283 - "Signals — what to watch for, in full"
 Cohesion: 0.14
@@ -2490,7 +2490,7 @@ Nodes (13): A command's risk is what it does, not what it was reached for, An un
 
 ### Community 284 - "Task Observer — Continuous Skill Discovery & Improvement"
 Cohesion: 0.04
-Nodes (26): Arm it, As a hook, The finish gate, The manual gate, What it does, ah, mh(), qh (+18 more)
+Nodes (30): Arm it, As a hook, The finish gate, The manual gate, What it does, ah, bh, eh() (+22 more)
 
 ### Community 285 - "angron/angron.js"
 Cohesion: 0.16
@@ -2498,7 +2498,7 @@ Nodes (17): ANGRON, AXE, BATWING, chain(), DAEMON, GLADIATOR, ground(), iT (+9 m
 
 ### Community 286 - "oe"
 Cohesion: 0.03
-Nodes (11): Is(), va(), ds(), fo, _i, ls(), oe, Rs() (+3 more)
+Nodes (14): Is(), Sc(), va(), Ac, ds(), _i, ko, ls() (+6 more)
 
 ### Community 287 - "fall-of-cadia/glass.js"
 Cohesion: 0.18
@@ -2541,16 +2541,16 @@ Cohesion: 0.15
 Nodes (12): 1. Fragments, 2. One word when one word is enough, 3. Each fact once, 4. Cut conjunctions only when order survives, 5. Tool runs, 6. Never perform, Floor, Persistence (+4 more)
 
 ### Community 297 - "Nl"
-Cohesion: 0.15
-Nodes (14): Cr(), el(), fl(), ha(), jl(), Js(), Kl(), Nl (+6 more)
+Cohesion: 0.12
+Nodes (20): g(), br(), Cr(), el(), er(), fl(), ha(), Ho() (+12 more)
 
 ### Community 298 - "Data collection"
 Cohesion: 0.15
 Nodes (13): Data collection, Error states and fallbacks, Per-signal source matrix, Real JSON shapes, Table of contents, The `signals.json` shape, `vercel api /v9/projects/<id>` / `?teamId=<orgId>`, `vercel contract --format json` (+5 more)
 
 ### Community 299 - "sr"
-Cohesion: 0.04
-Nodes (14): add(), Ao, El, $h, Il(), iu, nu, or (+6 more)
+Cohesion: 0.07
+Nodes (7): add(), Ao, $h, or, qh, remove(), sr
 
 ### Community 300 - "line-engraving/effect.js"
 Cohesion: 0.32
@@ -2565,8 +2565,8 @@ Cohesion: 0.37
 Nodes (12): collage(), film(), init(), letters(), liveWord(), lockLines(), other(), phone() (+4 more)
 
 ### Community 303 - "_print-core/lint-glsl.mjs"
-Cohesion: 0.22
-Nodes (8): glslProblems(), A new object, Do and don't, It always shows a picture, Light on a laptop GPU, Objects (`assets/objects/print-*`), Posters, Put one on a page
+Cohesion: 0.15
+Nodes (10): files, here, glslProblems(), A new object, Do and don't, It always shows a picture, Light on a laptop GPU, Objects (`assets/objects/print-*`) (+2 more)
 
 ### Community 304 - "MoneyPrinterTurbo Video Generation"
 Cohesion: 0.15
@@ -2586,7 +2586,7 @@ Nodes (11): cache, INK, LEAD, makeTex(), MAT, pat(), rgb(), sampleCurve() (+3 mo
 
 ### Community 308 - "It"
 Cohesion: 0.03
-Nodes (14): Co, s(), B(), F(), G(), k(), R(), z() (+6 more)
+Nodes (7): Co, go(), It, moveTo(), oo, Ro, To
 
 ### Community 309 - "It"
 Cohesion: 0.02
@@ -2599,6 +2599,10 @@ Nodes (11): Boundaries, Caveman Compress, Compress, Compression Rules, Pattern, 
 ### Community 311 - "Refinement & Evaluation Criteria"
 Cohesion: 0.17
 Nodes (11): 1. User Value, 2. Feasibility, 3. Differentiation, Assumption Audit, Core Evaluation Dimensions, Decision Framework, Might Be True (Nice to Have), Must Be True (Dealbreakers) (+3 more)
+
+### Community 312 - "Pi"
+Cohesion: 0.09
+Nodes (3): d, Pi, refresh()
 
 ### Community 313 - "Doctrine"
 Cohesion: 0.17
@@ -2640,9 +2644,13 @@ Nodes (11): About and story, Buttons and the close, Copy moves, Features and how
 Cohesion: 0.17
 Nodes (11): A photograph with copy (`fx-photo`), Cost: light enough for a laptop's integrated GPU, Effects beyond backgrounds, Feature cards with inset panels (`fx-feature-card`), Objects in dither (`fx-dither-object`), Picking the effect, Street map of the place (`fx-map`), The techniques (`components/shared.js`) (+3 more)
 
-### Community 324 - "bh"
-Cohesion: 0.06
-Nodes (12): bh, eh(), fh(), _h(), _lendControlInterpolant(), Mh, ph(), Ph (+4 more)
+### Community 323 - "Be"
+Cohesion: 0.03
+Nodes (25): Be, $c, D(), eo, he(), Ka, A(), C() (+17 more)
+
+### Community 324 - "Ph"
+Cohesion: 0.12
+Nodes (6): fh(), _h(), Ih(), Ph, Qa(), wh
 
 ### Community 325 - "Contributor Covenant Code of Conduct"
 Cohesion: 0.17
@@ -2652,17 +2660,13 @@ Nodes (12): 1. Correction, 2. Warning, 3. Temporary Ban, 4. Permanent Ban, Attri
 Cohesion: 0.17
 Nodes (11): A refused print is not an empty log, A refused snippet is a degraded path, never a skipped step, An empty scan over a non-empty log is a broken command, Contents, Every instrument gets the same guard, Scanning cheaply, The scan ends in a write, not only a print, The session-start scan — the scan, its guards and the checkpoint pairing (+3 more)
 
-### Community 327 - "test_storyboard_lint.py"
-Cohesion: 0.07
-Nodes (18): BulletWall, FlatStyleCharacters, NumberCardRule, tags(), TagsColumn, TemplateExample, do(), extra_skills() (+10 more)
-
 ### Community 328 - "The Horus Heresy in 60 seconds: treatment"
 Cohesion: 0.17
 Nodes (11): 10. Checked against the style's demo (read after this treatment was written), 1. Three candidate structures, 2. Logline and arc, 3. Benchmark, 4. Window design, 5. Shot list, 6. Beats (estimates; locked to the voice timings once recorded), 7. Cue map (+3 more)
 
 ### Community 332 - "pa"
 Cohesion: 0.03
-Nodes (3): IM, pa, sw
+Nodes (4): IM, mM, pa, sw
 
 ### Community 333 - "caveman-commit"
 Cohesion: 0.18
@@ -2677,8 +2681,8 @@ Cohesion: 0.18
 Nodes (10): 1. Component Architecture (HIGH), 2. State Management (MEDIUM), 3. Implementation Patterns (MEDIUM), 4. React 19 APIs (MEDIUM), Full Compiled Document, How to Use, Quick Reference, React Composition Patterns (+2 more)
 
 ### Community 336 - "zi"
-Cohesion: 0.03
-Nodes (27): Fi(), Al, Ci, clampPoint(), Dh(), Do, El, gl (+19 more)
+Cohesion: 0.04
+Nodes (23): Al, Ci, Dh(), Do, El, gl, Io, v() (+15 more)
 
 ### Community 337 - "3. Server-Side Performance"
 Cohesion: 0.18
@@ -2748,9 +2752,9 @@ Nodes (9): description, files, license, name, private, scripts, test, type (+1 m
 Cohesion: 0.20
 Nodes (9): description, files, license, name, private, scripts, test, type (+1 more)
 
-### Community 354 - "du"
-Cohesion: 0.07
-Nodes (33): t(), parseTextures(), setFromObject(), setTime(), n(), g(), update(), au() (+25 more)
+### Community 354 - ".copy"
+Cohesion: 0.05
+Nodes (5): bo, clampPoint(), ic, mn, Mo
 
 ### Community 355 - "React Composition Patterns"
 Cohesion: 0.20
@@ -2759,6 +2763,10 @@ Nodes (9): Component Architecture (CRITICAL), Core Principles, Creating a New Ru
 ### Community 356 - "agent/skills/vercel-optimize/SKILL.md"
 Cohesion: 0.27
 Nodes (4): Install, Procedure, Requirements, vercel-optimize
+
+### Community 357 - "parseObject"
+Cohesion: 0.06
+Nodes (9): El, Il(), iu, Ja, nu, parseObject(), Pl, su (+1 more)
 
 ### Community 358 - "agent/skills/vercel-optimize/references/scoring.md"
 Cohesion: 0.20
@@ -2798,7 +2806,7 @@ Nodes (4): Install, Procedure, Requirements, vercel-optimize
 
 ### Community 367 - ".agents/skills/vercel-optimize/lib/scanners/index.mjs"
 Cohesion: 0.06
-Nodes (44): apply(), metadata, apply(), metadata, MODE_PATTERNS, countMatches(), findRepeated(), metadata (+36 more)
+Nodes (47): apply(), COUNT_CLAIM_TYPES, metadata, rewriteCount(), apply(), metadata, apply(), metadata (+39 more)
 
 ### Community 368 - ".agents/skills/vercel-optimize/references/scoring.md"
 Cohesion: 0.20
@@ -2853,8 +2861,8 @@ Cohesion: 0.22
 Nodes (8): Analogous Inspiration, Constraint-Based Ideation, First Principles Thinking, How Might We (HMW), Ideation Frameworks Reference, Jobs to Be Done (JTBD), Pre-mortem, SCAMPER
 
 ### Community 383 - "Js"
-Cohesion: 0.03
-Nodes (58): An(), d(), f(), g(), u(), x(), cn, Cn() (+50 more)
+Cohesion: 0.04
+Nodes (58): An(), d(), f(), g(), u(), Bs(), x(), y() (+50 more)
 
 ### Community 384 - "spacex/scenes/s12.js"
 Cohesion: 0.11
@@ -2866,7 +2874,7 @@ Nodes (9): 2.1 Avoid Inline Objects in renderItem, 2.2 Hoist callbacks to the ro
 
 ### Community 386 - "agent/skills/vercel-react-view-transitions/AGENTS.md"
 Cohesion: 0.21
-Nodes (10): Troubleshooting, Implementation Workflow, Step 1: Audit the App, Step 2: Add CSS Recipes, Step 3: Isolate Persistent Elements, Step 4: Add Directional Page Transitions, Step 5: Add Suspense Reveals, Step 6: Add Shared Element Transitions (+2 more)
+Nodes (10): Implementation Workflow, Step 1: Audit the App, Step 2: Add CSS Recipes, Step 3: Isolate Persistent Elements, Step 4: Add Directional Page Transitions, Step 5: Add Suspense Reveals, Step 6: Add Shared Element Transitions, Step 7: Verify Each Navigation Path (+2 more)
 
 ### Community 387 - "Ideation Frameworks Reference"
 Cohesion: 0.22
@@ -2878,7 +2886,7 @@ Nodes (8): candidateForGroup(), gate(), groupFindings(), metadata, observedCache
 
 ### Community 389 - "Ot"
 Cohesion: 0.03
-Nodes (14): an, dA, eb, FT, ib, is, Jt(), kx (+6 more)
+Nodes (13): an, dA, eb, FT, ib, is, kx, Lb (+5 more)
 
 ### Community 390 - "2. List Performance"
 Cohesion: 0.22
@@ -2921,12 +2929,12 @@ Cohesion: 0.25
 Nodes (7): Failure templates (use verbatim, filled in — never soften), Rules (non-negotiable), Step 1 — Find every live LLM callsite, Step 2 — Pick the app slug, Step 3 — Wire each callsite, Step 4 — Verify with one real request, Step 5 — Report
 
 ### Community 401 - "vT"
-Cohesion: 0.04
-Nodes (27): _allocateTargets(), _applyPMREM(), _blur(), _compileMaterial(), dispose(), Ea(), ET(), fromCubemap() (+19 more)
+Cohesion: 0.03
+Nodes (30): _allocateTargets(), _applyPMREM(), Ar, _blur(), Cl, compileCubemapShader(), _compileMaterial(), dispose() (+22 more)
 
-### Community 402 - "hc"
-Cohesion: 0.04
-Nodes (16): clone(), dc, hc, r(), load(), loadAsync(), mc, c() (+8 more)
+### Community 402 - "parseObject"
+Cohesion: 0.02
+Nodes (40): bc, bindSkeletons(), clone(), dc, ec, fc, gc, hc (+32 more)
 
 ### Community 403 - "16_2026.js"
 Cohesion: 0.10
@@ -2937,16 +2945,16 @@ Cohesion: 0.25
 Nodes (7): applicableFrameworksSyntax, lastVerified, ruleSkillRefs, $schema, schemaVersion, urls, version
 
 ### Community 405 - "di"
-Cohesion: 0.03
-Nodes (8): li(), br, di, r(), kn, Qs, vu(), xu()
+Cohesion: 0.02
+Nodes (12): li(), br, di, r(), ea, js, kn, ks (+4 more)
 
 ### Community 406 - "Pi"
-Cohesion: 0.03
-Nodes (19): as, Cs, Ds, Fr, Ii, ks, Li, ms (+11 more)
+Cohesion: 0.02
+Nodes (25): as, bb, Cs, Ds, Fr, Ii, Li, ms (+17 more)
 
-### Community 407 - "Implementation Workflow"
-Cohesion: 0.25
-Nodes (8): Implementation Workflow, Step 1: Audit the App, Step 2: Add CSS Recipes, Step 3: Isolate Persistent Elements, Step 4: Add Directional Page Transitions, Step 5: Add Suspense Reveals, Step 6: Add Shared Element Transitions, Step 7: Verify Each Navigation Path
+### Community 407 - "jE"
+Cohesion: 0.06
+Nodes (14): CE, gp(), hp(), jE, jp(), kP, lp(), PE() (+6 more)
 
 ### Community 408 - "license.py"
 Cohesion: 0.11
@@ -2966,7 +2974,7 @@ Nodes (7): Failure templates (use verbatim, filled in — never soften), Rules (
 
 ### Community 412 - "Me"
 Cohesion: 0.05
-Nodes (13): be(), Cn, Dn(), jn, kn(), Me, mi, Se (+5 more)
+Nodes (8): be(), Cn, jn, Ln(), mi, Se, vi, xn()
 
 ### Community 414 - ".agents/skills/vercel-optimize/references/docs-library.json"
 Cohesion: 0.25
@@ -2980,9 +2988,9 @@ Nodes (7): Claim types, Dispositions, Re-gen trigger and accept criteria, Table 
 Cohesion: 0.25
 Nodes (8): Failure Copy, Final Customer Terms, Framework Support, Prerequisites, Recommendation Rules, Run Directory, Scanner Rules, Vercel Optimize
 
-### Community 417 - "Mi"
-Cohesion: 0.10
-Nodes (23): dl(), _a(), al(), cl(), dl(), el(), hl(), Ho() (+15 more)
+### Community 417 - "hf"
+Cohesion: 0.06
+Nodes (7): af, df, _f, get(), hf, Nf, pf
 
 ### Community 418 - "Implementation Workflow"
 Cohesion: 0.25
@@ -3056,9 +3064,13 @@ Nodes (27): at(), calendar(), calPage(), card(), chipIcon(), coin(), coins(), do
 Cohesion: 0.24
 Nodes (16): collectInputFiles(), escapeRegExp(), extractFenceBlocks(), extractJsonValue(), findBalancedJsonSpans(), inferCandidateRefFromFile(), isRecordObject(), log() (+8 more)
 
+### Community 437 - "Fw"
+Cohesion: 0.04
+Nodes (3): Fw, gw, mw
+
 ### Community 438 - "It"
-Cohesion: 0.02
-Nodes (8): Ct(), ea, Es, fromJSON(), It, js, ra, ws
+Cohesion: 0.03
+Nodes (7): Ct(), CT, Es, fromJSON(), It, ra, UT
 
 ### Community 439 - "nn"
 Cohesion: 0.03
@@ -3093,12 +3105,12 @@ Cohesion: 0.11
 Nodes (20): Clawd 博物馆奇妙夜 · GIF片段, 片里用了什么, 版权, 花叔超级玛丽通关 · GIF片段, 发布检查, 图片工具桥接, 更新时保留用户配置, 本地检查 (+12 more)
 
 ### Community 447 - ".agents/skills/vercel-optimize/lib/scanners/edge-heavy-import.mjs"
-Cohesion: 0.25
-Nodes (9): extractSpecifiers(), HEAVY_PATTERNS, isEdgeRuntimeFile(), isMiddleware(), metadata, scan(), isApplicable(), metadata (+1 more)
-
-### Community 448 - ".agents/skills/vercel-optimize/lib/scanners/turbo-force-bypass.mjs"
 Cohesion: 0.48
-Nodes (6): detectBuildCacheDisabled(), lineOfMatch(), metadata, safeScripts(), scan(), truncate()
+Nodes (6): extractSpecifiers(), HEAVY_PATTERNS, isEdgeRuntimeFile(), isMiddleware(), metadata, scan()
+
+### Community 448 - "art.py"
+Cohesion: 0.16
+Nodes (23): _as_img(), _canvas(), _circle_crop(), _drawing_lib(), _fit(), _font(), initials(), main() (+15 more)
 
 ### Community 450 - "Observability Plus Stop-And-Ask"
 Cohesion: 0.29
@@ -3116,9 +3128,9 @@ Nodes (7): 2.1 Avoid Barrel File Imports, 2.2 Conditional Module Loading, 2.3 De
 Cohesion: 0.29
 Nodes (6): Don't re-read history, graphify, Instructions for Claude, Replies, Skills and plugins always go in this repo, Use the cheapest model that can do the job
 
-### Community 454 - "time"
-Cohesion: 0.15
-Nodes (22): ahash(), api(), get(), main(), palette(), search(), change_password(), _check_pw() (+14 more)
+### Community 454 - "Lr"
+Cohesion: 0.10
+Nodes (3): J_, Lr, Rt()
 
 ### Community 455 - "install.sh"
 Cohesion: 0.54
@@ -3169,8 +3181,8 @@ Cohesion: 0.33
 Nodes (5): 1. Component Architecture (architecture), 2. State Management (state), 3. Implementation Patterns (patterns), 4. React 19 APIs (react19), Sections
 
 ### Community 468 - ".raycast"
-Cohesion: 0.09
-Nodes (14): To(), co(), fo(), go(), lo(), mo(), Po, Qs() (+6 more)
+Cohesion: 0.08
+Nodes (16): To(), to(), ts(), co(), fo(), go(), lo(), mo() (+8 more)
 
 ### Community 470 - "API service"
 Cohesion: 0.33
@@ -3217,16 +3229,16 @@ Cohesion: 0.33
 Nodes (5): 1. Component Architecture (architecture), 2. State Management (state), 3. Implementation Patterns (patterns), 4. React 19 APIs (react19), Sections
 
 ### Community 481 - "Rm"
-Cohesion: 0.04
-Nodes (12): af, By, cv, Ev, generate(), gf, gv, Tv (+4 more)
+Cohesion: 0.05
+Nodes (11): af, By, cv, Ev, generate(), gf, gv, Tv (+3 more)
 
 ### Community 482 - ".agents/skills/vercel-optimize/lib/queries.mjs"
 Cohesion: 0.53
 Nodes (5): defaultNormalize(), normalizeColdStart(), normalizerFor(), QUERIES, normalizeSummary()
 
 ### Community 483 - ".agents/skills/vercel-optimize/lib/gates/index.mjs"
-Cohesion: 0.06
-Nodes (39): gate(), metadata, unique(), extractColdStarts(), gate(), metadata, GATE_VERSION, gates (+31 more)
+Cohesion: 0.04
+Nodes (49): gate(), metadata, unique(), extractColdStarts(), gate(), metadata, GATE_VERSION, gates (+41 more)
 
 ### Community 484 - "API service"
 Cohesion: 0.33
@@ -3282,7 +3294,7 @@ Nodes (5): Backgrounds, Other kinds stay flat, Tech: code-drawn grounds, how the
 
 ### Community 497 - "ci"
 Cohesion: 0.03
-Nodes (22): ae(), ch, ci, dh, di, fl, Ha, hh (+14 more)
+Nodes (18): ae(), ci, dh, di, fl, Ha, hh, ih (+10 more)
 
 ### Community 498 - "Page plans"
 Cohesion: 0.33
@@ -3359,10 +3371,6 @@ Nodes (4): interface, default_prompt, display_name, short_description
 ### Community 517 - "interface"
 Cohesion: 0.40
 Nodes (4): interface, default_prompt, display_name, short_description
-
-### Community 519 - "_R"
-Cohesion: 0.04
-Nodes (4): iR, MN, nR, _R
 
 ### Community 520 - "extensions.py"
 Cohesion: 0.20
@@ -3518,7 +3526,7 @@ Nodes (4): Do Not Recommend When, Evidence To Check, Investigation Brief, Verifi
 
 ### Community 558 - "vT"
 Cohesion: 0.03
-Nodes (43): _allocateTargets(), _applyPMREM(), Ar, _blur(), Cl, compileCubemapShader(), compileEquirectangularShader(), _compileMaterial() (+35 more)
+Nodes (28): _allocateTargets(), _applyPMREM(), _blur(), _compileMaterial(), dispose(), Ea(), ET(), fromCubemap() (+20 more)
 
 ### Community 559 - "8. Advanced Patterns"
 Cohesion: 0.40
@@ -3565,16 +3573,16 @@ Cohesion: 0.40
 Nodes (4): interface, default_prompt, display_name, short_description
 
 ### Community 570 - "Hi"
-Cohesion: 0.05
-Nodes (8): Bi(), Dt(), Hi, ji, ki(), Or, Ut(), Xi
+Cohesion: 0.03
+Nodes (13): Bi(), Dt(), Hi, ji, jM, ki(), Or, tr (+5 more)
 
 ### Community 571 - "film_gate.py"
 Cohesion: 0.15
 Nodes (14): analyze(), blank_frames(), blue_purple(), cam_speed(), decode_gray(), explain(), grade(), layout_desc() (+6 more)
 
 ### Community 572 - "fe"
-Cohesion: 0.09
-Nodes (4): fe, Wa(), j(), q()
+Cohesion: 0.05
+Nodes (8): be(), De, fe, se(), so, Wa(), j(), q()
 
 ### Community 573 - "Third-party software"
 Cohesion: 0.25
@@ -3748,9 +3756,9 @@ Nodes (4): Guidelines Source, How It Works, Usage, Web Interface Guidelines
 Cohesion: 0.40
 Nodes (4): Guidelines Source, How It Works, Usage, Writing Guidelines
 
-### Community 617 - "test_clip_theme.py"
-Cohesion: 0.04
-Nodes (27): absolutize(), BootFails, Deterministic, ex(), img(), OnScreen, render(), setUpModule() (+19 more)
+### Community 617 - "run"
+Cohesion: 0.15
+Nodes (5): DeliverTests, FilmGateTests, gate(), QaCameraEventTests, run()
 
 ### Community 618 - "Price and questions"
 Cohesion: 0.40
@@ -3882,11 +3890,11 @@ Nodes (3): 8.1 Destructure Functions Early in Render (React Compiler), 8.2 Use .
 
 ### Community 663 - "agent_chat.py"
 Cohesion: 0.05
-Nodes (49): get_activity_text(), print_activity(), send_query(), _app_worker(), AppWorker, _choices(), _claude_ttys(), key() (+41 more)
+Nodes (46): get_activity_text(), print_activity(), send_query(), _app_worker(), AppWorker, _choices(), _claude_ttys(), key() (+38 more)
 
 ### Community 913 - "Xa"
-Cohesion: 0.19
-Nodes (20): Isi paket, ce(), Xa(), et(), f(), g(), J(), K() (+12 more)
+Cohesion: 0.20
+Nodes (19): ce(), Xa(), et(), f(), g(), J(), K(), m() (+11 more)
 
 ### Community 920 - "spacex/scenes/s10.js"
 Cohesion: 0.23
@@ -3898,11 +3906,15 @@ Nodes (15): assert, context, DOMMatrixStub, freshLog(), fs, makeCanvas(), PAINT,
 
 ### Community 952 - "sf"
 Cohesion: 0.02
-Nodes (16): av, kp(), ku(), Lx, ma, of, ov, RE (+8 more)
+Nodes (20): av, gp(), hp(), jp(), k_, kP, lp(), Lx (+12 more)
 
 ### Community 953 - "site/assets/system.js"
 Cohesion: 0.14
 Nodes (26): actionbar(), DAY_NAMES, DAYS, daySet(), faq(), forms(), glowOnHover(), GROUNDS (+18 more)
+
+### Community 955 - "dn"
+Cohesion: 0.05
+Nodes (4): dn, eN, _n(), fn()
 
 ### Community 956 - "properties"
 Cohesion: 0.10
@@ -3922,11 +3934,11 @@ Nodes (3): api_layers(), asset(), Shapes
 
 ### Community 960 - "Bn"
 Cohesion: 0.04
-Nodes (5): Bn, _N, outputColorSpace(), vN, Ln()
+Nodes (4): Bn, _N, outputColorSpace(), vN
 
 ### Community 961 - "ew"
-Cohesion: 0.04
-Nodes (13): CE, ew, jE, jw, nw, PE(), qw, SE() (+5 more)
+Cohesion: 0.03
+Nodes (13): Aw, CE, ew, jE, jw, nw, PE(), qw (+5 more)
 
 ### Community 962 - "bridge/package.json"
 Cohesion: 0.09
@@ -3940,13 +3952,9 @@ Nodes (19): enum, type, enum, type, enum, type, properties, cloud (+11 more)
 Cohesion: 0.60
 Nodes (5): fallback(), mount(), params, tones(), uniforms()
 
-### Community 965 - "is"
-Cohesion: 0.07
-Nodes (6): eb, FT, ib, is, Lb, rs
-
-### Community 966 - "ln"
-Cohesion: 0.06
-Nodes (9): gp(), hp(), jp(), kP, ln, lp(), toJSON(), VP() (+1 more)
+### Community 965 - "tn"
+Cohesion: 0.03
+Nodes (13): an, dA, eb, FT, ib, is, kx, Lb (+5 more)
 
 ### Community 968 - "design-taste-frontend/assets/effects/god-rays/effect.js"
 Cohesion: 0.50
@@ -3961,8 +3969,8 @@ Cohesion: 0.11
 Nodes (17): Animasi UI untuk app & SaaS — layout, warna, ritme, Cek sebelum menyerahkan, Contoh sidik jari (untuk membandingkan, bukan untuk disalin), Estafet benda — menurunkannya dari brand, Foto dalam opener — sumber aset, persiapan, animasi, Hukum kerangka, Klaim → cara → hasil — layout, warna, ritme, Konsep opener — pilih kerangka, jangan warisi kerangka (+9 more)
 
 ### Community 972 - "Kl"
-Cohesion: 0.04
-Nodes (15): ac(), Ac, ec, Gl(), ic, jl(), kl(), Kl (+7 more)
+Cohesion: 0.06
+Nodes (12): ac(), Gl(), jl(), Jl, kl(), Kl, Ql, sc (+4 more)
 
 ### Community 973 - "site/assets/motion/motion.js"
 Cohesion: 0.19
@@ -3974,7 +3982,7 @@ Nodes (14): draw(), s(), B(), F(), G(), L(), O(), z() (+6 more)
 
 ### Community 975 - "lf"
 Cohesion: 0.03
-Nodes (16): ag, Cb(), dv, Iy, lf, lg, Mb, Nb() (+8 more)
+Nodes (18): ag, dv, Iy, Jt(), kt(), Kt, lf, lg (+10 more)
 
 ### Community 976 - "Bang Motion"
 Cohesion: 0.12
@@ -3985,8 +3993,8 @@ Cohesion: 0.12
 Nodes (17): Clawd 博物馆奇妙夜, English, huashu-art-motion · 艺术动画, 关于作者, 动态, 动画样片, 可选媒体能力, 感谢反馈 (+9 more)
 
 ### Community 978 - "aa"
-Cohesion: 0.06
-Nodes (7): aa, eM, hA, lw, oa(), ow, uA
+Cohesion: 0.09
+Nodes (4): aa, lw, oa(), ow
 
 ### Community 979 - "huashu-art-motion · Animasi Seni"
 Cohesion: 0.12
@@ -4001,16 +4009,16 @@ Cohesion: 0.04
 Nodes (11): Dl, jl, kl(), Kl, $l, ql, Vl, Wl() (+3 more)
 
 ### Community 982 - "05_gothic.js"
-Cohesion: 0.18
-Nodes (9): cat(), chalice(), draw(), girl(), glassTwinkle(), ivy(), runMouse(), snail() (+1 more)
+Cohesion: 0.17
+Nodes (10): cat(), chalice(), draw(), girl(), glassTwinkle(), goldSweep(), ivy(), runMouse() (+2 more)
 
 ### Community 983 - "Effects usage"
 Cohesion: 0.20
 Nodes (9): Deal the effect, never by taste, Deal the moments and the scene, Effects usage, Motion and cost, Never, Tech budget, The gate (house rule 8), What each kind gets (+1 more)
 
 ### Community 984 - "Ue"
-Cohesion: 0.07
-Nodes (23): Aa(), r(), Oe(), Ue(), gR, Ka(), Na(), Ra() (+15 more)
+Cohesion: 0.05
+Nodes (27): Aa(), r(), Ca(), u(), Oe(), Ue(), m(), eI() (+19 more)
 
 ### Community 985 - "15_raytrace.js"
 Cohesion: 0.16
@@ -4029,8 +4037,8 @@ Cohesion: 0.13
 Nodes (16): additionalProperties, enum, type, additionalProperties, properties, type, additionalProperties, properties (+8 more)
 
 ### Community 989 - "Bang Motion — motion graphic web yang bukan PPT"
-Cohesion: 0.13
-Nodes (14): After Effects — langsung lewat bridge Higgsfield, Alur kerja, Arah gaya (pilih satu; boleh memadukan dua dengan sadar), Bang Motion — motion graphic web yang bukan PPT, Explainer dan karakter: baca sebelum menentukan shot, Hukum #1 — Ini video, bukan slide, Hukum #2 — Deterministik atau mati, Hukum #3 — Gaya lahir dari tema, bukan dari starter, bukan dari referensi (+6 more)
+Cohesion: 0.12
+Nodes (15): After Effects — langsung lewat bridge Higgsfield, Alur kerja, Arah gaya (pilih satu; boleh memadukan dua dengan sadar), Bang Motion — motion graphic web yang bukan PPT, Explainer dan karakter: baca sebelum menentukan shot, Hukum #1 — Ini video, bukan slide, Hukum #2 — Deterministik atau mati, Hukum #3 — Gaya lahir dari tema, bukan dari starter, bukan dari referensi (+7 more)
 
 ### Community 990 - "07 · 正面经验：哪些做法被证明有效"
 Cohesion: 0.13
@@ -4077,8 +4085,8 @@ Cohesion: 0.30
 Nodes (12): build(), draw(), formMap(), hatch(), paperPlate(), renderChalk(), warp(), circle() (+4 more)
 
 ### Community 1003 - "Bn"
-Cohesion: 0.04
-Nodes (5): Bn, hM, outputColorSpace(), vN, Ln()
+Cohesion: 0.05
+Nodes (4): Bn, outputColorSpace(), vN, Ln()
 
 ### Community 1004 - "Ti"
 Cohesion: 0.05
@@ -4108,6 +4116,10 @@ Nodes (11): beat1(), beat2(), beat3(), beat4(), beat5(), beat6(), draw(), failCa
 Cohesion: 0.27
 Nodes (10): cat(), curl(), dolphin(), draw(), girl(), head(), lyre(), panel() (+2 more)
 
+### Community 1012 - "zM"
+Cohesion: 0.11
+Nodes (4): Ar, Cl, Wf(), zM
+
 ### Community 1013 - "draw"
 Cohesion: 0.29
 Nodes (12): catHalo(), chair(), crownCurls(), draw(), drawHair(), flowers(), girlHalo(), hairMass() (+4 more)
@@ -4132,6 +4144,10 @@ Nodes (6): df, _f, get(), hf, Nf, pf
 Cohesion: 0.33
 Nodes (5): Piracy and clones: what helps, honestly, Plan, Selling Neesmo (owner notes), Store: Lemon Squeezy (you set this up; it needs your account), Website
 
+### Community 1020 - "agent/skills/vercel-optimize/lib/display-labels.mjs"
+Cohesion: 0.19
+Nodes (13): formatNumberLike(), formatSignalPart(), formatSignalValue(), humanizeKey(), KIND_LABELS, normalizeObservedWindowUnits(), PUBLIC_ASSIGNMENT_LABELS, REQUEST_COUNT_KINDS (+5 more)
+
 ### Community 1021 - "协议（按顺序，每一步有产物）"
 Cohesion: 0.17
 Nodes (12): 16 · 风格演示协议：从「受启发的扁平插画」到「一眼认得出是谁的画」, 1. 原作锚定, 2. 题材按风格自己的逻辑重构图, 3. 画「干净的形」，再过「媒介通道」, 4. 一帧先行，并排对照, 5. 让画活：用风格自己的运动逻辑, 6. 打分，门槛 80，最多两轮, 为什么 2026-10-15 新增的 17 个演示几乎不可用 (+4 more)
@@ -4145,7 +4161,7 @@ Cohesion: 0.17
 Nodes (11): ① 适用场景, ② 画面构成, ③ 运动轨迹, ④ 转场（常用 5 种）, ⑤ 节奏与文字, ⑦ 代表作品与一手参考, ⑧ 最容易做错的 3 件事, qa 数字（skill `scripts/qa.py`，2026-10-04，审片前） (+3 more)
 
 ### Community 1024 - "hh"
-Cohesion: 0.05
+Cohesion: 0.06
 Nodes (5): add(), ba, hh, setValue(), subscribe_()
 
 ### Community 1025 - "Y1 · Kurzgesagt 扁平科普：视频动画语法卡"
@@ -4212,10 +4228,6 @@ Nodes (12): 2026-10-15 · 单场景试作回流, 52_south_park · 南方公园�
 Cohesion: 0.18
 Nodes (12): properties, enum, type, mode, provider, system_voice, voice_ref, enum (+4 more)
 
-### Community 1043 - "svg-kit.js"
-Cohesion: 0.13
-Nodes (9): View Transition Events, View Transition Events, View Transition Events, View Transition Events, Determinisme — daftar larangan, mottlePattern(), mottleURL(), mulberry32() (+1 more)
-
 ### Community 1044 - "spacex_lin/scenes/s12.js"
 Cohesion: 0.30
 Nodes (10): camAt(), checkbox(), draw(), endCard(), label(), stop1(), stop2(), stop3() (+2 more)
@@ -4229,28 +4241,28 @@ Cohesion: 0.30
 Nodes (10): car(), draw(), ground(), neon18(), neonFlame(), orbitArc(), sideBooster(), silhouette() (+2 more)
 
 ### Community 1047 - "06_renaissance.js"
-Cohesion: 0.26
-Nodes (11): SK(), beamAndDust(), birds(), cat(), draw(), girl(), goblet(), landscape() (+3 more)
+Cohesion: 0.12
+Nodes (14): mottlePattern(), mottleURL(), mulberry32(), SK(), beamAndDust(), birds(), cat(), draw() (+6 more)
 
 ### Community 1048 - "27_kirby.js"
 Cohesion: 0.36
 Nodes (11): caption(), catPanel(), chars(), draw(), gutters(), krackle(), room(), sfx() (+3 more)
 
-### Community 1049 - "migrate-log.py"
-Cohesion: 0.16
-Nodes (11): id_floor_from(), main(), parse_entries(), parse_skill(), parse_status(), render(), skills_in_text(), slugify() (+3 more)
+### Community 1049 - "argparse"
+Cohesion: 0.04
+Nodes (40): font(), main(), build_manifest(), check(), forbidden(), git(), inspect(), main() (+32 more)
 
-### Community 1050 - "decision_matrix.py"
-Cohesion: 0.27
-Nodes (6): Analysis, create_decision_matrix(), DecisionMatrix, generate_analysis(), main(), OptionScore
+### Community 1050 - "BootFails"
+Cohesion: 0.21
+Nodes (4): BootFails, Deterministic, img(), OnScreen
 
 ### Community 1051 - "Motion"
 Cohesion: 0.18
 Nodes (10): Loops inside a card's visual (tech), Motion, Never, Reduced motion, no script, phones, Scroll, Tech budget, The hero's entrance (every kind), The hover layer (+2 more)
 
 ### Community 1052 - "readHtml"
-Cohesion: 0.31
-Nodes (11): attrOf(), brandsOf(), declaredKind(), decode(), hasAttr(), hiddenOrMock(), lint(), readHtml() (+3 more)
+Cohesion: 0.27
+Nodes (12): attrOf(), brandsOf(), declaredKind(), decode(), hasAttr(), hiddenOrMock(), lint(), readHtml() (+4 more)
 
 ### Community 1053 - "18 · 媒介层：同一个场景换画法，角色也一起被重画"
 Cohesion: 0.18
@@ -4312,9 +4324,9 @@ Nodes (9): Anti-PPT — hukum desain adegan, Kalibrasi rasa (heuristik cepat), K
 Cohesion: 0.20
 Nodes (7): 从口播到画面, 口播整片与经验回流, 经验如何回到skill, 验收与冻结, Y6 · 讲解员式财经科普, 帧与动作, 起手必查
 
-### Community 1068 - "参考实现：同一个房间，十六种画法（2026-11-09）"
-Cohesion: 0.40
-Nodes (4): 参考实现：同一个房间，十六种画法（2026-11-09）, 改成自己的片子, 角色帧, 跑起来
+### Community 1068 - "tex"
+Cohesion: 0.24
+Nodes (10): brush(), contours(), paint(), probe(), tex(), 参考实现：同一个房间，十六种画法（2026-11-09）, 改成自己的片子, 文件 (+2 more)
 
 ### Community 1069 - "film2.js"
 Cohesion: 0.40
@@ -4360,6 +4372,10 @@ Nodes (8): 02_egypt · 公元前1350年埃及墓室壁画（纯代码）, 母题
 Cohesion: 0.33
 Nodes (6): back(), bloomImg(), dragonflies(), front(), stone(), wisteria()
 
+### Community 1082 - "Part 2: Visual Grammar"
+Cohesion: 0.14
+Nodes (13): Beat budgeting, Core elements, Cultural adaptation, Motion grammar (Stage 4 prompts), Part 1: Writing, Part 2: Visual Grammar, Per-frame prompt template, Sentence-level rules (+5 more)
+
 ### Community 1083 - "draw"
 Cohesion: 0.42
 Nodes (8): antWatch(), cat(), draw(), elephant(), girl(), shadows(), softClock(), softMap()
@@ -4371,10 +4387,6 @@ Nodes (8): cat(), curtain(), daisies(), draw(), girl(), grass(), komorebi(), tab
 ### Community 1085 - "26_vaporwave.js"
 Cohesion: 0.42
 Nodes (8): cat(), dialog(), draw(), floorGrid(), girl(), neonSign(), sunset(), table()
-
-### Community 1086 - "ie"
-Cohesion: 0.04
-Nodes (10): Bs(), y(), fs(), G(), j(), V(), X(), Y() (+2 more)
 
 ### Community 1087 - "After Effects lewat bridge Higgsfield — membangun kartun panggung langsung di AE"
 Cohesion: 0.25
@@ -4445,24 +4457,24 @@ Cohesion: 0.46
 Nodes (7): build(), building(), crate(), draw(), ground(), rocks(), sky()
 
 ### Community 1106 - "constructor"
-Cohesion: 0.04
-Nodes (27): Ch(), fh(), f(), g(), m(), p(), Lh(), bt() (+19 more)
+Cohesion: 0.06
+Nodes (24): bh(), Ch(), fh(), f(), g(), m(), p(), Lh() (+16 more)
 
 ### Community 1108 - "ze"
-Cohesion: 0.06
-Nodes (4): Ce, ro(), vn, ze
+Cohesion: 0.04
+Nodes (5): Ce, ro(), vn, yc, ze
 
 ### Community 1109 - "ao"
-Cohesion: 0.05
-Nodes (9): ao, bo, _o, oo, so, vo(), wo, xo() (+1 more)
+Cohesion: 0.07
+Nodes (6): ao, _o, so, vo(), wo, yo
 
 ### Community 1110 - "Ue"
-Cohesion: 0.06
-Nodes (23): Aa(), r(), Ue(), m(), eI(), gR, Jl(), Ka() (+15 more)
+Cohesion: 0.04
+Nodes (33): Aa(), r(), Ue(), m(), eI(), Er, gR, Jl() (+25 more)
 
-### Community 1111 - "gu"
-Cohesion: 0.08
-Nodes (5): ca, da(), gu, ha(), YM
+### Community 1111 - "RE"
+Cohesion: 0.05
+Nodes (9): gu, kp(), ku(), ma, RE, Tt, Ya(), Yl (+1 more)
 
 ### Community 1112 - "silk-folds/effect.js"
 Cohesion: 0.52
@@ -4501,8 +4513,8 @@ Cohesion: 0.48
 Nodes (5): dots(), draw(), drawPage(), ghost(), track()
 
 ### Community 1121 - "Ii"
-Cohesion: 0.03
-Nodes (40): $a(), i(), n(), ac, constructor(), a(), o(), er() (+32 more)
+Cohesion: 0.04
+Nodes (15): ac, Ii, kc, lc, nc, oc, a(), o() (+7 more)
 
 ### Community 1122 - "pageTitle"
 Cohesion: 0.36
@@ -4585,11 +4597,11 @@ Cohesion: 0.33
 Nodes (5): 14_8bit · 1985 8-bit 像素游戏, 小循环（片中只停约 0.23s ≈ 11 可见帧，全部做成步进动画）, 牛仔裤, 管线, 踩到的坑
 
 ### Community 1142 - "ew"
-Cohesion: 0.04
-Nodes (12): CE, ew, jE, jw, nw, PE(), qw, SE() (+4 more)
+Cohesion: 0.05
+Nodes (8): ew, jw, nw, qw, vw, ww, yw, zw
 
 ### Community 1143 - "update.py"
-Cohesion: 0.16
+Cohesion: 0.17
 Nodes (12): grab(), main(), apply(), _backup(), check(), _get(), _install(), _newer() (+4 more)
 
 ### Community 1144 - "风格总索引（36种既有实做＋16种研究配方，2026-10-15更新）"
@@ -4657,8 +4669,8 @@ Cohesion: 0.40
 Nodes (4): 09_postimp · 1889 梵高（标杆实现）, 关键参数, 坑, 管线
 
 ### Community 1161 - "Bs"
-Cohesion: 0.07
-Nodes (17): ct(), ml(), wn(), en(), fl(), Hn(), Ji, kn (+9 more)
+Cohesion: 0.08
+Nodes (14): ml(), fl(), Hn(), Ji, jn(), kn, ln, ml() (+6 more)
 
 ### Community 1162 - "t1_3b1b.js"
 Cohesion: 0.60
@@ -4676,21 +4688,21 @@ Nodes (4): draw(), drawItem(), imgBox(), init()
 Cohesion: 0.60
 Nodes (4): draw(), init(), layout(), penAt()
 
-### Community 1166 - "tr"
-Cohesion: 0.05
-Nodes (7): bs, Fs, jM, tr, e(), vs, ys
-
 ### Community 1169 - ".getDataFromNode"
 Cohesion: 0.07
-Nodes (6): dw, gw, hw, pw, Tw, uw
+Nodes (5): cw, dw, gw, hw, uw
 
 ### Community 1170 - ".getUniformFromNode"
 Cohesion: 0.08
-Nodes (8): Aw, GC, jA, kA, OA, Rw, VA, xw
+Nodes (7): GC, jA, kA, OA, Rw, VA, xw
 
 ### Community 1171 - "draw"
 Cohesion: 0.70
 Nodes (4): cat(), draw(), girl(), glyph()
+
+### Community 1172 - ".agents/skills/vercel-optimize/lib/budget-summary.mjs"
+Cohesion: 0.31
+Nodes (10): buildBudgetSummary(), buildChatPreview(), buildExactChatMessage(), buildOptions(), buildPrintCheck(), buildQuestionPayload(), buildQuestionText(), renderBudgetSummaryMarkdown() (+2 more)
 
 ### Community 1173 - "draw"
 Cohesion: 0.70
@@ -4701,16 +4713,20 @@ Cohesion: 0.70
 Nodes (4): block(), build(), draw(), tiny()
 
 ### Community 1175 - "Ot"
-Cohesion: 0.02
-Nodes (16): an, Ax, Ca(), u(), dA, ET(), kr, kx (+8 more)
+Cohesion: 0.04
+Nodes (6): Ax, kr, la, Ot, Rx, W_
 
 ### Community 1176 - "RE"
-Cohesion: 0.05
-Nodes (8): gu, kp(), ku(), ma, RE, Tt, Ya(), Yl
+Cohesion: 0.07
+Nodes (4): gu, kp(), ma, RE
 
 ### Community 1177 - "Eo"
-Cohesion: 0.09
-Nodes (5): co(), Eo, Go, Mo, toShapes()
+Cohesion: 0.04
+Nodes (12): Fi(), bt(), co(), ea, Eo, fo, Go, Ki() (+4 more)
+
+### Community 1178 - "yy"
+Cohesion: 0.10
+Nodes (4): Sy, vy, Y_, yy
 
 ### Community 1179 - "horus-heresy/figures.js"
 Cohesion: 0.11
@@ -4725,8 +4741,8 @@ Cohesion: 0.11
 Nodes (21): featherPaint(), fold(), fold(), laurel(), face(), FATHER, FATHER_PAL, fold() (+13 more)
 
 ### Community 1182 - "agent/skills/vercel-optimize/scripts/deep-dive.mjs"
-Cohesion: 0.17
-Nodes (17): escapeODataString(), mergeIntoEvidence(), odataEq(), SCANNER_KINDS, simplify(), SPEC_GENERATORS, specsForCandidate(), TIME_WINDOW (+9 more)
+Cohesion: 0.18
+Nodes (16): escapeODataString(), mergeIntoEvidence(), odataEq(), SCANNER_KINDS, simplify(), SPEC_GENERATORS, specsForCandidate(), readProjectJson() (+8 more)
 
 ### Community 1183 - "05 · 节奏与配乐"
 Cohesion: 0.50
@@ -4748,21 +4764,13 @@ Nodes (3): cam(), draw(), init()
 Cohesion: 0.83
 Nodes (3): build(), draw(), init()
 
-### Community 1309 - "fa"
-Cohesion: 0.06
-Nodes (10): fa, gp(), jp(), kP, toJSON(), Ux, VP(), Wp() (+2 more)
-
-### Community 1311 - "Er"
-Cohesion: 0.09
-Nodes (7): Dr, Er, sa, C(), N(), R(), Mr()
-
-### Community 1312 - "agent/skills/vercel-optimize/scripts/scan-codebase.mjs"
+### Community 1312 - "Vox-Style Explainer Video Pipeline"
 Cohesion: 0.17
-Nodes (20): buildResolver(), detectMonorepoRoot(), fileExists(), listWorkspacePackages(), parsePnpmWorkspaceYaml(), readWorkspaceGlobs(), resolveWorkspaceImports(), tryReadJson() (+12 more)
+Nodes (11): Orchestration notes, Prerequisites, Project structure, References, Stage 1 — Script, Stage 2 — Voiceover (xAI TTS v1), Stage 3 — Keyframes (Seedream 5.0 Pro), Stage 4 — Animation (Gemini Omni Flash) (+3 more)
 
 ### Community 1316 - ".getDataFromNode"
-Cohesion: 0.09
-Nodes (4): dw, gw, hw, uw
+Cohesion: 0.07
+Nodes (4): cw, pw, Tw, uw
 
 ### Community 1321 - "Lr"
 Cohesion: 0.07
@@ -4773,24 +4781,20 @@ Cohesion: 0.16
 Nodes (18): ANGEL, ANGEL_PAL, chalice(), deck(), feathers(), ground(), iT, medallion() (+10 more)
 
 ### Community 1324 - "Rm"
-Cohesion: 0.06
-Nodes (5): EM(), iv, Rm, vv, wM
+Cohesion: 0.05
+Nodes (6): eM, hA, iv, Rm, uA, vv
 
-### Community 1327 - "Lr"
-Cohesion: 0.04
-Nodes (7): ff, iv, J_, Lr, Rm, Rt(), vv
-
-### Community 1328 - "Nm"
-Cohesion: 0.07
-Nodes (3): kM, Nm, pv
+### Community 1327 - "Rm"
+Cohesion: 0.03
+Nodes (15): By, EM(), Ev, ff, generate(), gf, gv, iv (+7 more)
 
 ### Community 1330 - "tr"
 Cohesion: 0.05
-Nodes (7): bs, Fs, jM, tr, e(), vs, ys
+Nodes (8): bs, Fs, jM, tr, e(), vs, ys, Zi()
 
 ### Community 1331 - ".getUniformFromNode"
-Cohesion: 0.04
-Nodes (13): Aw, ca, da(), GC, ha(), jA, kA, OA (+5 more)
+Cohesion: 0.07
+Nodes (8): Aw, GC, jA, kA, OA, Rw, VA, xw
 
 ### Community 1333 - "bm"
 Cohesion: 0.14
@@ -4806,15 +4810,27 @@ Nodes (3): Hs, js, ka
 
 ### Community 1339 - "Diagram"
 Cohesion: 0.11
-Nodes (8): axesOf(), Diagram, geo(), kindOf(), kindOther(), normalise(), Program(), s()
+Nodes (9): axesOf(), Diagram, geo(), kindOf(), kindOther(), Program(), s(), sub() (+1 more)
 
-### Community 1344 - "n"
-Cohesion: 0.06
-Nodes (24): makeComp(), render(), ae(), Ar, As(), d, dc(), fe() (+16 more)
+### Community 1340 - "agent/skills/vercel-optimize/lib/impact-label.mjs"
+Cohesion: 0.38
+Nodes (10): computeImpactLabel(), cwvIssue(), formatCwvIssue(), formatInteger(), joinEnglish(), parseSigNumber(), round1(), round2() (+2 more)
+
+### Community 1344 - "e"
+Cohesion: 0.05
+Nodes (42): Ki(), makeComp(), render(), ae(), Ai(), animateValues(), Ar, As() (+34 more)
+
+### Community 1345 - "wa"
+Cohesion: 0.24
+Nodes (6): wa(), d(), g(), h(), m(), o()
 
 ### Community 1346 - "xl"
-Cohesion: 0.18
-Nodes (20): kt(), qt(), xl(), b(), D(), f(), g(), I() (+12 more)
+Cohesion: 0.26
+Nodes (17): xl(), b(), D(), f(), g(), I(), k(), L() (+9 more)
+
+### Community 1348 - "img"
+Cohesion: 0.31
+Nodes (5): edge_frac(), img(), lum(), T2NumberOverShot, T3Theme
 
 ### Community 1353 - "the-angel/angel.js"
 Cohesion: 0.18
@@ -4824,13 +4840,17 @@ Nodes (17): ANGEL, ANGEL_PAL, chalice(), deck(), featherPaint(), feathers(), gro
 Cohesion: 0.25
 Nodes (16): enhance(), guide(), onboarding(), openChd(), paintUpd(), poll(), refresh(), settingsBlock() (+8 more)
 
-### Community 1355 - "youtube.py"
-Cohesion: 0.19
-Nodes (10): auth_finish(), auth_url(), _creds(), _flow(), me(), next_slot(), set_banner(), stats() (+2 more)
+### Community 1355 - "kw"
+Cohesion: 0.20
+Nodes (3): jC, kw, ta
 
-### Community 1358 - "tD"
-Cohesion: 0.13
-Nodes (3): QP, tD, ZP
+### Community 1357 - "Dt"
+Cohesion: 0.06
+Nodes (10): Dt, ee, fs(), G(), j(), V(), X(), Y() (+2 more)
+
+### Community 1358 - "ca"
+Cohesion: 0.28
+Nodes (3): ca, da(), ha()
 
 ### Community 1359 - "Hardening Patterns"
 Cohesion: 0.10
@@ -4848,33 +4868,41 @@ Nodes (14): A, band(), face(), FATHER2, FATHER2_PAL, fold(), HELM2, helm2() (+6 
 Cohesion: 0.20
 Nodes (10): init(), init(), DATA, init(), PREV, isStill(), withLoop(), init() (+2 more)
 
-### Community 1370 - "pick.mjs"
-Cohesion: 0.19
-Nodes (11): DARK, deal(), FLAT_TYPES, HERE, OWN_LOUD, random(), roleOf(), strHash() (+3 more)
+### Community 1370 - "s"
+Cohesion: 0.36
+Nodes (7): s(), B(), F(), G(), k(), R(), z()
 
 ### Community 1371 - "bakeDraw"
 Cohesion: 0.22
 Nodes (14): bakeDpr(), bakeDraw(), bakeOne(), grounds(), groundSpec(), liveOn(), mountAt(), nextBake() (+6 more)
 
-### Community 1375 - "Ax"
-Cohesion: 0.10
-Nodes (10): Yr(), Ax, kr, raycast(), Rx, ts(), raycast(), ts() (+2 more)
+### Community 1375 - "ca"
+Cohesion: 0.28
+Nodes (3): ca, da(), ha()
+
+### Community 1376 - "ffmpeg Assembly Recipes"
+Cohesion: 0.22
+Nodes (8): 1. Conform each clip to its beat duration, 2. Concatenate video, 3. Build the VO track, 4. Music: loop/trim + duck under narration, 5. Subtitles (.ass), 6. Final mux: burn subs + encode, 7. QC checklist, ffmpeg Assembly Recipes
 
 ### Community 1378 - "brand/figures2.js"
 Cohesion: 0.16
 Nodes (11): A, band(), face(), FATHER2, FATHER2_PAL, helm2(), SON2, SON2_LOYAL (+3 more)
 
-### Community 1382 - "font_subset.py"
-Cohesion: 0.23
-Nodes (5): cjk(), fix_blank_widths(), gb2312_l1(), main(), scan()
+### Community 1382 - "agent/skills/vercel-optimize/lib/scanners/large-static-asset.mjs"
+Cohesion: 0.36
+Nodes (7): formatBytes(), metadata, scan(), shouldSkip(), SKIP_EXTENSIONS, SKIP_PATH_PREFIXES, walk()
+
+### Community 1384 - "Implementation Workflow"
+Cohesion: 0.25
+Nodes (8): Implementation Workflow, Step 1: Audit the App, Step 2: Add CSS Recipes, Step 3: Isolate Persistent Elements, Step 4: Add Directional Page Transitions, Step 5: Add Suspense Reveals, Step 6: Add Shared Element Transitions, Step 7: Verify Each Navigation Path
 
 ### Community 1387 - "wa"
 Cohesion: 0.24
 Nodes (6): wa(), d(), g(), h(), m(), o()
 
-### Community 1389 - ".agents/skills/vercel-optimize/lib/sanitizers/count-correct.mjs"
-Cohesion: 0.27
-Nodes (8): apply(), COUNT_CLAIM_TYPES, metadata, rewriteCount(), apply(), metadata, STRIP_DIRECTIVES, escapeRegex()
+### Community 1389 - ".agents/skills/vercel-optimize/lib/scanners/large-static-asset.mjs"
+Cohesion: 0.36
+Nodes (7): formatBytes(), metadata, scan(), shouldSkip(), SKIP_EXTENSIONS, SKIP_PATH_PREFIXES, walk()
 
 ### Community 1390 - "Product render (`assets/objects/product-render`)"
 Cohesion: 0.20
@@ -4884,13 +4912,9 @@ Nodes (9): Behaviour and limits, Materials, Motion, Mount: the product at anchor
 Cohesion: 0.18
 Nodes (5): init(), init(), done(), init(), POINTER_SVG
 
-### Community 1395 - "agent/skills/vercel-optimize/lib/sanitizers/count-correct.mjs"
-Cohesion: 0.27
-Nodes (8): apply(), COUNT_CLAIM_TYPES, metadata, rewriteCount(), apply(), metadata, STRIP_DIRECTIVES, escapeRegex()
-
-### Community 1396 - "zM"
-Cohesion: 0.11
-Nodes (4): Ar, Cl, Wf(), zM
+### Community 1394 - "lintRead"
+Cohesion: 0.36
+Nodes (8): esc(), lintRead(), literal(), sentenceAt(), sentencesOf(), unabbr(), virtueLiteral(), wordRe()
 
 ### Community 1398 - "Neesmo viral rules"
 Cohesion: 0.22
@@ -4912,10 +4936,6 @@ Nodes (8): candidateForGroup(), gate(), groupFindings(), metadata, observedCache
 Cohesion: 0.29
 Nodes (6): After The User Chooses, Blocker Copy, Observability Plus Stop-And-Ask, Scanner-Only Mode, User Template, Why This Check Exists
 
-### Community 1405 - "agent/skills/vercel-optimize/lib/scanners/middleware-broad-matcher.mjs"
-Cohesion: 0.29
-Nodes (6): isApplicable(), metadata, scan(), isApplicable(), metadata, scan()
-
 ### Community 1406 - ".agents/skills/caveman-compress/scripts/benchmark.py"
 Cohesion: 0.36
 Nodes (4): benchmark_pair(), count_tokens(), main(), print_table()
@@ -4936,17 +4956,13 @@ Nodes (6): Check facts, Read first (in this order), Role: Marketer (hooks, topic
 Cohesion: 0.29
 Nodes (6): Output (in the video folder), Read first, Role: Producer (voice, picture, sound, render), Skills you MUST use (invoke each with the Skill tool), Then, Voice (free)
 
-### Community 1414 - "agent/skills/vercel-optimize/lib/scanners/cache-components-suspense-dedupe.mjs"
-Cohesion: 0.48
-Nodes (6): countMatches(), findRepeated(), metadata, record(), scan(), truncate()
+### Community 1414 - "vox-explainer"
+Cohesion: 0.25
+Nodes (7): Cost, Design decisions worth stealing, Install, License, Use, vox-explainer, What's inside
 
 ### Community 1415 - "Objects and prints (`assets/objects`)"
 Cohesion: 0.33
 Nodes (5): GPU cost, Mount, Never, Objects and prints (`assets/objects`), When to use one
-
-### Community 1417 - "agent/skills/vercel-optimize/lib/scanners/use-cache-date-stamp.mjs"
-Cohesion: 0.48
-Nodes (6): classifySubtype(), collectRanges(), findMatchingParen(), isInsideAnyRange(), metadata, scan()
 
 ### Community 1418 - "55_dunhuang · 敦煌壁画（北朝）：干泥壁上的矿物色与横飞的线"
 Cohesion: 0.29
@@ -4956,13 +4972,21 @@ Nodes (7): 55_dunhuang · 敦煌壁画（北朝）：干泥壁上的矿物色与
 Cohesion: 0.40
 Nodes (5): Avoid, Product names, Recommendation shape, Rules, Voice
 
-### Community 1420 - ".agents/skills/vercel-optimize/lib/gates/platform-bot-protection.mjs"
-Cohesion: 0.60
-Nodes (4): computeBotShare(), gate(), metadata, totalRequestsFromSignals()
+### Community 1420 - ".agents/skills/vercel-optimize/lib/gates/external-api-slow.mjs"
+Cohesion: 0.17
+Nodes (12): extractCallCounts(), extractExternalApis(), gate(), metadata, computeBotShare(), gate(), metadata, totalRequestsFromSignals() (+4 more)
 
 ### Community 1423 - "Product renders"
 Cohesion: 0.40
 Nodes (5): Limits, Posters, Product renders, The spec, Views (a different one in every section; the product whole in three at most)
+
+### Community 1425 - "Atlas Cloud API Reference"
+Cohesion: 0.29
+Nodes (6): Atlas Cloud API Reference, Budgeting, Concurrency and retries, Image-to-video call shape (Stage 4), Models used by this pipeline, The async task pattern
+
+### Community 1428 - "agent/skills/vercel-optimize/lib/gates/usage-spike-triage.mjs"
+Cohesion: 0.60
+Nodes (4): aggregateSkuStats(), dayTotal(), gate(), metadata
 
 ### Community 1429 - "Role: Analyst (learn from the numbers)"
 Cohesion: 0.40
@@ -4984,21 +5008,9 @@ Nodes (4): benchmark_pair(), count_tokens(), main(), print_table()
 Cohesion: 0.50
 Nodes (3): items, kit, _note
 
-### Community 1437 - "agent/skills/vercel-optimize/lib/gates/external-api-slow.mjs"
-Cohesion: 0.60
-Nodes (4): extractCallCounts(), extractExternalApis(), gate(), metadata
-
-### Community 1438 - "agent/skills/vercel-optimize/lib/gates/platform-bot-protection.mjs"
-Cohesion: 0.60
-Nodes (4): computeBotShare(), gate(), metadata, totalRequestsFromSignals()
-
-### Community 1439 - "agent/skills/vercel-optimize/lib/gates/platform-fluid-compute.mjs"
-Cohesion: 0.60
-Nodes (4): extractHighColdRoutes(), extractSlowHotRoutes(), gate(), metadata
-
-### Community 1440 - ".agents/skills/vercel-optimize/lib/gates/external-api-slow.mjs"
-Cohesion: 0.60
-Nodes (4): extractCallCounts(), extractExternalApis(), gate(), metadata
+### Community 1437 - ".agents/skills/vercel-optimize/lib/gates/types.d.ts"
+Cohesion: 0.40
+Nodes (4): Candidate, CandidateScope, GateMetadata, Signals
 
 ### Community 1441 - "兼容性与验证范围"
 Cohesion: 0.40
@@ -5008,40 +5020,28 @@ Nodes (5): 兼容性与验证范围, 可复现的最低检查, 安装与配置�
 Cohesion: 0.40
 Nodes (4): kweight(), lufs(), reverb(), true_peak()
 
-### Community 1445 - "agent/skills/vercel-optimize/lib/gates/build-minutes-fanout.mjs"
-Cohesion: 0.67
-Nodes (3): gate(), metadata, unique()
-
-### Community 1446 - "agent/skills/vercel-optimize/lib/gates/cold-start.mjs"
-Cohesion: 0.67
-Nodes (3): extractColdStarts(), gate(), metadata
-
-### Community 1447 - "agent/skills/vercel-optimize/lib/gates/isr-overrevalidation.mjs"
-Cohesion: 0.67
-Nodes (3): extractRows(), gate(), metadata
-
-### Community 1448 - "agent/skills/vercel-optimize/lib/gates/middleware-heavy.mjs"
-Cohesion: 0.67
-Nodes (3): gate(), metadata, sumRows()
+### Community 1443 - "fh"
+Cohesion: 0.70
+Nodes (5): fh(), f(), g(), m(), p()
 
 ## Knowledge Gaps
 - **2 isolated node(s):** `PATH`, `{ color, normalizePalette, readPalette, GLSL_LIB }`
-  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 11129 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
-- **542 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
+  These have ≤1 connection - possible missing edges or undocumented components. (Counts symbols only; 11174 node(s) total have ≤1 connection when file, concept and rationale nodes are included.)
+- **539 thin communities (<3 nodes) omitted from report** — run `graphify query` to explore isolated nodes.
 
 ## Suggested Questions
 _Questions this graph is uniquely positioned to answer:_
 
-- **Why does `$_` connect `$_` to `tE`, `Pi`, `Ot`, `un`, `t`, `li`, `Bs`, `U_`, `tr`, `lf`, `dotted-globe/effect.js`, `vT`, `gA`, `mM`, `Ot`, `_R`, `RE`, `mw`, `sf`, `pw`, `nR`, `Yn`, `oe`, `Er`, `Mi`, `$C`, `Rr`, `.getDataFromNode`, `Lr`, `Nm`, `.getUniformFromNode`, `_b`, `bm`, `It`, `robot/three.min.js`, `Fw`, `yy`, `Hi`, `dn`, `_N`, `xl`, `Cr`, `ln`, `xv`, `Zt`, `ss`, `pa`, `zi`, `yA`, `di`, `constructor`, `pE`, `fM`, `Ue`, `nE`, `QA`, `fa`, `ia`, `Ax`, `cw`, `Sm`, `WC`, `gy`, `I_`, `wM`, `jT`, `pN`, `Bn`, `wa`, `zM`, `nn`, `ew`, `Ip`, `aa`, `$_`?**
-  _High betweenness centrality (0.150) - this node is a cross-community bridge._
+- **Why does `$_` connect `$_` to `tE`, `Pi`, `Ot`, `un`, `t`, `Bs`, `U_`, `Fs`, `lf`, `dotted-globe/effect.js`, `vT`, `.generateTextureLod`, `xN`, `Ot`, `jE`, `RE`, `Eo`, `sf`, `_R`, `nR`, `Yn`, `oe`, `three.min.js`, `hM`, `hf`, `$C`, `Rr`, `.getDataFromNode`, `Rm`, `Nm`, `.getUniformFromNode`, `_b`, `bm`, `It`, `robot/three.min.js`, `Fw`, `yy`, `Hi`, `dn`, `_N`, `xl`, `Cr`, `Lr`, `ln`, `xv`, `kw`, `pa`, `pv`, `ca`, `Zt`, `yA`, `di`, `constructor`, `pE`, `fM`, `Ue`, `nE`, `QA`, `fa`, `ia`, `Sm`, `gy`, `I_`, `jT`, `pN`, `Bn`, `wa`, `Ng`, `nn`, `Ip`, `ew`, `zM`, `aa`, `WC`?**
+  _High betweenness centrality (0.175) - this node is a cross-community bridge._
 - **Are the 2 inferred relationships involving `$_` (e.g. with `sd()` and `t()`) actually correct?**
   _`$_` has 2 INFERRED edges - model-reasoned connections that need verification._
 - **What connects `PATH`, `{ color, normalizePalette, readPalette, GLSL_LIB }` to the rest of the system?**
   _2 weakly-connected nodes found - possible documentation gaps or missing edges._
 - **Should `validate-skill-bundle.py` be split into smaller, more focused modules?**
   _Cohesion score 0.02790880503144654 - nodes in this community are weakly interconnected._
-- **Why does `$_` connect `$_` to `vendor/motion.js`, `_R`, `Nm`, `.getDataFromNode`, `.getUniformFromNode`, `di`, `Pi`, `Ot`, `jn`, `yy`, `pE`, `bm`, `fa`, `Hr`, `t`, `nE`, `ia`, `Y_`, `Sm`, `gy`, `I_`, `xv`, `Lr`, `fM`, `xl`, `Rm`, `ss`, `vT`, `jT`, `pN`, `Rr`, `tr`, `It`, `nn`, `sf`, `$C`, `Cr`, `Fw`, `pa`, `cw`, `Ip`, `pv`, `Bn`, `ew`, `tE`, `U_`, `Yn`, `is`, `xN`, `dn`, `un`, `hM`, `tD`, `lf`, `aa`, `WC`, `gu`, `Ue`, `Ax`, `Rm`, `yA`, `Yc`, `_b`, `QA`, `zM`, `k_`, `ln`, `hf`, `Hi`?**
-  _High betweenness centrality (0.131) - this node is a cross-community bridge._
+- **Why does `onUpdate()` connect `Patterns and Guidelines` to `06_renaissance.js`?**
+  _High betweenness centrality (0.168) - this node is a cross-community bridge._
 - **Are the 157 inferred relationships involving `W()` (e.g. with `draw()` and `draw()`) actually correct?**
   _`W()` has 157 INFERRED edges - model-reasoned connections that need verification._
 - **Should `lib` be split into smaller, more focused modules?**

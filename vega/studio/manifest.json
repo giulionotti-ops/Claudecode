@@ -1,5 +1,5 @@
 {
-  "_note": "What Neesmo Studio installs on first run. Only free tools: nothing here runs on paid credits or tokens. Items with 'login' need one step from the owner; Neesmo guides them. edition: all | youtube | instagram.",
+  "_note": "What Neesmo Studio installs on first run. Only free tools: nothing here needs paid credits or tokens (Vox explainers only run if the owner adds their own key). Items with 'login' need one step from the owner; Neesmo guides them. edition: all | youtube | instagram.",
   "kit": "~/.neesmo-kit",
   "items": [
     {"id": "ffmpeg", "group": "general", "label": "FFmpeg (video tools)", "kind": "apt", "pkg": "ffmpeg", "check": "ffmpeg", "required": true},
@@ -27,12 +27,15 @@
      "skills": ["content-strategy", "copywriting", "copy-editing", "marketing-psychology", "social", "analytics", "ab-testing", "marketing-ideas", "competitor-profiling"]},
     {"id": "skills-neesmo-rules", "group": "marketing", "label": "Neesmo's viral rules (what worked on our own channels)", "kind": "local-skill", "path": "studio/skills/neesmo-viral-rules"},
 
-    {"id": "skills-drawing", "group": "content", "label": "Claude Drawing (80+ art styles drawn by code)", "kind": "git-skill", "repo": "https://github.com/cloveric/claude-drawing-skill.git", "name": "claude-drawing-skill", "post_pip": "lib/../requirements.txt"},
+    {"id": "skills-drawing", "group": "content", "label": "Claude Drawing (80+ art styles drawn by code; makes your avatars and banners)", "kind": "git-skill", "repo": "https://github.com/cloveric/claude-drawing-skill.git", "name": "claude-drawing-skill", "post_pip": "lib/../requirements.txt", "required": true},
     {"id": "skills-huashu", "group": "content", "label": "Huashu Art Motion (animated explainer scenes)", "kind": "skills", "repo": "alchaincyf/huashu-art-motion", "skills": ["huashu-art-motion"]},
     {"id": "skills-bang", "group": "content", "label": "Bang Motion (cinematic motion graphics)", "kind": "skills", "repo": "bangtutorial/bang-motion", "skills": ["bang-motion"]},
     {"id": "skills-edit", "group": "content", "label": "Short editing and clipping", "kind": "skills", "repo": "Melvynx/video-agent-skills", "skills": ["short-editing", "clips"]},
     {"id": "skills-captions", "group": "content", "label": "FFmpeg captions and subtitles", "kind": "skills", "repo": "JosiahSiegel/claude-plugin-marketplace", "skills": ["ffmpeg-captions-subtitles"]},
     {"id": "skills-ffmpeg", "group": "content", "label": "FFmpeg toolkit", "kind": "skills", "repo": "digitalsamba/claude-code-video-toolkit", "skills": ["ffmpeg"]},
+    {"id": "skills-voice", "group": "content", "label": "VoiceStudio (free local voiceovers and dubbing)", "kind": "skills", "repo": "debpalash/VoiceStudio", "skills": ["voicestudio"]},
+    {"id": "skills-mpt", "group": "content", "label": "MoneyPrinterTurbo (topic to finished video, free stock footage)", "kind": "skills", "repo": "harry0703/MoneyPrinterTurbo", "skills": ["moneyprinterturbo-video"]},
+    {"id": "skills-vox", "group": "content", "label": "Vox-style explainers (only runs if you add your own Atlas Cloud key)", "kind": "local-skill", "path": "studio/skills/vox-explainer-skill"},
 
     {"id": "skills-analyse", "group": "analysis", "label": "Video analysis (frame-by-frame checks)", "kind": "skills", "repo": "fabriqaai/ffmpeg-analyse-video-skill", "skills": ["ffmpeg-analyse-video"]},
     {"id": "skills-watch", "group": "analysis", "label": "Watch videos (learn from top creators)", "kind": "skills", "repo": "bradautomates/claude-video", "skills": ["watch"]},

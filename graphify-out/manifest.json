@@ -19386,9 +19386,9 @@
     "semantic_hash": ""
   },
   "vega/studio/art.py": {
-    "mtime": 1795457148.5002332,
-    "seen": 1795458116.8118844,
-    "ast_hash": "fd709395f146f569f32beb029680821e",
+    "mtime": 1795459635.9947643,
+    "seen": 1795459696.0637228,
+    "ast_hash": "d053cc664b4f9dc95a7e3bc7c3f88160",
     "semantic_hash": ""
   },
   "vega/studio/audit.py": {
@@ -19422,9 +19422,9 @@
     "semantic_hash": ""
   },
   "vega/studio/manifest.json": {
-    "mtime": 1795457192.0270674,
-    "seen": 1795458116.8118958,
-    "ast_hash": "0eb869e2ab2ee469c7f3244feed66c77",
+    "mtime": 1795459361.7676241,
+    "seen": 1795459696.0637376,
+    "ast_hash": "5784d4642c4c665f3ae3530aea285e20",
     "semantic_hash": ""
   },
   "vega/studio/pipeline.py": {
@@ -19521,6 +19521,36 @@
     "mtime": 1795458997.0237284,
     "seen": 1795459148.6827242,
     "ast_hash": "7b3441409b71806db46d4035e7bf32ad",
+    "semantic_hash": ""
+  },
+  "vega/studio/skills/vox-explainer-skill/README.md": {
+    "mtime": 1795459341.6136866,
+    "seen": 1795459696.0661933,
+    "ast_hash": "9183bd590a0cc61af230cffe016a17ee",
+    "semantic_hash": ""
+  },
+  "vega/studio/skills/vox-explainer-skill/SKILL.md": {
+    "mtime": 1795459341.6136866,
+    "seen": 1795459696.066198,
+    "ast_hash": "187ef31f0705c49baf601cc1e330d6cb",
+    "semantic_hash": ""
+  },
+  "vega/studio/skills/vox-explainer-skill/references/atlas-cloud-api.md": {
+    "mtime": 1795459341.7526863,
+    "seen": 1795459696.0662007,
+    "ast_hash": "95f72c85fe04d6ae9f29860978010499",
+    "semantic_hash": ""
+  },
+  "vega/studio/skills/vox-explainer-skill/references/ffmpeg-assembly.md": {
+    "mtime": 1795459341.754686,
+    "seen": 1795459696.066203,
+    "ast_hash": "4e29365303896b9a9ec8151e1c166248",
+    "semantic_hash": ""
+  },
+  "vega/studio/skills/vox-explainer-skill/references/vox-style-guide.md": {
+    "mtime": 1795459341.7566862,
+    "seen": 1795459696.0662053,
+    "ast_hash": "6980602720022c620282a1df8abc16eb",
     "semantic_hash": ""
   }
 }
