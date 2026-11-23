@@ -439,6 +439,11 @@
   #report .thread p.you { font-size: 15px; color: var(--c); background: color-mix(in srgb, var(--a) 28%, #fff); }
   #report .thread { border-top: 0; }
   @media (max-width: 700px) { #report .rp > header h2 { font-size: 17px; } }
+  @media (max-width: 600px) {   /* phone: Back / Chat / New chat sit under the Approvals-Map-Settings bar, not over it */
+    html.robot body.chat #chathead { top: calc(var(--vvt, 0px) + 70px + env(safe-area-inset-top)); }
+    html.robot body.chat #log { top: calc(var(--vvt, 0px) + 122px + env(safe-area-inset-top)); }
+    html.robot #status { bottom: calc(196px + min(86vw, 420px) * 1.06 + env(safe-area-inset-bottom)); }   /* bubble above the robot head */
+  }
 </style>
 </head>
 <body class="boot">
