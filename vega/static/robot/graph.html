@@ -40,11 +40,12 @@
   #tip { position: fixed; bottom: 16px; right: 16px; font-size: 12px; color: var(--dim); z-index: 1; padding: 8px 14px; border-radius: 999px; }
   @media (max-width: 700px) { #legend { display: none; } #panel { top: auto; height: 60vh; transform: translateY(calc(100% + 24px)); } #tip { display: none; } h1 { font-size: 22px; } }
 </style>
+<script>if (window.EMBED) document.write("<style>#back{display:none}header{padding-right:64px}</style>")</script>
 </head>
 <body>
 <div id="g" aria-label="3D map of Neesmo's code. Drag to rotate, scroll to zoom, click a dot for details."></div>
 <header>
-  <a class="pill glass" href="/">← Neesmo</a>
+  <a class="pill glass" id="back" href="/">← Neesmo</a>
   <h1>Code map</h1>
   <input id="search" class="glass" type="search" placeholder="Find a function or file" aria-label="Find a function or file">
   <span id="stats"></span>
@@ -52,13 +53,13 @@
 <nav id="legend" class="glass" aria-label="Files"></nav>
 <aside id="panel" class="glass" aria-live="polite"><button id="close" aria-label="Close">×</button><div id="body"></div></aside>
 <div id="tip" class="glass">Drag to rotate · scroll to zoom · click a dot</div>
-<script src="/static/vendor/3d-force-graph.min.js"></script>
+<script src="/static/robot/3d-force-graph.min.js"></script>
 <script>
 const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const PAL = ['#EF8746', '#7FD6A4', '#F2C14E', '#6FA8FF', '#F27C9B', '#B79CFF', '#5ED3D9', '#E6E1D8', '#FF6B4A', '#A8D86E', '#D99A6C', '#8FB3C9', '#C98BD9', '#E8D36A'];
 (async () => {
-  const data = await (await fetch('/api/graph')).json();
+  const data = await (await fetch('/static/robot/graph.json')).json();
   const files = [...new Set(data.nodes.map(n => n.file))].sort((a, b) => data.nodes.filter(n => n.file === b).length - data.nodes.filter(n => n.file === a).length);
   const color = Object.fromEntries(files.map((f, i) => [f, PAL[i % PAL.length]]));
   const byId = Object.fromEntries(data.nodes.map(n => [n.id, n]));

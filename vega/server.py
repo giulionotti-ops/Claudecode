@@ -311,12 +311,12 @@ def guide():
 @app.get("/graph")
 def graph_page():
     """3D map of Neesmo's code: files, functions and who calls whom (from graphify)."""
-    return FileResponse(HERE / "graph.html")
+    return FileResponse(HERE / "static" / "robot" / "graph.html")
 
 
 @app.get("/api/graph")
 def graph_data():
-    return FileResponse(HERE / "graph.json")
+    return FileResponse(HERE / "static" / "robot" / "graph.json")
 
 
 @app.get("/welcome")

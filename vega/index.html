@@ -6,9 +6,9 @@
 <title>Neesmo</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:ital,wght@0,400;0,600;0,700;1,900&display=swap" rel="stylesheet">
-<link rel="manifest" href="/manifest.webmanifest">
-<link rel="apple-touch-icon" href="/static/icon-180.png?v=3">
-<link rel="icon" type="image/png" href="/static/icon-192.png?v=3">
+<link rel="manifest" href="/manifest.webmanifest?v=4">
+<link rel="apple-touch-icon" sizes="180x180" href="/static/icon-180.png?v=4">
+<link rel="icon" type="image/png" href="/static/icon-192.png?v=4">
 <meta name="theme-color" content="#D6CBC0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -410,6 +410,23 @@
     html.robot #welcome { left: 4vw; translate: none; top: calc(100px + min(19.5vw, 320px) * .95); text-align: left; width: min(54vw, 760px); }
     html.robot .corner { margin: 22px 4vw 0; }
   }
+
+  @media (max-width: 600px) { html.robot .card .mono-a { display: none; } html.robot .card b { font-size: 14px; } }
+  /* map pop-up */
+  dialog#mapdlg { position: fixed; inset: 0; margin: calc(env(safe-area-inset-top, 0px) + 8px) auto calc(env(safe-area-inset-bottom, 0px) + 8px) !important; width: min(1100px, calc(100vw - 16px)); height: calc(100dvh - 16px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)); padding: 0; border: 1px solid rgba(255,255,255,.7); border-radius: 22px; overflow: hidden; background: #0E0D12; }
+  dialog#mapdlg::backdrop { background: rgba(214,203,192,.2); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); }
+  #map-f { width: 100%; height: 100%; border: 0; display: block; }
+  #map-x { position: absolute; top: 12px; right: 12px; z-index: 5; width: 42px; height: 42px; border-radius: 50%; border: 1px solid rgba(255,255,255,.3); background: rgba(30,27,34,.7); color: #F4EDE4; font-size: 17px; cursor: pointer; }
+  /* agent chat: clearer header, readable bubbles, a disguised mini Neesmo in the corner */
+  #report .rp > header { align-items: center; padding: 10px 12px; border-radius: 14px; background: color-mix(in srgb, var(--a) 22%, rgba(255,250,243,.9)); border: 1px solid color-mix(in srgb, var(--a) 55%, transparent); }
+  #report .rp > header h2 { font-size: 20px; color: var(--c); }
+  #report .rp > header h2::before { content: ""; display: inline-block; width: 11px; height: 11px; border-radius: 50%; background: var(--a); margin-right: 9px; box-shadow: 0 0 0 3px color-mix(in srgb, var(--a) 30%, transparent); }
+  #r-sub { font-size: 12.5px; color: rgba(43,29,20,.75); }
+  #report #r-mini { position: static; inset: auto; width: 78px; height: 82px; flex: none; margin: -22px 0 -12px; align-self: flex-end; filter: drop-shadow(0 6px 6px rgba(43,29,20,.25)); pointer-events: none; }
+  #report .thread p.bot { color: var(--c); background: rgba(255,255,255,.6); border: 1px solid rgba(43,29,20,.12); border-left: 4px solid var(--a); border-radius: 6px 16px 16px 16px; padding: 10px 14px; max-width: 92%; font-size: 15px; }
+  #report .thread p.you { font-size: 15px; color: var(--c); background: color-mix(in srgb, var(--a) 28%, #fff); }
+  #report .thread { border-top: 0; }
+  @media (max-width: 700px) { #report #r-mini { width: 64px; height: 67px; margin: -16px 0 -10px; } #report .rp > header h2 { font-size: 17px; } }
 </style>
 </head>
 <body class="boot">
@@ -417,9 +434,8 @@
 <div id="bot" aria-hidden="true"><canvas width="560" height="625"></canvas></div>
 <div class="corner tl"><span class="pill" id="busy"><i></i><span>Agents</span></span></div>
 <div class="corner tr"><div class="icons">
-  <button type="button" class="ic" id="agentsbtn">Agents</button>
   <button type="button" class="ic" id="bell" aria-label="Notifications" aria-expanded="false" aria-controls="pop-n">Approvals<span class="badge" id="badge" hidden>0</span></button>
-  <a class="ic" id="mapbtn" href="/graph">Map</a>
+  <button type="button" class="ic" id="mapbtn" aria-haspopup="dialog">Map</button>
   <button type="button" class="ic" id="gear" aria-label="Settings" aria-expanded="false" aria-controls="pop-s">Settings</button>
 </div></div>
 <div class="pop wide" id="pop-s" hidden role="dialog" aria-label="Settings">
@@ -479,6 +495,7 @@
   <div class="nhead"><h3>History</h3><button type="button" id="nclear">Clear all</button></div>
   <ul class="nlist" id="nlist"><li><small>Nothing yet</small></li></ul>
 </div>
+<dialog id="mapdlg" aria-label="Code map"><button type="button" id="map-x" aria-label="Close map">✕</button><iframe id="map-f" title="Code map"></iframe></dialog>
 <dialog id="ap" aria-labelledby="ap-title"><div class="rp">
   <header><div><h2 id="ap-title">Approval</h2><small id="ap-sub"></small></div><button type="button" id="ap-close" aria-label="Close">✕</button></header>
   <p class="what" id="ap-what"></p>
@@ -516,7 +533,7 @@
   </form>
 </div></dialog>
 <dialog id="report" aria-labelledby="r-name"><div class="rp">
-  <header><div><h2 id="r-name">Agent</h2><small id="r-sub"></small></div><button type="button" id="r-gear" aria-label="Agent settings" title="Agent settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button><button type="button" id="r-close" aria-label="Close">✕</button></header>
+  <header><div><h2 id="r-name">Agent</h2><small id="r-sub"></small></div><canvas id="r-mini" width="200" height="210" aria-hidden="true"></canvas><button type="button" id="r-gear" aria-label="Agent settings" title="Agent settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button><button type="button" id="r-close" aria-label="Close">✕</button></header>
   <details id="r-more"><summary>Details</summary>
     <div class="strip" id="r-strip"></div>
     <div class="kpis" id="r-kpis"></div>
@@ -866,6 +883,7 @@ async function openReport(id) {
     const r = await (await api('/api/agents/' + encodeURIComponent(id))).json(); if (reportFor !== id) return;
     const t = r.today || {}, g = r.git || {}, ctxPct = Math.min(100, Math.round((r.context_tokens || 0) / 1e6 * 100));
     $('#report').style.setProperty('--a', AGENT_COLORS[r.id] || '#3dff8f');
+    if ($('#r-mini').dataset.k !== r.id + (AGENT_COLORS[r.id] || '')) { $('#r-mini').dataset.k = r.id + (AGENT_COLORS[r.id] || ''); miniBot(r.id, AGENT_COLORS[r.id] || '#3dff8f'); }
     $('#r-name').textContent = AGENT_DEV.has(r.id) ? `${AGENT_SHORT[r.id]} (in development)` : r.name;
     $('#r-sub').innerHTML = `<span class="st ${esc(r.status)}">${esc(r.status)}</span> · ${esc(r.role)} · last active ${esc(r.last_active_ago || '—')}${r.model ? ' · ' + esc(r.model) : ''}`;
     const last = (g.commits || [])[0], now = (r.requests || [])[0];
@@ -995,7 +1013,8 @@ function togglePop(btn, pop, open = pop.hidden) {
   pop.hidden = !open; btn.setAttribute('aria-expanded', String(open));
   if (open && pop.id === 'pop-n') { loadNotes(); pushState().catch(() => {}); }
 }
-$('#agentsbtn').onclick = () => { settingsTab = 'agents'; $('#pop-s').hidden = true; $('#gear').click(); };
+$('#mapbtn').onclick = async () => { const f = $('#map-f'); if (!f.srcdoc) { try { f.srcdoc = (await (await fetch('/static/robot/graph.html')).text()).replace('<head>', '<head><base href="/"><script>window.EMBED = 1<\/script>'); } catch {} } $('#pop-s').hidden = $('#pop-n').hidden = true; $('#mapdlg').showModal(); };
+$('#map-x').onclick = () => $('#mapdlg').close();
 $('#gear').onclick = () => { togglePop($('#gear'), $('#pop-s')); if (!$('#pop-s').hidden) { loadLicense(); showTab(settingsTab); } };
 // ── agents editor ──
 let agCfg = { agents: [], colors: [] }, agEdit = -1, agColor = '';
@@ -1385,13 +1404,13 @@ if (window.Motion) {
 }
 
 // ── robot companion: drawn frames blended into fluid motion. The body never moves; it only sways a hair, and the head tilts ──
-const BOT = { wave: 2.6, torch: 3.2, approve: 2.6, listening: 2.6, working: 2.2 };   // seconds per pass
+const BOT = { approve: 2.6, listening: 2.6, working: 2.2 };   // seconds per pass
 const HEAD = [[40,175],[150,55],[300,38],[335,38],[368,100],[368,215],[300,240],[250,262],[190,305],[95,302],[36,240]];   // head outline in still frames
 const botCv = $('#bot canvas'), botCx = botCv.getContext('2d'), botImgs = {};
 const off = () => Object.assign(document.createElement('canvas'), { width: 560, height: 625 });
 const bufA = off(), bufB = off(), bufP = off();
-for (const n of ['still', 'reading', 'wave', 'torch', 'approve', 'listening', 'working']) (botImgs[n] = new Image()).src = `/static/robot/${n}.webp`;
-let botPending = 0, botAsked = 0, botReply = 0, botAct = '', botActT = 0, botNext = Date.now() + 15000, botBlink = Date.now() + 3000;
+for (const n of ['still', 'reading', 'approve', 'listening', 'working']) (botImgs[n] = new Image()).src = `/static/robot/${n}.webp`;
+let botPending = 0, botAsked = 0, botReply = 0, botAct = '', botActT = 0, botBlink = Date.now() + 3000;
 let botCur = '', botFrom = 0;   // current mood and when the crossfade into it began
 const bufT = [off(), off()];
 function frame(c, name, i, tilt = 0) {   // one drawn frame; still frames can tilt the head on its neck
@@ -1419,6 +1438,35 @@ const audioLevel = () => {
   return Math.min(1, d.reduce((a, b) => a + b, 0) / d.length / 90);
 };
 let botLvl = 0;
+
+// ── mini Neesmo in the agent chat: tinted in the agent's colour, each with its own disguise ──
+const DISGUISE = ['stache', 'tophat', 'cap', 'stache+beret', 'cowboy', 'beret'];
+function miniBot(id, color) {
+  const cv = $('#r-mini'), img = botImgs.still; if (!cv || !img) return;
+  const draw = () => {
+    const W = 460, H = 480, cx = cv.getContext('2d'), t = off(), tx = t.getContext('2d');
+    cv.width = 200; cv.height = 210; tx.clearRect(0, 0, 560, 625);
+    tx.drawImage(img, 0, 0, 560, 625, 0, 0, 560, 625);
+    tx.globalCompositeOperation = 'color'; tx.fillStyle = color; tx.fillRect(0, 0, 560, 625);
+    tx.globalCompositeOperation = 'destination-in'; tx.drawImage(img, 0, 0, 560, 625, 0, 0, 560, 625);
+    cx.clearRect(0, 0, 200, 210); cx.drawImage(t, 0, -50, W, H, 0, 0, 200, 210);
+    cx.save(); cx.scale(200 / 460, 200 / 460); cx.translate(0, 50);   // disguise drawn in the 560x625 frame
+    const kind = DISGUISE[[...id].reduce((a, c) => a + c.charCodeAt(0), 0) % DISGUISE.length], ink = '#2B1D14';
+    const stache = () => { cx.save(); cx.translate(188, 238); cx.rotate(-.42); cx.fillStyle = ink; cx.beginPath();
+      cx.moveTo(0, -6); cx.bezierCurveTo(-20, -26, -62, -22, -72, 4); cx.bezierCurveTo(-48, -2, -26, 12, 0, 8);
+      cx.bezierCurveTo(26, 12, 48, -2, 72, 4); cx.bezierCurveTo(62, -22, 20, -26, 0, -6); cx.fill(); cx.restore(); };
+    const hat = (k) => { cx.save(); cx.translate(212, 72); cx.rotate(-.28); cx.fillStyle = ink;
+      if (k === 'tophat') { cx.fillRect(-46, -88, 92, 84); cx.beginPath(); cx.ellipse(0, -4, 84, 15, 0, 0, 7); cx.fill(); cx.fillStyle = color; cx.fillRect(-46, -24, 92, 14); }
+      else if (k === 'cap') { cx.fillStyle = color; cx.beginPath(); cx.ellipse(0, -8, 62, 46, 0, Math.PI, 0); cx.fill(); cx.fillStyle = ink; cx.fillRect(-72, -10, 150, 11); }
+      else if (k === 'cowboy') { cx.beginPath(); cx.ellipse(0, -4, 100, 18, 0, 0, 7); cx.fill(); cx.beginPath(); cx.moveTo(-52, -4); cx.quadraticCurveTo(-48, -78, -10, -66); cx.quadraticCurveTo(18, -80, 52, -4); cx.fill(); cx.fillStyle = color; cx.fillRect(-52, -22, 104, 9); }
+      else { cx.fillStyle = color; cx.beginPath(); cx.ellipse(0, -14, 76, 28, 0, 0, 7); cx.fill(); cx.fillStyle = ink; cx.fillRect(-4, -50, 8, 14); }
+      cx.restore(); };
+    if (kind.includes('stache')) stache();
+    if (kind !== 'stache') hat(kind.split('+')[1] || kind);
+    cx.restore();
+  };
+  img.complete ? draw() : (img.onload = draw);
+}
 function botTick() {
   requestAnimationFrame(botTick);
 
@@ -1428,9 +1476,6 @@ function botTick() {
     : mode === 'speaking' || now < botReply ? 'talking' : chatOpen() ? 'reading' : '';
   if (botPending > botAsked && !want && now > botActT) { botAct = 'approve'; botActT = now + BOT.approve * 1000; }   // something new waits for you: ask once
   botAsked = botPending;
-  if (!want && now > botActT && now > botNext && !reduce) {   // idle: still, looking at you; every 25-40 s one small act
-    botAct = ['wave', 'torch'][Math.random() * 2 | 0]; botActT = now + BOT[botAct] * 1000; botNext = botActT + 25000 + Math.random() * 15000;
-  }
   const mood = want || (now < botActT ? botAct : 'still');
   if (mood !== botCur) {   // freeze what is on screen and melt from it into the new mood
     const p = bufP.getContext('2d'); p.clearRect(0, 0, 560, 625); p.drawImage(bufA, 0, 0);
