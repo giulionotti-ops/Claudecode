@@ -126,8 +126,8 @@ const PAL = ['#EF8746', '#7FD6A4', '#F2C14E', '#6FA8FF', '#F27C9B', '#B79CFF', '
         void main() { vec3 d = position;
           float w = sin(d.x * 5. + t * .5) * sin(d.y * 4. - t * .4) + sin(d.z * 6. + d.y * 3. + t * .35) * .6;
           float rr = R * (1. + .05 * w); vec4 mv = modelViewMatrix * vec4(d * rr, 1.);
-          a = .22 + .4 * (.5 + .5 * sin(t * 1.4 + ph * 40.)) * ph + .22 * smoothstep(.2, 1., w * .5 + .5);
-          gl_PointSize = k * (2.8 + 2.6 * ph); gl_Position = projectionMatrix * mv; }`,
+          a = .11 + .2 * (.5 + .5 * sin(t * 1.4 + ph * 40.)) * ph + .11 * smoothstep(.2, 1., w * .5 + .5);
+          gl_PointSize = k * (2.2 + 2.0 * ph); gl_Position = projectionMatrix * mv; }`,
       fragmentShader: `varying float a; void main() { float d = length(gl_PointCoord - .5); if (d > .5) discard; gl_FragColor = vec4(.93, .9, .86, a * (1. - d * 1.6)); }` });
     const orb = new THREE.Points(geo, mat); sc.add(orb);
     const fit = () => { rn.setSize(innerWidth, innerHeight, false); bc.aspect = innerWidth / innerHeight; bc.updateProjectionMatrix(); };
