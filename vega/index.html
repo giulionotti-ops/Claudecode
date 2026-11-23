@@ -351,14 +351,21 @@
   #bot { position: fixed; right: 0; bottom: calc(196px + env(safe-area-inset-bottom)); width: min(86vw, 420px); aspect-ratio: 560 / 625; overflow: hidden; pointer-events: none; z-index: 1; filter: drop-shadow(-14px 20px 18px rgba(60,35,20,.28)); }
   #bot canvas { width: 100%; height: 100%; display: block; }
   @media (max-width: 900px) { #bot { -webkit-mask-image: linear-gradient(#000 80%, transparent); mask-image: linear-gradient(#000 80%, transparent); } }
-  @media (max-width: 900px) { body.chat #bot { opacity: .2; } } html.robot #status.quiet { visibility: hidden; }
+  html.robot #status.quiet { visibility: hidden; }
   html.robot #wordmark { top: calc(84px + env(safe-area-inset-top)); translate: none; transform: translateX(-50%); font-size: min(21vw, 320px); z-index: 0; }
   html.robot #status { top: auto; left: 16px; right: auto; bottom: calc(196px + min(86vw, 420px) * .9 + env(safe-area-inset-bottom)); z-index: 2; padding: 10px 16px; border-radius: 18px 18px 18px 6px; max-width: 60vw;
     letter-spacing: .01em; text-transform: none; font: 600 15px/1.3 var(--sans); }
   html.robot #welcome { top: calc(110px + min(21vw, 320px) + env(safe-area-inset-top)); }
-  @media (max-width: 600px) { html.robot .corner.tl { display: none; } }
+  @media (max-width: 600px) {
+    html.robot .corner.tl { display: block; }
+    html.robot .corner.tl .pill { padding: 9px 11px; gap: 6px; cursor: pointer; pointer-events: auto; }
+    html.robot .corner.tl .pill > span { display: none; }
+    html.robot .corner.tl .pill::after { content: attr(data-n); font: 700 13px var(--sans); }
+    #busytip { position: absolute; top: 100%; left: 0; margin-top: 6px; padding: 7px 12px; border-radius: 999px; white-space: nowrap; font: 700 12px var(--sans); text-transform: uppercase; background: rgba(255,250,243,.9); box-shadow: 0 10px 24px -8px rgba(43,29,20,.35); opacity: 0; transition: opacity .2s; pointer-events: none; }
+    #busytip.show { opacity: 1; }
+  }
   html.robot :is(#status, .pill, .icons) { background: rgba(255,250,243,.5); -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); border: 1px solid rgba(255,255,255,.7); box-shadow: inset 0 1px 0 rgba(255,255,255,.85), 0 18px 36px -12px rgba(43,29,20,.35); }
-  html.robot .corner { padding: 0; margin: calc(14px + env(safe-area-inset-top)) 16px 0; color: var(--c); letter-spacing: .04em; font: 700 13px var(--sans); }
+  html.robot .corner { padding: 0; margin: 14px 16px 0; position: fixed; color: var(--c); letter-spacing: .04em; font: 700 13px var(--sans); }
   .pill { display: inline-flex; align-items: center; gap: 8px; padding: 11px 16px; border-radius: 999px; text-transform: uppercase; }
   .pill i { width: 8px; height: 8px; border-radius: 50%; background: #9DB8A2; } .pill.on i { background: #2F8F5B; animation: pulse 1.2s infinite; }
   html.robot .icons { gap: 2px; padding: 5px; border-radius: 999px; }
@@ -436,7 +443,7 @@
 <body class="boot">
 <div id="wordmark" aria-hidden="true">NEESMO</div>
 <div id="bot" aria-hidden="true"><canvas width="560" height="625"></canvas></div>
-<div class="corner tl"><span class="pill" id="busy"><i></i><span>Agents</span></span></div>
+<div class="corner tl"><span class="pill" id="busy" data-n="0"><i></i><span>Agents</span></span><span id="busytip"></span></div>
 <div class="corner tr"><div class="icons">
   <button type="button" class="ic" id="bell" aria-label="Notifications" aria-expanded="false" aria-controls="pop-n">Approvals<span class="badge" id="badge" hidden>0</span></button>
   <button type="button" class="ic" id="mapbtn" aria-haspopup="dialog">Map</button>
@@ -865,7 +872,7 @@ async function loadAgents() {
     const { agents } = await (await api('/api/agents')).json(), half = Math.ceil(agents.length / 2);
     learnAgents(agents); lastAgents = agents;
     const busy = agents.filter(a => a.status === 'working').length;
-    $('#busy').classList.toggle('on', busy > 0); $('#busy span').textContent = busy ? `${busy} agent${busy > 1 ? 's' : ''} working` : 'All agents resting';
+    $('#busy').dataset.n = busy; $('#busy').classList.toggle('on', busy > 0); $('#busy span').textContent = busy ? `${busy} agent${busy > 1 ? 's' : ''} working` : 'All agents resting';
     const card = (a, i) => `<button type="button" class="card agent s-${AGENT_DEV.has(a.id) ? 'dev' : esc(a.status)}${AGENT_DEV.has(a.id) ? ' dev' : ''}" style="--a:${AGENT_COLORS[a.id] || '#3dff8f'};--i:${i}" data-id="${esc(a.id)}" aria-label="${esc(a.name)} report">
       <i class="mono-a" aria-hidden="true">${esc((AGENT_SHORT[a.id] || a.name).trim()[0] || '?')}</i><span class="st">${esc(AGENT_SHORT[a.id] || a.name)}</span><b>${AGENT_DEV.has(a.id) ? 'In dev' : { working: 'Working', idle: 'Resting', offline: 'Offline' }[a.status] || esc(a.status)}</b>
       <small>${esc(a.last_reply || a.role)}</small><i class="live" aria-hidden="true"></i></button>`;
@@ -981,6 +988,7 @@ $('#report').addEventListener('close', () => { reportFor = null; clearTimeout(rP
 loadAgents(); setInterval(() => { if (!document.hidden) { loadAgents(); if (reportFor) openReport(reportFor); } }, 15000);
 
 // ── home-screen app: notifications + replies that arrive on their own ──
+$('#busy').addEventListener('click', () => { const t = $('#busytip'); t.textContent = $('#busy span').textContent; t.classList.add('show'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), 2500); });
 const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
 const b64 = s => Uint8Array.from(atob((s + '='.repeat((4 - s.length % 4) % 4)).replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0));
 // Notifications on/off lives in the bell menu; history + approvals below.
@@ -1502,8 +1510,8 @@ function botTick() {
 
   if (document.hidden) return;
   const now = Date.now(), t = now / 1000;
-  const want = mode === 'listening' ? 'listening' : mode === 'thinking' ? 'working'
-    : mode === 'speaking' || now < botReply ? 'talking' : chatOpen() ? 'reading' : '';
+  const want = mode === 'thinking' ? 'working'
+    : mode === 'speaking' || now < botReply ? 'talking' : chatOpen() || mode === 'listening' ? 'reading' : '';
   if (botPending > botAsked && !want && now > botActT) { botAct = 'approve'; botActT = now + BOT.approve * 1000; }   // something new waits for you: ask once
   botAsked = botPending;
   const mood = want || (now < botActT ? botAct : 'still');
