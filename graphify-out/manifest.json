@@ -3912,9 +3912,9 @@
     "semantic_hash": ""
   },
   "vega/server.py": {
-    "mtime": 1795375720.041074,
-    "seen": 1795381856.2071924,
-    "ast_hash": "48f74ab1d490d3010716228974edafd6",
+    "mtime": 1795433488.2881088,
+    "seen": 1795433724.6066551,
+    "ast_hash": "bc22a7edcb5589d7db347acdc3f75467",
     "semantic_hash": ""
   },
   "vega/static/sw.js": {
@@ -8586,9 +8586,9 @@
     "semantic_hash": ""
   },
   "vega/index.html": {
-    "mtime": 1795413787.100312,
-    "seen": 1795413857.3917952,
-    "ast_hash": "27125a64534f49347b9dbe60e3946a5b",
+    "mtime": 1795433676.2290971,
+    "seen": 1795433724.6078086,
+    "ast_hash": "01c40b01552beb7f8520891c31b6c1c8",
     "semantic_hash": ""
   },
   "vega/requirements.txt": {
@@ -15432,21 +15432,21 @@
     "semantic_hash": ""
   },
   "vega/static/icon-180.png": {
-    "mtime": 1795384697.780051,
-    "seen": 1795384769.37407,
-    "ast_hash": "72ef0d8c98100df5ea66e70b882392ae",
+    "mtime": 1795433668.8276618,
+    "seen": 1795433724.6094196,
+    "ast_hash": "306e2b5dc2f8ab549e4bcf08eed8f3c8",
     "semantic_hash": ""
   },
   "vega/static/icon-192.png": {
-    "mtime": 1795384697.768051,
-    "seen": 1795384769.3740718,
-    "ast_hash": "ea6d5761c42f14a3cfe801e60c8f7510",
+    "mtime": 1795433668.7916617,
+    "seen": 1795433724.6094205,
+    "ast_hash": "b4c0375ca1a4b88ea05b145894bbaabe",
     "semantic_hash": ""
   },
   "vega/static/icon-512.png": {
-    "mtime": 1795384697.760051,
-    "seen": 1795384769.3740735,
-    "ast_hash": "1f9c35a547cc7414fb4ecd72f51d91bc",
+    "mtime": 1795433668.7436619,
+    "seen": 1795433724.609422,
+    "ast_hash": "c98636ac46bbccd5e8ba856b4bd57ef1",
     "semantic_hash": ""
   },
   "vega/static/icon.svg": {
@@ -16038,9 +16038,9 @@
     "semantic_hash": ""
   },
   "vega/THIRD_PARTY_NOTICES.md": {
-    "mtime": 1795375720.0392752,
-    "seen": 1795381856.2082148,
-    "ast_hash": "d29e4a5e1f3f484a7e1de614af3b9087",
+    "mtime": 1795433676.2290971,
+    "seen": 1795433724.607805,
+    "ast_hash": "2ea7b3e21f8eaef3a70d8ff943b0854c",
     "semantic_hash": ""
   },
   "vega/login.html": {
@@ -19320,15 +19320,9 @@
     "semantic_hash": ""
   },
   "vega/static/robot/approve.webp": {
-    "mtime": 1795413726.1443553,
-    "seen": 1795413857.3938618,
-    "ast_hash": "6921600aaf10d12432f65ebe0aebb09a",
-    "semantic_hash": ""
-  },
-  "vega/static/robot/done.webp": {
-    "mtime": 1795413726.332824,
-    "seen": 1795413857.3938637,
-    "ast_hash": "3f0c3ad23e7bf828673d5efec8e94bd0",
+    "mtime": 1795433259.0035737,
+    "seen": 1795433724.6094248,
+    "ast_hash": "eac1fa6530ae3687bc2a7c380e134a23",
     "semantic_hash": ""
   },
   "vega/static/robot/hero_cut.webp": {
@@ -19338,15 +19332,15 @@
     "semantic_hash": ""
   },
   "vega/static/robot/listening.webp": {
-    "mtime": 1795413726.1390033,
-    "seen": 1795413857.3938668,
-    "ast_hash": "bb503aed07262a237fbf546100217666",
+    "mtime": 1795433259.0026832,
+    "seen": 1795433724.609429,
+    "ast_hash": "1534f58ac22f63d37ee5c3ef46d8deec",
     "semantic_hash": ""
   },
   "vega/static/robot/reading.webp": {
-    "mtime": 1795413838.732588,
-    "seen": 1795413857.3938682,
-    "ast_hash": "60865843122aaf5a3c14c270a6698f0b",
+    "mtime": 1795433259.0040371,
+    "seen": 1795433724.609431,
+    "ast_hash": "c09c7e08104687f69be1df497cf7bbbb",
     "semantic_hash": ""
   },
   "vega/static/robot/still.webp": {
@@ -19356,21 +19350,69 @@
     "semantic_hash": ""
   },
   "vega/static/robot/torch.webp": {
-    "mtime": 1795413726.1361904,
-    "seen": 1795413857.3938718,
-    "ast_hash": "487502da12e97365c0e53c7069783d16",
+    "mtime": 1795433259.002147,
+    "seen": 1795433724.6094344,
+    "ast_hash": "411f7ce7daa8c3a6914af460a80b65ff",
     "semantic_hash": ""
   },
   "vega/static/robot/wave.webp": {
-    "mtime": 1795413726.128824,
-    "seen": 1795413857.393873,
-    "ast_hash": "895012d77a6e6686d56d93fcbaca7924",
+    "mtime": 1795433259.0015018,
+    "seen": 1795433724.6094356,
+    "ast_hash": "e085436a6950fa43ffc0ab0c07ed99c6",
     "semantic_hash": ""
   },
   "vega/static/robot/working.webp": {
-    "mtime": 1795413726.141786,
-    "seen": 1795413857.3938742,
-    "ast_hash": "391cc130d446b61c008ad44ffc42a2e6",
+    "mtime": 1795433259.0031493,
+    "seen": 1795433724.609437,
+    "ast_hash": "3ca92be8717527e075abadc6b9b1d5ce",
+    "semantic_hash": ""
+  },
+  "vega/graph.json": {
+    "mtime": 1795433488.26223,
+    "seen": 1795433724.6066487,
+    "ast_hash": "5579371f385933a516da80314e7cc4a6",
+    "semantic_hash": ""
+  },
+  "vega/static/vendor/3d-force-graph.min.js": {
+    "mtime": 1795433443.511092,
+    "seen": 1795433724.6066568,
+    "ast_hash": "50aec5f1d1de2b5de9af195262dbb285",
+    "semantic_hash": ""
+  },
+  "vega/tools/graph_json.py": {
+    "mtime": 1795433488.0436554,
+    "seen": 1795433724.6066592,
+    "ast_hash": "7091598ea728ea031454aa6dbd99891a",
+    "semantic_hash": ""
+  },
+  "vega/graph.html": {
+    "mtime": 1795433590.6913302,
+    "seen": 1795433724.6078067,
+    "ast_hash": "89c1d88981246faabb2a7c40753ea744",
+    "semantic_hash": ""
+  },
+  "e1.png": {
+    "mtime": 1795433679.7276623,
+    "seen": 1795433724.609364,
+    "ast_hash": "202db4bad7777caa7d41235ca7094f7f",
+    "semantic_hash": ""
+  },
+  "e2.png": {
+    "mtime": 1795433681.1316624,
+    "seen": 1795433724.6093652,
+    "ast_hash": "8a64fa273a8e84bffe56618a5b1efbb4",
+    "semantic_hash": ""
+  },
+  "e3.png": {
+    "mtime": 1795433685.0676625,
+    "seen": 1795433724.609366,
+    "ast_hash": "1d1652163c62bdf0b8f577667ea3ec5b",
+    "semantic_hash": ""
+  },
+  "e4.png": {
+    "mtime": 1795433686.8556626,
+    "seen": 1795433724.609367,
+    "ast_hash": "cb599ec319aae22525a8e62e62d56f79",
     "semantic_hash": ""
   }
 }

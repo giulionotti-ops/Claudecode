@@ -308,6 +308,17 @@ def guide():
     return FileResponse(Path(__file__).parent / "static" / "guide.html")
 
 
+@app.get("/graph")
+def graph_page():
+    """3D map of Neesmo's code: files, functions and who calls whom (from graphify)."""
+    return FileResponse(HERE / "graph.html")
+
+
+@app.get("/api/graph")
+def graph_data():
+    return FileResponse(HERE / "graph.json")
+
+
 @app.get("/welcome")
 def welcome():
     return FileResponse(Path(__file__).parent / "static" / "landing.html")

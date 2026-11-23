@@ -54,3 +54,8 @@ Checked 2026-11-15.
 - deploy-to-vercel, vercel-cli-with-tokens, vercel-optimize, web-design-guidelines, writing-guidelines:
   no license found upstream, so left out.
 - Claude itself: each buyer signs in with their own Claude account or API key. Neesmo does not resell access.
+
+## 3d-force-graph 1.77.0 (vega/static/vendor/3d-force-graph.min.js)
+
+MIT License, Copyright (c) 2017 Vasco Asturiano. https://github.com/vasturiano/3d-force-graph
+Bundles three.js (MIT, Copyright 2010-2024 three.js authors) and d3-force-3d (MIT).

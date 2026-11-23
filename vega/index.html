@@ -7,8 +7,8 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:ital,wght@0,400;0,600;0,700;1,900&display=swap" rel="stylesheet">
 <link rel="manifest" href="/manifest.webmanifest">
-<link rel="apple-touch-icon" href="/static/icon-180.png">
-<link rel="icon" type="image/png" href="/static/icon-192.png">
+<link rel="apple-touch-icon" href="/static/icon-180.png?v=3">
+<link rel="icon" type="image/png" href="/static/icon-192.png?v=3">
 <meta name="theme-color" content="#D6CBC0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
@@ -349,10 +349,9 @@
   @media (max-width: 900px) { html.robot .cards.l, html.robot .cards.r { left: 16px; right: 16px; justify-content: flex-start; } html.robot .cards.l { bottom: calc(136px + env(safe-area-inset-bottom)); } html.robot .card { flex: 1 1 0; } html.robot #log { bottom: calc(204px + env(safe-area-inset-bottom)); } }
   /* the robot: upper body only, cut off by the screen edge (desktop) or standing behind the cards (phone) */
   #bot { position: fixed; right: 0; bottom: calc(196px + env(safe-area-inset-bottom)); width: min(86vw, 420px); aspect-ratio: 560 / 625; overflow: hidden; pointer-events: none; z-index: 1; filter: drop-shadow(-14px 20px 18px rgba(60,35,20,.28)); }
-  #bot img { width: 800%; height: 100%; display: block; }
+  #bot canvas { width: 100%; height: 100%; display: block; }
   @media (max-width: 900px) { #bot { -webkit-mask-image: linear-gradient(#000 80%, transparent); mask-image: linear-gradient(#000 80%, transparent); } }
   @media (max-width: 900px) { body.chat #bot { opacity: .2; } } html.robot #status.quiet { visibility: hidden; }
-  @keyframes spr { to { transform: translateX(-100%); } }
   html.robot #wordmark { top: calc(84px + env(safe-area-inset-top)); translate: none; transform: translateX(-50%); font-size: min(21vw, 320px); z-index: 0; }
   html.robot #status { top: auto; left: 16px; right: auto; bottom: calc(196px + min(86vw, 420px) * .9 + env(safe-area-inset-bottom)); z-index: 2; padding: 10px 16px; border-radius: 18px 18px 18px 6px; max-width: 60vw;
     letter-spacing: .01em; text-transform: none; font: 600 15px/1.3 var(--sans); }
@@ -365,10 +364,27 @@
   html.robot .icons { gap: 2px; padding: 5px; border-radius: 999px; }
   html.robot .icons .ic { width: auto; height: 38px; padding: 0 14px; border: 0; border-radius: 999px; background: none; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; font: 600 13.5px var(--sans); letter-spacing: 0; text-transform: none; color: var(--c); }
   html.robot .icons .ic[aria-expanded="true"] { background: #2B1D14; color: #FFF8EF; }
-  html.robot .icons .badge:not([hidden]) { position: static; display: inline; background: none; color: inherit; padding: 0; font: inherit; } html.robot .icons .badge::before { content: " · "; } html.robot .icons .ic { white-space: nowrap; display: inline-flex; align-items: center; }
+  html.robot .icons .badge:not([hidden]) { position: static; display: inline; background: none; color: inherit; padding: 0; font: inherit; } html.robot .icons .badge::before { content: " · "; } html.robot .icons .ic { white-space: nowrap; display: inline-flex; align-items: center; } html.robot .icons a.ic { text-decoration: none; }
   html.robot :is(.corner, #status, .st, .chip, .kpi span, .card span, #chathead h2) { font-family: var(--sans); }
   html.robot .card .st { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: rgba(43,29,20,.7); }
   html.robot .card .st::before { content: none; } html.robot .card b { font: 900 italic 20px/1.15 "Archivo", var(--sans); letter-spacing: -.01em; }
+  /* agent cards: tilt toward the pointer with a moving glint; working cards breathe a light sweep and a live bar */
+  html.robot .card.agent { position: relative; overflow: hidden; transform: perspective(700px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(var(--ty, 0)); transition: transform .5s cubic-bezier(.2,.8,.2,1), box-shadow .5s; will-change: transform; text-align: left; }
+  html.robot .card.agent:hover { --ty: -6px; box-shadow: inset 0 1px 0 rgba(255,255,255,.85), 0 30px 50px -18px rgba(43,29,20,.45); }
+  html.robot .card.agent:active { --ty: -2px; transition-duration: .15s; }
+  html.robot .card.agent::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0; transition: opacity .4s; background: radial-gradient(240px circle at var(--mx, 50%) var(--my, 0%), rgba(255,255,255,.55), transparent 60%); }
+  html.robot .card.agent:hover::after { opacity: 1; }
+  html.robot .card .mono-a { position: absolute; top: 12px; right: 12px; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font: 900 italic 15px "Archivo", var(--sans); color: #FFF8EF; background: #2B1D14; box-shadow: inset 0 1px 0 rgba(255,255,255,.25), 0 6px 12px -4px rgba(43,29,20,.5); }
+  html.robot .card.s-working .mono-a::after { content: ""; position: absolute; inset: -4px; border-radius: 50%; border: 2px solid #2F8F5B; animation: ring 1.8s cubic-bezier(.2,.8,.2,1) infinite; }
+  @keyframes ring { from { transform: scale(.85); opacity: 1; } to { transform: scale(1.5); opacity: 0; } }
+  html.robot .card.s-working::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(105deg, transparent 35%, rgba(255,255,255,.5) 50%, transparent 65%) no-repeat; background-size: 250% 100%; animation: sweep 3.2s ease-in-out infinite; }
+  @keyframes sweep { from { background-position: 130% 0; } to { background-position: -30% 0; } }
+  html.robot .card .live { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; display: none; overflow: hidden; background: rgba(43,29,20,.08); }
+  html.robot .card.s-working .live { display: block; }
+  html.robot .card .live::before { content: ""; position: absolute; top: 0; bottom: 0; width: 40%; background: linear-gradient(90deg, transparent, #2B1D14, transparent); animation: live 1.6s cubic-bezier(.45,0,.55,1) infinite; }
+  @keyframes live { from { left: -40%; } to { left: 100%; } }
+  html.robot .card .st { padding-right: 36px; }
+  @media (prefers-reduced-motion: reduce) { html.robot .card.agent { transform: none; } html.robot .card.s-working::before, html.robot .card .live::before, html.robot .card.s-working .mono-a::after { animation: none; } }
   html.robot .card small { color: rgba(43,29,20,.75); } html.robot #agents-l .card:nth-child(3n+2), html.robot #agents-r .card:nth-child(3n) { background: rgba(239,135,70,.55); } html.robot #agents-l .card:nth-child(3n), html.robot #agents-r .card:nth-child(3n+1) { background: rgba(194,226,198,.6); } html.robot .card.s-offline { opacity: .7; }
   html.robot dialog { background: rgba(255,250,243,.72); -webkit-backdrop-filter: blur(24px) saturate(1.4); backdrop-filter: blur(24px) saturate(1.4); border: 1px solid rgba(255,255,255,.7); border-radius: 24px; box-shadow: 0 40px 80px -20px rgba(43,29,20,.45); color: var(--c); }
   html.robot dialog::backdrop { background: rgba(214,203,192,.25); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); }
@@ -398,11 +414,12 @@
 </head>
 <body class="boot">
 <div id="wordmark" aria-hidden="true">NEESMO</div>
-<div id="bot" aria-hidden="true"><img alt="" src="/static/robot/still.webp"></div>
+<div id="bot" aria-hidden="true"><canvas width="560" height="625"></canvas></div>
 <div class="corner tl"><span class="pill" id="busy"><i></i><span>Agents</span></span></div>
 <div class="corner tr"><div class="icons">
   <button type="button" class="ic" id="agentsbtn">Agents</button>
   <button type="button" class="ic" id="bell" aria-label="Notifications" aria-expanded="false" aria-controls="pop-n">Approvals<span class="badge" id="badge" hidden>0</span></button>
+  <a class="ic" id="mapbtn" href="/graph">Map</a>
   <button type="button" class="ic" id="gear" aria-label="Settings" aria-expanded="false" aria-controls="pop-s">Settings</button>
 </div></div>
 <div class="pop wide" id="pop-s" hidden role="dialog" aria-label="Settings">
@@ -650,7 +667,7 @@ async function ask(text, { typed = false } = {}) {
     }
     const { reply } = await (await api('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ text, typed, files: paths }) })).json();
-    typing(false); say(reply, 'vega');
+    typing(false); say(reply, 'vega'); botReply = Date.now() + Math.min(6000, 1500 + reply.length * 25);
     if (!typed) await speak(reply);   // spoken questions get a spoken answer; typed chat stays quiet
   } catch (e) { typing(false); setStatus(e.message, true); if (chatOpen()) say('⚠ ' + e.message, 'vega', { restore: true }); }
   finally { typing(false); if (mode !== 'idle') { mode = 'idle'; if (!statusEl.classList.contains('err')) setStatus('Standby'); } }
@@ -828,8 +845,8 @@ async function loadAgents() {
     const busy = agents.filter(a => a.status === 'working').length;
     $('#busy').classList.toggle('on', busy > 0); $('#busy span').textContent = busy ? `${busy} agent${busy > 1 ? 's' : ''} working` : 'All agents resting';
     const card = (a, i) => `<button type="button" class="card agent s-${AGENT_DEV.has(a.id) ? 'dev' : esc(a.status)}${AGENT_DEV.has(a.id) ? ' dev' : ''}" style="--a:${AGENT_COLORS[a.id] || '#3dff8f'};--i:${i}" data-id="${esc(a.id)}" aria-label="${esc(a.name)} report">
-      <span class="st">${esc(AGENT_SHORT[a.id] || a.name)}</span><b>${AGENT_DEV.has(a.id) ? 'In dev' : { working: 'Working', idle: 'Resting', offline: 'Offline' }[a.status] || esc(a.status)}</b>
-      <small>${esc(a.last_reply || a.role)}</small></button>`;
+      <i class="mono-a" aria-hidden="true">${esc((AGENT_SHORT[a.id] || a.name).trim()[0] || '?')}</i><span class="st">${esc(AGENT_SHORT[a.id] || a.name)}</span><b>${AGENT_DEV.has(a.id) ? 'In dev' : { working: 'Working', idle: 'Resting', offline: 'Offline' }[a.status] || esc(a.status)}</b>
+      <small>${esc(a.last_reply || a.role)}</small><i class="live" aria-hidden="true"></i></button>`;
     $('#agents-l').innerHTML = agents.slice(0, half).map(card).join('')
       || '<button type="button" class="card" id="first-agent" style="--a:#3dff8f"><span class="st">start here</span><b>Add an agent</b><small>An agent is a helper with its own folder and job. Tap to make your first one.</small></button>';
     if ($('#first-agent')) $('#first-agent').onclick = e => { e.stopPropagation(); setTimeout(() => { if ($('#pop-s').hidden) $('#gear').click(); showTab('agents'); }, 0); };
@@ -1367,32 +1384,94 @@ if (window.Motion) {
     .observe(statusEl, { childList: true, characterData: true, subtree: true });
 }
 
-// ── robot companion: 8 drawn frames per mood, swapped like stop motion. App state first, then random idle acts ──
-const LOOP = { torch: 3, wave: 2.4, listening: 2.4, working: 2, approve: 2.4, done: 2 };
-const botImg = $('#bot img');
-let botPending = 0, botAsked = 0, botName = '', botAct = '', botActEnd = 0, botNext = Date.now() + 15000, botBlink = Date.now() + 3000, botWas = '';
-function botShow(name, frame, once) {
-  if (botName !== name) { botName = name; botImg.src = `/static/robot/${name}.webp`; document.body.dataset.bot = name; }
-  botImg.style.animation = frame == null ? `spr ${LOOP[name]}s steps(8) ${once ? 1 : 'infinite'}` : 'none';
-  botImg.style.transform = frame == null ? '' : `translateX(-${frame * 12.5}%)`;
+// ── robot companion: drawn frames blended into fluid motion. The body never moves; it only sways a hair, and the head tilts ──
+const BOT = { wave: 2.6, torch: 3.2, approve: 2.6, listening: 2.6, working: 2.2 };   // seconds per pass
+const HEAD = [[40,175],[150,55],[300,38],[335,38],[368,100],[368,215],[300,240],[250,262],[190,305],[95,302],[36,240]];   // head outline in still frames
+const botCv = $('#bot canvas'), botCx = botCv.getContext('2d'), botImgs = {};
+const off = () => Object.assign(document.createElement('canvas'), { width: 560, height: 625 });
+const bufA = off(), bufB = off(), bufP = off();
+for (const n of ['still', 'reading', 'wave', 'torch', 'approve', 'listening', 'working']) (botImgs[n] = new Image()).src = `/static/robot/${n}.webp`;
+let botPending = 0, botAsked = 0, botReply = 0, botAct = '', botActT = 0, botNext = Date.now() + 15000, botBlink = Date.now() + 3000;
+let botCur = '', botFrom = 0;   // current mood and when the crossfade into it began
+const bufT = [off(), off()];
+function frame(c, name, i, tilt = 0) {   // one drawn frame; still frames can tilt the head on its neck
+  const img = botImgs[name]; if (!img.complete) return;
+  if (!tilt) return c.drawImage(img, i * 560, 0, 560, 625, 0, 0, 560, 625);
+  const tc = bufT[i ? 1 : 0], x = tc.getContext('2d'), head = () => { HEAD.forEach(([a, b], k) => k ? x.lineTo(a, b) : x.moveTo(a, b)); x.closePath(); };
+  x.clearRect(0, 0, 560, 625);
+  x.save(); x.beginPath(); x.rect(0, 0, 560, 625); head(); x.clip('evenodd'); x.drawImage(img, i * 560, 0, 560, 625, 0, 0, 560, 625); x.restore();
+  x.save(); x.translate(265, 258); x.rotate(tilt); x.translate(-265, -258); x.beginPath(); head(); x.clip(); x.drawImage(img, i * 560, 0, 560, 625, 0, 0, 560, 625); x.restore();
+  c.drawImage(tc, 0, 0);
 }
-const botBlinkTick = now => { if (now > botBlink + 150) botBlink = now + 3000 + Math.random() * 6000; };   // blink now and then
-setInterval(() => {
-  const now = Date.now(), q = $('#q');
-  const want = mode === 'listening' ? 'listening' : mode !== 'idle' ? 'working' : document.activeElement === q && q.value ? 'reading' : '';
-  if (want === 'reading') return botShow('reading', now > botBlink ? 5 : 0, true), botBlinkTick(now);   // glasses on, book in hand, still blinks
-  if (botWas === 'working' && !want) { botAct = 'done'; botActEnd = now + LOOP.done * 1000; }   // a reply just finished
-  if (botPending > botAsked && !want && now > botActEnd) { botAct = 'approve'; botActEnd = now + LOOP.approve * 1000; }   // something new waits for you: ask once
+function mix(c, drawA, drawB, k) {   // exact crossfade of two transparent drawings: (1-k)·A + k·B
+  c.clearRect(0, 0, 560, 625);
+  c.globalAlpha = 1 - k; drawA(c); c.globalCompositeOperation = 'lighter'; c.globalAlpha = k; drawB(c);
+  c.globalAlpha = 1; c.globalCompositeOperation = 'source-over';
+}
+const ease = x => x * x * (3 - 2 * x);
+function strip(c, name, pos, loop) {   // a float position through 8 frames: hold each drawing, then melt into the next
+  const i = Math.floor(pos) % 8, j = loop ? (i + 1) % 8 : Math.min(i + 1, 7), f = pos - Math.floor(pos);
+  mix(c, x => frame(x, name, i), x => frame(x, name, j), ease(Math.max(0, (f - .35) / .65)));
+}
+const audioLevel = () => {
+  if (mode !== 'speaking' || !analyser) return 0;
+  const d = new Uint8Array(analyser.frequencyBinCount); analyser.getByteFrequencyData(d);
+  return Math.min(1, d.reduce((a, b) => a + b, 0) / d.length / 90);
+};
+let botLvl = 0;
+function botTick() {
+  requestAnimationFrame(botTick);
+
+  if (document.hidden) return;
+  const now = Date.now(), t = now / 1000;
+  const want = mode === 'listening' ? 'listening' : mode === 'thinking' ? 'working'
+    : mode === 'speaking' || now < botReply ? 'talking' : chatOpen() ? 'reading' : '';
+  if (botPending > botAsked && !want && now > botActT) { botAct = 'approve'; botActT = now + BOT.approve * 1000; }   // something new waits for you: ask once
   botAsked = botPending;
-  botWas = want;
-  if (want) return botShow(want);
-  if (now < botActEnd) return botShow(botAct, null, true);
-  if (now > botNext && !reduce) {   // idle = still, looking at you, blinking; every 25-40 s one small act
-    botAct = ['wave', 'torch'][Math.random() * 2 | 0]; botActEnd = now + LOOP[botAct] * 1000; botNext = botActEnd + 25000 + Math.random() * 15000;
-    return botShow(botAct, null, true);
+  if (!want && now > botActT && now > botNext && !reduce) {   // idle: still, looking at you; every 25-40 s one small act
+    botAct = ['wave', 'torch'][Math.random() * 2 | 0]; botActT = now + BOT[botAct] * 1000; botNext = botActT + 25000 + Math.random() * 15000;
   }
-  botBlinkTick(now); botShow('still', now > botBlink ? 5 : 0);
-}, 100);
+  const mood = want || (now < botActT ? botAct : 'still');
+  if (mood !== botCur) {   // freeze what is on screen and melt from it into the new mood
+    const p = bufP.getContext('2d'); p.clearRect(0, 0, 560, 625); p.drawImage(bufA, 0, 0);
+    botCur = mood; botFrom = now;
+  }
+  if (now > botBlink + 200) botBlink = now + 2500 + Math.random() * 5500;
+  const blink = now > botBlink ? ease(1 - Math.abs((now - botBlink) / 100 - 1)) : 0;   // 200 ms: shut and open
+  botLvl += (audioLevel() - botLvl) * .25;
+  const a = bufA.getContext('2d');
+  if (mood === 'still' || mood === 'talking') {
+    const talk = mood === 'talking';
+    const tilt = reduce ? 0 : talk ? (Math.sin(t * 5.3) * .025 + Math.sin(t * 2.1) * .02) * (.6 + botLvl * 1.6) - botLvl * .03
+      : Math.sin(t * .7) * .018 + Math.sin(t * .23) * .012;   // idle: the head drifts a little, like it is thinking
+    mix(a, x => frame(x, 'still', 0, tilt), x => frame(x, 'still', 5, tilt), blink);
+  } else if (mood === 'reading') mix(a, x => frame(x, 'reading', 0), x => frame(x, 'reading', 5), blink);
+  else {
+    const el = (now - botFrom) / 1000 / BOT[mood] * 8, loop = mood === 'listening' || mood === 'working';
+    strip(a, mood, loop ? el % 8 : Math.min(el, 7.999), loop);
+  }
+  const k = Math.min(1, (now - botFrom) / 350);
+  const b = bufB.getContext('2d');
+  if (k < 1) mix(b, x => x.drawImage(bufP, 0, 0), x => x.drawImage(bufA, 0, 0), ease(k));
+  const src = k < 1 ? bufB : bufA;
+  botCx.setTransform(1, 0, 0, 1, 0, 0); botCx.clearRect(0, 0, 560, 625);
+  const sway = reduce ? 0 : Math.sin(t * .9) * .006 + Math.sin(t * .37) * .004;   // a breath of sway around the waist
+  const breath = reduce ? 1 : 1 + Math.sin(t * 1.6) * .004;
+  botCx.translate(280, 625); botCx.rotate(sway); botCx.scale(1, breath); botCx.translate(-280, -625);
+  botCx.drawImage(src, 0, 0);
+}
+requestAnimationFrame(botTick);
+
+// agent cards lean toward the pointer, the glint follows it
+document.querySelectorAll('.cards').forEach(box => {
+  box.addEventListener('pointermove', e => {
+    const c = e.target.closest('.card.agent'); if (!c || reduce || e.pointerType !== 'mouse') return;
+    const r = c.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+    c.style.setProperty('--mx', `${x * 100}%`); c.style.setProperty('--my', `${y * 100}%`);
+    c.style.setProperty('--ry', `${(x - .5) * 14}deg`); c.style.setProperty('--rx', `${(.5 - y) * 12}deg`);
+  });
+  box.addEventListener('pointerout', e => { const c = e.target.closest('.card.agent'); if (c && !c.contains(e.relatedTarget)) ['--rx', '--ry'].forEach(p => c.style.removeProperty(p)); });
+});
 
 var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches || PREFS.calm;
 
