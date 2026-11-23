@@ -20,6 +20,14 @@
     - **Lean:** make viewer curious. Give a proof or stat, a pain point or wanted benefit, or something shocking or unexpected. This opens the curiosity loop. Test: read the first 1-2 sentences alone. Is the context clear, and does it pull you in?
     - **Contrarian snapback:** pull them away from the direction they were leaning, like yanking a fish hook the other way. Context, lean, then snap to a different path.
 
+15. **Text hook (title text) guide, from @kallawaymarketing (10th video).** The on-screen title text matters as much as the spoken hook.
+    - **Six categories:** Outcome, Video Subject, Core Takeaway, Core Question, Series Name, Labels.
+    - **Formula:** a subject plus one of three components: pain point reminder, dream outcome teaser, or future state change.
+    - **Be specific:** "22 days" beats "a few weeks". "$2,700" beats "a couple thousand".
+    - **Use power words:** 1-3 word phrases that grab attention. Mine them from top videos in your niche.
+    - **Cut filler:** no generic or transition words (and, but, therefore). No punctuation except parentheses and quotes.
+    - **Design:** very readable font (Reels or CapCut system font is fine). Place about a third down from the top, clear of eyes and mouth. Max 2 lines. Break lines where the phrasing splits naturally, never between words read together.
+
 ## Script template (Reels / Shorts, 15-45s)
 | Time | Part | What to do |
 |---|---|---|
@@ -52,6 +60,12 @@ CTA:           "Follow for [niche promise]." Cut so the end flows into the start
 [CONTEXT, said + shown + written]  "Here's how to [result] in [topic]."
 [LEAN]                             "[Proof/stat/pain point] ..."
 [SNAPBACK]                         "But it's not [what they expect], it's [opposite]."
+```
+
+## Text hook formula (fill in)
+```
+TITLE TEXT (max 2 lines, 1/3 down): [specific number] + [power word] + [pain point | dream outcome | future state]
+Example: "Gain 10K followers in 22 days (no ads)"
 ```
 
 ## How these were watched
