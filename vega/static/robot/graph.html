@@ -10,7 +10,7 @@
   :root { --bg: #0E0D12; --ink: #F4EDE4; --dim: rgba(244,237,228,.6); --or: #EF8746; --glass: rgba(30,27,34,.62); --edge: rgba(255,255,255,.14); }
   * { box-sizing: border-box; }
   html, body { margin: 0; height: 100%; background: var(--bg); color: var(--ink); font-family: Archivo, system-ui, sans-serif; overflow: hidden; }
-  #bg { position: fixed; inset: -12%; background: url(/static/robot/orb.webp) center / auto 92% no-repeat; opacity: .26; mix-blend-mode: screen; will-change: transform; pointer-events: none; }
+  #bg { position: fixed; inset: 0; width: 100%; height: 100%; pointer-events: none; }
   #g { position: fixed; inset: 0; }
   .glass { background: var(--glass); -webkit-backdrop-filter: blur(18px) saturate(1.4); backdrop-filter: blur(18px) saturate(1.4); border: 1px solid var(--edge); box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 24px 48px -16px rgba(0,0,0,.6); }
   header { position: fixed; top: 16px; left: 16px; right: 16px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; pointer-events: none; z-index: 2; }
@@ -44,7 +44,7 @@
 <script>if (window.EMBED) document.write("<style>#back{display:none}header{padding-right:64px}</style>")</script>
 </head>
 <body>
-<div id="bg"></div>
+<canvas id="bg"></canvas>
 <div id="g" aria-label="3D map of Neesmo's code. Drag to rotate, scroll to zoom, click a dot for details."></div>
 <header>
   <a class="pill glass" id="back" href="/">← Neesmo</a>
@@ -112,10 +112,31 @@ const PAL = ['#EF8746', '#7FD6A4', '#F2C14E', '#6FA8FF', '#F27C9B', '#B79CFF', '
   $('#search').addEventListener('keydown', e => { if (e.key === 'Enter' && hits && hits.size) pick(byId[[...hits][0]]); });
   addEventListener('keydown', e => { if (e.key === 'Escape') $('#close').click(); });
   addEventListener('resize', () => G.width(innerWidth).height(innerHeight));
-  // faded orb behind the graph drifts and scales as the camera orbits
-  const bg = $('#bg'), cam = () => { const c = G.cameraPosition(), h = Math.hypot(c.x, c.z) || 1, d = Math.hypot(c.x, c.y, c.z) || 1;
-    bg.style.transform = `translate(${(-Math.atan2(c.x, c.z) * 160).toFixed(1)}px, ${(Math.atan2(c.y, h) * 160).toFixed(1)}px) scale(${(1 + Math.min(d, 1200) / 2400).toFixed(3)})`; };
-  G.controls().addEventListener('change', cam); cam();
+  // a dotted sphere around the graph, seen from inside (only the far wall shows); it ripples and turns slowly
+  G.controls().maxDistance = 1000;
+  fetch('/static/robot/three.min.js').then(r => r.text()).then(txt => { const ex = {}; new Function('exports', 'module', txt)(ex, { exports: ex }); const THREE = ex;
+  const cv = $('#bg'), R = 1600, N = 14000;
+    const rn = new THREE.WebGLRenderer({ canvas: cv, alpha: true, antialias: true }); rn.setPixelRatio(Math.min(devicePixelRatio, 2));
+    const sc = new THREE.Scene(), bc = new THREE.PerspectiveCamera(40, 1, 10, 6000);
+    const pos = new Float32Array(N * 3), ph = new Float32Array(N), ga = Math.PI * (3 - Math.sqrt(5));
+    for (let i = 0; i < N; i++) { const y = 1 - 2 * (i + .5) / N, r = Math.sqrt(1 - y * y), t = i * ga; pos.set([Math.cos(t) * r, y, Math.sin(t) * r], i * 3); ph[i] = Math.random(); }
+    const geo = new THREE.BufferGeometry(); geo.setAttribute('position', new THREE.BufferAttribute(pos, 3)); geo.setAttribute('ph', new THREE.BufferAttribute(ph, 1));
+    const mat = new THREE.ShaderMaterial({ transparent: true, depthWrite: false, blending: THREE.AdditiveBlending, uniforms: { t: { value: 0 }, R: { value: R }, k: { value: rn.getPixelRatio() } },
+      vertexShader: `attribute float ph; uniform float t, R, k; varying float a;
+        void main() { vec3 d = position;
+          float w = sin(d.x * 5. + t * .5) * sin(d.y * 4. - t * .4) + sin(d.z * 6. + d.y * 3. + t * .35) * .6;
+          float rr = R * (1. + .05 * w); vec4 mv = modelViewMatrix * vec4(d * rr, 1.);
+          a = .22 + .4 * (.5 + .5 * sin(t * 1.4 + ph * 40.)) * ph + .22 * smoothstep(.2, 1., w * .5 + .5);
+          gl_PointSize = k * (2.8 + 2.6 * ph); gl_Position = projectionMatrix * mv; }`,
+      fragmentShader: `varying float a; void main() { float d = length(gl_PointCoord - .5); if (d > .5) discard; gl_FragColor = vec4(.93, .9, .86, a * (1. - d * 1.6)); }` });
+    const orb = new THREE.Points(geo, mat); sc.add(orb);
+    const fit = () => { rn.setSize(innerWidth, innerHeight, false); bc.aspect = innerWidth / innerHeight; bc.updateProjectionMatrix(); };
+    fit(); addEventListener('resize', fit);
+    const still = matchMedia('(prefers-reduced-motion: reduce)').matches;
+    (function loop(ms) { const gc = G.camera(); bc.fov = gc.fov; bc.position.copy(gc.position); bc.quaternion.copy(gc.quaternion); bc.updateProjectionMatrix();
+      if (!still) { mat.uniforms.t.value = ms / 1000; orb.rotation.y = ms / 90000; orb.rotation.x = Math.sin(ms / 40000) * .12; }
+      rn.render(sc, bc); requestAnimationFrame(loop); })(0);
+  });
   // a slow turn until you touch it
   let spin = !matchMedia('(prefers-reduced-motion: reduce)').matches, ang;
   ['pointerdown', 'wheel'].forEach(ev => $('#g').addEventListener(ev, () => spin = false, { once: true }));
