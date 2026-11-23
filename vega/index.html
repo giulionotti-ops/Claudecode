@@ -350,7 +350,8 @@
   /* the robot: upper body only, cut off by the screen edge (desktop) or standing behind the cards (phone) */
   #bot { position: fixed; right: 0; bottom: calc(196px + env(safe-area-inset-bottom)); width: min(86vw, 420px); aspect-ratio: 560 / 625; overflow: hidden; pointer-events: none; z-index: 1; filter: drop-shadow(-14px 20px 18px rgba(60,35,20,.28)); }
   #bot canvas { width: 100%; height: 100%; display: block; }
-  @media (max-width: 900px) { #bot { -webkit-mask-image: linear-gradient(#000 80%, transparent); mask-image: linear-gradient(#000 80%, transparent); } }
+  #bot { --fadeL: linear-gradient(to right, transparent, #000 16%); -webkit-mask-image: var(--fadeL); mask-image: var(--fadeL); }   /* the sprite is cropped at the box edge: fade it so its shadow has no hard vertical cut */
+  @media (max-width: 900px) { #bot { -webkit-mask-image: var(--fadeL), linear-gradient(#000 80%, transparent); mask-image: var(--fadeL), linear-gradient(#000 80%, transparent); -webkit-mask-composite: source-in; mask-composite: intersect; } }
   html.robot #status.quiet { visibility: hidden; }
   html.robot #wordmark { top: calc(84px + env(safe-area-inset-top)); translate: none; transform: translateX(-50%); font-size: min(21vw, 320px); z-index: 0; }
   html.robot #status { top: auto; left: 16px; right: auto; bottom: calc(196px + min(86vw, 420px) * .9 + env(safe-area-inset-bottom)); z-index: 2; padding: 10px 16px; border-radius: 18px 18px 18px 6px; max-width: 60vw;
@@ -1505,13 +1506,24 @@ function miniTick(now, t) {
   c.drawImage(mSm, 0, 0);
   
 }
+function listenPose(c, k) {   // frame 2 of the listening strip, held; the eyes squash shut for a blink
+  const img = botImgs.listening; if (!img.complete) return;
+  c.drawImage(img, 2 * 560, 0, 560, 625, 0, 0, 560, 625);
+  if (k <= 0) return;
+  for (const [ex, ey, rx, ry] of [[121, 203, 40, 60], [229, 165, 50, 64]]) {   // each eye: dark patch, then the eye squashed flat inside it
+    const h = ry * 2 * (1 - k * .9);
+    c.save(); c.beginPath(); c.ellipse(ex, ey, rx, ry, 0, 0, 7); c.clip();
+    c.globalCompositeOperation = 'source-atop'; c.fillStyle = '#2a1114'; c.fillRect(ex - rx, ey - ry, rx * 2, ry * 2);
+    c.drawImage(img, 2 * 560 + ex - rx, ey - ry, rx * 2, ry * 2, ex - rx, ey - h / 2, rx * 2, h); c.restore();
+  }
+}
 function botTick() {
   requestAnimationFrame(botTick);
 
   if (document.hidden) return;
   const now = Date.now(), t = now / 1000;
-  const want = mode === 'thinking' ? 'working'
-    : mode === 'speaking' || now < botReply ? 'talking' : chatOpen() || mode === 'listening' ? 'reading' : '';
+  const want = mode === 'listening' ? 'listening' : mode === 'thinking' ? 'working'
+    : mode === 'speaking' || now < botReply ? 'talking' : chatOpen() ? 'reading' : '';
   if (botPending > botAsked && !want && now > botActT) { botAct = 'approve'; botActT = now + BOT.approve * 1000; }   // something new waits for you: ask once
   botAsked = botPending;
   const mood = want || (now < botActT ? botAct : 'still');
@@ -1528,7 +1540,8 @@ function botTick() {
     const tilt = reduce ? 0 : talk ? (Math.sin(t * 5.3) * .025 + Math.sin(t * 2.1) * .02) * (.6 + botLvl * 1.6) - botLvl * .03
       : Math.sin(t * .7) * .018 + Math.sin(t * .23) * .012;   // idle: the head drifts a little, like it is thinking
     mix(a, x => frame(x, 'still', 0, tilt), x => frame(x, 'still', 5, tilt), blink);
-  } else if (mood === 'reading') mix(a, x => frame(x, 'reading', 0), x => frame(x, 'reading', 5), blink);
+  } else if (mood === 'listening') listenPose(a, blink);   // hand at the ear, held still; blink and sway only
+  else if (mood === 'reading') mix(a, x => frame(x, 'reading', 0), x => frame(x, 'reading', 5), blink);
   else {
     const el = (now - botFrom) / 1000 / BOT[mood] * 8, loop = mood === 'listening' || mood === 'working';
     strip(a, mood, loop ? el % 8 : Math.min(el, 7.999), loop);
