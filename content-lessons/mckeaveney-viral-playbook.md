@@ -15,6 +15,11 @@
 12. **Mix content goals.** Some videos for views, some for follows, some for sales. Find the missing one and fix it.
 13. **Branding and CTA.** Every video ends with a clear reason to follow ("content worth stealing"). Product CTA only after the open loop is set.
 
+14. **Triple hook method (9th reel).** Three beats in the first 1-2 sentences:
+    - **Context:** say, show and write what the video is about, immediately. Delaying context even to the back half of the first sentence raises skip rate sharply. Use audio, visuals and text together.
+    - **Lean:** make viewer curious. Give a proof or stat, a pain point or wanted benefit, or something shocking or unexpected. This opens the curiosity loop. Test: read the first 1-2 sentences alone. Is the context clear, and does it pull you in?
+    - **Contrarian snapback:** pull them away from the direction they were leaning, like yanking a fish hook the other way. Context, lean, then snap to a different path.
+
 ## Script template (Reels / Shorts, 15-45s)
 | Time | Part | What to do |
 |---|---|---|
@@ -42,5 +47,12 @@ CTA:           "Follow for [niche promise]." Cut so the end flows into the start
 - **YouTube Shorts:** same structure, hook visible in the first 1s, retention graph in Studio shows where to fix.
 - **YouTube long form:** same hook, buildup, payoff idea. Re-hook every 30-60s.
 
-## Source reels not analysed
-- https://www.instagram.com/reel/Df6finpMjlX/ (out of Contendeo credits)
+## Hook line formula (fill in)
+```
+[CONTEXT, said + shown + written]  "Here's how to [result] in [topic]."
+[LEAN]                             "[Proof/stat/pain point] ..."
+[SNAPBACK]                         "But it's not [what they expect], it's [opposite]."
+```
+
+## How these were watched
+8 reels via Contendeo transcripts. 9th (screen recording) via ElevenLabs speech-to-text on extracted audio. Gemini key was out of prepaid credits. Instagram blocks downloads from the cloud IP (429), so reels must be uploaded as files.
