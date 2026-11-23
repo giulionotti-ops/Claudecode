@@ -1513,6 +1513,7 @@ function miniTick(now, t) {
 }
 function listenPose(c, k) {   // frame 2 of the listening strip, held; the eyes squash shut for a blink
   const img = botImgs.listening; if (!img.complete) return;
+  c.clearRect(0, 0, 560, 625);   // the buffer still holds the last mood: wipe it or the two robots stack
   c.drawImage(img, 2 * 560, 0, 560, 625, 0, 0, 560, 625);
   if (k <= 0) return;
   for (const [ex, ey, rx, ry] of [[121, 203, 40, 60], [229, 165, 50, 64]]) {   // each eye: dark patch, then the eye squashed flat inside it
