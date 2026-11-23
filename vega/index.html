@@ -422,11 +422,12 @@
   #report .rp > header h2 { font-size: 20px; color: var(--c); }
   #report .rp > header h2::before { content: ""; display: inline-block; width: 11px; height: 11px; border-radius: 50%; background: var(--a); margin-right: 9px; box-shadow: 0 0 0 3px color-mix(in srgb, var(--a) 30%, transparent); }
   #r-sub { font-size: 12.5px; color: rgba(43,29,20,.75); }
-  #report #r-mini { position: static; inset: auto; width: 78px; height: 82px; flex: none; margin: -22px 0 -12px; align-self: flex-end; filter: drop-shadow(0 6px 6px rgba(43,29,20,.25)); pointer-events: none; }
+  #report .rfoot { position: relative; min-height: 60px; align-items: flex-end; padding-right: 76px; }
+  #report #r-mini { position: absolute; inset: auto 0 -6px auto; width: 66px; height: 69px; filter: drop-shadow(0 6px 6px rgba(43,29,20,.25)); pointer-events: none; }
   #report .thread p.bot { color: var(--c); background: rgba(255,255,255,.6); border: 1px solid rgba(43,29,20,.12); border-left: 4px solid var(--a); border-radius: 6px 16px 16px 16px; padding: 10px 14px; max-width: 92%; font-size: 15px; }
   #report .thread p.you { font-size: 15px; color: var(--c); background: color-mix(in srgb, var(--a) 28%, #fff); }
   #report .thread { border-top: 0; }
-  @media (max-width: 700px) { #report #r-mini { width: 64px; height: 67px; margin: -16px 0 -10px; } #report .rp > header h2 { font-size: 17px; } }
+  @media (max-width: 700px) { #report .rp > header h2 { font-size: 17px; } }
 </style>
 </head>
 <body class="boot">
@@ -533,7 +534,7 @@
   </form>
 </div></dialog>
 <dialog id="report" aria-labelledby="r-name"><div class="rp">
-  <header><div><h2 id="r-name">Agent</h2><small id="r-sub"></small></div><canvas id="r-mini" width="200" height="210" aria-hidden="true"></canvas><button type="button" id="r-gear" aria-label="Agent settings" title="Agent settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button><button type="button" id="r-close" aria-label="Close">✕</button></header>
+  <header><div><h2 id="r-name">Agent</h2><small id="r-sub"></small></div><button type="button" id="r-gear" aria-label="Agent settings" title="Agent settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3.2"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button><button type="button" id="r-close" aria-label="Close">✕</button></header>
   <details id="r-more"><summary>Details</summary>
     <div class="strip" id="r-strip"></div>
     <div class="kpis" id="r-kpis"></div>
@@ -552,7 +553,7 @@
     <textarea id="r-q" rows="1" placeholder="Reply…" aria-label="Message for this agent"></textarea>
     <button type="submit" id="r-send">Send</button>
   </form>
-  <div class="rfoot"><button type="button" id="r-new">New thread</button><span class="rlink" id="r-link"></span><button type="button" id="r-stop" hidden>Stop</button></div>
+  <div class="rfoot"><canvas id="r-mini" width="200" height="210" aria-hidden="true"></canvas><button type="button" id="r-new">New thread</button><span class="rlink" id="r-link"></span><button type="button" id="r-stop" hidden>Stop</button></div>
 </div></dialog>
 <div id="welcome" hidden aria-hidden="true"></div>
 <div id="status" class="quiet" role="status" aria-live="polite">Standby</div>
@@ -883,7 +884,7 @@ async function openReport(id) {
     const r = await (await api('/api/agents/' + encodeURIComponent(id))).json(); if (reportFor !== id) return;
     const t = r.today || {}, g = r.git || {}, ctxPct = Math.min(100, Math.round((r.context_tokens || 0) / 1e6 * 100));
     $('#report').style.setProperty('--a', AGENT_COLORS[r.id] || '#3dff8f');
-    if ($('#r-mini').dataset.k !== r.id + (AGENT_COLORS[r.id] || '')) { $('#r-mini').dataset.k = r.id + (AGENT_COLORS[r.id] || ''); miniBot(r.id, AGENT_COLORS[r.id] || '#3dff8f'); }
+    setMini(r.id, AGENT_COLORS[r.id] || '#3dff8f', r.status === 'working');
     $('#r-name').textContent = AGENT_DEV.has(r.id) ? `${AGENT_SHORT[r.id]} (in development)` : r.name;
     $('#r-sub').innerHTML = `<span class="st ${esc(r.status)}">${esc(r.status)}</span> · ${esc(r.role)} · last active ${esc(r.last_active_ago || '—')}${r.model ? ' · ' + esc(r.model) : ''}`;
     const last = (g.commits || [])[0], now = (r.requests || [])[0];
@@ -1439,33 +1440,58 @@ const audioLevel = () => {
 };
 let botLvl = 0;
 
-// ── mini Neesmo in the agent chat: tinted in the agent's colour, each with its own disguise ──
+// ── mini Neesmo in the agent chat: the same frames, sway and blink as the big one; only the orange becomes the agent's colour; each wears a disguise ──
 const DISGUISE = ['stache', 'tophat', 'cap', 'stache+beret', 'cowboy', 'beret'];
-function miniBot(id, color) {
-  const cv = $('#r-mini'), img = botImgs.still; if (!cv || !img) return;
-  const draw = () => {
-    const W = 460, H = 480, cx = cv.getContext('2d'), t = off(), tx = t.getContext('2d');
-    cv.width = 200; cv.height = 210; tx.clearRect(0, 0, 560, 625);
-    tx.drawImage(img, 0, 0, 560, 625, 0, 0, 560, 625);
-    tx.globalCompositeOperation = 'color'; tx.fillStyle = color; tx.fillRect(0, 0, 560, 625);
-    tx.globalCompositeOperation = 'destination-in'; tx.drawImage(img, 0, 0, 560, 625, 0, 0, 560, 625);
-    cx.clearRect(0, 0, 200, 210); cx.drawImage(t, 0, -50, W, H, 0, 0, 200, 210);
-    cx.save(); cx.scale(200 / 460, 200 / 460); cx.translate(0, 50);   // disguise drawn in the 560x625 frame
-    const kind = DISGUISE[[...id].reduce((a, c) => a + c.charCodeAt(0), 0) % DISGUISE.length], ink = '#2B1D14';
-    const stache = () => { cx.save(); cx.translate(188, 238); cx.rotate(-.42); cx.fillStyle = ink; cx.beginPath();
-      cx.moveTo(0, -6); cx.bezierCurveTo(-20, -26, -62, -22, -72, 4); cx.bezierCurveTo(-48, -2, -26, 12, 0, 8);
-      cx.bezierCurveTo(26, 12, 48, -2, 72, 4); cx.bezierCurveTo(62, -22, 20, -26, 0, -6); cx.fill(); cx.restore(); };
-    const hat = (k) => { cx.save(); cx.translate(212, 72); cx.rotate(-.28); cx.fillStyle = ink;
-      if (k === 'tophat') { cx.fillRect(-46, -88, 92, 84); cx.beginPath(); cx.ellipse(0, -4, 84, 15, 0, 0, 7); cx.fill(); cx.fillStyle = color; cx.fillRect(-46, -24, 92, 14); }
-      else if (k === 'cap') { cx.fillStyle = color; cx.beginPath(); cx.ellipse(0, -8, 62, 46, 0, Math.PI, 0); cx.fill(); cx.fillStyle = ink; cx.fillRect(-72, -10, 150, 11); }
-      else if (k === 'cowboy') { cx.beginPath(); cx.ellipse(0, -4, 100, 18, 0, 0, 7); cx.fill(); cx.beginPath(); cx.moveTo(-52, -4); cx.quadraticCurveTo(-48, -78, -10, -66); cx.quadraticCurveTo(18, -80, 52, -4); cx.fill(); cx.fillStyle = color; cx.fillRect(-52, -22, 104, 9); }
-      else { cx.fillStyle = color; cx.beginPath(); cx.ellipse(0, -14, 76, 28, 0, 0, 7); cx.fill(); cx.fillStyle = ink; cx.fillRect(-4, -50, 8, 14); }
-      cx.restore(); };
-    if (kind.includes('stache')) stache();
-    if (kind !== 'stache') hat(kind.split('+')[1] || kind);
-    cx.restore();
-  };
-  img.complete ? draw() : (img.onload = draw);
+const mini = { id: '', color: '', hue: 0, sat: 1, kind: '', working: false, blink: Date.now() + 2000, last: 0, from: Date.now(), cur: '' };
+const mBig = off(), mSm = Object.assign(document.createElement('canvas'), { width: 200, height: 210 });
+const mBufs = [off(), off(), off()];
+function rgb2hsv(r, g, b) { const m = Math.max(r, g, b), d = m - Math.min(r, g, b); let h = 0;
+  if (d) h = m === r ? ((g - b) / d + 6) % 6 : m === g ? (b - r) / d + 2 : (r - g) / d + 4; return [h * 60, m ? d / m : 0, m / 255]; }
+function hsv2rgb(h, s, v) { const f = n => { const k = (n + h / 60) % 6; return v - v * s * Math.max(0, Math.min(k, 4 - k, 1)); }; return [f(5) * 255, f(3) * 255, f(1) * 255]; }
+function setMini(id, color, working) {
+  const hex = color.replace('#', ''), full = hex.length === 3 ? hex.replace(/./g, '$&$&') : hex;
+  const n = parseInt(full, 16), [h, sa] = rgb2hsv(n >> 16 & 255, n >> 8 & 255, n & 255);
+  if (mini.id !== id || mini.color !== color) Object.assign(mini, { id, color, hue: h, sat: Math.max(.45, sa), kind: DISGUISE[[...id].reduce((a, c) => a + c.charCodeAt(0), 0) % DISGUISE.length] });
+  mini.working = !!working;
+}
+function disguise(c, tilt) {
+  const ink = '#2B1D14', color = mini.color, kind = mini.kind;
+  c.save(); c.translate(265, 258); c.rotate(tilt); c.translate(-265, -258);
+  if (kind.includes('stache')) { c.save(); c.translate(188, 238); c.rotate(-.42); c.fillStyle = ink; c.beginPath();
+    c.moveTo(0, -6); c.bezierCurveTo(-20, -26, -62, -22, -72, 4); c.bezierCurveTo(-48, -2, -26, 12, 0, 8);
+    c.bezierCurveTo(26, 12, 48, -2, 72, 4); c.bezierCurveTo(62, -22, 20, -26, 0, -6); c.fill(); c.restore(); }
+  if (kind !== 'stache') { const k = kind.split('+')[1] || kind; c.save(); c.translate(212, 72); c.rotate(-.28); c.fillStyle = ink;
+    if (k === 'tophat') { c.fillRect(-46, -88, 92, 84); c.beginPath(); c.ellipse(0, -4, 84, 15, 0, 0, 7); c.fill(); c.fillStyle = color; c.fillRect(-46, -24, 92, 14); }
+    else if (k === 'cap') { c.fillStyle = color; c.beginPath(); c.ellipse(0, -8, 62, 46, 0, Math.PI, 0); c.fill(); c.fillStyle = ink; c.fillRect(-72, -10, 150, 11); }
+    else if (k === 'cowboy') { c.beginPath(); c.ellipse(0, -4, 100, 18, 0, 0, 7); c.fill(); c.beginPath(); c.moveTo(-52, -4); c.quadraticCurveTo(-48, -78, -10, -66); c.quadraticCurveTo(18, -80, 52, -4); c.fill(); c.fillStyle = color; c.fillRect(-52, -22, 104, 9); }
+    else { c.fillStyle = color; c.beginPath(); c.ellipse(0, -14, 76, 28, 0, 0, 7); c.fill(); c.fillStyle = ink; c.fillRect(-4, -50, 8, 14); }
+    c.restore(); }
+  c.restore();
+}
+function miniTick(now, t) {
+  const cv = $('#r-mini'); if (!cv || !$('#report').open || !botImgs.still.complete || now - mini.last < 33) return; mini.last = now;
+  const mood = mini.working ? 'working' : 'still';
+  if (mood !== mini.cur) { mini.cur = mood; mini.from = now; }
+  if (now > mini.blink + 200) mini.blink = now + 2500 + Math.random() * 5500;
+  const blink = now > mini.blink ? ease(1 - Math.abs((now - mini.blink) / 100 - 1)) : 0;
+  const a = mBig.getContext('2d'); let tilt = 0;
+  if (mood === 'working') { const el = (now - mini.from) / 1000 / BOT.working * 8; strip(a, 'working', el % 8, true); }
+  else { tilt = reduce ? 0 : Math.sin(t * .7) * .018 + Math.sin(t * .23) * .012; mix(a, x => frame(x, 'still', 0, tilt), x => frame(x, 'still', 5, tilt), blink); }
+  const sm = mSm.getContext('2d', { willReadFrequently: true }); sm.clearRect(0, 0, 200, 210); sm.drawImage(mBig, 0, -50, 460, 480, 0, 0, 200, 210);
+  const im = sm.getImageData(0, 0, 200, 210), d = im.data;
+  for (let i = 0; i < d.length; i += 4) {
+    if (d[i + 3] < 8) continue;
+    const [h, s, v] = rgb2hsv(d[i], d[i + 1], d[i + 2]);
+    if (h > 55 && h < 345 || s < .4 || v < .3) continue;   // eyes, metal, shadows stay; only the orange family moves
+    const hh = (h > 300 ? h - 360 : h) - 25, r = hsv2rgb((mini.hue + hh * .5 + 360) % 360, Math.min(1, s * (mini.sat + .25)), v);
+    d[i] = r[0]; d[i + 1] = r[1]; d[i + 2] = r[2];
+  }
+  sm.putImageData(im, 0, 0);
+  const c = cv.getContext('2d'); c.setTransform(1, 0, 0, 1, 0, 0); c.clearRect(0, 0, 200, 210);
+  const sway = reduce ? 0 : Math.sin(t * .9) * .006 + Math.sin(t * .37) * .004, br = reduce ? 1 : 1 + Math.sin(t * 1.6) * .004;
+  c.translate(100, 210); c.rotate(sway); c.scale(1, br); c.translate(-100, -210);
+  c.drawImage(mSm, 0, 0);
+  c.save(); c.scale(200 / 460, 200 / 460); c.translate(0, 50); disguise(c, tilt); c.restore();
 }
 function botTick() {
   requestAnimationFrame(botTick);
@@ -1504,6 +1530,7 @@ function botTick() {
   const breath = reduce ? 1 : 1 + Math.sin(t * 1.6) * .004;
   botCx.translate(280, 625); botCx.rotate(sway); botCx.scale(1, breath); botCx.translate(-280, -625);
   botCx.drawImage(src, 0, 0);
+  miniTick(now, t);
 }
 requestAnimationFrame(botTick);
 

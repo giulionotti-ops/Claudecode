@@ -74,8 +74,8 @@ const PAL = ['#EF8746', '#7FD6A4', '#F2C14E', '#6FA8FF', '#F27C9B', '#B79CFF', '
     .nodeColor(n => hits && !hits.has(n.id) ? 'rgba(120,110,100,.25)' : sel && n !== sel && !(nb[sel.id] || []).some(([id]) => id === n.id) ? 'rgba(120,110,100,.35)' : color[n.file])
     .nodeVisibility(visible)
     .linkVisibility(l => visible(l.source.id ? l.source : byId[l.source]) && visible(l.target.id ? l.target : byId[l.target]))
-    .linkColor(l => sel && (l.source === sel || l.target === sel) ? '#EF8746' : 'rgba(244,237,228,.3)')
-    .linkWidth(l => sel && (l.source === sel || l.target === sel) ? 1.2 : 0)
+    .linkColor(l => { const on = sel && (l.source === sel || l.target === sel); return on ? '#FFB27A' : sel ? 'rgba(244,237,228,.1)' : (color[(l.source.id ? l.source : byId[l.source]).file] || '#F4EDE4') + 'B0'; })
+    .linkWidth(l => sel && (l.source === sel || l.target === sel) ? 2.4 : sel ? 0.2 : 0.7).linkOpacity(.9)
     .linkDirectionalParticles(l => sel && (l.source === sel || l.target === sel) ? 3 : 0).linkDirectionalParticleWidth(2).linkDirectionalParticleColor(() => '#EF8746')
     .onNodeClick(pick).onBackgroundClick(() => { sel = null; $('#panel').classList.remove('on'); refresh(); });
   G.d3Force('charge').strength(-40);
