@@ -8586,9 +8586,9 @@
     "semantic_hash": ""
   },
   "vega/index.html": {
-    "mtime": 1795384762.9751124,
-    "seen": 1795384769.3722463,
-    "ast_hash": "9a6e4dbbf2f75cf9d9b77be9da8ac576",
+    "mtime": 1795413787.100312,
+    "seen": 1795413857.3917952,
+    "ast_hash": "27125a64534f49347b9dbe60e3946a5b",
     "semantic_hash": ""
   },
   "vega/requirements.txt": {
@@ -19320,15 +19320,15 @@
     "semantic_hash": ""
   },
   "vega/static/robot/approve.webp": {
-    "mtime": 1795384681.587412,
-    "seen": 1795384769.3740766,
-    "ast_hash": "d6f41c95d9e8a90a844fa2dbe01d79c2",
+    "mtime": 1795413726.1443553,
+    "seen": 1795413857.3938618,
+    "ast_hash": "6921600aaf10d12432f65ebe0aebb09a",
     "semantic_hash": ""
   },
   "vega/static/robot/done.webp": {
-    "mtime": 1795384681.5899737,
-    "seen": 1795384769.3740783,
-    "ast_hash": "4b7be17b71cd69a6bd4478ac6eba5f5d",
+    "mtime": 1795413726.332824,
+    "seen": 1795413857.3938637,
+    "ast_hash": "3f0c3ad23e7bf828673d5efec8e94bd0",
     "semantic_hash": ""
   },
   "vega/static/robot/hero_cut.webp": {
@@ -19338,45 +19338,39 @@
     "semantic_hash": ""
   },
   "vega/static/robot/listening.webp": {
-    "mtime": 1795384681.5800269,
-    "seen": 1795384769.3740816,
-    "ast_hash": "22419e17d88dcb59915038e770390d31",
+    "mtime": 1795413726.1390033,
+    "seen": 1795413857.3938668,
+    "ast_hash": "bb503aed07262a237fbf546100217666",
     "semantic_hash": ""
   },
   "vega/static/robot/reading.webp": {
-    "mtime": 1795384681.582429,
-    "seen": 1795384769.374086,
-    "ast_hash": "fef11619e3b99295d87424dac7d89996",
+    "mtime": 1795413838.732588,
+    "seen": 1795413857.3938682,
+    "ast_hash": "60865843122aaf5a3c14c270a6698f0b",
     "semantic_hash": ""
   },
   "vega/static/robot/still.webp": {
-    "mtime": 1795384681.5709689,
-    "seen": 1795384769.3740876,
-    "ast_hash": "f7445fbb1ae73568e42898616079ffdc",
+    "mtime": 1795413726.0684695,
+    "seen": 1795413857.3938704,
+    "ast_hash": "20203c0ed4b336edcc06481e59f43240",
     "semantic_hash": ""
   },
   "vega/static/robot/torch.webp": {
-    "mtime": 1795384681.577774,
-    "seen": 1795384769.3740892,
-    "ast_hash": "3aa61e94e36eefb46460025ec15c0f3b",
+    "mtime": 1795413726.1361904,
+    "seen": 1795413857.3938718,
+    "ast_hash": "487502da12e97365c0e53c7069783d16",
     "semantic_hash": ""
   },
   "vega/static/robot/wave.webp": {
-    "mtime": 1795384681.5752876,
-    "seen": 1795384769.3740902,
-    "ast_hash": "5261139e2ad50a5f8b54f36055661e65",
+    "mtime": 1795413726.128824,
+    "seen": 1795413857.393873,
+    "ast_hash": "895012d77a6e6686d56d93fcbaca7924",
     "semantic_hash": ""
   },
   "vega/static/robot/working.webp": {
-    "mtime": 1795384681.585118,
-    "seen": 1795384769.3740919,
-    "ast_hash": "2b357ee1c361f21a3d4c4771a1bcbe49",
-    "semantic_hash": ""
-  },
-  "vega/static/robot/look.webp": {
-    "mtime": 1795384681.5729663,
-    "seen": 1795384769.3740833,
-    "ast_hash": "06b48bcef607b3e70fdf1efcce843ef3",
+    "mtime": 1795413726.141786,
+    "seen": 1795413857.3938742,
+    "ast_hash": "391cc130d446b61c008ad44ffc42a2e6",
     "semantic_hash": ""
   }
 }
