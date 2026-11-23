@@ -112,7 +112,6 @@ def style_chalk(name, kind, seed):
     b.text(name, BW / 4, BH / 4 + size * 0.35, size, anchor="ms")
     w = b.text_width(name, size)
     b.underline(BW / 4 - w / 2, BW / 4 + w / 2, BH / 4 + size * 0.55)
-    b.arrow([(BW / 4 + w / 2 + 40, BH / 4 - 70), (BW / 4 + w / 2 + 110, BH / 4 - 10)], width=3.5)
     b.dust(0.6, specks=2500)
     return _as_img(b.composite()).resize((BW, BH), Image.LANCZOS)
 
@@ -152,8 +151,9 @@ def style_papercut(name, kind, seed):
     W, H = (AV, AV) if kind == "avatar" else (BW // 2, BH // 2)
     c = Collage(W, H, seed=seed)
     c.background("#232d66", texture="kraft")
-    r = min(W, H) * (0.36 if kind == "avatar" else 0.2)
-    cx = W / 2 if kind == "avatar" else W / 2 - SAFE[0] / 4 + r * 0.6
+    r = min(W, H) * (0.36 if kind == "avatar" else 0.17)
+    # banner: title gets the whole safe box; the sun sits at the left edge (may crop on phones)
+    cx = W / 2 if kind == "avatar" else r + 24
     c.piece(mask=c.circle_mask(cx, H / 2, r), colour="#f6d77a", texture="crayon")
     if kind == "banner":
         c.face(cx, H / 2 + r * 0.05, r * 0.85, mood="smile")
@@ -166,8 +166,9 @@ def style_papercut(name, kind, seed):
         d.text((W / 2, H / 2 + 4), t, font=f, fill="#232d66", anchor="mm")
     if kind == "banner":
         d = ImageDraw.Draw(img)
-        size = _fit(name, int(SAFE[0] / 2 - r * 2 - 60), 150)
-        d.text((cx + r + 40, H / 2), name, font=_font(size), fill="#fbf3e4", anchor="lm")
+        size = _fit(name, SAFE[0] // 2 - 80, 130)
+        d.text((W / 2 + 6, H / 2 + 6), name, font=_font(size), fill="#141a40", anchor="mm")   # cut-paper shadow
+        d.text((W / 2, H / 2), name, font=_font(size), fill="#fbf3e4", anchor="mm")
         img = img.resize((BW, BH), Image.LANCZOS)
     return img
 
@@ -218,7 +219,7 @@ def style_watercolor(name, kind, seed):
     p.paper()
     av = kind == "avatar"
     p.gradient_wash(0, int(H * 0.62), top=hexc("#86b4d8"), bottom=hexc("#f7d4ae"), strength=0.8)
-    sx, sy, sr = (W * 0.5, H * 0.45, W * 0.27) if av else (W * 0.22, H * 0.38, H * 0.16)
+    sx, sy, sr = (W * 0.5, H * 0.45, W * 0.27) if av else (W * 0.12, H * 0.36, H * 0.16)
     p.glaze(p.blobs([(sx, sy, sr, sr)], rough=0.04, soft=3), hexc("#f2a65a"), 0.8, bloom=2)
     hy = H * (0.8 if av else 0.84)
     p.glaze(p.blobs([(W * 0.3, hy, W * 0.42, H * 0.16), (W * 0.78, hy + H * 0.02, W * 0.4, H * 0.15)], rough=0.12), hexc("#4f8a73"), 0.85, bloom=1)
