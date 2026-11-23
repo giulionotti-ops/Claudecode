@@ -8586,9 +8586,9 @@
     "semantic_hash": ""
   },
   "vega/index.html": {
-    "mtime": 1795450786.627156,
-    "seen": 1795458116.8145318,
-    "ast_hash": "827fa11945eae4aedc72ef49d4a8e77f",
+    "mtime": 1795458639.6957257,
+    "seen": 1795459148.6852913,
+    "ast_hash": "9842b8733d6b936d529567673115a98b",
     "semantic_hash": ""
   },
   "vega/requirements.txt": {
@@ -16188,9 +16188,9 @@
     "semantic_hash": ""
   },
   "site/index.html": {
-    "mtime": 1795439223.9479728,
-    "seen": 1795458116.8145146,
-    "ast_hash": "fdba9db52858e85b82a0cc5eb28362c2",
+    "mtime": 1795458964.5448234,
+    "seen": 1795459148.685281,
+    "ast_hash": "5ab4b6502de5b2fd7698b2389ed927d0",
     "semantic_hash": ""
   },
   "site/assets/icons/tmux.svg": {
@@ -19356,9 +19356,9 @@
     "semantic_hash": ""
   },
   "scripts/publish_update.py": {
-    "mtime": 1795457739.491062,
-    "seen": 1795458116.8114817,
-    "ast_hash": "0ea6c5d97c457a5916dd9522a622d858",
+    "mtime": 1795458264.1155896,
+    "seen": 1795459148.682458,
+    "ast_hash": "238b1acc64f76697ff9dd6450f1f1389",
     "semantic_hash": ""
   },
   "vega/private/graph.json": {
@@ -19434,9 +19434,9 @@
     "semantic_hash": ""
   },
   "vega/studio/routes.py": {
-    "mtime": 1795458009.9209726,
-    "seen": 1795458116.8119001,
-    "ast_hash": "1b7bee6c9bf25cc2d15a0677d51d8fdd",
+    "mtime": 1795458364.7443852,
+    "seen": 1795459148.682756,
+    "ast_hash": "83569b6e9b83b1639a891183adf33293",
     "semantic_hash": ""
   },
   "vega/studio/state.py": {
@@ -19458,9 +19458,9 @@
     "semantic_hash": ""
   },
   "vega/studio/update.py": {
-    "mtime": 1795457748.5030663,
-    "seen": 1795458116.8119066,
-    "ast_hash": "0795d1d173e94d3b2de20cdc1719c75f",
+    "mtime": 1795458273.835571,
+    "seen": 1795459148.6827638,
+    "ast_hash": "741af31d4559231665a260ad3c5d7c14",
     "semantic_hash": ""
   },
   "vega/studio/youtube.py": {
@@ -19515,6 +19515,12 @@
     "mtime": 1795439223.868973,
     "seen": 1795458116.8184066,
     "ast_hash": "b4c0375ca1a4b88ea05b145894bbaabe",
+    "semantic_hash": ""
+  },
+  "vega/static/studio.js": {
+    "mtime": 1795458997.0237284,
+    "seen": 1795459148.6827242,
+    "ast_hash": "7b3441409b71806db46d4035e7bf32ad",
     "semantic_hash": ""
   }
 }

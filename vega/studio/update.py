@@ -75,12 +75,12 @@ def check() -> dict:
 
 def _backup() -> Path:
     DIR.mkdir(parents=True, exist_ok=True)
-    out = DIR / f"backup-{version()}.tar.gz"
+    out = DIR / f"backup-{version()}-{state.now():%Y%m%d%H%M%S}.tar.gz"
     with tarfile.open(out, "w:gz") as t:
         for p in APP.iterdir():
             if p.name not in KEEP:
                 t.add(p, arcname=p.name, filter=lambda ti: None if "__pycache__" in ti.name else ti)
-    for old in sorted(DIR.glob("backup-*.tar.gz"))[:-3]:   # keep the last three
+    for old in sorted(DIR.glob("backup-*.tar.gz"), key=lambda f: f.stat().st_mtime)[:-3]:   # keep the last three
         old.unlink()
     return out
 
@@ -95,29 +95,11 @@ def apply() -> dict:
     if hashlib.sha256(data).hexdigest() != m["sha256"]:
         raise ValueError("the download does not match the signed update; nothing was changed")
     backup = _backup()
-    z = zipfile.ZipFile(io.BytesIO(data))
-    prefix = "neesmo/"
-    for info in z.infolist():
-        name = info.filename[len(prefix):] if info.filename.startswith(prefix) else info.filename
-        parts = Path(name).parts
-        if not name or info.is_dir() or not parts or parts[0] in KEEP or ".." in parts or name.startswith("/"):
-            continue
-        dest = APP / name
-        dest.parent.mkdir(parents=True, exist_ok=True)
-        dest.write_bytes(z.read(info))
-        mode = (info.external_attr >> 16) & 0o777
-        if mode:
-            dest.chmod(mode)
-    for rel in m.get("removed", []):   # files a release dropped
-        p = (APP / rel).resolve()
-        if p.is_file() and APP in p.parents and Path(rel).parts[0] not in KEEP:
-            p.unlink()
-    VERSION_FILE.write_text(m["version"] + "\n")
-    pip = APP / ".venv" / "bin" / "pip"
-    if pip.exists():
-        subprocess.run([str(pip), "install", "-q", "-r", str(APP / "requirements.txt")], timeout=900)
-    # new skills/tools from the manifest, then fresh role briefs and skill links in every channel
-    subprocess.run([sys.executable, "-m", "studio.install"], cwd=APP, timeout=1800)
+    try:
+        _install(zipfile.ZipFile(io.BytesIO(data)), m)
+    except Exception:
+        rollback()
+        raise
     try:
         import agents
         from . import channel
@@ -130,11 +112,48 @@ def apply() -> dict:
             "notes": m.get("notes", "")}
 
 
+def _install(z: zipfile.ZipFile, m: dict) -> None:
+    prefix = "neesmo/"
+    for info in z.infolist():
+        name = info.filename[len(prefix):] if info.filename.startswith(prefix) else info.filename
+        parts = Path(name).parts
+        if not name or info.is_dir() or not parts or parts[0] in KEEP or ".." in parts or name.startswith("/"):
+            continue
+        dest = APP / name
+        if dest.is_symlink():
+            dest.unlink()
+        dest.parent.mkdir(parents=True, exist_ok=True)
+        if APP.resolve() not in dest.resolve().parents:
+            continue
+        dest.write_bytes(z.read(info))
+        mode = (info.external_attr >> 16) & 0o777
+        if mode:
+            dest.chmod(mode)
+    for rel in m.get("removed", []):   # files a release dropped
+        p = (APP / rel).resolve()
+        if p.is_file() and APP in p.parents and Path(rel).parts[0] not in KEEP:
+            p.unlink()
+    pip = APP / ".venv" / "bin" / "pip"
+    if pip.exists():
+        subprocess.run([str(pip), "install", "-q", "-r", str(APP / "requirements.txt")], timeout=900, check=True)
+    # new skills/tools from the manifest (a missing optional tool is not fatal; install.py reports it)
+    subprocess.run([sys.executable, "-m", "studio.install"], cwd=APP, timeout=1800)
+    VERSION_FILE.write_text(m["version"] + "\n")   # last: only a finished update counts
+
+
 def rollback() -> dict:
-    backups = sorted(DIR.glob("backup-*.tar.gz"))
+    backups = sorted(DIR.glob("backup-*.tar.gz"), key=lambda f: f.stat().st_mtime)
     if not backups:
         return {"ok": False, "msg": "No backup to go back to."}
     with tarfile.open(backups[-1]) as t:
+        names = set(t.getnames())
+        for top in APP.iterdir():   # drop files the failed update added (never .venv or private)
+            if top.name in KEEP:
+                continue
+            for f in ([top] if top.is_file() else top.rglob("*")):
+                rel = f.relative_to(APP).as_posix()
+                if f.is_file() and rel not in names and "__pycache__" not in rel:
+                    f.unlink()
         t.extractall(APP, filter="data")
     return {"ok": True, "msg": f"Went back to {version()}."}
 

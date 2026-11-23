@@ -103,7 +103,10 @@ def _claude_mode(auto: bool) -> None:
     p = Path.home() / ".claude" / "settings.json"
     s = channel.read_json(p, {})
     s.setdefault("permissions", {})["defaultMode"] = "auto" if auto else "default"
-    channel.write_json(p, s)
+    tmp = p.with_suffix(".tmp")
+    p.parent.mkdir(parents=True, exist_ok=True)
+    tmp.write_text(json.dumps(s, indent=2))
+    os.replace(tmp, p)   # atomic: never leave a half-written settings file
 
 
 @router.post("/settings")
@@ -130,29 +133,31 @@ async def set_name(b: NameIn):
     name = re.sub(r"\s+", " ", b.name).strip()[:40]
     if not name:
         raise HTTPException(400, "pick a name")
-    state.save(channel_name=name, step="look", looks_ready=False)
+    state.save(channel_name=name, step="look", looks_ready=False, looks_error=None)
     LOOKS.mkdir(parents=True, exist_ok=True)
     banner = ["--banner"] if state.load()["edition"] == "youtube" else []
     seed = str(secrets.randbelow(9999))
 
     def draw():
-        r = subprocess.run([sys.executable, "-m", "studio.art", name, str(LOOKS), *banner, "--seed", seed],
-                           cwd=state.APP, capture_output=True, text=True, timeout=600)
+        looks, err = [], None
         try:
+            r = subprocess.run([sys.executable, "-m", "studio.art", name, str(LOOKS), *banner, "--seed", seed],
+                               cwd=state.APP, capture_output=True, text=True, timeout=600)
             looks = json.loads(r.stdout.strip().splitlines()[-1])
-        except (ValueError, IndexError):
-            looks = []
+        except Exception as e:
+            err = str(e)[:200]
         for x in looks:   # bust caches: a new name draws new pictures under the same file names
             x["v"] = seed
         channel.write_json(LOOKS / "looks.json", looks)
-        state.save(looks_ready=True)
+        state.save(looks_ready=True, looks_error=None if looks else (err or "Drawing failed. Try again."))
     asyncio.get_running_loop().run_in_executor(None, draw)
     return {"ok": True}
 
 
 @router.get("/looks")
 def looks():
-    return {"ready": state.load().get("looks_ready"), "looks": channel.read_json(LOOKS / "looks.json", [])}
+    s = state.load()
+    return {"ready": s.get("looks_ready"), "error": s.get("looks_error"), "looks": channel.read_json(LOOKS / "looks.json", [])}
 
 
 @router.get("/looks/{fname}")
@@ -257,6 +262,8 @@ def github_start():
     p = _gh.get("proc")
     if p is not None and p.poll() is None and _gh.get("code"):
         return {"code": _gh["code"], "url": "https://github.com/login/device"}
+    if p is not None and p.poll() is None:
+        p.kill()   # an old sign-in that never showed a code
     p = subprocess.Popen(["gh", "auth", "login", "--hostname", "github.com", "--git-protocol", "https", "--web"],
                          stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True,
                          env={**os.environ, "BROWSER": "true"})
@@ -273,7 +280,10 @@ def github_start():
                 p.stdin.flush()
             except OSError:
                 pass
+            import threading   # keep reading so gh never blocks on a full pipe while it waits for the owner
+            threading.Thread(target=lambda: [None for _ in p.stdout], daemon=True).start()
             return {"code": _gh["code"], "url": "https://github.com/login/device"}
+    p.kill()
     raise HTTPException(500, "GitHub did not give a code; try again.")
 
 
@@ -343,6 +353,14 @@ def channel_settings(aid: str, b: ChannelSettingsIn):
         ch["post_times"] = sorted({t for t in ch["post_times"] if re.fullmatch(r"([01]\d|2[0-3]):[0-5]\d", t)})[:6] or ["13:30"]
     if "videos_per_day" in ch:
         ch["videos_per_day"] = max(1, min(4, ch["videos_per_day"]))
+    if ch.get("timezone"):
+        try:
+            from zoneinfo import ZoneInfo
+            ZoneInfo(ch["timezone"])
+        except Exception:
+            raise HTTPException(400, "Unknown time zone. Use a name like Europe/Rome.")
+    if "format" in ch and ch["format"] not in ("short", "long"):
+        raise HTTPException(400, "format is short or long")
     if ch.get("auto_schedule") and state.in_trial(aid):
         raise HTTPException(409, f"Automatic scheduling unlocks after the {state.TRIAL_DAYS}-day trial week.")
     return state.save_channel(aid, **ch)
@@ -366,7 +384,10 @@ async def channel_inspiration(aid: str, file: UploadFile):
     name = re.sub(r"[^\w.\-]", "_", Path(file.filename or "image").name)[-80:]
     if not name.lower().endswith((".png", ".jpg", ".jpeg", ".webp", ".gif", ".mp4")):
         raise HTTPException(400, "images or short clips only")
-    data = await file.read(30 << 20)
+    data = await file.read((30 << 20) + 1)
+    if len(data) > 30 << 20:
+        raise HTTPException(413, "Max 30 MB.")
+    channel.paths(aid)["inspiration"].mkdir(parents=True, exist_ok=True)
     dest = channel.paths(aid)["inspiration"] / f"{dt.datetime.now():%Y%m%d-%H%M%S}-{name}"
     dest.write_bytes(data)
     channel.event(aid, "inspiration", f"New inspiration: {name}")
@@ -390,7 +411,11 @@ class TagIn(BaseModel):
 
 
 def mentions(text: str) -> list[dict]:
-    ids = {a["id"]: a for a in agents.load()}
+    ids = {}
+    for a in agents.load():   # @id or the card label (@shop)
+        ids[a["id"]] = a
+        if a.get("short"):
+            ids.setdefault(re.sub(r"[^a-z0-9-]", "", a["short"].lower()), a)
     out = []
     for m in re.findall(r"@([a-z0-9][a-z0-9-]{0,23})", text.lower()):
         if m in ids and ids[m] not in out:
@@ -422,12 +447,18 @@ async def update_check():
     return await asyncio.to_thread(update.check)
 
 
+def _busy() -> list[str]:
+    return [a["id"] for a in agents.load() if channel.is_channel(a) and pipeline.busy(a["id"])]
+
+
 @router.post("/update")
 async def update_apply():
+    if _busy():   # never cut a video in half; try again when the agents are idle
+        return {"ok": False, "msg": "A video is being made. Update again when it is done."}
     try:
         res = await asyncio.to_thread(update.apply)
     except Exception as e:
-        raise HTTPException(500, f"Update failed, nothing broken: {str(e)[:200]}")
+        raise HTTPException(500, f"Update failed, the old version was put back: {str(e)[:200]}")
     if res.get("ok") and res.get("backup"):
         asyncio.get_running_loop().call_later(1.5, update.restart)
     return res
@@ -442,7 +473,10 @@ def _notify_sync(kind: str, title: str, body: str, data: dict) -> None:
     if kind == "auto_schedule":   # a yes/no the owner answers in the review dialog
         kind, extra = "review", {"status": "pending", "studio": {"ask": "auto_schedule", "agent": data.get("agent")},
                                  "agent": data.get("agent"), "agent_name": data.get("agent")}
-    asyncio.run_coroutine_threadsafe(_notify(title, body, kind=kind, **extra), _loop).result(30)
+    try:
+        asyncio.run_coroutine_threadsafe(_notify(title, body, kind=kind, **extra), _loop).result(30)
+    except Exception as e:
+        print(f"studio notify: {e}", flush=True)
 
 
 def _review_sync(aid: str, v: dict) -> None:
@@ -459,6 +493,7 @@ def _review_sync(aid: str, v: dict) -> None:
         title, v.get("title") or f"Video {v['id']}", kind="review", status="pending", agent=aid, agent_name=a["name"],
         details=details[:4000], studio={"agent": aid, "video": v["id"]},
         media=[{"name": Path(m).name, "video": m.endswith(".mp4")} for m in media], media_paths=media), _loop).result(30)
+    # an exception here propagates so tick does not mark review_sent
 
 
 def on_decision(item: dict) -> bool:

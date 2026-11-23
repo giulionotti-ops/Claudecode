@@ -444,6 +444,7 @@
     html.robot #status { bottom: calc(196px + min(86vw, 420px) * 1.06 + env(safe-area-inset-bottom)); }   /* bubble above the robot head */
   }
 </style>
+<link rel="stylesheet" href="/static/studio.css">
 </head>
 <body class="boot">
 <div id="wordmark" aria-hidden="true">NEESMO</div>
@@ -1619,5 +1620,6 @@ var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches || PREFS.cal
   $('#report').addEventListener('close', close);
 })();
 </script>
+<script src="/static/studio.js"></script>
 </body>
 </html>

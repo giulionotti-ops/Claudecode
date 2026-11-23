@@ -29,7 +29,10 @@ def main() -> None:
     a = ap.parse_args()
     from cryptography.hazmat.primitives.serialization import load_pem_private_key
     zp = Path(a.zip)
-    names = {n[len("neesmo/"):] for n in zipfile.ZipFile(zp).namelist() if n.startswith("neesmo/")}
+    all_names = zipfile.ZipFile(zp).namelist()
+    if any(not n.startswith("neesmo/") for n in all_names):
+        raise SystemExit("every file in the zip must sit under neesmo/")
+    names = {n[len("neesmo/"):] for n in all_names if not n.endswith("/")}
     version = (ROOT / "vega" / "VERSION").read_text().strip()
     out = Path(a.out)
     out.mkdir(parents=True, exist_ok=True)
@@ -37,6 +40,9 @@ def main() -> None:
     removed: list[str] = []
     if prev.exists():   # files the last release had that this one drops
         old = json.loads(prev.read_text())["manifest"]
+        p = lambda v: [int(x) for x in v.split(".")]
+        if p(version) <= p(old["version"]):
+            raise SystemExit(f"bump vega/VERSION first: {version} is not newer than {old['version']}")
         removed = sorted(set(old.get("files", [])) - names)
     manifest = {"version": version, "url": zp.name, "sha256": hashlib.sha256(zp.read_bytes()).hexdigest(),
                 "notes": a.notes, "date": datetime.date.today().isoformat(), "files": sorted(names), "removed": removed,
