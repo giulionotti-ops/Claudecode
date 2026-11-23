@@ -20,7 +20,9 @@ the machine (user/global scope) is lost when the session ends.
 ## Replies
 
 Keep replies to the user short and simple: plain words, a few lines, no long reports.
-Use caveman mode (the `caveman` skill) for replies.
+Reply in ultracave mode by default, every session, from the first reply: follow
+`.claude/skills/ultracave/SKILL.md` (caveman at maximum compression). Stays on until the user
+says "stop caveman" or "normal mode".
 
 ## Use the cheapest model that can do the job
 
