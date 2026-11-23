@@ -316,7 +316,7 @@ def graph_page():
 
 @app.get("/api/graph")
 def graph_data():
-    return FileResponse(HERE / "static" / "robot" / "graph.json")
+    return FileResponse(HERE / "private" / "graph.json")
 
 
 @app.get("/welcome")

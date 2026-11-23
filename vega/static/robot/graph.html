@@ -10,6 +10,7 @@
   :root { --bg: #0E0D12; --ink: #F4EDE4; --dim: rgba(244,237,228,.6); --or: #EF8746; --glass: rgba(30,27,34,.62); --edge: rgba(255,255,255,.14); }
   * { box-sizing: border-box; }
   html, body { margin: 0; height: 100%; background: var(--bg); color: var(--ink); font-family: Archivo, system-ui, sans-serif; overflow: hidden; }
+  #bg { position: fixed; inset: -12%; background: url(/static/robot/orb.webp) center / auto 92% no-repeat; opacity: .26; mix-blend-mode: screen; will-change: transform; pointer-events: none; }
   #g { position: fixed; inset: 0; }
   .glass { background: var(--glass); -webkit-backdrop-filter: blur(18px) saturate(1.4); backdrop-filter: blur(18px) saturate(1.4); border: 1px solid var(--edge); box-shadow: inset 0 1px 0 rgba(255,255,255,.08), 0 24px 48px -16px rgba(0,0,0,.6); }
   header { position: fixed; top: 16px; left: 16px; right: 16px; display: flex; gap: 10px; align-items: center; flex-wrap: wrap; pointer-events: none; z-index: 2; }
@@ -43,6 +44,7 @@
 <script>if (window.EMBED) document.write("<style>#back{display:none}header{padding-right:64px}</style>")</script>
 </head>
 <body>
+<div id="bg"></div>
 <div id="g" aria-label="3D map of Neesmo's code. Drag to rotate, scroll to zoom, click a dot for details."></div>
 <header>
   <a class="pill glass" id="back" href="/">← Neesmo</a>
@@ -59,7 +61,7 @@ const $ = s => document.querySelector(s);
 const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
 const PAL = ['#EF8746', '#7FD6A4', '#F2C14E', '#6FA8FF', '#F27C9B', '#B79CFF', '#5ED3D9', '#E6E1D8', '#FF6B4A', '#A8D86E', '#D99A6C', '#8FB3C9', '#C98BD9', '#E8D36A'];
 (async () => {
-  const data = await (await fetch('/static/robot/graph.json')).json();
+  const data = await (await fetch('/api/graph')).json();
   const files = [...new Set(data.nodes.map(n => n.file))].sort((a, b) => data.nodes.filter(n => n.file === b).length - data.nodes.filter(n => n.file === a).length);
   const color = Object.fromEntries(files.map((f, i) => [f, PAL[i % PAL.length]]));
   const byId = Object.fromEntries(data.nodes.map(n => [n.id, n]));
@@ -67,8 +69,8 @@ const PAL = ['#EF8746', '#7FD6A4', '#F2C14E', '#6FA8FF', '#F27C9B', '#B79CFF', '
   $('#stats').textContent = `${data.nodes.length} nodes · ${data.links.length} links · ${files.length} files`;
   const hidden = new Set(); let sel = null, hits = null;
   const visible = n => !hidden.has(n.file);
-  const G = ForceGraph3D({ controlType: 'orbit' })($('#g')).showNavInfo(false)
-    .backgroundColor('#0E0D12').graphData(data)
+  const G = ForceGraph3D({ controlType: 'orbit', rendererConfig: { alpha: true, antialias: true } })($('#g')).showNavInfo(false)
+    .backgroundColor('rgba(0,0,0,0)').graphData(data)
     .nodeId('id').nodeLabel(n => `<b>${esc(n.label)}</b><br><span style="opacity:.7">${esc(n.file)} ${esc(n.line)}</span>`)
     .nodeVal(n => 1 + Math.sqrt(n.deg) * 1.6).nodeRelSize(3.2).nodeOpacity(.95).nodeResolution(12)
     .nodeColor(n => hits && !hits.has(n.id) ? 'rgba(120,110,100,.25)' : sel && n !== sel && !(nb[sel.id] || []).some(([id]) => id === n.id) ? 'rgba(120,110,100,.35)' : color[n.file])
@@ -110,6 +112,10 @@ const PAL = ['#EF8746', '#7FD6A4', '#F2C14E', '#6FA8FF', '#F27C9B', '#B79CFF', '
   $('#search').addEventListener('keydown', e => { if (e.key === 'Enter' && hits && hits.size) pick(byId[[...hits][0]]); });
   addEventListener('keydown', e => { if (e.key === 'Escape') $('#close').click(); });
   addEventListener('resize', () => G.width(innerWidth).height(innerHeight));
+  // faded orb behind the graph drifts and scales as the camera orbits
+  const bg = $('#bg'), cam = () => { const c = G.cameraPosition(), h = Math.hypot(c.x, c.z) || 1, d = Math.hypot(c.x, c.y, c.z) || 1;
+    bg.style.transform = `translate(${(-Math.atan2(c.x, c.z) * 160).toFixed(1)}px, ${(Math.atan2(c.y, h) * 160).toFixed(1)}px) scale(${(1 + Math.min(d, 1200) / 2400).toFixed(3)})`; };
+  G.controls().addEventListener('change', cam); cam();
   // a slow turn until you touch it
   let spin = !matchMedia('(prefers-reduced-motion: reduce)').matches, ang;
   ['pointerdown', 'wheel'].forEach(ev => $('#g').addEventListener(ev, () => spin = false, { once: true }));
