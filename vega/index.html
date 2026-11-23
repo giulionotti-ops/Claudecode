@@ -371,7 +371,7 @@
   html.robot .icons { gap: 2px; padding: 5px; border-radius: 999px; }
   html.robot .icons .ic { width: auto; height: 38px; padding: 0 14px; border: 0; border-radius: 999px; background: none; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; font: 600 13.5px var(--sans); letter-spacing: 0; text-transform: none; color: var(--c); }
   html.robot .icons .ic[aria-expanded="true"] { background: #2B1D14; color: #FFF8EF; }
-  html.robot .icons .badge:not([hidden]) { position: static; display: inline; background: none; color: inherit; padding: 0; font: inherit; } html.robot .icons .badge::before { content: " · "; } html.robot .icons .ic { white-space: nowrap; display: inline-flex; align-items: center; } html.robot .icons a.ic { text-decoration: none; }
+  html.robot .icons .badge:not([hidden]) { position: static; display: inline-block; vertical-align: middle; background: none; color: inherit; padding: 0; font: inherit; } html.robot .icons .badge { margin-left: 5px; } html.robot .icons #bell svg { width: 19px; height: 19px; vertical-align: middle; } html.robot .icons .ic { white-space: nowrap; display: inline-flex; align-items: center; } html.robot .icons a.ic { text-decoration: none; }
   html.robot :is(.corner, #status, .st, .chip, .kpi span, .card span, #chathead h2) { font-family: var(--sans); }
   html.robot .card .st { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: rgba(43,29,20,.7); }
   html.robot .card .st::before { content: none; } html.robot .card b { font: 900 italic 20px/1.15 "Archivo", var(--sans); letter-spacing: -.01em; }
@@ -451,7 +451,7 @@
 <div id="bot" aria-hidden="true"><canvas width="560" height="625"></canvas></div>
 <div class="corner tl"><span class="pill" id="busy" data-n="0"><i></i><span>Agents</span></span><span id="busytip"></span></div>
 <div class="corner tr"><div class="icons">
-  <button type="button" class="ic" id="bell" aria-label="Notifications" aria-expanded="false" aria-controls="pop-n">Approvals<span class="badge" id="badge" hidden>0</span></button>
+  <button type="button" class="ic" id="bell" aria-label="Notifications" aria-expanded="false" aria-controls="pop-n"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 21h4"/></svg><span class="badge" id="badge" hidden>0</span></button>
   <button type="button" class="ic" id="mapbtn" aria-haspopup="dialog">Map</button>
   <button type="button" class="ic" id="gear" aria-label="Settings" aria-expanded="false" aria-controls="pop-s">Settings</button>
 </div></div>
