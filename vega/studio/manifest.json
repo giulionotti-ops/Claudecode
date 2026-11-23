@@ -1,0 +1,57 @@
+{
+  "_note": "What Neesmo Studio installs on first run. Only free tools: nothing here runs on paid credits or tokens. Items with 'login' need one step from the owner; Neesmo guides them. edition: all | youtube | instagram.",
+  "kit": "~/.neesmo-kit",
+  "items": [
+    {"id": "ffmpeg", "group": "general", "label": "FFmpeg (video tools)", "kind": "apt", "pkg": "ffmpeg", "check": "ffmpeg", "required": true},
+    {"id": "tmux", "group": "general", "label": "tmux (keeps agent sessions alive)", "kind": "apt", "pkg": "tmux", "check": "tmux", "required": true},
+    {"id": "gh", "group": "general", "label": "GitHub CLI", "kind": "apt", "pkg": "gh", "check": "gh"},
+    {"id": "fonts", "group": "general", "label": "Fonts for captions", "kind": "apt", "pkg": "fonts-dejavu-core fonts-noto-core", "check_file": "/usr/share/fonts/truetype/dejavu/DejaVuSans-Bold.ttf"},
+    {"id": "pydeps", "group": "general", "label": "Python tools (images, voice, uploads)", "kind": "pip", "pkg": "pillow numpy edge-tts google-api-python-client google-auth-oauthlib yt-dlp", "check_py": "edge_tts"},
+    {"id": "playwright", "group": "general", "label": "Headless browser for rendering", "kind": "npm-g", "pkg": "playwright", "post": "npx -y playwright install --with-deps chromium", "check_glob": "~/.cache/ms-playwright/chromium-*"},
+    {"id": "omniroute", "group": "general", "label": "OmniRoute (free AI models for plain text jobs)", "kind": "npm-g", "pkg": "omniroute", "check": "omniroute",
+     "login": {"optional": true, "title": "Add free model keys (optional)", "steps": [
+       "Make a free Gemini key at aistudio.google.com/apikey and a free Groq key at console.groq.com/keys.",
+       "Paste each key in Settings > System > Free models. Neesmo keeps them only on this machine.",
+       "Skip this and Neesmo uses Claude for everything (works fine, costs a bit more of your Claude plan)."]}},
+    {"id": "claude-mem", "group": "general", "label": "claude-mem (long-term memory)", "kind": "cmd", "run": "npx -y claude-mem install --ide claude-code && npx -y claude-mem start", "check_dir": "~/.claude-mem"},
+    {"id": "agent-reach", "group": "general", "label": "Agent Reach (reads YouTube, Instagram, Reddit for research)", "kind": "cmd", "run": "uv tool install https://github.com/Panniantong/Agent-Reach/releases/latest/download/agent-reach.zip && agent-reach setup", "check": "agent-reach", "needs": "uv"},
+
+    {"id": "mkt-claude-plugins", "group": "general", "label": "Claude plugins: caveman, superpowers, memory tools", "kind": "plugins",
+     "marketplaces": ["JuliusBrussee/caveman", "anthropics/claude-plugins-official", "thedotmack/claude-mem"],
+     "plugins": ["caveman@caveman", "superpowers@claude-plugins-official", "claude-md-management@claude-plugins-official", "skill-creator@claude-plugins-official", "ralph-loop@claude-plugins-official", "claude-mem@thedotmack"]},
+
+    {"id": "skills-viral", "group": "marketing", "label": "Viral content skills (hooks, captions, short-form)", "kind": "skills", "repo": "vyralcontent/content-skills",
+     "skills": ["viral-hooks", "viral-captions-and-ctas", "viral-short-form", "viral-short-form-ideas"],
+     "edition_skills": {"youtube": ["viral-youtube-shorts"], "instagram": ["viral-instagram-reels"]}},
+    {"id": "skills-marketing", "group": "marketing", "label": "Marketing skills (strategy, copy, psychology, analytics)", "kind": "skills", "repo": "coreyhaines31/marketingskills",
+     "skills": ["content-strategy", "copywriting", "copy-editing", "marketing-psychology", "social", "analytics", "ab-testing", "marketing-ideas", "competitor-profiling"]},
+    {"id": "skills-neesmo-rules", "group": "marketing", "label": "Neesmo's viral rules (what worked on our own channels)", "kind": "local-skill", "path": "studio/skills/neesmo-viral-rules"},
+
+    {"id": "skills-drawing", "group": "content", "label": "Claude Drawing (80+ art styles drawn by code)", "kind": "git-skill", "repo": "https://github.com/cloveric/claude-drawing-skill.git", "name": "claude-drawing-skill", "post_pip": "lib/../requirements.txt"},
+    {"id": "skills-huashu", "group": "content", "label": "Huashu Art Motion (animated explainer scenes)", "kind": "skills", "repo": "alchaincyf/huashu-art-motion", "skills": ["huashu-art-motion"]},
+    {"id": "skills-bang", "group": "content", "label": "Bang Motion (cinematic motion graphics)", "kind": "skills", "repo": "bangtutorial/bang-motion", "skills": ["bang-motion"]},
+    {"id": "skills-edit", "group": "content", "label": "Short editing and clipping", "kind": "skills", "repo": "Melvynx/video-agent-skills", "skills": ["short-editing", "clips"]},
+    {"id": "skills-captions", "group": "content", "label": "FFmpeg captions and subtitles", "kind": "skills", "repo": "JosiahSiegel/claude-plugin-marketplace", "skills": ["ffmpeg-captions-subtitles"]},
+    {"id": "skills-ffmpeg", "group": "content", "label": "FFmpeg toolkit", "kind": "skills", "repo": "digitalsamba/claude-code-video-toolkit", "skills": ["ffmpeg"]},
+
+    {"id": "skills-analyse", "group": "analysis", "label": "Video analysis (frame-by-frame checks)", "kind": "skills", "repo": "fabriqaai/ffmpeg-analyse-video-skill", "skills": ["ffmpeg-analyse-video"]},
+    {"id": "skills-watch", "group": "analysis", "label": "Watch videos (learn from top creators)", "kind": "skills", "repo": "bradautomates/claude-video", "skills": ["watch"]},
+    {"id": "skills-observer", "group": "analysis", "label": "Task observer (learns from every run)", "kind": "skills", "repo": "rebelytics/one-skill-to-rule-them-all", "skills": ["task-observer"]},
+
+    {"id": "github", "group": "connect", "label": "GitHub (private backup of every channel)", "kind": "connect", "check_cmd": "gh auth status",
+     "login": {"title": "Connect GitHub", "action": "github", "steps": [
+       "Make a free account at github.com if you don't have one.",
+       "Press Connect. Neesmo shows a short code: open github.com/login/device, type the code, and allow.",
+       "Neesmo makes one private repository per channel, so nothing is ever lost."]}},
+    {"id": "youtube", "group": "connect", "edition": "youtube", "label": "YouTube channel", "kind": "connect", "check_file": "{conf}/studio/youtube_token.json",
+     "login": {"title": "Connect YouTube", "action": "youtube", "steps": [
+       "Open console.cloud.google.com, make a project (free), and turn on 'YouTube Data API v3' and 'YouTube Analytics API'.",
+       "Under 'Google Auth Platform', set the app to External, add yourself as a test user, then make an OAuth client of type 'Desktop app' and download its JSON.",
+       "Upload that JSON here, press Connect, and allow access with the Google account that owns the channel."]}},
+    {"id": "instagram", "group": "connect", "edition": "instagram", "label": "Instagram account", "kind": "connect", "check_file": "{conf}/studio/instagram.json",
+     "login": {"title": "Connect Instagram", "action": "instagram", "steps": [
+       "In the Instagram app: Settings > Account type > switch to a free Professional (Creator) account.",
+       "Make a free app at developers.facebook.com (type 'Business'), add 'Instagram' with 'Instagram API with Instagram Login'.",
+       "Generate a token for your account there and paste it here with your app id. Neesmo checks it and keeps it only on this machine."]}}
+  ]
+}

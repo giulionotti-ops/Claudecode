@@ -98,7 +98,8 @@ def save(items: list[dict]) -> list[dict]:
         out.append({"id": aid, "name": name, "folder": str(folder), "role": str(raw.get("role", "")).strip()[:120],
                     "short": (str(raw.get("short") or name.split()[0]).strip())[:10], "color": color,
                     "instructions": str(raw.get("instructions", "")).strip()[:4000],
-                    **({"hidden": True} if raw.get("hidden") else {}), **({"dev": True} if raw.get("dev") else {})})
+                    **({"hidden": True} if raw.get("hidden") else {}), **({"dev": True} if raw.get("dev") else {}),
+                    **({"kind": "channel"} if raw.get("kind") == "channel" else {})})
     NEESMO_DIR.mkdir(parents=True, exist_ok=True)
     CONFIG.write_text(json.dumps(out, indent=1))
     _cache.clear()

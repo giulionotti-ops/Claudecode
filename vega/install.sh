@@ -7,6 +7,7 @@
 #   ./install.sh --dry-run       print what would happen, change nothing
 #   ./install.sh --no-service    skip the systemd service (run it yourself)
 #   ./install.sh --tunnel        also set up a Cloudflare Tunnel for access from anywhere
+#   ./install.sh --edition=instagram   Neesmo for Instagram (default: youtube, Neesmo YouTube Studio)
 #
 # Safe to run again: each step checks first and skips what is already done.
 set -euo pipefail
@@ -14,7 +15,7 @@ set -euo pipefail
 HERE="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 CONF="${NEESMO_DIR:-$HOME/.config/neesmo}"
 PORT="${NEESMO_PORT:-8080}"
-DRY=0; ALL=0; SERVICE=1; TUNNEL=0
+DRY=0; ALL=0; SERVICE=1; TUNNEL=0; EDITION="${NEESMO_EDITION:-youtube}"
 
 for a in "$@"; do
   case "$a" in
@@ -22,7 +23,8 @@ for a in "$@"; do
     --all) ALL=1 ;;
     --no-service) SERVICE=0 ;;
     --tunnel) TUNNEL=1 ;;
-    -h|--help) sed -n '2,11p' "$0"; exit 0 ;;
+    --edition=youtube|--edition=instagram) EDITION="${a#--edition=}" ;;
+    -h|--help) sed -n '2,12p' "$0"; exit 0 ;;
     *) echo "unknown option: $a" >&2; exit 2 ;;
   esac
 done
@@ -81,6 +83,13 @@ NEESMO_URL=http://127.0.0.1:$PORT${contact:+
 NEESMO_PUSH_CONTACT=mailto:$contact}"
   if [ "$DRY" = 1 ]; then printf '   [dry-run] write:\n%s\n' "$env_text"
   else (umask 077; printf '%s\n' "$env_text" > "$CONF/neesmo.env"); fi
+fi
+
+# the edition (YouTube Studio or Instagram); the first-run setup inside the app does the rest
+if [ ! -f "$CONF/studio/state.json" ]; then
+  run mkdir -p "$CONF/studio"
+  if [ "$DRY" = 1 ]; then echo "   [dry-run] edition: $EDITION"
+  else printf '{"edition": "%s"}\n' "$EDITION" > "$CONF/studio/state.json"; fi
 fi
 
 # ---- 3. approval hook ---------------------------------------------------------

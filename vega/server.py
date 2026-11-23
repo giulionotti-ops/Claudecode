@@ -31,6 +31,7 @@ import auth
 import license
 import notes
 import push
+from studio import routes as studio_routes, channel as studio_channel, state as studio_state
 
 VS_URL = os.environ.get("VOICESTUDIO_URL", "http://localhost:3900").rstrip("/")
 VS_KEY = os.environ.get("VOICESTUDIO_API_KEY", "")
@@ -115,7 +116,23 @@ def system_prompt() -> str:
         "To give one a job, call run_channel with its id and a clear, complete instruction; it works in the background "
         "and finishes the job on its own. Use channel_jobs when asked how jobs are going. "
         "Before starting anything that changes, uploads or deletes something, repeat the task back in one sentence and wait for a yes."
+        + studio_prompt()
     )
+
+
+def studio_prompt() -> str:
+    if not studio_state.STATE.exists():
+        return ""
+    s = studio_state.load()
+    where = "YouTube channel" if s["edition"] == "youtube" else "Instagram account"
+    chans = [a["id"] for a in agents.load() if studio_channel.is_channel(a)]
+    return (f" You are Neesmo Studio: you help the owner go viral with their {where}"
+            + (f" named {s['channel_name']}" if s.get("channel_name") else "") + ". "
+            f"When the owner wants Neesmo to run the {where}, confirm in one sentence, then call create_channel_agent "
+            "with a name and a short brief of what they asked; it appears as a card that runs everything by itself. "
+            + (f"Channel agents: {', '.join(chans)}. For instructions to one use channel_request, for how it is going use channel_status. "
+               if chans else "")
+            + "Now and then suggest that the owner sends you images they like, as inspiration for the art and videos.")
 
 
 _jobs: dict[int, dict] = {}
@@ -156,10 +173,51 @@ async def _notify(title: str, body: str, tag: str | None = None, kind: str = "in
     """Record in the notification history, then push to every subscribed device."""
     item = await asyncio.to_thread(notes.add, kind, title, body, **extra)
     try:
-        await asyncio.to_thread(push.send, title, body, tag, f"/?n={item['id']}")
+        if studio_routes.push_allowed(kind):  # System setting: notifications for videos and important things only
+            await asyncio.to_thread(push.send, title, body, tag, f"/?n={item['id']}")
     except Exception as e:  # never let a push problem break a reply or a job
         print(f"push error: {e}", flush=True)
     return item
+
+
+@tool("create_channel_agent", "Create a channel agent: a home-screen card that runs the owner's whole channel or account "
+      "(ideas, hooks, scripts, videos, checks, posting, analysis) on its own", {"name": str, "brief": str})
+async def create_channel_agent(args):
+    brief = str(args.get("brief", "")).strip()
+    if not brief:
+        return {"content": [{"type": "text", "text": "Need a short brief: what the channel is about."}], "is_error": True}
+    try:
+        a = await asyncio.to_thread(studio_routes.create_channel, str(args.get("name", "")), brief)
+    except ValueError as e:
+        return {"content": [{"type": "text", "text": str(e)}], "is_error": True}
+    left = studio_state.warmup_left()
+    when = ("It starts making videos now." if studio_state.load().get("warmup_done") else
+            f"It starts making videos when the warm-up is over ({left if left is not None else studio_state.WARMUP_DAYS} days).")
+    return {"content": [{"type": "text", "text": f"Created the {a['name']} agent (id {a['id']}). {when}"}]}
+
+
+@tool("channel_request", "Give a channel agent an instruction for its next videos (beats its usual style)",
+      {"channel": str, "request": str})
+async def channel_request(args):
+    aid = str(args.get("channel", "")).lower()
+    a = next((x for x in agents.load() if x["id"] == aid and studio_channel.is_channel(x)), None)
+    if not a or not str(args.get("request", "")).strip():
+        return {"content": [{"type": "text", "text": "Need a channel agent id and a request."}], "is_error": True}
+    await asyncio.to_thread(studio_channel.add_request, aid, str(args["request"]))
+    return {"content": [{"type": "text", "text": f"{a['name']} will do that from its next video."}]}
+
+
+@tool("channel_status", "What a channel agent is doing: videos made, waiting for review, scheduled, latest events",
+      {"channel": str})
+async def channel_status(args):
+    aid = str(args.get("channel", "")).lower()
+    if not any(x["id"] == aid and studio_channel.is_channel(x) for x in agents.load()):
+        return {"content": [{"type": "text", "text": "No such channel agent."}], "is_error": True}
+    s = await asyncio.to_thread(studio_channel.summary, aid)
+    slim = {"counts": s["counts"], "running": s["running"], "in_trial": s["in_trial"],
+            "videos": [{k: v.get(k) for k in ("id", "status", "title", "publish_at", "score")} for v in s["videos"][-5:]],
+            "events": [e["text"] for e in s["events"][-8:]]}
+    return {"content": [{"type": "text", "text": json.dumps(slim)}]}
 
 
 @tool("channel_jobs", "Status and latest output of the background jobs started with run_channel", {})
@@ -175,6 +233,12 @@ async def channel_jobs(_args):
 
 
 app = FastAPI()
+app.include_router(studio_routes.router)
+
+
+@app.on_event("startup")
+async def _studio_start():
+    studio_routes.start(_notify)
 notes.hook_token()  # create the hook's secret at start, so approval_hook.py can read it
 app.mount("/static", StaticFiles(directory=HERE / "static"), name="static")
 
@@ -712,9 +776,12 @@ async def chat(body: ChatIn):
                 model=MODEL,
                 system_prompt=system_prompt(),
                 tools=["ListAgents", "SendMessage"],  # talk to the local project sessions; still no file or shell tools
-                mcp_servers={"neesmo": create_sdk_mcp_server("neesmo", tools=[channel_stats, run_channel, channel_jobs])},
+                mcp_servers={"neesmo": create_sdk_mcp_server("neesmo", tools=[channel_stats, run_channel, channel_jobs,
+                                                                               create_channel_agent, channel_request, channel_status])},
                 allowed_tools=["ListAgents", "SendMessage", "mcp__neesmo__channel_stats",
-                               "mcp__neesmo__run_channel", "mcp__neesmo__channel_jobs"],
+                               "mcp__neesmo__run_channel", "mcp__neesmo__channel_jobs",
+                               "mcp__neesmo__create_channel_agent", "mcp__neesmo__channel_request",
+                               "mcp__neesmo__channel_status"],
                 setting_sources=[],    # don't load this repo's plugins/hooks
                 effort="low",          # snappy replies for voice
                 env=_gateway_env(),
@@ -926,6 +993,8 @@ async def approval_decide(nid: int, body: DecisionIn):
         item = notes.decide(nid, body.decision, body.note)
     except ValueError as e:
         raise HTTPException(409, str(e))
+    if await asyncio.to_thread(studio_routes.on_decision, item):  # a channel agent's video: its pipeline handles it
+        return item
     text = _review_line(item)
     aid = item.get("agent")
     if item["kind"] == "review" and item.get("note") and aid in agents.folders():
