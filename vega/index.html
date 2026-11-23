@@ -350,8 +350,7 @@
   /* the robot: upper body only, cut off by the screen edge (desktop) or standing behind the cards (phone) */
   #bot { position: fixed; right: 0; bottom: calc(196px + env(safe-area-inset-bottom)); width: min(86vw, 420px); aspect-ratio: 560 / 625; overflow: hidden; pointer-events: none; z-index: 1; filter: drop-shadow(-14px 20px 18px rgba(60,35,20,.28)); }
   #bot canvas { width: 100%; height: 100%; display: block; }
-  #bot { --fadeL: linear-gradient(to right, transparent, #000 16%); -webkit-mask-image: var(--fadeL); mask-image: var(--fadeL); }   /* the sprite is cropped at the box edge: fade it so its shadow has no hard vertical cut */
-  @media (max-width: 900px) { #bot { -webkit-mask-image: var(--fadeL), linear-gradient(#000 80%, transparent); mask-image: var(--fadeL), linear-gradient(#000 80%, transparent); -webkit-mask-composite: source-in; mask-composite: intersect; } }
+  @media (max-width: 900px) { #bot canvas { -webkit-mask-image: linear-gradient(#000 80%, transparent); mask-image: linear-gradient(#000 80%, transparent); } }   /* fade on the sprite, not the box: the box would clip the drop shadow */
   html.robot #status.quiet { visibility: hidden; }
   html.robot #wordmark { top: calc(84px + env(safe-area-inset-top)); translate: none; transform: translateX(-50%); font-size: min(21vw, 320px); z-index: 0; }
   html.robot #status { top: auto; left: 16px; right: auto; bottom: calc(196px + min(86vw, 420px) * .9 + env(safe-area-inset-bottom)); z-index: 2; padding: 10px 16px; border-radius: 18px 18px 18px 6px; max-width: 60vw;
@@ -673,14 +672,16 @@ applyPrefs();
 // ── voices ──
 (async () => {
   const cfg = await (await fetch('/api/config')).json();
-  try {
+  for (let tryN = 0; tryN < 3; tryN++) try {   // the voice engine can lag behind the page: retry before giving up
     const { voices } = await (await api('/api/voices')).json();
     voiceSel.innerHTML = '';
     for (const v of voices) voiceSel.add(new Option(`${v.name}${v.type === 'profile' ? '' : ' (alias)'}`, v.id));
     voiceSel.value = localStorage.getItem('neesmo-voice-v2') || cfg.voice;
     if (!voiceSel.value) voiceSel.selectedIndex = 0;
     $('#vs').textContent = 'voice: linked';
+    return;
   } catch (e) {
+    if (tryN < 2) { await new Promise(r => setTimeout(r, 4000)); continue; }
     voiceSel.innerHTML = `<option value="${cfg.voice}">${cfg.voice}</option>`;
     $('#vs').textContent = 'voice: offline';
     setStatus('Voice offline — text only', true);
