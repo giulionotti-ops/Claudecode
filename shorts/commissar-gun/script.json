@@ -1,0 +1,192 @@
+{
+ "layout": {
+  "page1": [
+   [
+    0.33,
+    [
+     1
+    ]
+   ],
+   [
+    0.31,
+    [
+     0.45,
+     0.55
+    ]
+   ],
+   [
+    0.36,
+    [
+     0.6,
+     0.4
+    ]
+   ]
+  ],
+  "page2": [
+   [
+    0.3,
+    [
+     1
+    ]
+   ],
+   [
+    0.34,
+    [
+     0.5,
+     0.5
+    ]
+   ],
+   [
+    0.36,
+    [
+     1
+    ]
+   ]
+  ]
+ },
+ "voices": {
+  "rookie": "TX3LPaxmHKxFdv7VOQHJ",
+  "sarge": "M5E055lOUxMi0kJpGyE9",
+  "commissar": "onwK4e9ZLuTAKqWW03F9",
+  "boss": "SOYHLrjzK2X1ezoPC6cr"
+ },
+ "voice_fx": {
+  "boss": "asetrate=44100*0.8,aresample=48000,atempo=1.12,acrusher=bits=10:mix=0.2",
+  "mek": "asetrate=44100*0.9,aresample=48000,atempo=1.06,acrusher=bits=12:mix=0.15"
+ },
+ "lines": [
+  {
+   "id": "l01",
+   "who": "rookie",
+   "say": "[whispering, terrified] Sarge... the Commissar's on our side. Right? Then why is he pointing that at ME?",
+   "text": "SARGE... THE COMMISSAR'S ON OUR SIDE. RIGHT? THEN WHY IS HE POINTING THAT AT ME?"
+  },
+  {
+   "id": "l02",
+   "who": "sarge",
+   "say": "[deadpan] You looked at the exit, son.",
+   "text": "YOU LOOKED AT THE EXIT, SON."
+  },
+  {
+   "id": "l03",
+   "who": "commissar",
+   "say": "[cold] Fear me more than the enemy, Private. That is my entire job.",
+   "text": "FEAR ME MORE THAN THE ENEMY, PRIVATE. THAT IS MY ENTIRE JOB."
+  },
+  {
+   "id": "l04",
+   "who": "sarge",
+   "say": "[flat] Officio Prefectus. Every regiment gets one. He can shoot anyone who runs. Even officers.",
+   "text": "OFFICIO PREFECTUS. EVERY REGIMENT GETS ONE. HE CAN SHOOT ANYONE WHO RUNS. EVEN OFFICERS."
+  },
+  {
+   "id": "l05",
+   "who": "rookie",
+   "say": "[squeaky] EVEN OFFICERS?!",
+   "text": "EVEN OFFICERS?!"
+  },
+  {
+   "id": "l06",
+   "who": "commissar",
+   "say": "[dry] Especially officers.",
+   "text": "ESPECIALLY OFFICERS."
+  },
+  {
+   "id": "l07",
+   "who": "boss",
+   "say": "[roaring] WAAAAAGH!",
+   "text": "WAAAGH!!"
+  },
+  {
+   "id": "l08",
+   "who": "commissar",
+   "say": "[calm, loud] Nobody runs. I am not asking.",
+   "text": "NOBODY RUNS. I AM NOT ASKING."
+  },
+  {
+   "id": "l09",
+   "who": "commissar",
+   "say": "[roaring] FOR THE EMPEROR! WITH ME!",
+   "text": "FOR THE EMPEROR! WITH ME!"
+  },
+  {
+   "id": "l10",
+   "who": "sarge",
+   "say": "[flat] Rule two. He goes in first.",
+   "text": "RULE TWO. HE GOES IN FIRST."
+  },
+  {
+   "id": "l11",
+   "who": "rookie",
+   "say": "[stunned] ...He's not scared at all?",
+   "text": "...HE'S NOT SCARED AT ALL?"
+  },
+  {
+   "id": "l12",
+   "who": "sarge",
+   "say": "[quiet] He's scared of what happens if we run.",
+   "text": "HE'S SCARED OF WHAT HAPPENS IF WE RUN."
+  },
+  {
+   "id": "l13",
+   "who": "commissar",
+   "say": "[dry, tired] Good lad. I hate writing letters home.",
+   "text": "GOOD LAD. I HATE WRITING LETTERS HOME."
+  },
+  {
+   "id": "l14",
+   "who": "rookie",
+   "say": "[shaky, relieved] He IS on our side.",
+   "text": "HE IS ON OUR SIDE."
+  },
+  {
+   "id": "l15",
+   "who": "sarge",
+   "say": "[deadpan] Yes. That's why he'd have shot you.",
+   "text": "YES. THAT'S WHY HE'D HAVE SHOT YOU."
+  }
+ ],
+ "sfx": {
+  "shell": [
+   "Distant artillery shell explosion, rumbling",
+   3.0
+  ],
+  "pistol": [
+   "Heavy bolt pistol cocking click, metallic",
+   1.0
+  ],
+  "boom": [
+   "Big bolt pistol shot boom, echo",
+   1.5
+  ],
+  "charge": [
+   "Army of men and monsters charging, boots and roaring",
+   3.0
+  ],
+  "cheer": [
+   "Crowd of rowdy brutish monsters roaring",
+   3.0
+  ],
+  "gasp": [
+   "Soldier gasps in shock",
+   1.0
+  ],
+  "page": [
+   "Comic book page turning quickly, paper whoosh",
+   1.0
+  ],
+  "whoosh": [
+   "Quick soft camera whoosh swipe transition",
+   0.6
+  ],
+  "puff": [
+   "Man exhales a long puff of cigar smoke, slow breath",
+   1.5
+  ],
+  "wind": [
+   "Strong gust of wind blast, flapping cloth",
+   1.2
+  ]
+ },
+ "music": "Tense grimdark war drums, low brass, building to a heroic charge, then a dry sombre cello ending, instrumental, no vocals, 110 bpm"
+}
