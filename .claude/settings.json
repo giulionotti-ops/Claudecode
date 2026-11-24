@@ -44,16 +44,16 @@
     ]
   },
   "enabledPlugins": {
-    "claude-code-setup@claude-plugins-official": true,
+    "claude-code-setup@claude-plugins-official": false,
     "claude-mem@thedotmack": true,
-    "lemo-opuscar@lemolab": true,
-    "ponytail@ponytail": true,
-    "hyperframes@hyperframes": true,
-    "ui-ux-pro-max@ui-ux-pro-max-skill": true,
-    "document-skills@anthropic-agent-skills": true,
-    "example-skills@anthropic-agent-skills": true,
-    "andrej-karpathy-skills@karpathy-skills": true,
-    "superpowers@claude-plugins-official": true
+    "lemo-opuscar@lemolab": false,
+    "ponytail@ponytail": false,
+    "hyperframes@hyperframes": false,
+    "ui-ux-pro-max@ui-ux-pro-max-skill": false,
+    "document-skills@anthropic-agent-skills": false,
+    "example-skills@anthropic-agent-skills": false,
+    "andrej-karpathy-skills@karpathy-skills": false,
+    "superpowers@claude-plugins-official": false
   },
   "extraKnownMarketplaces": {
     "claude-plugins-official": {

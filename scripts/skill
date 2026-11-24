@@ -1,0 +1,16 @@
+#!/bin/bash
+# Load or unload a project skill on request.
+# Only general skills (caveman/token family, graphify) live in .claude/skills and load
+# at chat start. The rest wait in .claude/skill-library until asked for.
+#   scripts/skill list            show loaded and available skills
+#   scripts/skill load <name>...  move skills into .claude/skills (usable this session)
+#   scripts/skill unload <name>.. move them back to the library
+set -euo pipefail
+cd "$(dirname "$0")/.."
+LIB=.claude/skill-library; ON=.claude/skills
+case "${1:-list}" in
+  list) echo "loaded:"; ls "$ON" | sed 's/^/  /'; echo "library:"; ls "$LIB" | sed 's/^/  /';;
+  load) shift; for s in "$@"; do [ -d "$LIB/$s" ] || { echo "no skill $s in $LIB" >&2; exit 1; }; mv "$LIB/$s" "$ON/$s"; echo "loaded $s"; done;;
+  unload) shift; for s in "$@"; do [ -d "$ON/$s" ] || { echo "$s not loaded" >&2; exit 1; }; mv "$ON/$s" "$LIB/$s"; echo "unloaded $s"; done;;
+  *) echo "usage: scripts/skill list|load|unload <name>..." >&2; exit 1;;
+esac

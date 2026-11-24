@@ -17,6 +17,15 @@ the machine (user/global scope) is lost when the session ends.
 - **Tools that must be installed or started each session** (e.g. OmniRoute,
   the claude-mem worker) go in `.claude/hooks/session-start.sh`.
 
+## Load skills and plugins only on request
+
+New chats load only general tools: the caveman/token skills, graphify, claude-mem and OmniRoute.
+Every other skill waits in `.claude/skill-library/`; every other plugin is set to `false` in
+`.claude/settings.json` `enabledPlugins`. When the user asks for one, load it:
+`scripts/skill load <name>` (skills, works in the same session) or flip the plugin to `true`
+(plugins, needs a restart). Commit only if the user wants it on by default. New skills installed
+with `npx skills add` go to the library unless they are general.
+
 ## Replies
 
 Keep replies to the user short and simple: plain words, a few lines, no long reports.
