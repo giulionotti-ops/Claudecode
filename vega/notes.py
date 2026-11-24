@@ -1,0 +1,216 @@
+"""Neesmo's notification history and the agents' permission requests (approvals).
+
+The approval_hook.py PermissionRequest hook posts each permission prompt of the server's Claude
+sessions here and waits for a decision made in the Neesmo app. Everything lives in
+~/.config/neesmo (mode 600), never in the repo.
+"""
+import datetime
+import json
+import os
+import secrets
+import threading
+import time
+from pathlib import Path
+
+DIR = Path(os.environ.get("NEESMO_DIR", Path.home() / ".config" / "neesmo"))
+FILE = DIR / "notifications.json"
+TOKEN = DIR / "hook_token"
+WAIT_S = int(os.environ.get("NEESMO_APPROVAL_WAIT_S", 172800))  # how long the hook waits (2 days, so it can be answered the next day)
+KEEP = 200
+_lock = threading.Lock()
+_items: list[dict] = []
+_loaded = False
+
+
+def hook_token() -> str:
+    """Shared secret the hook sends, so only local hooks (not a browser) can create approvals."""
+    DIR.mkdir(parents=True, exist_ok=True, mode=0o700)
+    if not TOKEN.exists():
+        fd = os.open(TOKEN, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+        with os.fdopen(fd, "w") as f:
+            f.write(secrets.token_urlsafe(32))
+    return TOKEN.read_text().strip()
+
+
+def _load() -> None:
+    global _loaded
+    if _loaded:
+        return
+    try:
+        _items.extend(json.loads(FILE.read_text()))
+    except (OSError, ValueError):
+        pass
+    _loaded = True
+
+
+def _save() -> None:
+    DIR.mkdir(parents=True, exist_ok=True, mode=0o700)
+    tmp = FILE.with_suffix(".tmp")
+    fd = os.open(tmp, os.O_WRONLY | os.O_CREAT | os.O_TRUNC, 0o600)
+    with os.fdopen(fd, "w") as f:
+        json.dump(_items[-KEEP:], f)
+    os.replace(tmp, FILE)
+
+
+def _expire_old() -> None:
+    """A pending approval whose hook has given up (or was cancelled) is answered in the Claude app instead."""
+    now = time.time()
+    for i in _items:
+        if i.get("status") == "pending" and i["kind"] == "approval" and now - i["ts"] > WAIT_S + 15:
+            i["status"] = "expired"
+
+
+def _next_id() -> int:
+    """Ids are never reused, even after the list is cleared: a job polling an old review id must never read a new one."""
+    last_file = DIR / "last_id"
+    try:
+        last = int(last_file.read_text())
+    except (OSError, ValueError):
+        last = 0
+    nid = max([last] + [i["id"] for i in _items]) + 1
+    last_file.write_text(str(nid))
+    return nid
+
+
+def add(kind: str, title: str, body: str, **extra) -> dict:
+    with _lock:
+        _load()
+        nid = _next_id()
+        item = {"id": nid, "kind": kind, "title": title, "body": body[:4000], "ts": time.time(),
+                "at": datetime.datetime.now().strftime("%d %b %H:%M"), **extra}
+        _items.append(item)
+        del _items[:-KEEP]
+        _save()
+        return item
+
+
+def history() -> list[dict]:
+    with _lock:
+        _load()
+        _expire_old()
+        return [i for i in reversed(_items) if not i.get("hidden")]
+
+
+def collect(nid: int) -> None:
+    """The job behind a review has read its answer: from now on deleting it really deletes it."""
+    with _lock:
+        _load()
+        for i in _items:
+            if i["id"] == nid and i["kind"] == "review" and i.get("status") not in ("pending", "ignored") and not i.get("collected"):
+                i["collected"] = True
+                _save()
+
+
+def get(nid: int) -> dict | None:
+    with _lock:
+        _load()
+        _expire_old()
+        return next((i for i in _items if i["id"] == nid), None)
+
+
+def flag(nid: int, key: str) -> None:
+    """Mark a request, e.g. once its answer was typed into the agent's session."""
+    with _lock:
+        _load()
+        for i in _items:
+            if i["id"] == nid:
+                i[key] = True
+                _save()
+
+
+def decide(nid: int, decision: str, note: str = "") -> dict:
+    """Answer a pending request. Raises ValueError if it is no longer pending.
+    approval (permission prompt): allow / deny.  review (e.g. a new short to post): allow / changes, with a note."""
+    with _lock:
+        _load()
+        _expire_old()
+        item = next((i for i in _items if i["id"] == nid and i["kind"] in ("approval", "review")), None)
+        if item is None:
+            raise ValueError("no such request")
+        ok = ("allow", "changes") if item["kind"] == "review" else ("allow", "deny")
+        if decision not in ok:
+            raise ValueError("decision must be " + " or ".join(ok))
+        if decision == "changes" and not note.strip():
+            raise ValueError("say what to change")
+        if item["status"] != "pending" and not (item["kind"] == "review" and item["status"] == "ignored"):
+            raise ValueError(f"already {item['status']}")
+        item["status"] = {"allow": "approved", "deny": "denied", "changes": "changes asked"}[decision]
+        if note.strip():
+            item["note"] = note.strip()[:2000]
+        item["decided_at"] = datetime.datetime.now().strftime("%d %b %H:%M")
+        item["decided_ts"] = time.time()
+        _save()
+        return item
+
+
+def expire(nid: int) -> None:
+    with _lock:
+        _load()
+        for i in _items:
+            if i["id"] == nid and i.get("status") == "pending":
+                i["status"] = "expired"
+                _save()
+
+
+def ignore(nid: int) -> dict:
+    """Skip a pending request without opening it. An approval goes back to the Claude app's own prompt
+    (the hook stops waiting); an ignored review just sits and can still be answered later."""
+    with _lock:
+        _load()
+        _expire_old()
+        item = next((i for i in _items if i["id"] == nid), None)
+        if item is None:
+            raise ValueError("no such request")
+        if item.get("status") != "pending":
+            raise ValueError(f"already {item.get('status')}")
+        item["status"] = "ignored"
+        item["decided_at"] = datetime.datetime.now().strftime("%d %b %H:%M")
+        _save()
+        return item
+
+
+def remove(nid: int | None = None) -> int:
+    """Delete one notification, or all of them (nid None). A still-pending approval is kept: its chat is waiting on it.
+    A review whose job has not read the answer yet (or that is still open) is only hidden from the list: deleting it
+    must not lose an "ask for changes" note, nor make the job send the same review again."""
+    with _lock:
+        _load()
+        _expire_old()
+        keep, gone = [], 0
+        for i in _items:
+            if nid is not None and i["id"] != nid:
+                keep.append(i); continue
+            if i["kind"] == "review" and not i.get("collected"):
+                gone += not i.get("hidden"); i["hidden"] = True; keep.append(i)
+            elif i.get("status") == "pending":
+                keep.append(i)
+            else:
+                gone += 1
+        _items[:] = keep
+        _save()
+        return gone
+
+
+if __name__ == "__main__":  # self-check: python3 notes.py
+    import tempfile
+    DIR = Path(tempfile.mkdtemp()); FILE = DIR / "n.json"; TOKEN = DIR / "t"
+    a = add("approval", "Roblox wants to run a command", "rm -rf build", status="pending", tool="Bash")
+    assert get(a["id"])["status"] == "pending"
+    assert decide(a["id"], "allow")["status"] == "approved"
+    try:
+        decide(a["id"], "deny"); raise SystemExit("decided twice")
+    except ValueError:
+        pass
+    b = add("approval", "x", "y", status="pending"); b["ts"] -= WAIT_S + 60
+    assert get(b["id"])["status"] == "expired"
+    assert history()[0]["id"] == b["id"] and len(hook_token()) > 20
+    c = add("info", "hi", "x"); p = add("approval", "a", "b", status="pending")
+    assert remove(c["id"]) == 1 and get(c["id"]) is None
+    remove(); assert [i["id"] for i in history()] == [p["id"]]
+    assert ignore(p["id"])["status"] == "ignored" and remove(p["id"]) == 1
+    r = add("review", "t", "n", status="pending"); ignore(r["id"])
+    assert decide(r["id"], "allow")["status"] == "approved"
+    remove(); assert get(r["id"])["status"] == "approved" and r["id"] not in [i["id"] for i in history()]
+    collect(r["id"]); remove(); assert get(r["id"]) is None
+    n = add("info", "a", "b"); remove(); assert add("info", "c", "d")["id"] > n["id"]   # ids never reused
+    print("ok")
