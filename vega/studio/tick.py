@@ -40,37 +40,38 @@ def _when(v: dict) -> dt.datetime | None:
 
 
 def _post(aid: str, notify) -> None:
-    """Approved -> scheduled (YouTube: uploaded private with publishAt; Instagram: published at the slot)."""
-    edition = state.load()["edition"]
+    """Approved -> scheduled (YouTube: uploaded private with publishAt; Instagram: published at the slot).
+    The director edition does both for every video and keeps each post id in platform_ids."""
+    plats = state.platforms()
     c = state.channel(aid)
     q = channel.queue(aid)
     taken = [w for v in q if (w := _when(v))]
     for v in q:
         try:
+            ids = dict(v.get("platform_ids") or {})
+            if v.get("platform_id") and not ids:
+                ids[plats[0]] = v["platform_id"]
             if v.get("status") == "approved":
                 from .youtube import next_slot
                 when = next_slot(c["post_times"], taken, c.get("timezone", ""))
                 taken.append(when)
-                if edition == "youtube":
+                if "youtube" in plats:
                     from . import youtube
                     if not youtube.connected():
                         return
-                    pid = youtube.upload(v, when)
-                    channel.update_video(aid, v["id"], status="scheduled", platform_id=pid, publish_at=when.isoformat())
-                else:
-                    channel.update_video(aid, v["id"], status="scheduled", publish_at=when.isoformat())
+                    ids["youtube"] = youtube.upload(v, when)
+                channel.update_video(aid, v["id"], status="scheduled", platform_ids=ids,
+                                     platform_id=ids.get(plats[0]), publish_at=when.isoformat())
                 channel.event(aid, "scheduled", f"Video {v['id']} scheduled for {when:%a %d %b %H:%M}", video=v["id"])
-            elif v.get("status") == "scheduled" and edition == "instagram" and not v.get("platform_id"):
+            elif v.get("status") == "scheduled":
                 w = _when(v)
-                if w and w <= state.now():
+                if not (w and w <= state.now()):
+                    continue
+                if "instagram" in plats and not ids.get("instagram"):
                     from . import instagram
-                    pid = instagram.publish(v)
-                    channel.update_video(aid, v["id"], status="posted", platform_id=pid)
+                    ids["instagram"] = instagram.publish(v)
                     channel.event(aid, "posted", f"Video {v['id']} is live on Instagram", video=v["id"])
-            elif v.get("status") == "scheduled" and edition == "youtube":
-                w = _when(v)
-                if w and w <= state.now():
-                    channel.update_video(aid, v["id"], status="posted")
+                channel.update_video(aid, v["id"], status="posted", platform_ids=ids, platform_id=ids.get(plats[0]))
         except Exception as e:   # one bad upload must not stop the others; tell the owner once
             if not v.get("post_error"):
                 channel.update_video(aid, v["id"], post_error=str(e)[:300])
@@ -151,7 +152,7 @@ def tick(notify, review) -> None:
             _daily(aid)
         except Exception as e:
             channel.event(aid, "error", f"Tick problem: {str(e)[:200]}")
-    if state.load()["edition"] == "instagram":
+    if "instagram" in state.platforms():
         d = channel.read_json(state.DIR / "ig_refresh.json", {})
         if d.get("week") != dt.date.today().isocalendar()[1]:
             try:

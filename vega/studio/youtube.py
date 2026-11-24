@@ -162,6 +162,32 @@ def stats(ids: list[str]) -> dict[str, dict]:
     return out
 
 
+def detail(video_id: str, days: int = 28) -> dict:
+    """Numbers for one video's detail page: totals, daily views/likes, traffic sources, search terms."""
+    from googleapiclient.discovery import build
+    ya = build("youtubeAnalytics", "v2", credentials=_creds(), cache_discovery=False)
+    end = dt.date.today().isoformat()
+    start = (dt.date.today() - dt.timedelta(days=days)).isoformat()
+    base = dict(ids="channel==MINE", startDate=start, endDate=end, filters=f"video=={video_id}")
+    out: dict = {}
+    m = "views,likes,dislikes,comments,shares,estimatedMinutesWatched,averageViewDuration,averageViewPercentage,subscribersGained"
+    r = ya.reports().query(metrics=m, **base).execute()
+    if r.get("rows"):
+        out["totals"] = dict(zip(m.split(","), r["rows"][0]))
+    r = ya.reports().query(metrics="views,likes", dimensions="day", sort="day", **base).execute()
+    out["daily"] = [{"d": d, "views": v, "likes": lk} for d, v, lk in r.get("rows", [])]
+    try:
+        r = ya.reports().query(metrics="views", dimensions="insightTrafficSourceType", sort="-views", maxResults=8, **base).execute()
+        out["sources"] = [{"name": n.replace("_", " ").title(), "views": v} for n, v in r.get("rows", [])]
+        r = ya.reports().query(metrics="views", dimensions="insightTrafficSourceDetail", sort="-views", maxResults=5,
+                               ids=base["ids"], startDate=start, endDate=end,
+                               filters=f"video=={video_id};insightTrafficSourceType==YT_SEARCH").execute()
+        out["keywords"] = [{"name": n, "views": v} for n, v in r.get("rows", [])]
+    except Exception:
+        pass
+    return out
+
+
 if __name__ == "__main__":
     a = sys.argv[1:]
     if a[:1] == ["auth-url"]:

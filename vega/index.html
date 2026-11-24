@@ -54,7 +54,12 @@
   #mic svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
   #mic.on { color: var(--bg); background: var(--c2); border-color: var(--c2); box-shadow: 0 0 16px var(--c2); }
   select { padding: 4px; max-width: 180px; }
-  html.no-mark #wordmark { display: none; }
+  html.no-mark #wordmark, html.no-mark #studio-label { display: none; }
+  /* edition under the wordmark: YouTube Studio / IG Studio / Director Studio */
+  #studio-label { position: fixed; left: 50%; top: calc(50vh + min(13vw, 190px)); transform: translateX(-50%); pointer-events: none; z-index: 1;
+    font: 700 12px/1 system-ui, sans-serif; letter-spacing: .32em; text-transform: uppercase; color: rgba(var(--rgb), .55); white-space: nowrap; }
+  html.robot #studio-label { top: calc(84px + env(safe-area-inset-top) + min(21vw, 320px) * .82 + 8px); color: #B85F30; }
+  html.robot body.chat #studio-label { opacity: .25; }
   .icons { display: flex; gap: 8px; justify-content: flex-end; }
   .ic { position: relative; width: 40px; height: 40px; padding: 0; display: grid; place-items: center; }
   .ic svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
@@ -407,6 +412,7 @@
   @media (min-width: 901px) {
     #bot { right: -1vw; bottom: 0; width: min(46vw, 78vh, 760px); }
     html.robot #wordmark { top: 92px; font-size: min(19.5vw, 320px); }
+    html.robot #studio-label { top: calc(92px + min(19.5vw, 320px) * .82 + 6px); }
     html.robot #status { left: auto; right: calc(min(46vw, 78vh, 760px) * .55); bottom: calc(min(46vw, 78vh, 760px) * .8); max-width: 340px; border-radius: 20px 20px 6px 20px; }
     html.robot form { left: 4vw; right: auto; width: min(54vw, 760px); margin: 0; z-index: 3; }
     html.robot .cards { z-index: 3; justify-content: flex-start; overflow: visible; }
@@ -448,6 +454,7 @@
 </head>
 <body class="boot">
 <div id="wordmark" aria-hidden="true">NEESMO</div>
+<div id="studio-label" hidden></div>
 <div id="bot" aria-hidden="true"><canvas width="560" height="625"></canvas></div>
 <div class="corner tl"><span class="pill" id="busy" data-n="0"><i></i><span>Agents</span></span><span id="busytip"></span></div>
 <div class="corner tr"><div class="icons">
@@ -570,11 +577,11 @@
     <button type="submit" id="r-send">Send</button>
     <canvas id="r-mini" width="200" height="210" aria-hidden="true"></canvas>
   </form>
-  <div class="rfoot"><button type="button" id="r-new">New thread</button><span class="rlink" id="r-link"></span><button type="button" id="r-stop" hidden>Stop</button></div>
+  <div class="rfoot"><span class="rlink" id="r-link"></span><button type="button" id="r-stop" hidden>Stop</button></div>
 </div></dialog>
 <div id="welcome" hidden aria-hidden="true"></div>
 <div id="status" class="quiet" role="status" aria-live="polite">Standby</div>
-<div id="chathead"><button type="button" id="chat-back" aria-label="Back to the home screen">← Back</button><h2>CHAT</h2><button type="button" id="chat-new">New chat</button></div>
+<div id="chathead"><button type="button" id="chat-back" aria-label="Back to the home screen">← Back</button><h2>CHAT</h2></div>
 <div id="log" aria-live="polite"></div>
 <div id="atts" aria-label="Attached files"></div>
 <form id="f">
@@ -752,10 +759,6 @@ $('#q').addEventListener('focus', openChat);
 logEl.addEventListener('click', e => { if (!chatOpen() && e.target.closest('p')) openChat(); });
 $('#chat-back').onclick = closeChat;
 addEventListener('keydown', e => { if (e.key === 'Escape' && chatOpen() && !document.querySelector('dialog[open]')) closeChat(); });
-$('#chat-new').onclick = async () => {
-  chatLog = []; try { localStorage.removeItem(CHAT_KEY); } catch {}
-  logEl.innerHTML = ''; await api('/api/chat/reset', { method: 'POST' }).catch(() => {}); $('#q').focus();
-};
 const pending = [];
 function renderAtts() {
   const box = $('#atts'); box.innerHTML = '';
@@ -942,7 +945,7 @@ async function loadThread(id, force) {
   try {
     const d = await (await api(`/api/agents/${encodeURIComponent(id)}/chat`)).json(); if (reportFor !== id) return;
     const app = d.mode === 'terminal', key = JSON.stringify([d.messages.length, d.messages.at(-1)?.text?.length, d.busy, d.ask, d.mode]);
-    rBusy = d.busy; $('#r-stop').hidden = !d.busy || d.mode === 'app'; $('#r-send').disabled = app; rq.disabled = app; $('#r-new').disabled = app || d.mode === 'app';
+    rBusy = d.busy; $('#r-stop').hidden = !d.busy || d.mode === 'app'; $('#r-send').disabled = app; rq.disabled = app;
     $('#r-link').textContent = d.attach ? 'terminal: ' + d.attach : d.mode === 'app' ? 'also in the Claude app' : d.mode === 'terminal' ? 'open in a terminal' : '';
     $('#r-link').title = d.attach || '';
     clearTimeout(rPoll); rPoll = setTimeout(() => reportFor === id && loadThread(id), d.busy || d.ask ? 2000 : 6000);
@@ -981,11 +984,6 @@ $('#r-form').onsubmit = async e => {
   loadThread(id, true);
 };
 $('#r-stop').onclick = () => reportFor && api(`/api/agents/${encodeURIComponent(reportFor)}/chat/stop`, { method: 'POST' }).then(() => loadThread(reportFor, true));
-$('#r-new').onclick = async () => {
-  if (!reportFor || !confirm('Clear this session (/clear)? Claude forgets this conversation.')) return;
-  try { await api(`/api/agents/${encodeURIComponent(reportFor)}/chat/reset`, { method: 'POST' }); } catch (err) { alert(err.message); }
-  loadThread(reportFor, true);
-};
 $('#r-close').onclick = () => $('#report').close();
 $('#r-gear').onclick = async () => {   // this agent's settings, over its chat
   if (!agCfg.agents.length) await loadAgentCfg();

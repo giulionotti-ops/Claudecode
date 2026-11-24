@@ -4,7 +4,7 @@
   python3 -m studio.pipeline fix <aid> <vid> "<note>"   # the owner asked for changes
   python3 -m studio.pipeline analyse <aid>              # analyst session (after stats.py)
 
-Every role is its own fresh, short `claude -p` session in the channel folder (new session per video, so
+Every role is its own fresh, short `claude -p` session in its own folder (.roles/<role>, with only its skills) (new session per video, so
 context and cost stay small). Scripts check what scripts can check (gate.py, audit.py); the supervisor
 session judges the rest and can send the work back up to `max_fix_rounds` times.
 """
@@ -41,11 +41,14 @@ def run_role(aid: str, role: str, vdir: Path | None, extra: str = "") -> dict:
     channel.event(aid, "role", f"{channel.ROLE_LABEL[role]} started" + (f" on video {vdir.name}" if vdir else ""),
                   role=role, video=vdir.name if vdir else None, session=sid)
     claude = shutil.which("claude") or str(Path.home() / ".local" / "bin" / "claude")
+    # own folder = only this role's skills; --settings = only this role's plugins
+    cwd = channel.role_dir(aid, role)
     cmd = [claude, "-p", prompt, "--session-id", sid, "--output-format", "json", "--model", _model(),
-           "--allowedTools", TOOLS, "--permission-mode", "acceptEdits"]
+           "--allowedTools", TOOLS, "--permission-mode", "acceptEdits",
+           "--settings", json.dumps({"enabledPlugins": channel.ROLE_PLUGINS[role]})]
     res = {"ok": False, "session": sid, "cost": 0.0, "text": ""}
     try:
-        r = subprocess.run(cmd, cwd=d, capture_output=True, text=True, timeout=TIMEOUT[role],
+        r = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True, timeout=TIMEOUT[role],
                            env={**os.environ, "NEESMO_ROLE": role, "NEESMO_CHANNEL": aid})
         out = json.loads(r.stdout or "{}")
         res.update(ok=r.returncode == 0 and not out.get("is_error"), cost=float(out.get("total_cost_usd") or 0),
@@ -76,6 +79,8 @@ def _new_video(aid: str) -> tuple[str, Path]:
     q.append({"id": vid, "status": "making", "created": state.now().isoformat(timespec="seconds"),
               "dir": str(vdir), "sessions": {}, "rounds": 0})
     channel.save_queue(aid, q)
+    from . import video_chat
+    video_chat.open_chat(aid, vid)      # every video gets its own chat, "#<number>"
     c = state.channel(aid)
     if not c.get("trial_start"):
         state.save_channel(aid, trial_start=state.now().date().isoformat())

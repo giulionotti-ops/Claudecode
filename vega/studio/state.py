@@ -24,7 +24,7 @@ TRIAL_DAYS = 7       # every video needs the owner's OK before it is scheduled
 STEPS = ["install", "intro", "permissions", "name", "look", "warmup", "ready"]
 
 DEFAULTS = {
-    "edition": os.environ.get("NEESMO_EDITION", "youtube"),  # youtube | instagram (set by the license / build)
+    "edition": os.environ.get("NEESMO_EDITION", "youtube"),  # youtube | instagram | director (both; set by the license / build)
     "step": "install",
     "channel_name": "",
     "look": {},                    # {"style": ..., "avatar": path, "banner": path}
@@ -34,6 +34,15 @@ DEFAULTS = {
     "notify": "important",         # important (videos + things that need you) | all | off
     "inspiration_hint_shown": False,
 }
+
+
+EDITION_LABEL = {"youtube": "YouTube Studio", "instagram": "IG Studio", "director": "Director Studio"}
+
+
+def platforms(edition: str | None = None) -> list[str]:
+    """Platforms this install posts to: one per edition, both for the director edition."""
+    e = edition or load()["edition"]
+    return ["youtube", "instagram"] if e == "director" else [e if e in ("youtube", "instagram") else "youtube"]
 
 
 def now() -> dt.datetime:

@@ -47,8 +47,12 @@ def audit(folder: Path, sessions: dict[str, list[str]], engine: str) -> dict:
         if role not in REQUIRED:
             continue
         used: list[str] = []
+        rd = folder / ".roles" / role   # roles run in their own folder; older videos ran in the channel folder
         for sid in ids:
-            used += [s for s in skills_used(transcript(folder, sid)) if s not in used]
+            log = transcript(rd, sid) if rd.is_dir() else None
+            if not log or not log.exists():
+                log = transcript(folder, sid)
+            used += [s for s in skills_used(log) if s not in used]
         missing = []
         for group in REQUIRED[role]:
             group = [engine if g == "@engine" else g for g in group]

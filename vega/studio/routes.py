@@ -18,7 +18,7 @@ from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
 import agents
-from . import channel, install, pipeline, state, tick, update
+from . import channel, install, pipeline, state, stats, tick, update, video_chat
 
 router = APIRouter(prefix="/api/studio")
 LOOKS = state.DIR / "looks"
@@ -57,6 +57,7 @@ def get_state():
     return {**s, "studio": state.STATE.exists(), "warmup_left": state.warmup_left(s), "warmup_days": state.WARMUP_DAYS, "trial_days": state.TRIAL_DAYS,
             "steps": state.STEPS, "install": install.progress(), "connectors": connectors(),
             "version": update.version(), "update": upd,
+            "studio_label": state.EDITION_LABEL.get(s["edition"], "YouTube Studio"), "platforms": state.platforms(s["edition"]),
             "channels": [a["id"] for a in agents.load() if channel.is_channel(a)]}
 
 
@@ -119,7 +120,7 @@ def set_settings(b: SettingsIn):
         ch["auto_permissions"] = b.auto_permissions
     if b.auto_update is not None:
         ch["auto_update"] = b.auto_update
-    if b.edition in ("youtube", "instagram"):
+    if b.edition in ("youtube", "instagram", "director"):
         ch["edition"] = b.edition
     return state.save(**ch)
 
@@ -135,7 +136,7 @@ async def set_name(b: NameIn):
         raise HTTPException(400, "pick a name")
     state.save(channel_name=name, step="look", looks_ready=False, looks_error=None)
     LOOKS.mkdir(parents=True, exist_ok=True)
-    banner = ["--banner"] if state.load()["edition"] == "youtube" else []
+    banner = ["--banner"] if "youtube" in state.platforms() else []
     seed = str(secrets.randbelow(9999))
 
     def draw():
@@ -333,7 +334,117 @@ def channel_get(aid: str):
     out["cost_usd"] = round(total, 2)
     out["board"] = channel.paths(aid)["board"].read_text().splitlines()[-30:] if channel.paths(aid)["board"].exists() else []
     out["lessons"] = channel.paths(aid)["lessons"].read_text()[:3000] if channel.paths(aid)["lessons"].exists() else ""
+    rows = {r["id"]: r for r in channel.read_json(channel.paths(aid)["stats"], {}).get("videos", [])}
+    vids = []
+    for v in channel.queue(aid)[-60:]:   # the dashboard list: each video with a couple of numbers per platform
+        r = rows.get(v["id"]) or {}
+        vids.append({**v, "chat": video_chat.name(v["id"]),
+                     "nums": {p: {"views": n.get("views"), "likes": n.get("likes")} for p, n in (r.get("platforms") or {}).items()}})
+    out["videos"] = vids
+    out["platforms"] = state.platforms()
     return out
+
+
+# ---------------------------------------------------------------- one video: numbers per platform + its chat
+
+KPIS = {
+    "youtube": [("views", "Views"), ("likes", "Likes"), ("per_day", "Average views per day"), ("dislikes", "Dislikes"),
+                ("minutes", "Estimated min watched"), ("comments", "Comments"), ("avg_seconds", "Avg view duration (sec)"),
+                ("shares", "Shares")],
+    "instagram": [("views", "Views"), ("likes", "Likes"), ("per_day", "Average views per day"), ("reach", "Accounts reached"),
+                  ("saves", "Saves"), ("comments", "Comments"), ("avg_seconds", "Avg watch time (sec)"), ("shares", "Shares")],
+}
+
+
+def _yt_detail(vdir: Path, pid: str) -> dict:
+    """YouTube Analytics for one video, cached 30 min in the video folder (no tokens, few API calls)."""
+    cache = vdir / "detail_youtube.json"
+    d = channel.read_json(cache, {})
+    if d.get("_t", 0) > dt.datetime.now().timestamp() - 1800:
+        return d
+    try:
+        from . import youtube
+        if youtube.connected():
+            d = {**youtube.detail(pid), "_t": dt.datetime.now().timestamp()}
+            channel.write_json(cache, d)
+    except Exception:
+        pass
+    return d
+
+
+def _daily_from_history(h: dict) -> list[dict]:
+    days = sorted(h)
+    out, prev = [], {}
+    for d in days:
+        n = h[d]
+        out.append({"d": d, "views": max(0, (n.get("views") or 0) - (prev.get("views") or 0)),
+                    "likes": max(0, (n.get("likes") or 0) - (prev.get("likes") or 0))})
+        prev = n
+    return out[1:] if len(out) > 1 else out
+
+
+def _platform_view(aid: str, v: dict, plat: str, rows: dict) -> dict:
+    vdir = Path(v["dir"])
+    n = dict(((rows.get(v["id"]) or {}).get("platforms") or {}).get(plat) or {})
+    pid = stats.ids_of(v).get(plat)
+    daily = []
+    top = {}
+    if plat == "youtube" and pid:
+        det = _yt_detail(vdir, pid)
+        t = det.get("totals") or {}
+        n.update({k: t[m] for k, m in (("dislikes", "dislikes"), ("minutes", "estimatedMinutesWatched"),
+                                       ("shares", "shares"), ("avg_seconds", "averageViewDuration")) if t.get(m) is not None})
+        daily = det.get("daily") or []
+        top = {"Traffic sources": det.get("sources") or [], "Top search terms": det.get("keywords") or []}
+    if not daily:
+        daily = _daily_from_history(channel.read_json(vdir / "stats_history.json", {}).get(plat, {}))
+    if n.get("views") is not None and daily:
+        n["per_day"] = round(n["views"] / max(1, len(daily)))
+    # % against the channel's average video on this platform (the arrows on each tile)
+    others = [(r.get("platforms") or {}).get(plat) or {} for k, r in rows.items() if k != v["id"]]
+    delta = {}
+    for key, _ in KPIS[plat]:
+        vals = [o[key] for o in others if isinstance(o.get(key), (int, float))]
+        if vals and isinstance(n.get(key), (int, float)) and sum(vals):
+            avg = sum(vals) / len(vals)
+            delta[key] = round(100 * (n[key] - avg) / avg, 1)
+    return {"posted": bool(pid), "kpis": [{"key": k, "label": lab, "value": n.get(k), "delta": delta.get(k)} for k, lab in KPIS[plat]],
+            "daily": daily[-28:], "top": {k: x for k, x in top.items() if x},
+            "pct_viewed": n.get("pct_viewed"), "subs": n.get("subs")}
+
+
+@router.get("/channels/{aid}/videos/{vid}")
+def video_get(aid: str, vid: str):
+    _channel_or_404(aid)
+    v = next((x for x in channel.queue(aid) if x["id"] == vid), None)
+    if not v:
+        raise HTTPException(404, "no such video")
+    rows = {r["id"]: r for r in channel.read_json(channel.paths(aid)["stats"], {}).get("videos", [])}
+    script = channel.read_json(Path(v["dir"]) / "script.json", {})
+    return {"video": {**v, "hook": script.get("hook"), "description": script.get("description")},
+            "platforms": {p: _platform_view(aid, v, p, rows) for p in state.platforms()},
+            "chat": video_chat.view(aid, vid)}
+
+
+@router.get("/channels/{aid}/videos/{vid}/chat")
+def video_chat_get(aid: str, vid: str):
+    _channel_or_404(aid)
+    return video_chat.view(aid, vid)
+
+
+class ChatIn(BaseModel):
+    text: str
+
+
+@router.post("/channels/{aid}/videos/{vid}/chat")
+def video_chat_post(aid: str, vid: str, b: ChatIn):
+    _channel_or_404(aid)
+    if not b.text.strip():
+        raise HTTPException(400, "empty message")
+    try:
+        return video_chat.send(aid, vid, b.text)
+    except ValueError as e:
+        raise HTTPException(404, str(e))
 
 
 class ChannelSettingsIn(BaseModel):
@@ -432,8 +543,13 @@ async def tag(b: TagIn):
     if not hit:
         return {"routed": []}
     clean = re.sub(r"@[a-z0-9-]+\s*", "", b.text, flags=re.I).strip() or b.text
+    num = re.search(r"(?<![\w&])#(\d{1,3})\b", clean)   # "@shop #12 shorter hook" -> chat #12 of that channel
     for a in hit:
-        if channel.is_channel(a):
+        vid = num and next((v["id"] for v in channel.queue(a["id"]) if v["id"].isdigit() and int(v["id"]) == int(num.group(1))), None) \
+            if channel.is_channel(a) else None
+        if vid:
+            video_chat.send(a["id"], vid, clean)
+        elif channel.is_channel(a):
             channel.add_request(a["id"], clean)
         else:
             await agent_chat.send(a["id"], a["name"], clean)

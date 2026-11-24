@@ -33,16 +33,31 @@ from . import state
 
 ROLES = ["marketer", "producer", "supervisor", "analyst"]
 ROLE_LABEL = {"marketer": "Hooks & scripts", "producer": "Video", "supervisor": "Main agent", "analyst": "Analysis"}
-# skills each channel links from the kit (only those of its own job, so sessions stay small)
-SKILLS = ["neesmo-viral-rules", "viral-hooks", "viral-captions-and-ctas", "viral-short-form", "viral-short-form-ideas",
-          "viral-youtube-shorts", "viral-instagram-reels", "content-strategy", "copywriting", "copy-editing",
-          "marketing-psychology", "social", "analytics", "ab-testing", "marketing-ideas", "competitor-profiling",
-          "claude-drawing-skill", "huashu-art-motion", "bang-motion", "short-editing", "clips",
-          "ffmpeg-captions-subtitles", "ffmpeg", "ffmpeg-analyse-video", "watch", "task-observer"]
-PLUGINS = {"caveman@caveman": True, "superpowers@claude-plugins-official": True, "claude-mem@thedotmack": True}
+# Skills by group. The channel folder links only the general ones (every role sees those); each role
+# runs in its own folder .roles/<role>/ that links its group's skills too, so a session loads only
+# what its job needs. Main agent (supervisor) = general only.
+SKILL_GROUPS = {
+    "general": ["neesmo-viral-rules"],
+    "marketing": ["viral-hooks", "viral-captions-and-ctas", "viral-short-form", "viral-short-form-ideas",
+                  "viral-youtube-shorts", "viral-instagram-reels", "content-strategy", "copywriting", "copy-editing",
+                  "marketing-psychology", "social", "marketing-ideas", "competitor-profiling"],
+    "content": ["claude-drawing-skill", "huashu-art-motion", "bang-motion", "short-editing", "clips",
+                "ffmpeg-captions-subtitles", "ffmpeg", "voicestudio", "moneyprinterturbo-video", "vox-explainer-skill"],
+    "analysis": ["analytics", "ab-testing", "ffmpeg-analyse-video", "watch", "task-observer"],
+}
+SKILLS = [x for g in SKILL_GROUPS.values() for x in g]
+# "editor" works in a video's own chat (#NNN): changes can touch the words and the picture
+ROLE_GROUPS = {"supervisor": [], "marketer": ["marketing"], "producer": ["content"], "analyst": ["analysis"],
+               "editor": ["marketing", "content"]}
+GENERAL_PLUGINS = {"caveman@caveman": True, "claude-mem@thedotmack": True}
+ROLE_PLUGINS = {r: {**GENERAL_PLUGINS, "superpowers@claude-plugins-official": r in ("producer", "editor")}
+                for r in ROLE_GROUPS}
+PLUGINS = {**GENERAL_PLUGINS, "superpowers@claude-plugins-official": False}
 # which art style (from the avatar picker) maps to which video engine skill
 ENGINE_FOR_STYLE = {"chalk": "claude-drawing-skill", "papercut": "claude-drawing-skill", "flat": "claude-drawing-skill",
                     "synthwave": "bang-motion", "bold": "huashu-art-motion"}
+PLATFORM_NAME = {"youtube": "YouTube", "instagram": "Instagram", "director": "YouTube and Instagram (one video, both versions)"}
+WHERE = {"youtube": "YouTube channel", "instagram": "Instagram account", "director": "YouTube channel and Instagram account"}
 VOICES = {"youtube": "en-US-AndrewNeural", "instagram": "en-US-AvaNeural"}
 
 
@@ -130,27 +145,53 @@ def update_video(aid: str, vid: str, **changes) -> dict | None:
     return None
 
 
-def _link_skills(d: Path) -> list[str]:
+def _link(dest: Path, names: list[str]) -> list[str]:
+    """Make dest/.claude/skills hold links to exactly `names` (those the kit has); drop other kit links."""
     kit = state.KIT / ".claude" / "skills"
-    dest = d / ".claude" / "skills"
-    dest.mkdir(parents=True, exist_ok=True)
+    sk = dest / ".claude" / "skills"
+    sk.mkdir(parents=True, exist_ok=True)
+    for link in sk.iterdir():
+        if link.is_symlink() and link.name in SKILLS and link.name not in names:
+            link.unlink()
     linked = []
-    for s in SKILLS:
-        src = kit / s
-        if not src.exists():
-            continue
-        link = dest / s
-        if link.is_symlink() or link.exists():
-            continue
-        link.symlink_to(src.resolve())
-        linked.append(s)
+    for s in names:
+        src, link = kit / s, sk / s
+        if src.exists() and not (link.is_symlink() or link.exists()):
+            link.symlink_to(src.resolve())
+            linked.append(s)
+    return linked
+
+
+def role_dir(aid: str, role: str) -> Path:
+    """Folder a role's session runs in: its own skills, plus links back to the channel's files so the
+    briefs' relative paths (neesmo/, videos/, inspiration/) still work."""
+    d = state.channel_dir(aid)
+    r = d / ".roles" / role
+    r.mkdir(parents=True, exist_ok=True)
+    for name in ("neesmo", "videos", "inspiration"):
+        link = r / name
+        if not (link.is_symlink() or link.exists()):
+            link.symlink_to(Path("..") / ".." / name)
+    _link(r, [x for g in ROLE_GROUPS[role] for x in SKILL_GROUPS[g]])
+    return r
+
+
+def _link_skills(d: Path) -> list[str]:
+    linked = _link(d, SKILL_GROUPS["general"])
+    gi = d / ".gitignore"
+    if gi.exists() and ".roles/" not in gi.read_text():
+        with open(gi, "a") as f:
+            f.write(".roles/\n")
+    if (d / "neesmo").exists() and d.parent == state.AGENT_HOME:
+        for role in ROLE_GROUPS:
+            role_dir(d.name, role)
     return linked
 
 
 def _claude_settings(d: Path) -> None:
     p = d / ".claude" / "settings.json"
     s = read_json(p, {})
-    s.setdefault("enabledPlugins", {}).update(PLUGINS)
+    s.setdefault("enabledPlugins", {}).update(PLUGINS)   # roles add their own with --settings
     write_json(p, s)
 
 
@@ -176,7 +217,7 @@ def create(name: str, brief: str, edition: str | None = None, style: str | None 
     s = state.load()
     style = style or (s.get("look") or {}).get("style") or "bold"
     if not p["brief"].exists():
-        p["brief"].write_text(f"# {name}\n\nPlatform: {'YouTube' if edition == 'youtube' else 'Instagram'}\n\n"
+        p["brief"].write_text(f"# {name}\n\nPlatform: {PLATFORM_NAME.get(edition, 'YouTube')}\n\n"
                               f"## What the owner asked\n{brief.strip()}\n\n"
                               "## Audience\n(the marketer fills this in after the first research run)\n")
     if not p["style"].exists():
@@ -205,7 +246,7 @@ def create(name: str, brief: str, edition: str | None = None, style: str | None 
     _git_init(p["dir"], aid)
     items = [a for a in agents._raw() if a.get("id") != aid]
     items.append({"id": aid, "name": name, "folder": str(p["dir"]), "short": name.split()[0][:10],
-                  "role": f"Runs the {name} {'YouTube channel' if edition == 'youtube' else 'Instagram account'}",
+                  "role": f"Runs the {name} {WHERE.get(edition, 'YouTube channel')}",
                   "kind": "channel", **({"color": color} if color else {})})
     agents.save(items)
     event(aid, "created", f"{name} is ready. The marketer, producer, analyst and the main agent are set up.")
@@ -216,7 +257,7 @@ def _git_init(d: Path, aid: str) -> None:
     """Local history always; a private GitHub backup when the owner connected GitHub."""
     if not (d / ".git").exists():
         subprocess.run(["git", "init", "-q"], cwd=d)
-        (d / ".gitignore").write_text("*.mp4\n*.mov\n*.wav\n*.mp3\nnode_modules/\n.cache/\n")
+        (d / ".gitignore").write_text("*.mp4\n*.mov\n*.wav\n*.mp3\nnode_modules/\n.cache/\n.roles/\n")
     if shutil.which("gh") and subprocess.run(["gh", "auth", "status"], capture_output=True).returncode == 0:
         has_remote = subprocess.run(["git", "remote"], cwd=d, capture_output=True, text=True).stdout.strip()
         if not has_remote:

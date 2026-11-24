@@ -7,7 +7,8 @@ const J = (path, body, method = 'POST') => api('/api/studio' + path, body instan
   : { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body ?? {}) }).then(r => r.json());
 const G = path => api('/api/studio' + path).then(r => r.json());
 const yt = () => S.st?.edition !== 'instagram';
-const platform = () => yt() ? 'YouTube' : 'Instagram';
+const platform = () => S.st?.edition === 'director' ? 'Director' : yt() ? 'YouTube' : 'Instagram';
+const PLAT = { youtube: 'YouTube', instagram: 'Instagram' };
 const media = (aid, p) => `/api/studio/channels/${encodeURIComponent(aid)}/media?p=${encodeURIComponent(p)}`;
 const ago = ts => { if (!ts) return ''; const m = Math.round((Date.now() - new Date(ts)) / 6e4);
   return m < 1 ? 'now' : m < 60 ? m + 'm' : m < 1440 ? Math.round(m / 60) + 'h' : Math.round(m / 1440) + 'd'; };
@@ -23,6 +24,7 @@ document.body.insertAdjacentHTML('beforeend', `
 async function refresh() {
   try { S.st = await G('/state'); } catch { return; }
   if (!S.st.studio) return;
+  const lab = $('#studio-label'); if (lab) { lab.textContent = S.st.studio_label || ''; lab.hidden = !S.st.studio_label; }
   onboarding();
   settingsBlock();
 }
@@ -235,7 +237,7 @@ async function enhance() {
       <span class="run${d.busy ? ' on' : ''}">${esc(run)}</span>`);
     if (d.busy) el.querySelector('b').textContent = 'Working';
   }
-  if (S.chd && $('#chd').open && !$('#chd-play video')) openChd(S.chd, true);
+  if (S.chd && $('#chd').open && !S.vd) openChd(S.chd, true);
 }
 const _loadAgents = loadAgents;
 loadAgents = async (...a) => { await _loadAgents(...a); await enhance(); };
@@ -253,19 +255,15 @@ async function openChd(id, soft) {
   const c = d.counts || {}, s = d.settings || {}, r = d.running || {}, st = d.stats || {};
   const sub = d.warmup_left ? `Warm-up: ${d.warmup_left} days left` : d.in_trial ? `Trial week: every video waits for your OK` : s.auto_schedule ? 'Schedules by itself' : 'Every video waits for your OK';
   const vids = (d.videos || []).slice().reverse();
-  const keepAsk = soft ? box.querySelector('#chd-q')?.value || '' : '';
   if (soft && document.activeElement?.closest?.('#chd form')) return;   // don't redraw under typing
   box.innerHTML = `<header><div><h2 id="chd-t">${esc(a.name)}</h2><small>${esc(sub)}${s.paused ? ' · paused' : ''}</small></div>
-    <div class="hb"><button type="button" id="chd-make" class="main">Make a video now</button><button type="button" id="chd-chat">Chat</button>
-    <button type="button" id="chd-set">Settings</button><button type="button" id="chd-full">${dlg.classList.contains('full') ? 'Exit full screen' : 'Full screen'}</button><button type="button" id="chd-x" aria-label="Close">✕</button></div></header>
+    <div class="hb"><button type="button" id="chd-make" class="main">Make a video now</button><button type="button" id="chd-set">Settings</button><button type="button" id="chd-full">${dlg.classList.contains('full') ? 'Exit full screen' : 'Full screen'}</button><button type="button" id="chd-x" aria-label="Close">✕</button></div></header>
     <div class="kp"><div><b>${kfmt(st.views)}</b><small>views</small></div><div><b>${kfmt(st.subs)}</b><small>${yt() ? 'subscribers gained' : 'followers gained'}</small></div>
     <div><b>${c.posted || 0}</b><small>live</small></div><div><b>${c.scheduled || 0}</b><small>scheduled</small></div>
     <div><b>${(c.ready_for_review || 0) + (c.needs_owner || 0)}</b><small>waiting for you</small></div><div><b>$${(d.cost_usd || 0).toFixed(2)}</b><small>Claude use (est.)</small></div></div>
     <div class="roles">${d.roles.map(x => `<span class="${d.busy && r.role === x.id ? 'on' : ''}">${esc(x.label)}${d.busy && r.role === x.id ? ' · working' : ''}</span>`).join('')}</div>
-    <form class="ask" id="chd-ask"><input id="chd-q" placeholder="Tell ${esc(a.name)} what to change (it beats the usual style)" value="${esc(keepAsk)}"><button type="submit">Send</button></form>
     <div class="cols">
-      <section><h3>Videos</h3><div class="vids">${vids.map(v => `<button type="button" class="vid" data-v="${esc(v.id)}">${v.poster ? `<img src="${media(id, v.poster)}" alt="" loading="lazy">` : '<img alt="">'}<div><b>${esc(v.title || 'Video ' + v.id)}</b><span class="st-${esc(v.status)}">${esc(STATUS[v.status] || v.status)}</span>${v.publish_at ? ` · ${esc(new Date(v.publish_at).toLocaleString([], { weekday: 'short', hour: '2-digit', minute: '2-digit' }))}` : ''}</div></button>`).join('') || '<small>No videos yet.</small>'}</div>
-        <div id="chd-play"></div></section>
+      <section class="vlist"><h3>Videos</h3><div class="vids">${vids.map(v => vRow(id, v, d.platforms || ['youtube'])).join('') || '<small>No videos yet.</small>'}</div></section>
       <section><h3>Timeline</h3><ol class="ev">${(d.events || []).slice().reverse().map(e => `<li><small>${esc(ago(e.ts))}</small>${esc(e.text)}</li>`).join('') || '<li>Nothing yet.</li>'}</ol></section>
       <section><h3>Team board</h3><pre>${esc((Array.isArray(d.board) ? d.board.join('\n') : d.board) || 'The agents write to each other here.')}</pre>
         <h3 style="margin-top:12px">What it learned</h3><pre>${esc((Array.isArray(d.lessons) ? d.lessons.join('\n') : d.lessons) || 'Lessons appear after the first videos have numbers.')}</pre>
@@ -275,19 +273,89 @@ async function openChd(id, soft) {
   const q = sel => box.querySelector(sel);
   q('#chd-x').onclick = () => dlg.close();
   q('#chd-full').onclick = () => { dlg.classList.toggle('full'); openChd(id, true); };
-  q('#chd-chat').onclick = () => { dlg.close(); rSeen = ''; rPending = []; renderRAtts(); openReport(id); loadThread(id, true); };
   q('#chd-set').onclick = async () => { dlg.close(); await loadAgentCfg(); const i = agCfg.agents.findIndex(x => x.id === id); if (i >= 0) { openAgentEditor(i); showAgTab('channel'); } };
   q('#chd-make').onclick = async () => { try { const r = await J(`/channels/${encodeURIComponent(id)}/make`); say(r.ok ? `${a.name} started a new video.` : r.msg, 'vega'); openChd(id, true); } catch (x) { say(x.message, 'vega'); } };
-  q('#chd-ask').onsubmit = async e => { e.preventDefault(); const t = q('#chd-q').value.trim(); if (!t) return;
-    await J('/tag', { text: `@${id} ${t}` }); q('#chd-q').value = ''; say(`Sent to ${a.name}. The next video follows it.`, 'vega'); };
   q('#chd-insp').onchange = async e => { for (const f of e.target.files) { const fd = new FormData(); fd.append('file', f);
     try { await J(`/channels/${encodeURIComponent(id)}/inspiration`, fd); } catch (x) { say(x.message, 'vega'); } } say('Thanks, the team will use it.', 'vega'); openChd(id, true); };
-  box.querySelector('.vids').onclick = e => { const b = e.target.closest('.vid'); if (!b) return; const v = vids.find(x => x.id === b.dataset.v);
-    q('#chd-play').innerHTML = v?.video ? `<video class="play" src="${media(id, v.video)}" controls playsinline autoplay></video><small>${esc(v.summary || '')}</small>` : `<small>${esc(v?.summary || 'No video file yet.')}</small>`; };
+  box.querySelector('.vids').onclick = e => { const b = e.target.closest('.vid'); if (b) openVideo(id, b.dataset.v); };
   if (!dlg.open) dlg.showModal();
 }
+
+// one row of the video list: poster, #number + title, status, a couple of numbers per platform
+function vRow(aid, v, plats) {
+  const when = v.publish_at ? new Date(v.publish_at).toLocaleString([], { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' }) : ago(v.created) + ' ago';
+  const nums = plats.map(p => { const n = (v.nums || {})[p];
+    return `<span class="pn p-${p}" title="${PLAT[p]}"><i>${p === 'youtube' ? 'YT' : 'IG'}</i>${n ? `<b>${kfmt(n.views)}</b> views · <b>${kfmt(n.likes)}</b> likes` : '<em>not posted</em>'}</span>`; }).join('');
+  return `<button type="button" class="vid" data-v="${esc(v.id)}">${v.poster ? `<img src="${media(aid, v.poster)}" alt="" loading="lazy">` : '<img alt="">'}
+    <div><b><span class="vno">${esc(v.chat || '#' + v.id)}</span> ${esc(v.title || 'Video ' + v.id)}</b>
+    <span><span class="st-${esc(v.status)}">${esc(STATUS[v.status] || v.status)}</span> · ${esc(when)}</span><span class="nums">${nums}</span></div></button>`;
+}
+
+// ------------------------------------------------------------------ one video: numbers per platform + its own chat
+const num = x => x == null ? '–' : typeof x === 'number' ? (Math.abs(x) >= 1e4 ? kfmt(x) : x.toLocaleString(undefined, { maximumFractionDigits: 1 })) : esc(x);
+function chart(daily) {
+  if (!daily?.length) return '<p class="none">Daily numbers appear a day after the video is posted.</p>';
+  const W = 640, H = 220, L = 40, R = 40, T = 14, B = 26, n = daily.length, bw = (W - L - R) / n;
+  const mv = Math.max(1, ...daily.map(x => x.views || 0)), ml = Math.max(1, ...daily.map(x => x.likes || 0));
+  const y = (v, m) => T + (H - T - B) * (1 - v / m);
+  const bars = daily.map((x, i) => `<rect x="${(L + i * bw + bw * .15).toFixed(1)}" y="${y(x.views || 0, mv).toFixed(1)}" width="${(bw * .7).toFixed(1)}" height="${(H - B - y(x.views || 0, mv)).toFixed(1)}"><title>${esc(x.d)}: ${x.views} views</title></rect>`).join('');
+  const pts = daily.map((x, i) => `${(L + i * bw + bw / 2).toFixed(1)},${y(x.likes || 0, ml).toFixed(1)}`);
+  const grid = [0, .5, 1].map(f => `<line x1="${L}" x2="${W - R}" y1="${y(mv * f, mv)}" y2="${y(mv * f, mv)}"/><text x="${L - 6}" y="${y(mv * f, mv) + 4}" text-anchor="end">${kfmt(Math.round(mv * f))}</text><text x="${W - R + 6}" y="${y(ml * f, ml) + 4}">${kfmt(Math.round(ml * f))}</text>`).join('');
+  const lab = daily.map((x, i) => i % Math.ceil(n / 7) ? '' : `<text x="${L + i * bw + bw / 2}" y="${H - 8}" text-anchor="middle">${esc(new Date(x.d).toLocaleDateString([], { day: 'numeric', month: 'short' }))}</text>`).join('');
+  return `<div class="leg"><span class="lb">Views</span><span class="ll">Likes</span></div>
+    <svg viewBox="0 0 ${W} ${H}" class="vc" role="img" aria-label="Daily views and likes"><g class="gr">${grid}</g><g class="bars">${bars}</g>
+    <polyline class="ln" points="${pts.join(' ')}"/>${pts.map(p => `<circle class="dot" cx="${p.split(',')[0]}" cy="${p.split(',')[1]}" r="3"/>`).join('')}<g class="ax">${lab}</g></svg>`;
+}
+function topList(title, rows) {
+  const m = Math.max(1, ...rows.map(r => r.views || 0));
+  return `<div class="vcard"><h4>${esc(title)}</h4>${rows.map(r => `<div class="tr"><span>${esc(r.name)}</span><i style="width:${(100 * (r.views || 0) / m).toFixed(0)}%"></i><b>${num(r.views)}</b></div>`).join('')}</div>`;
+}
+function platPane(p, d) {
+  if (!d.posted) return `<p class="none">This video is not on ${PLAT[p]} yet. Its numbers show here once it is posted.</p>`;
+  const tiles = d.kpis.map(k => `<div class="tile"><small>${esc(k.label)}</small><b>${num(k.value)}</b>${k.delta == null ? '' : `<em class="${k.delta >= 0 ? 'up' : 'dn'}">${k.delta >= 0 ? '▲' : '▼'} ${Math.abs(k.delta)}%</em>`}</div>`).join('');
+  return `<div class="vgrid"><div class="tiles">${tiles}</div><div class="vcard"><h4>Views &amp; Likes</h4>${chart(d.daily)}</div></div>
+    <p class="cmp">Arrows compare with this channel's average video on ${PLAT[p]}.${d.pct_viewed != null ? ` Viewers watch ${num(d.pct_viewed)}% of it.` : ''}${d.subs != null ? ` ${num(d.subs)} ${p === 'youtube' ? 'subscribers' : 'followers'} gained.` : ''}</p>
+    ${Object.keys(d.top || {}).length ? `<div class="tops">${Object.entries(d.top).map(([t, r]) => topList(t, r)).join('')}</div>` : ''}`;
+}
+function chatHtml(c) {
+  const who = { owner: 'you', neesmo: 'vega' };
+  return c.messages.map(m => `<p class="${who[m.role] || 'vega'}${m.error ? ' err' : ''}">${esc(m.text)}</p>`).join('')
+    + (c.busy ? `<p class="vega wait">${c.busy === 'compacting' ? 'Tidying up this chat to keep it cheap…' : 'Working on it…'}</p>` : '');
+}
+async function openVideo(aid, vid, tab) {
+  const box = $('#chd-b');
+  let d; try { d = await G(`/channels/${encodeURIComponent(aid)}/videos/${encodeURIComponent(vid)}`); } catch (x) { return say(x.message, 'vega'); }
+  const v = d.video, plats = Object.keys(d.platforms);
+  tab = tab && plats.includes(tab) ? tab : plats[0];
+  box.innerHTML = `<header><div><h2 id="chd-t"><span class="vno">${esc(d.chat.name)}</span> ${esc(v.title || 'Video ' + v.id)}</h2>
+      <small>${esc(STATUS[v.status] || v.status)}${v.publish_at ? ' · ' + esc(new Date(v.publish_at).toLocaleString()) : ''}</small></div>
+    <div class="hb"><button type="button" id="vd-back">← Videos</button><button type="button" id="chd-x" aria-label="Close">✕</button></div></header>
+    <div class="vd">
+      <div class="vmain">
+        ${plats.length > 1 ? `<div class="ptabs" role="tablist">${plats.map(p => `<button type="button" role="tab" data-p="${p}" aria-selected="${p === tab}">${PLAT[p]}</button>`).join('')}</div>` : ''}
+        <div id="vd-pane">${platPane(tab, d.platforms[tab])}</div>
+        ${v.video ? `<video class="play" src="${media(aid, v.video)}" controls playsinline preload="metadata"></video>` : ''}
+        ${v.hook ? `<p class="cmp"><b>Hook:</b> ${esc(v.hook)}</p>` : ''}
+      </div>
+      <aside class="vchat"><h3>Chat ${esc(d.chat.name)}</h3><div class="vlog" id="vd-log">${chatHtml(d.chat)}</div>
+        <form id="vd-f"><input id="vd-q" placeholder="Ask for a change to ${esc(d.chat.name)}" autocomplete="off"><button type="submit">Send</button></form>
+        <small class="ctx">${d.chat.ctx_pct ? `Chat memory ${d.chat.ctx_pct}% full` : ''}</small></aside>
+    </div>`;
+  const q = sel => box.querySelector(sel);
+  const log = q('#vd-log'); log.scrollTop = log.scrollHeight;
+  q('#chd-x').onclick = () => $('#chd').close();
+  q('#vd-back').onclick = () => { clearTimeout(S.vt); S.vd = null; openChd(aid); };
+  box.querySelectorAll('.ptabs button').forEach(b => b.onclick = () => { box.querySelectorAll('.ptabs button').forEach(x => x.setAttribute('aria-selected', String(x === b))); q('#vd-pane').innerHTML = platPane(b.dataset.p, d.platforms[b.dataset.p]); });
+  const paint = c => { log.innerHTML = chatHtml(c); log.scrollTop = log.scrollHeight; q('.ctx').textContent = c.ctx_pct ? `Chat memory ${c.ctx_pct}% full` : '';
+    clearTimeout(S.vt); if (c.busy) S.vt = setTimeout(poll, 3000); };
+  const poll = async () => { if (S.vd !== vid || !$('#chd').open) return; try { paint(await G(`/channels/${encodeURIComponent(aid)}/videos/${encodeURIComponent(vid)}/chat`)); } catch {} };
+  q('#vd-f').onsubmit = async e => { e.preventDefault(); const t = q('#vd-q').value.trim(); if (!t) return; q('#vd-q').value = '';
+    try { paint(await J(`/channels/${encodeURIComponent(aid)}/videos/${encodeURIComponent(vid)}/chat`, { text: t })); } catch (x) { say(x.message, 'vega'); } };
+  S.vd = vid; if (d.chat.busy) S.vt = setTimeout(poll, 3000);
+  if (!$('#chd').open) $('#chd').showModal();
+}
 $('#chd').addEventListener('click', e => { if (e.target.id === 'chd') e.target.close(); });
-$('#chd').addEventListener('close', () => { S.chd = null; });
+$('#chd').addEventListener('close', () => { S.chd = null; S.vd = null; clearTimeout(S.vt); });
 
 // ------------------------------------------------------------------ @tags on the home composer
 const tagbar = $('#tagbar');
@@ -411,7 +479,7 @@ function settingsBlock() {
     };
   }
   tog($('#s-ap'), st.auto_permissions); tog($('#s-au'), st.auto_update); $('#s-nt').value = st.notify || 'important';
-  $('#s-ver').textContent = `${st.version} · ${platform()} edition`;
+  $('#s-ver').textContent = `${st.version} · ${st.studio_label || platform() + ' edition'}`;
   paintUpd();
 }
 function paintUpd() {

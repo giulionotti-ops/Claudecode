@@ -124,7 +124,7 @@ def studio_prompt() -> str:
     if not studio_state.STATE.exists():
         return ""
     s = studio_state.load()
-    where = "YouTube channel" if s["edition"] == "youtube" else "Instagram account"
+    where = {"youtube": "YouTube channel", "instagram": "Instagram account"}.get(s["edition"], "YouTube channel and Instagram account")
     chans = [a["id"] for a in agents.load() if studio_channel.is_channel(a)]
     return (f" You are Neesmo Studio: you help the owner go viral with their {where}"
             + (f" named {s['channel_name']}" if s.get("channel_name") else "") + ". "
