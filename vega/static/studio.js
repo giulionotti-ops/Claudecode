@@ -1,0 +1,425 @@
+// Neesmo Studio UI: first-run setup, channel agent dashboards, @tags on the home composer, Studio settings.
+// Uses the main page's helpers ($, api, esc, say, loadAgents, openReport, openNote, notes, agCfg ...).
+// Does nothing on a plain Neesmo install (no studio/state.json on the server).
+(() => {
+const S = { st: null, ch: {}, chd: null, timer: 0 };
+const J = (path, body, method = 'POST') => api('/api/studio' + path, body instanceof FormData ? { method, body }
+  : { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body ?? {}) }).then(r => r.json());
+const G = path => api('/api/studio' + path).then(r => r.json());
+const yt = () => S.st?.edition !== 'instagram';
+const platform = () => yt() ? 'YouTube' : 'Instagram';
+const media = (aid, p) => `/api/studio/channels/${encodeURIComponent(aid)}/media?p=${encodeURIComponent(p)}`;
+const ago = ts => { if (!ts) return ''; const m = Math.round((Date.now() - new Date(ts)) / 6e4);
+  return m < 1 ? 'now' : m < 60 ? m + 'm' : m < 1440 ? Math.round(m / 60) + 'h' : Math.round(m / 1440) + 'd'; };
+const STATUS = { making: 'Making', ready_for_review: 'Waiting for you', needs_owner: 'Needs you', approved: 'Approved',
+  scheduled: 'Scheduled', posted: 'Posted', rejected: 'Rejected', failed: 'Failed' };
+
+document.body.insertAdjacentHTML('beforeend', `
+<div id="onb" hidden role="dialog" aria-modal="true" aria-label="Neesmo setup"><div class="ob" id="onb-b"></div></div>
+<button type="button" id="warm-pill" hidden></button>
+<div id="tagbar" hidden role="listbox" aria-label="Tag an agent"></div>
+<dialog class="chd" id="chd" aria-labelledby="chd-t"><div class="rp" id="chd-b"></div></dialog>`);
+
+async function refresh() {
+  try { S.st = await G('/state'); } catch { return; }
+  if (!S.st.studio) return;
+  onboarding();
+  settingsBlock();
+}
+
+// ------------------------------------------------------------------ first-run setup
+const STEP_N = ['install', 'intro', 'permissions', 'name', 'look', 'warmup', 'ready'];
+const dots = s => `<div class="dots" aria-hidden="true">${STEP_N.map((x, i) => `<i class="${i <= STEP_N.indexOf(s) ? 'on' : ''}"></i>`).join('')}</div>`;
+let hideWarm = sessionStorage.getItem('neesmo-warm-hide') === '1';
+const step = s => J('/step', { step: s }).then(refresh);
+
+function onboarding() {
+  const st = S.st, box = $('#onb-b'), onb = $('#onb');
+  let s = st.step || 'install';
+  const noChannel = !(st.channels || []).length && localStorage.getItem('neesmo-chan-later') !== '1';
+  const show = s !== 'ready' || noChannel;
+  $('#warm-pill').hidden = !(s === 'warmup' && st.warmup_left != null && hideWarm);
+  $('#warm-pill').textContent = `Warm-up: ${st.warmup_left} day${st.warmup_left === 1 ? '' : 's'} left`;
+  if (!show || (s === 'warmup' && hideWarm)) { onb.hidden = true; return; }
+  const typing = (box.contains(document.activeElement) && document.activeElement.matches('input,textarea'))
+    || [...box.querySelectorAll('input:not([type=file]),textarea')].some(i => i.value);
+  if (box.dataset.step === s && (typing || (s !== 'install' && s !== 'look' && s !== 'warmup'))) { onb.hidden = false; return; }   // don't wipe typing
+  if (box.dataset.step !== s) { S.polls = 0; clearInterval(S.gh); }
+  box.dataset.step = s; onb.hidden = false;
+  ({ install: vInstall, intro: vIntro, permissions: vPerm, name: vName, look: vLook, warmup: vWarm, ready: vReady }[s] || vInstall)(box, st);
+}
+
+function vInstall(box, st) {
+  const inst = st.install || {}, items = inst.items || [], c = st.connectors || {};
+  const groups = { general: 'Basics', marketing: 'Marketing skills', content: 'Video skills', analysis: 'Learning skills', connect: 'Your accounts' };
+  const started = items.length > 0, done = inst.done && !st.install.running;
+  const okReq = items.filter(i => i.required).every(i => i.status === 'ok');
+  const conn = { github: c.github, youtube: c.youtube, instagram: c.instagram };
+  const list = Object.entries(groups).map(([g, label]) => {
+    const rows = items.filter(i => i.group === g); if (!rows.length) return '';
+    return `<div class="grp">${label}</div><ul class="inst">${rows.map(i => {
+      const status = i.group === 'connect' ? (conn[i.id] ? 'ok' : 'waiting') : i.status;
+      return `<li class="${esc(status)}"><span class="s"></span><span>${esc(i.label)}${i.msg && status === 'failed' ? `<small>${esc(i.msg)}</small>` : ''}</span><span></span></li>`;
+    }).join('')}</ul>`;
+  }).join('');
+  const logins = items.filter(i => i.login && i.login.action);
+  const guides = logins.map(i => guide(i, conn[i.id])).join('');
+  const free = items.find(i => i.id === 'omniroute')?.login;
+  box.innerHTML = `${dots('install')}<h2>Setting up Neesmo</h2>
+    <p>Neesmo installs everything it needs by itself: free tools, memory, marketing skills and video skills. Nothing here uses paid credits.</p>
+    ${started ? list : '<p>This takes a few minutes. You can watch it happen.</p>'}
+    ${done ? `<p><b>Now connect your accounts.</b> Each one takes a minute. Neesmo walks you through it.</p>${guides}` : ''}
+    ${free && done ? `<details class="guide"><summary>${esc(free.title)}</summary><ol>${free.steps.map(x => `<li>${esc(x)}</li>`).join('')}</ol></details>` : ''}
+    <p class="err" id="onb-err"></p>
+    <div class="btns">${!started || (done && !okReq) ? `<button type="button" class="main" id="ob-run">${started ? 'Try again' : 'Start setup'}</button>` : ''}
+    ${done ? `<button type="button" class="${conn.github && (yt() ? conn.youtube : conn.instagram) ? 'main' : ''}" id="ob-next">${conn.github && (yt() ? conn.youtube : conn.instagram) ? 'Continue' : 'Skip for now'}</button>` : ''}</div>`;
+  $('#ob-run') && ($('#ob-run').onclick = async () => { await J('/install'); poll(); });
+  $('#ob-next') && ($('#ob-next').onclick = () => step('intro'));
+  wireGuides(box);
+  if (started && !done) poll();
+}
+function poll() {
+  clearTimeout(S.timer);
+  if ((S.polls = (S.polls || 0) + 1) > 240) {   // ~10 min: the server probably restarted mid-job
+    const e = $('#onb-b').querySelector('.err') || $('#onb-b').appendChild(Object.assign(document.createElement('p'), { className: 'err' }));
+    e.textContent = 'This is taking too long. Reload the page; if it still hangs, press "Draw new ones" or restart Neesmo.'; return;
+  }
+  S.timer = setTimeout(refresh, 2500);
+}
+
+function guide(i, ok) {
+  const l = i.login, a = l.action;
+  let act = '';
+  if (ok) act = '<p>✓ Connected.</p>';
+  else if (a === 'github') act = `<div class="btns"><button type="button" data-act="github">Connect GitHub</button></div><div data-out="github"></div>`;
+  else if (a === 'youtube') act = `
+    <label>1. The OAuth client file (JSON)</label><input type="file" accept=".json,application/json" data-act="yt-file">
+    <div class="btns"><button type="button" data-act="yt-url">2. Open Google sign-in</button></div>
+    <label>3. After you allow, the page will not load. That's fine: copy its full address and paste it here.</label>
+    <input data-in="yt-back" placeholder="http://localhost:8765/?code=..." autocomplete="off">
+    <div class="btns"><button type="button" data-act="yt-finish">Connect</button></div>`;
+  else if (a === 'instagram') act = `<input data-in="ig" placeholder="Paste your access token" autocomplete="off">
+    <div class="btns"><button type="button" data-act="ig">Connect</button></div>`;
+  return `<div class="guide${ok ? ' done' : ''}"><b>${esc(l.title)}</b>${ok ? '' : `<ol>${l.steps.map(x => `<li>${esc(x)}</li>`).join('')}</ol>`}${act}</div>`;
+}
+function wireGuides(box) {
+  const err = t => { const e = box.querySelector('#onb-err') || box.querySelector('.err'); if (e) e.textContent = t || ''; };
+  box.onclick = async e => {
+    const b = e.target.closest('[data-act]'); if (!b || b.tagName === 'INPUT') return;
+    err(''); b.disabled = true;
+    try {
+      if (b.dataset.act === 'github') {
+        const r = await J('/github/start');
+        box.querySelector('[data-out="github"]').innerHTML = `<p>Open <a href="${r.url}" target="_blank" rel="noopener">github.com/login/device</a> and type:</p><p class="code">${esc(r.code)}</p><p>Neesmo notices by itself when you're done.</p>`;
+        clearInterval(S.gh); let n = 0;
+        S.gh = setInterval(async () => { if (++n > 150) return clearInterval(S.gh); try { const st = await G('/state'); if (st.connectors.github) { clearInterval(S.gh); refresh(); } } catch {} }, 4000);
+      } else if (b.dataset.act === 'yt-url') {
+        const r = await G('/youtube/auth-url'); window.open(r.url, '_blank', 'noopener');
+      } else if (b.dataset.act === 'yt-finish') {
+        await J('/youtube/auth-finish', { url: box.querySelector('[data-in="yt-back"]').value.trim() }); refresh();
+      } else if (b.dataset.act === 'ig') {
+        await J('/instagram', { token: box.querySelector('[data-in="ig"]').value.trim() }); refresh();
+      }
+    } catch (x) { err(x.message); }
+    b.disabled = false;
+  };
+  box.onchange = async e => {
+    if (e.target.dataset.act !== 'yt-file' || !e.target.files[0]) return;
+    const fd = new FormData(); fd.append('file', e.target.files[0]);
+    try { await J('/youtube/client', fd); err(''); e.target.insertAdjacentHTML('afterend', '<small>✓ File saved. Now step 2.</small>'); } catch (x) { err(x.message); }
+  };
+}
+
+function vIntro(box) {
+  box.innerHTML = `${dots('intro')}<h2>Everything is ready.</h2>
+    <p>One honest thing before we start. Neesmo is built for one job: to help your ${yt() ? 'channel' : 'account'} go viral.</p>
+    <p>That doesn't happen by luck. It comes from small steps done right, in the right order. Some of them feel slow (like waiting 10 days before the first post). They are there for a reason.</p>
+    <p><b>So my advice: follow every step.</b> I'll keep it simple and tell you what to do each time.</p>
+    <div class="btns"><button type="button" class="main" id="ob-go">Got it, let's go</button></div>`;
+  $('#ob-go').onclick = () => step('permissions');
+}
+
+function vPerm(box) {
+  box.innerHTML = `${dots('permissions')}<h2>Fewer interruptions?</h2>
+    <p>Your agents do many small steps for each video (write a file, run a render...). By default, Claude asks before each step, and every question becomes a notification.</p>
+    <p><b>Auto permissions</b> lets safe steps run by themselves, so you only hear about videos and important things. You can change this any time in Settings › System.</p>
+    <div class="btns"><button type="button" id="ob-no">No, ask me every time</button><button type="button" class="main" id="ob-yes">Yes, use auto (recommended)</button></div>`;
+  const go = async auto => { await J('/settings', { auto_permissions: auto, notify: 'important' }); step('name'); };
+  $('#ob-yes').onclick = () => go(true); $('#ob-no').onclick = () => go(false);
+}
+
+function vName(box, st) {
+  box.innerHTML = `${dots('name')}<h2>What's your ${yt() ? 'channel' : 'account'} called?</h2>
+    <p>Pick the name people will see. Short and easy to say works best. Not sure yet? Write the topic and you can change it later.</p>
+    <input id="ob-name" maxlength="40" placeholder="e.g. Tiny Facts" value="${esc(st.channel_name || '')}">
+    <p class="err" id="onb-err"></p>
+    <div class="btns"><button type="button" class="main" id="ob-ok">Draw my ${yt() ? 'avatar and banner' : 'avatar'}</button></div>`;
+  const ok = async () => { try { await J('/name', { name: $('#ob-name').value }); refresh(); } catch (x) { $('#onb-err').textContent = x.message; } };
+  $('#ob-ok').onclick = ok; $('#ob-name').onkeydown = e => { if (e.key === 'Enter') ok(); };
+  $('#ob-name').focus();
+}
+
+async function vLook(box, st) {
+  const L = await G('/looks').catch(() => ({ ready: false, looks: [] }));
+  const img = (p, v, cls) => p ? `<img class="${cls}" src="/api/studio/looks/${encodeURIComponent(p.split('/').pop())}?v=${esc(v)}" alt="">` : '';
+  if (!L.ready) {
+    box.innerHTML = `${dots('look')}<h2>Drawing "${esc(st.channel_name)}"…</h2><p>Neesmo is drawing one ${yt() ? 'avatar and banner' : 'avatar'} in each style. Each picture is made by code, in a different art style, so you can pick your favourite.</p><p>About a minute.</p>`;
+    return poll();
+  }
+  box.innerHTML = `${dots('look')}<h2>Pick your look</h2>
+    <p>One per style. Tap the one you like most: it also sets the style of your videos.${yt() && st.connectors?.youtube ? ' The banner goes straight onto your channel.' : ''}</p>
+    ${L.error ? `<p class="err">${esc(L.error)}</p>` : !L.looks.length ? '<p class="err">No pictures came out this time. Press "Draw new ones".</p>' : ''}
+    <div class="looks">${L.looks.map(l => `<button type="button" class="look" data-style="${esc(l.style)}">${img(l.avatar, l.v, 'av')}${img(l.banner, l.v, 'bn')}<b>${esc(l.label)}</b></button>`).join('')}</div>
+    <p class="err" id="onb-err"></p>
+    <div class="btns"><button type="button" id="ob-again">Draw new ones</button><button type="button" id="ob-rename">Change the name</button></div>`;
+  box.querySelector('.looks').onclick = async e => {
+    const b = e.target.closest('.look'); if (!b) return;
+    try { const r = await J('/look', { style: b.dataset.style }); if (r.banner_set) say('Your new banner is on YouTube.', 'vega'); refresh(); }
+    catch (x) { $('#onb-err').textContent = x.message; }
+  };
+  $('#ob-again').onclick = async () => { await J('/name', { name: st.channel_name }); refresh(); };
+  $('#ob-rename').onclick = () => step('name');
+}
+
+function vWarm(box, st) {
+  const look = st.look || {};
+  const av = look.avatar ? `<p>Download your ${yt() ? 'avatar and banner' : 'avatar'} and add ${yt() ? 'them' : 'it'} to the account: <a href="/api/studio/looks/${encodeURIComponent(look.avatar.split('/').pop())}" download>avatar</a>${look.banner ? ` · <a href="/api/studio/looks/${encodeURIComponent(look.banner.split('/').pop())}" download>banner</a>` : ''}</p>` : '';
+  if (!st.warmup_start) {
+    box.innerHTML = `${dots('warmup')}<h2>First, 10 days as a normal viewer</h2>
+      <p>New ${yt() ? 'channels' : 'accounts'} that post on day one often get treated like spam. So for ${st.warmup_days} days, use it like anyone would:</p>
+      <ul class="tips"><li>Watch videos in your topic for 10-20 minutes a day, to the end.</li><li>Like and leave a real comment on a few.</li>
+      <li>Follow or subscribe to 5-10 creators you'd want to be like.</li><li>Fill in your bio${yt() ? ', avatar and banner' : ' and avatar'}.</li><li>Don't post yet.</li></ul>
+      ${av}<p>Neesmo counts the days and tells you when it's time. Then it starts making videos.</p>
+      <div class="btns"><button type="button" class="main" id="ob-start">Start the 10 days</button></div>`;
+    $('#ob-start').onclick = async () => { await J('/warmup/start'); refresh(); };
+    return;
+  }
+  box.innerHTML = `${dots('warmup')}<h2>Warm-up</h2><div class="big">${st.warmup_left}</div><p>day${st.warmup_left === 1 ? '' : 's'} left. Keep watching, liking and following like a normal viewer. No posts yet.</p>
+    ${av}<p>Meanwhile you can send Neesmo pictures or videos you like (in the chat, or on the agent's card): it uses them as inspiration.</p>
+    <div class="btns"><button type="button" id="ob-over">The 10 days are over</button><button type="button" class="main" id="ob-hide">OK, close</button></div>`;
+  $('#ob-hide').onclick = () => { hideWarm = true; sessionStorage.setItem('neesmo-warm-hide', '1'); onboarding(); };
+  $('#ob-over').onclick = async () => { if (st.warmup_left > 0 && !confirm(`There are still ${st.warmup_left} days to go. Skipping them can hurt your reach. Start anyway?`)) return; await J('/warmup/done'); refresh(); };
+}
+$('#warm-pill').onclick = () => { hideWarm = false; sessionStorage.removeItem('neesmo-warm-hide'); $('#onb-b').dataset.step = ''; onboarding(); };
+
+function vReady(box, st) {
+  box.innerHTML = `${dots('ready')}<h2>Time to make videos</h2>
+    <p>Neesmo now makes a <b>channel agent</b> for "${esc(st.channel_name || 'your channel')}". It runs the ${yt() ? 'channel' : 'account'} for you: a marketer writes hooks and scripts, a producer makes the video, a supervisor checks it and an analyst learns from the numbers. It shows up on your home screen as a card.</p>
+    <p>For the first ${st.trial_days} days, every video waits for your OK before it's scheduled.</p>
+    <label for="ob-brief">What is it about? Who is it for? (a few words is fine)</label>
+    <textarea id="ob-brief" rows="3" placeholder="e.g. surprising science facts in 30 seconds, for curious teens"></textarea>
+    <p class="err" id="onb-err"></p>
+    <div class="btns"><button type="button" id="ob-later">Later</button><button type="button" class="main" id="ob-make">Create my channel agent</button></div>`;
+  $('#ob-later').onclick = () => { localStorage.setItem('neesmo-chan-later', '1'); $('#onb').hidden = true; };
+  $('#ob-make').onclick = async () => {
+    const brief = $('#ob-brief').value.trim(); if (!brief) { $('#onb-err').textContent = 'Write a few words about the topic.'; return; }
+    $('#ob-make').disabled = true;
+    try { await J('/channels', { name: st.channel_name, brief }); $('#onb').hidden = true; await refresh(); loadAgents(); say('Your channel agent is on the home screen. Tap its card to watch it work.', 'vega'); }
+    catch (x) { $('#onb-err').textContent = x.message; $('#ob-make').disabled = false; }
+  };
+}
+
+// ------------------------------------------------------------------ channel cards = dashboards
+const isChan = id => (S.st?.channels || []).includes(id);
+async function enhance() {
+  if (!S.st?.studio) return;
+  for (const el of document.querySelectorAll('.agent')) {
+    const id = el.dataset.id; if (!isChan(id)) continue;
+    el.classList.add('chan');
+    let d = S.ch[id];
+    if (!d || Date.now() - d._t > 14000) { try { d = S.ch[id] = { ...(await G('/channels/' + encodeURIComponent(id))), _t: Date.now() }; } catch { continue; } }
+    const c = d.counts || {}, r = d.running || {};
+    const run = d.busy && r.role ? `${(d.roles.find(x => x.id === r.role) || {}).label || r.role} · video ${r.video || ''}` : d.warmup_left ? `Warm-up: ${d.warmup_left} days` : d.settings?.paused ? 'Paused' : 'Waiting for the next slot';
+    el.querySelector('small').insertAdjacentHTML('afterend', `${d.last_poster ? `<img class="pv" src="${media(id, d.last_poster)}" alt="">` : ''}
+      <span class="dash"><span><b>${(c.ready_for_review || 0) + (c.needs_owner || 0)}</b>review</span><span><b>${c.scheduled || 0}</b>sched.</span><span><b>${c.posted || 0}</b>live</span><span><b>${kfmt(d.stats?.views)}</b>views</span></span>
+      <span class="run${d.busy ? ' on' : ''}">${esc(run)}</span>`);
+    if (d.busy) el.querySelector('b').textContent = 'Working';
+  }
+  if (S.chd && $('#chd').open && !$('#chd-play video')) openChd(S.chd, true);
+}
+const _loadAgents = loadAgents;
+loadAgents = async (...a) => { await _loadAgents(...a); await enhance(); };
+// a channel card opens its dashboard instead of the chat (the dashboard has a Chat button)
+document.addEventListener('click', e => {
+  const b = e.target.closest('.agent.chan'); if (!b || dragOn) return;
+  e.stopImmediatePropagation(); e.preventDefault(); openChd(b.dataset.id);
+}, true);
+
+async function openChd(id, soft) {
+  S.chd = id; const dlg = $('#chd'), box = $('#chd-b');
+  let d; try { d = S.ch[id] = { ...(await G('/channels/' + encodeURIComponent(id))), _t: Date.now() }; } catch (x) { return say(x.message, 'vega'); }
+  const a = (lastAgents || []).find(x => x.id === id) || { name: id };
+  dlg.style.setProperty('--a', AGENT_COLORS[id] || 'var(--c)');
+  const c = d.counts || {}, s = d.settings || {}, r = d.running || {}, st = d.stats || {};
+  const sub = d.warmup_left ? `Warm-up: ${d.warmup_left} days left` : d.in_trial ? `Trial week: every video waits for your OK` : s.auto_schedule ? 'Schedules by itself' : 'Every video waits for your OK';
+  const vids = (d.videos || []).slice().reverse();
+  const keepAsk = soft ? box.querySelector('#chd-q')?.value || '' : '';
+  if (soft && document.activeElement?.closest?.('#chd form')) return;   // don't redraw under typing
+  box.innerHTML = `<header><div><h2 id="chd-t">${esc(a.name)}</h2><small>${esc(sub)}${s.paused ? ' · paused' : ''}</small></div>
+    <div class="hb"><button type="button" id="chd-make" class="main">Make a video now</button><button type="button" id="chd-chat">Chat</button>
+    <button type="button" id="chd-set">Settings</button><button type="button" id="chd-full">${dlg.classList.contains('full') ? 'Exit full screen' : 'Full screen'}</button><button type="button" id="chd-x" aria-label="Close">✕</button></div></header>
+    <div class="kp"><div><b>${kfmt(st.views)}</b><small>views</small></div><div><b>${kfmt(st.subs)}</b><small>${yt() ? 'subscribers gained' : 'followers gained'}</small></div>
+    <div><b>${c.posted || 0}</b><small>live</small></div><div><b>${c.scheduled || 0}</b><small>scheduled</small></div>
+    <div><b>${(c.ready_for_review || 0) + (c.needs_owner || 0)}</b><small>waiting for you</small></div><div><b>$${(d.cost_usd || 0).toFixed(2)}</b><small>Claude use (est.)</small></div></div>
+    <div class="roles">${d.roles.map(x => `<span class="${d.busy && r.role === x.id ? 'on' : ''}">${esc(x.label)}${d.busy && r.role === x.id ? ' · working' : ''}</span>`).join('')}</div>
+    <form class="ask" id="chd-ask"><input id="chd-q" placeholder="Tell ${esc(a.name)} what to change (it beats the usual style)" value="${esc(keepAsk)}"><button type="submit">Send</button></form>
+    <div class="cols">
+      <section><h3>Videos</h3><div class="vids">${vids.map(v => `<button type="button" class="vid" data-v="${esc(v.id)}">${v.poster ? `<img src="${media(id, v.poster)}" alt="" loading="lazy">` : '<img alt="">'}<div><b>${esc(v.title || 'Video ' + v.id)}</b><span class="st-${esc(v.status)}">${esc(STATUS[v.status] || v.status)}</span>${v.publish_at ? ` · ${esc(new Date(v.publish_at).toLocaleString([], { weekday: 'short', hour: '2-digit', minute: '2-digit' }))}` : ''}</div></button>`).join('') || '<small>No videos yet.</small>'}</div>
+        <div id="chd-play"></div></section>
+      <section><h3>Timeline</h3><ol class="ev">${(d.events || []).slice().reverse().map(e => `<li><small>${esc(ago(e.ts))}</small>${esc(e.text)}</li>`).join('') || '<li>Nothing yet.</li>'}</ol></section>
+      <section><h3>Team board</h3><pre>${esc((Array.isArray(d.board) ? d.board.join('\n') : d.board) || 'The agents write to each other here.')}</pre>
+        <h3 style="margin-top:12px">What it learned</h3><pre>${esc((Array.isArray(d.lessons) ? d.lessons.join('\n') : d.lessons) || 'Lessons appear after the first videos have numbers.')}</pre>
+        <h3 style="margin-top:12px">Inspiration</h3><small>Pictures or clips you like. The marketer and producer use them as reference.</small>
+        <input type="file" id="chd-insp" accept="image/*,video/mp4" multiple></section>
+    </div>`;
+  const q = sel => box.querySelector(sel);
+  q('#chd-x').onclick = () => dlg.close();
+  q('#chd-full').onclick = () => { dlg.classList.toggle('full'); openChd(id, true); };
+  q('#chd-chat').onclick = () => { dlg.close(); rSeen = ''; rPending = []; renderRAtts(); openReport(id); loadThread(id, true); };
+  q('#chd-set').onclick = async () => { dlg.close(); await loadAgentCfg(); const i = agCfg.agents.findIndex(x => x.id === id); if (i >= 0) { openAgentEditor(i); showAgTab('channel'); } };
+  q('#chd-make').onclick = async () => { try { const r = await J(`/channels/${encodeURIComponent(id)}/make`); say(r.ok ? `${a.name} started a new video.` : r.msg, 'vega'); openChd(id, true); } catch (x) { say(x.message, 'vega'); } };
+  q('#chd-ask').onsubmit = async e => { e.preventDefault(); const t = q('#chd-q').value.trim(); if (!t) return;
+    await J('/tag', { text: `@${id} ${t}` }); q('#chd-q').value = ''; say(`Sent to ${a.name}. The next video follows it.`, 'vega'); };
+  q('#chd-insp').onchange = async e => { for (const f of e.target.files) { const fd = new FormData(); fd.append('file', f);
+    try { await J(`/channels/${encodeURIComponent(id)}/inspiration`, fd); } catch (x) { say(x.message, 'vega'); } } say('Thanks, the team will use it.', 'vega'); openChd(id, true); };
+  box.querySelector('.vids').onclick = e => { const b = e.target.closest('.vid'); if (!b) return; const v = vids.find(x => x.id === b.dataset.v);
+    q('#chd-play').innerHTML = v?.video ? `<video class="play" src="${media(id, v.video)}" controls playsinline autoplay></video><small>${esc(v.summary || '')}</small>` : `<small>${esc(v?.summary || 'No video file yet.')}</small>`; };
+  if (!dlg.open) dlg.showModal();
+}
+$('#chd').addEventListener('click', e => { if (e.target.id === 'chd') e.target.close(); });
+$('#chd').addEventListener('close', () => { S.chd = null; });
+
+// ------------------------------------------------------------------ @tags on the home composer
+const tagbar = $('#tagbar');
+const tagList = () => (lastAgents || []).map(a => ({ id: a.id, label: AGENT_SHORT[a.id] || a.name, color: AGENT_COLORS[a.id] }));
+$('#q').addEventListener('input', () => {
+  const v = $('#q').value, m = v.slice(0, $('#q').selectionStart).match(/@([\w-]*)$/);
+  if (!m) { tagbar.hidden = true; return; }
+  const k = m[1].toLowerCase(), hits = tagList().filter(a => a.id.includes(k) || a.label.toLowerCase().includes(k)).slice(0, 8);
+  if (!hits.length) { tagbar.hidden = true; return; }
+  tagbar.innerHTML = hits.map((a, i) => `<button type="button" role="option" class="${i ? '' : 'sel'}" style="--a:${esc(a.color || '')}" data-id="${esc(a.id)}">@${esc(a.label)}</button>`).join('');
+  const r = $('#f').getBoundingClientRect(); tagbar.style.left = r.left + 'px'; tagbar.style.bottom = (innerHeight - r.top + 6) + 'px'; tagbar.hidden = false;
+});
+function pickTag(id) {
+  const q = $('#q'), pos = q.selectionStart, before = q.value.slice(0, pos).replace(/@[\w-]*$/, '@' + id + ' ');
+  q.value = before + q.value.slice(pos); q.focus(); q.setSelectionRange(before.length, before.length); tagbar.hidden = true;
+}
+tagbar.onmousedown = e => e.preventDefault();
+tagbar.onclick = e => { const b = e.target.closest('[data-id]'); if (b) pickTag(b.dataset.id); };
+$('#q').addEventListener('keydown', e => {
+  if (tagbar.hidden) return;
+  const all = [...tagbar.children], i = all.findIndex(b => b.classList.contains('sel'));
+  if (e.key === 'Tab' || (e.key === 'Enter' && i >= 0)) { e.preventDefault(); e.stopPropagation(); pickTag(all[Math.max(0, i)].dataset.id); }
+  else if (e.key === 'ArrowRight' || e.key === 'ArrowLeft') { e.preventDefault(); all[i]?.classList.remove('sel'); all[(i + (e.key === 'ArrowRight' ? 1 : -1) + all.length) % all.length].classList.add('sel'); }
+  else if (e.key === 'Escape') tagbar.hidden = true;
+}, true);
+$('#q').addEventListener('blur', () => setTimeout(() => { tagbar.hidden = true; }, 150));
+const _submit = $('#f').onsubmit;
+$('#f').onsubmit = async e => {
+  const text = $('#q').value;
+  if (!/(^|\s)@[\w-]+/.test(text)) return _submit(e);
+  e.preventDefault(); tagbar.hidden = true;
+  try {
+    const r = await J('/tag', { text });
+    if (!r.routed.length) return _submit(e);   // no such agent: ask Neesmo normally
+    $('#q').value = ''; say(text, 'you');
+    const names = r.routed.map(id => (lastAgents.find(a => a.id === id) || { name: id }).name).join(', ');
+    say(`Sent to ${names}.${r.routed.some(isChan) ? ' Channel agents follow it from the next video.' : ''}`, 'vega');
+  } catch (x) { say(x.message, 'vega'); }
+};
+
+// ------------------------------------------------------------------ approvals: the "may I schedule by myself?" question
+const _openNote = openNote;
+openNote = async id => {
+  await _openNote(id);
+  const n = notes.find(x => x.id === id);
+  if (!n?.studio?.ask) { $('#ap-btns').dataset.ask = ''; return; }
+  $('#ap-btns').dataset.ask = '1';
+  $('#ap-what').textContent = n.body; $('#ap-details').hidden = true;
+  $('#ap-yes').textContent = 'Yes, schedule by yourself'; $('#ap-no').textContent = 'No, keep asking me';
+};
+$('#ap-no').addEventListener('click', e => {
+  if ($('#ap-btns').dataset.ask !== '1') return;
+  e.stopImmediatePropagation(); decide('changes', 'No, keep asking me before scheduling.');
+}, true);
+
+// ------------------------------------------------------------------ agent settings: Channel tab
+$('#ag-tabs').insertAdjacentHTML('beforeend', '<button type="button" role="tab" data-agtab="channel" aria-selected="false" hidden>Channel</button>');
+$('#ag-form .agtab[data-agtab="plugins"]').insertAdjacentHTML('afterend', `<div class="agtab" data-agtab="channel" role="tabpanel" hidden>
+  <div class="row"><div><label id="l-cas">Schedule by itself</label><small class="sub" id="cas-note">Videos go out without waiting for your OK.</small></div><button type="button" class="tog" role="switch" id="c-auto" aria-labelledby="l-cas"></button></div>
+  <label for="c-per">Videos per day</label><select id="c-per"><option>1</option><option>2</option><option>3</option><option>4</option></select>
+  <label for="c-times">Post times (24h, comma separated)</label><input id="c-times" placeholder="13:30, 19:30">
+  <label for="c-tz">Time zone</label><input id="c-tz" placeholder="">
+  <div class="row"><div><label id="l-cp">Pause this agent</label><small class="sub">Stops new videos and posting until you switch it back.</small></div><button type="button" class="tog" role="switch" id="c-pause" aria-labelledby="l-cp"></button></div>
+  <p id="c-err" role="alert"></p><div class="btns"><button type="button" id="c-save">Save channel settings</button></div></div>`);
+const tog = (el, on) => el.setAttribute('aria-checked', String(!!on));
+for (const t of ['#c-auto', '#c-pause']) $(t).onclick = () => { if (!$(t).disabled) tog($(t), $(t).getAttribute('aria-checked') !== 'true'); };
+const _openAgentEditor = openAgentEditor;
+openAgentEditor = i => {
+  _openAgentEditor(i);
+  const a = agCfg.agents[i], on = a && isChan(a.id);
+  $('#ag-tabs [data-agtab="channel"]').hidden = !on;
+  if (!on) return;
+  $('#ag-form').dataset.chan = a.id;
+  G('/channels/' + encodeURIComponent(a.id)).then(d => {
+    const s = d.settings || {};
+    tog($('#c-auto'), s.auto_schedule); tog($('#c-pause'), s.paused);
+    $('#c-auto').disabled = d.in_trial || !!d.warmup_left;
+    $('#cas-note').textContent = d.in_trial || d.warmup_left ? `Unlocks after the ${S.st.trial_days}-day trial week. Until then every video waits for your OK.` : 'Videos go out without waiting for your OK.';
+    $('#c-per').value = String(s.videos_per_day || 1); $('#c-times').value = (s.post_times || []).join(', ');
+    $('#c-tz').value = s.timezone || ''; $('#c-tz').placeholder = Intl.DateTimeFormat().resolvedOptions().timeZone; $('#c-err').textContent = '';
+  }).catch(() => {});
+};
+const _showAgTab = showAgTab;
+showAgTab = t => { _showAgTab(t); if (t === 'channel') $('#ag-btns').hidden = true; };
+for (const t of ['#c-times', '#c-tz']) $(t).addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('#c-save').click(); } });
+$('#c-save').onclick = async () => {
+  const id = $('#ag-form').dataset.chan;
+  try {
+    await J(`/channels/${encodeURIComponent(id)}/settings`, {
+      auto_schedule: $('#c-auto').getAttribute('aria-checked') === 'true', paused: $('#c-pause').getAttribute('aria-checked') === 'true',
+      videos_per_day: +$('#c-per').value, post_times: $('#c-times').value.split(/[,\s]+/).filter(Boolean),
+      timezone: $('#c-tz').value.trim() || Intl.DateTimeFormat().resolvedOptions().timeZone }, 'PUT');
+    $('#c-err').textContent = 'Saved.'; delete S.ch[id];
+  } catch (x) { $('#c-err').textContent = x.message; }
+};
+
+// ------------------------------------------------------------------ System settings: permissions, notifications, updates
+function settingsBlock() {
+  const st = S.st, sys = $('.tab[data-tab="system"]');
+  let el = $('#studio-sys');
+  if (!el) {
+    sys.insertAdjacentHTML('afterbegin', `<div id="studio-sys">
+      <h3>Neesmo Studio</h3>
+      <div class="row"><div><label id="l-sap">Auto permissions</label><small class="sub">Safe steps run by themselves, so you get fewer questions. Off: Claude asks before each step.</small></div><button type="button" class="tog" role="switch" id="s-ap" aria-labelledby="l-sap"></button></div>
+      <div class="row"><label for="s-nt">Phone notifications</label><select id="s-nt"><option value="important">Videos and important only</option><option value="all">Everything</option><option value="off">Off</option></select></div>
+      <h3>Updates</h3>
+      <div class="row"><small>Version</small><small id="s-ver"></small></div>
+      <div class="row"><div><label id="l-sau">Update by itself</label><small class="sub">Free forever. Your channels, settings and keys are never touched.</small></div><button type="button" class="tog" role="switch" id="s-au" aria-labelledby="l-sau"></button></div>
+      <div class="row"><small id="s-upd"></small><span><button type="button" id="s-chk">Check</button> <button type="button" id="s-go" hidden>Update now</button></span></div>
+    </div>`);
+    el = $('#studio-sys');
+    $('#s-ap').onclick = async () => { const on = $('#s-ap').getAttribute('aria-checked') !== 'true'; tog($('#s-ap'), on); try { await J('/settings', { auto_permissions: on }); } catch (x) { tog($('#s-ap'), !on); $('#s-upd').textContent = x.message; } };
+    $('#s-au').onclick = async () => { const on = $('#s-au').getAttribute('aria-checked') !== 'true'; tog($('#s-au'), on); try { await J('/settings', { auto_update: on }); } catch (x) { tog($('#s-au'), !on); $('#s-upd').textContent = x.message; } };
+    $('#s-nt').onchange = () => J('/settings', { notify: $('#s-nt').value }).catch(x => { $('#s-upd').textContent = x.message; });
+    $('#s-chk').onclick = async () => { $('#s-upd').textContent = 'Checking…'; try { S.st.update = await G('/update'); paintUpd(); } catch (x) { $('#s-upd').textContent = x.message; } };
+    $('#s-go').onclick = async () => {
+      $('#s-go').disabled = true; $('#s-upd').textContent = 'Updating… Neesmo restarts by itself.';
+      try { const r = await J('/update'); $('#s-upd').textContent = r.msg; if (r.ok && r.backup) setTimeout(() => location.reload(), 9000); }
+      catch (x) { $('#s-upd').textContent = x.message; }
+      $('#s-go').disabled = false;
+    };
+  }
+  tog($('#s-ap'), st.auto_permissions); tog($('#s-au'), st.auto_update); $('#s-nt').value = st.notify || 'important';
+  $('#s-ver').textContent = `${st.version} · ${platform()} edition`;
+  paintUpd();
+}
+function paintUpd() {
+  const u = S.st.update || {};
+  $('#s-upd').textContent = u.available ? `New: ${u.latest}${u.notes ? ' · ' + u.notes : ''}` : u.error ? 'Could not check right now.' : u.latest ? 'Up to date.' : '';
+  $('#s-go').hidden = !u.available;
+}
+
+refresh().then(() => loadAgents());
+setInterval(() => { if (!document.hidden) refresh(); }, 30000);
+})();

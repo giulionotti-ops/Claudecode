@@ -106,6 +106,7 @@
     }
   },
   "env": {
-    "CLAUDE_CODE_SUBAGENT_MODEL": "sonnet"
+    "CLAUDE_CODE_SUBAGENT_MODEL": "sonnet",
+    "CAVEMAN_DEFAULT_MODE": "ultracave"
   }
 }

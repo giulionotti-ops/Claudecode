@@ -5,11 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
 <title>Neesmo</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Anton&display=swap" rel="stylesheet">
-<link rel="manifest" href="/manifest.webmanifest">
-<link rel="apple-touch-icon" href="/static/icon-180.png">
-<link rel="icon" type="image/png" href="/static/icon-192.png">
-<meta name="theme-color" content="#02070d">
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:ital,wght@0,400;0,600;0,700;1,900&display=swap" rel="stylesheet">
+<link rel="manifest" href="/manifest.webmanifest?v=4">
+<link rel="apple-touch-icon" sizes="180x180" href="/static/icon-180.png?v=4">
+<link rel="icon" type="image/png" href="/static/icon-192.png?v=4">
+<meta name="theme-color" content="#D6CBC0">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Neesmo">
@@ -17,15 +17,13 @@
 <style>
   @font-face { font-family: "Geist"; src: url(/static/fonts/geist.woff2) format("woff2"); font-weight: 100 900; font-display: swap; }
   @font-face { font-family: "Geist Mono"; src: url(/static/fonts/geist-mono.woff2) format("woff2"); font-weight: 100 900; font-display: swap; }
-  :root { --sans: "Geist", system-ui, -apple-system, "Segoe UI", sans-serif; --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace; --rgb: 61,255,143; --c: rgb(var(--rgb)); --c2: #c6ff4a; --bg: #02070d; --dim: rgba(var(--rgb),.35); --err: #ff5f6d; --fs: 14px; }
+  :root { --sans: "Geist", system-ui, -apple-system, "Segoe UI", sans-serif; --mono: "Geist Mono", ui-monospace, "SF Mono", Menlo, monospace; --rgb: 239,135,70; --c: rgb(var(--rgb)); --c2: #c6ff4a; --bg: #D6CBC0; --dim: rgba(var(--rgb),.35); --err: #ff5f6d; --fs: 14px; }
   * { box-sizing: border-box; }
   html { touch-action: manipulation; -webkit-text-size-adjust: 100%; }  /* no double-tap zoom */
-  html { background-color: #02070d; min-height: 100lvh; }  /* iPhone home-screen app paints the area under the page with this */
+  html { background-color: #D6CBC0; min-height: 100lvh; }  /* iPhone home-screen app paints the area under the page with this */
   html, body { margin: 0; height: 100%; background: var(--bg) radial-gradient(ellipse at center, rgba(var(--rgb),.13) 0%, var(--bg) 70%) no-repeat fixed; color: var(--c);
     font: var(--fs)/1.45 var(--sans); overflow: hidden; -webkit-font-smoothing: antialiased; }
   .corner, #status, .st, .chip, .mono, .kpi span, .card span, code, pre, kbd, #chathead h2 { font-family: var(--mono); }
-  body::after { content: ""; position: fixed; inset: 0; pointer-events: none;
-    background: repeating-linear-gradient(0deg, rgba(var(--rgb),.03) 0 1px, transparent 1px 3px); }
   canvas { position: fixed; inset: 0; width: 100%; height: 100%; }
   /* Big faded wordmark far behind the ring: heavy condensed italic, tight letters, soft blur for depth */
   #wordmark { position: fixed; left: 50%; top: 0; translate: 0 50vh; will-change: translate; transform: translate(-50%, -50%) skewX(-11deg); pointer-events: none; white-space: nowrap;
@@ -38,15 +36,15 @@
   .tl { top: calc(var(--vvt, 0px) + env(safe-area-inset-top)); left: env(safe-area-inset-left); } .tr { top: calc(var(--vvt, 0px) + env(safe-area-inset-top)); right: env(safe-area-inset-right); text-align: right; }
   .corner b { color: var(--c); font-weight: 600; }
   #status { position: fixed; left: 0; right: 0; top: calc(50% + min(26vmin, 210px)); text-align: center;
-    letter-spacing: .4em; text-transform: uppercase; font-size: 13px; text-shadow: 0 0 8px var(--c); }
-  #status.err { color: var(--err); text-shadow: 0 0 8px var(--err); letter-spacing: .1em; }
+    letter-spacing: .4em; text-transform: uppercase; font-size: 13px; }
+  #status.err { color: var(--err); letter-spacing: .1em; }
   #log { position: fixed; left: 16px; bottom: calc(84px + env(safe-area-inset-bottom)); width: min(420px, calc(100% - 32px)); max-height: 30vh; overflow-y: auto;
     display: flex; flex-direction: column; gap: 6px; mask-image: linear-gradient(transparent, #000 30%); padding-top: 24px; }
   #log p { margin: 0; padding: 6px 10px; border-left: 2px solid var(--dim); background: rgba(var(--rgb),.05); }
   #log p.you { border-color: var(--c2); color: var(--c2); }
   form { transition: bottom .32s cubic-bezier(.2,.8,.2,1); } form.kb-snap { transition: none; }
   form { position: fixed; left: 16px; right: 16px; bottom: max(calc(16px + env(safe-area-inset-bottom)), calc(var(--kb, 0px) + 10px)); display: flex; gap: 8px; max-width: 720px; margin: 0 auto; }
-  input, select, button { font: inherit; color: var(--c); background: rgba(2,20,30,.8); border: 1px solid var(--dim); border-radius: 4px; }
+  input, select, button { font: inherit; color: var(--c); background: rgba(255,250,243,.6); border: 1px solid var(--dim); border-radius: 4px; }
   input { flex: 1; min-width: 0; padding: 12px; outline: none; font-size: max(16px, 1em); }
   #f > * { border-radius: 12px; } #q { padding-inline: 16px; } ::placeholder { color: rgba(var(--rgb),.45); }
   #q:focus { border-color: var(--c); box-shadow: 0 0 0 3px rgba(var(--rgb),.12), 0 0 18px rgba(var(--rgb),.18); }  /* 16px+: iOS zooms in on smaller inputs */
@@ -56,7 +54,7 @@
   #mic svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
   #mic.on { color: var(--bg); background: var(--c2); border-color: var(--c2); box-shadow: 0 0 16px var(--c2); }
   select { padding: 4px; max-width: 180px; }
-  html.no-scan body::after, html.no-mark #wordmark { display: none; }
+  html.no-mark #wordmark { display: none; }
   .icons { display: flex; gap: 8px; justify-content: flex-end; }
   .ic { position: relative; width: 40px; height: 40px; padding: 0; display: grid; place-items: center; }
   .ic svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
@@ -65,10 +63,10 @@
   .badge[hidden] { display: none; }
   .pop { position: fixed; top: calc(64px + env(safe-area-inset-top)); right: calc(16px + env(safe-area-inset-right)); width: min(360px, calc(100vw - 32px));
     max-height: calc(100dvh - 160px); overflow: auto; z-index: 20; padding: 14px; border: 1px solid var(--dim); border-radius: 10px;
-    background: rgba(2,14,10,.97); box-shadow: 0 0 30px rgba(var(--rgb),.15); text-transform: none; letter-spacing: normal; text-align: left; }
+    background: rgba(255,250,243,.82); box-shadow: 0 0 30px rgba(var(--rgb),.15); text-transform: none; letter-spacing: normal; text-align: left; }
   .pop[hidden] { display: none; }
   .pop.wide { width: min(520px, calc(100vw - 32px)); padding-top: 0; }
-  .tabs { position: sticky; top: 0; z-index: 2; display: flex; gap: 2px; margin: 0 -14px 10px; padding: 10px 10px 0; background: rgba(2,14,10,.98);
+  .tabs { position: sticky; top: 0; z-index: 2; display: flex; gap: 2px; margin: 0 -14px 10px; padding: 10px 10px 0; background: rgba(255,250,243,.82);
     border-bottom: 1px solid rgba(var(--rgb),.18); overflow-x: auto; scrollbar-width: none; }
   .tabs button { flex: none; border: 0; border-bottom: 2px solid transparent; border-radius: 0; padding: 8px 10px; background: none; color: var(--dim);
     font-size: 12px; letter-spacing: .08em; text-transform: uppercase; }
@@ -76,7 +74,7 @@
   .tab[hidden] { display: none; } .tab h3 { margin-top: 14px; } .tab h3:first-child { margin-top: 4px; }
   .pop .sub { display: block; font-size: 11.5px; line-height: 1.35; margin-top: 2px; }
   .pop .row.col { flex-direction: column; align-items: stretch; gap: 4px; }
-  .tin { min-width: 0; flex: 1; max-width: 240px; padding: 7px 8px; font: inherit; font-size: max(16px, 1em); color: var(--c); background: rgba(0,0,0,.35); border: 1px solid rgba(var(--rgb),.35); border-radius: 6px; }
+  .tin { min-width: 0; flex: 1; max-width: 240px; padding: 7px 8px; font: inherit; font-size: max(16px, 1em); color: var(--c); background: rgba(255,255,255,.5); border: 1px solid rgba(var(--rgb),.35); border-radius: 6px; }
   .row.col .tin { max-width: none; }
   .xlist { list-style: none; margin: 6px 0 0; padding: 0; display: flex; flex-direction: column; }
   .xlist li { display: flex; align-items: center; gap: 10px; padding: 7px 0; border-top: 1px solid rgba(var(--rgb),.1); }
@@ -98,8 +96,8 @@
   .aglist li > button[data-ag]::after { content: "⠿"; margin-left: auto; color: var(--dim); font-size: 16px; }
   /* welcome */
   #welcome { position: fixed; left: 50%; top: 50%; translate: -50% -50%; z-index: 15; width: min(560px, calc(100vw - 48px)); text-align: center; pointer-events: none;
-    font: 600 clamp(22px, 4.4vw, 34px)/1.2 var(--sans); color: #eafff2; text-shadow: 0 0 24px rgba(var(--rgb),.6); letter-spacing: -.01em; }
-  #welcome small { display: block; margin-top: 10px; font: 12px/1.4 var(--mono); letter-spacing: .3em; text-transform: uppercase; color: var(--c); text-shadow: 0 0 8px var(--c); }
+    font: 600 clamp(22px, 4.4vw, 34px)/1.2 var(--sans); color: #2B1D14; letter-spacing: -.01em; }
+  #welcome small { display: block; margin-top: 10px; font: 12px/1.4 var(--mono); letter-spacing: .3em; text-transform: uppercase; color: var(--c); }
   #welcome[hidden] { display: none; }
   .pop h3 { margin: 0 0 10px; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); }
   .pop .row { display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 8px 0; border-top: 1px solid rgba(var(--rgb),.12); }
@@ -121,46 +119,46 @@
   #nclear, #logout, #ag-add { padding: 3px 10px; font-size: 11px; }
   .nlist .unread b::before { content: "● "; color: var(--c2); }
   dialog#ap { --a: var(--c); width: min(720px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); padding: 0; border: 1px solid var(--dim);
-    border-top: 3px solid var(--a); border-radius: 10px; background: rgba(2,14,10,.98); color: var(--c); }
-  dialog#ag { --a: var(--c); width: min(560px, calc(100vw - 24px)); padding: 0; border: 1px solid var(--dim); border-top: 3px solid var(--a); border-radius: 10px; background: rgba(2,14,10,.98); color: var(--c); }
-  dialog#ag::backdrop, dialog#ap::backdrop { background: rgba(0,0,0,.7); backdrop-filter: blur(3px); }
-  #ap .rp h2 { color: var(--a); } #ap .what { font-size: 16px; } #ap .pre { max-height: 45dvh; border: 1px solid rgba(var(--rgb),.2); border-radius: 6px; padding: 10px; background: rgba(0,0,0,.35); font-size: 12px; }
+    border-top: 3px solid var(--a); border-radius: 10px; background: rgba(255,250,243,.82); color: var(--c); }
+  dialog#ag { --a: var(--c); width: min(560px, calc(100vw - 24px)); padding: 0; border: 1px solid var(--dim); border-top: 3px solid var(--a); border-radius: 10px; background: rgba(255,250,243,.82); color: var(--c); }
+  dialog#ag::backdrop, dialog#ap::backdrop { background: rgba(214,203,192,.2); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); }
+  #ap .rp h2 { color: var(--a); } #ap .what { font-size: 16px; } #ap .pre { max-height: 45dvh; border: 1px solid rgba(var(--rgb),.2); border-radius: 6px; padding: 10px; background: rgba(255,255,255,.5); font-size: 12px; }
   #ap .btns { display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; } #ap .btns button { padding: 12px 20px; }
   #ap-media video, #ap-media img { display: block; width: 100%; max-height: 60vh; object-fit: contain; background: #000; border-radius: 10px; margin: 0 0 10px; }
   #ap-btns[hidden] { display: none; }
-  #ap-note { width: 100%; box-sizing: border-box; margin: 0 0 10px; padding: 10px; font: inherit; color: var(--c); background: rgba(0,0,0,.35); border: 1px solid rgba(var(--rgb),.35); border-radius: 6px; }
+  #ap-note { width: 100%; box-sizing: border-box; margin: 0 0 10px; padding: 10px; font: inherit; color: var(--c); background: rgba(255,255,255,.5); border: 1px solid rgba(var(--rgb),.35); border-radius: 6px; }
   #ap-media small { display: block; margin: -4px 0 10px; opacity: .7; }
   #ap-yes { background: var(--c); color: var(--bg); border-color: var(--c); font-weight: 600; } #ap-no { border-color: var(--err); color: var(--err); }
   .cards { position: fixed; top: 50%; transform: translateY(-50%); display: flex; flex-direction: column; gap: 10px; width: 190px; }
   .cards.l { left: 16px; } .cards.r { right: 16px; }
-  .card { padding: 10px 12px; border: 1px solid var(--dim); border-radius: 6px; background: rgba(2,26,14,.6); }
+  .card { padding: 10px 12px; border: 1px solid var(--dim); border-radius: 6px; background: rgba(255,250,243,.45); }
   .card span { display: block; font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); }
-  .card b { display: block; font-size: 22px; font-weight: 600; text-shadow: 0 0 8px var(--dim); }
+  .card b { display: block; font-size: 22px; font-weight: 600; }
   .card small { color: var(--dim); font-size: 11px; }
   .agent { text-align: left; cursor: pointer; font: inherit; color: var(--c); width: 100%; }
   .agent { --a: var(--c); border-color: color-mix(in srgb, var(--a) 45%, transparent); border-left: 3px solid var(--a);
-    background: linear-gradient(90deg, color-mix(in srgb, var(--a) 14%, transparent), rgba(2,26,14,.6) 70%); }
-  .agent b { color: var(--a); text-shadow: 0 0 8px color-mix(in srgb, var(--a) 50%, transparent) !important; }
+    background: linear-gradient(90deg, color-mix(in srgb, var(--a) 14%, transparent), rgba(255,250,243,.45) 70%); }
+  .agent b { color: var(--a); }
   .agent:hover, .agent:focus-visible { border-color: var(--a); box-shadow: 0 0 14px color-mix(in srgb, var(--a) 45%, transparent); outline: none; }
   .agent b { font-size: 15px !important; font-weight: 600; letter-spacing: -.01em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .agent .st { font-size: 10.5px; letter-spacing: .08em; text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .agent .st .ago { display: inline; }
   .agent.dev { opacity: .5; filter: grayscale(1); } .agent.dev:hover, .agent.dev:focus-visible { opacity: .8; }
   .st.dev { color: #7d8a83; } .st.dev::before { content: "◌ "; }
-  .st.working { color: var(--c2); text-shadow: 0 0 8px var(--c2); } .st.idle { color: var(--c); } .st.offline { color: var(--err); }
+  .st.working { color: var(--c2); } .st.idle { color: var(--c); } .st.offline { color: var(--err); }
   .st.working::before { content: "● "; animation: pulse 1.2s infinite; } .st.idle::before { content: "● "; } .st.offline::before { content: "○ "; }
   @keyframes pulse { 50% { opacity: .2; } }
   .agent small { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; margin-top: 2px; }
   dialog#report { --a: var(--c); border-top: 3px solid var(--a) !important; width: min(1100px, calc(100vw - 24px)); max-height: calc(100dvh - 24px); padding: 0; border: 1px solid var(--dim); border-radius: 10px;
-    background: rgba(2,14,10,.97); color: var(--c); box-shadow: 0 0 40px rgba(var(--rgb),.15); }
+    background: rgba(255,250,243,.82); color: var(--c); box-shadow: 0 0 40px rgba(var(--rgb),.15); }
   /* dialogs start below the iPhone island / status bar and end above the home bar */
   dialog#ap, dialog#report, dialog#ag { position: fixed; inset: 0; margin: calc(env(safe-area-inset-top, 0px) + 8px) auto calc(env(safe-area-inset-bottom, 0px) + 8px) !important;
     max-height: calc(100dvh - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px) - 16px) !important; overflow-y: auto; overscroll-behavior: contain; }
   /* title and ✕ stay pinned at the top of the panel while its content scrolls */
   #ap .rp > header, #report .rp > header, #ag .rp > header { position: sticky; top: -18px; z-index: 2; margin: -18px -18px 0; padding: 18px;
-    background: rgba(2,14,10,.98); border-bottom: 1px solid rgba(var(--rgb),.15); }
+    background: rgba(255,250,243,.82); border-bottom: 1px solid rgba(var(--rgb),.15); }
   #ag form { position: static; max-width: none; margin: 0; display: flex; flex-direction: column; gap: 6px; } #ag label { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); margin-top: 6px; }
-  #ag input, #ag textarea { width: 100%; padding: 10px; font: inherit; font-size: 16px; color: var(--c); background: rgba(0,0,0,.35); border: 1px solid rgba(var(--rgb),.35); border-radius: 6px; }
+  #ag input, #ag textarea { width: 100%; padding: 10px; font: inherit; font-size: 16px; color: var(--c); background: rgba(255,255,255,.5); border: 1px solid rgba(var(--rgb),.35); border-radius: 6px; }
   #ag textarea { font-size: 13px; } #ag .btns { display: flex; gap: 10px; justify-content: space-between; margin-top: 10px; } #ag-save { margin-left: auto; } #ag .btns button { padding: 12px 18px; }
   #ag-save { background: var(--c); color: var(--bg); font-weight: 600; } #ag-del { border-color: var(--err); color: var(--err); } #ag-err { color: var(--err); min-height: 1.2em; }
   .aglist li button[data-ag] { display: flex; align-items: center; gap: 8px; } .aglist i { width: 10px; height: 10px; border-radius: 50%; background: var(--a); flex: none; }
@@ -173,22 +171,22 @@
   .agtab[hidden] { display: none; } .agtab { display: flex; flex-direction: column; gap: 6px; }
   #wel-row small { flex: 1; min-width: 0; } #wel-try { flex: none; white-space: nowrap; }
   #ag-pother summary, #pjob summary { cursor: pointer; color: var(--dim); font-size: 12px; margin-top: 10px; }
-  dialog#report::backdrop { background: rgba(0,0,0,.7); backdrop-filter: blur(3px); }
+  dialog#report::backdrop { background: rgba(214,203,192,.2); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); }
   .rp { padding: 18px; display: flex; flex-direction: column; gap: 14px; }
   .rp header { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
-  .rp h2 { color: var(--a); margin: 0; font-size: 20px; letter-spacing: .12em; text-transform: uppercase; text-shadow: 0 0 10px var(--dim); }
+  .rp h2 { color: var(--a); margin: 0; font-size: 20px; letter-spacing: .12em; text-transform: uppercase; }
   .rp h3 { margin: 0 0 8px; font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--dim); }
   .rp small { color: var(--dim); } #r-close { padding: 6px 12px; font-size: 16px; }
   .kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
-  .kpi { border: 1px solid var(--dim); border-radius: 6px; padding: 10px 12px; background: rgba(2,26,14,.6); }
+  .kpi { border: 1px solid var(--dim); border-radius: 6px; padding: 10px 12px; background: rgba(255,250,243,.45); }
   .kpi span { display: block; font-size: 10px; letter-spacing: .12em; text-transform: uppercase; color: var(--dim); }
-  .kpi b { display: block; font-size: 22px; font-variant-numeric: tabular-nums; text-shadow: 0 0 8px var(--dim); }
+  .kpi b { display: block; font-size: 22px; font-variant-numeric: tabular-nums; }
   .kpi i { display: block; height: 4px; margin-top: 6px; background: rgba(var(--rgb),.15); border-radius: 2px; overflow: hidden; }
   .kpi i::after { content: ""; display: block; height: 100%; width: var(--w, 0%); background: var(--a, var(--c)); }
   #report .kpi { border-color: color-mix(in srgb, var(--a) 40%, transparent); } #report .kpi b { color: var(--a); }
   #report .grid section { border-color: color-mix(in srgb, var(--a) 25%, transparent); } #report .list li { border-left-color: color-mix(in srgb, var(--a) 60%, transparent); }
   .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-  .grid section { border: 1px solid rgba(var(--rgb),.2); border-radius: 6px; padding: 12px; background: rgba(2,20,12,.5); min-width: 0; }
+  .grid section { border: 1px solid rgba(var(--rgb),.2); border-radius: 6px; padding: 12px; background: rgba(255,250,243,.45); min-width: 0; }
   .grid .wide { grid-column: 1 / -1; }
   .pre { white-space: pre-wrap; margin: 0; max-height: 220px; overflow: auto; line-height: 1.5; }
   .list { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; max-height: 220px; overflow: auto; }
@@ -210,11 +208,10 @@
   }
 
   /* ── chat screen: opens from the command bar; cards step aside, the HUD stays behind ── */
-  .cards, #status, #hud, #log { transition: opacity .45s cubic-bezier(.2,.8,.2,1), filter .45s, translate .45s cubic-bezier(.2,.8,.2,1); }
+  .cards, #status, #log { transition: opacity .45s cubic-bezier(.2,.8,.2,1), filter .45s, translate .45s cubic-bezier(.2,.8,.2,1); }
   body.chat .cards { opacity: 0; filter: blur(6px); pointer-events: none; }
   body.chat .cards.l { translate: -40px 0; } body.chat .cards.r { translate: 40px 0; }
   body.chat #status { opacity: 0 !important; }   /* beats the inline opacity the status animation leaves */
-  body.chat #hud { opacity: .32; }
   #chathead { display: none; }
   body.chat #chathead { display: flex; position: fixed; z-index: 5; top: calc(var(--vvt, 0px) + 14px + env(safe-area-inset-top)); left: 50%; translate: -50% 0;
     gap: 8px; align-items: center; animation: fadein .35s both; }
@@ -234,7 +231,7 @@
   body.chat #log p.you { align-self: flex-end; max-width: 82%; padding: 10px 14px; border-radius: 14px 14px 4px 14px;
     background: rgba(var(--rgb),.12); border: 1px solid var(--dim); color: var(--c); white-space: pre-wrap; }
   body.chat #log p.vega { color: #d9ffe9; color: color-mix(in srgb, var(--c) 35%, #fff); }
-  @keyframes msg { from { opacity: 0; translate: 0 10px; filter: blur(3px); } }
+  @keyframes msg { from { opacity: 0; filter: blur(3px); } }
   @keyframes fadein { from { opacity: 0; } }
   #log p code { background: rgba(var(--rgb),.12); padding: 1px 5px; border-radius: 4px; font-size: .92em; }
   #log p pre { margin: 8px 0; padding: 10px 12px; background: rgba(0,0,0,.45); border: 1px solid rgba(var(--rgb),.2); border-radius: 8px; overflow-x: auto; white-space: pre; }
@@ -250,7 +247,7 @@
   #atts { position: fixed; left: 50%; translate: -50% 0; width: min(720px, calc(100% - 32px)); bottom: calc(70px + env(safe-area-inset-bottom));
     display: flex; flex-wrap: wrap; gap: 6px; } #atts:empty { display: none; }
   #atts span { display: flex; align-items: center; gap: 6px; padding: 4px 4px 4px 10px; border: 1px solid var(--dim); border-radius: 14px; font-size: 12px;
-    background: rgba(2,20,30,.9); max-width: 240px; } #atts span b { font-weight: 400; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    background: rgba(255,250,243,.7); max-width: 240px; } #atts span b { font-weight: 400; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   #atts button { border: 0; background: none; padding: 0 6px; height: 20px; }
   body.chat form#f { max-width: 760px; }
   @media (prefers-reduced-motion: reduce) { body.chat #log p, #chathead { animation: none !important; } }
@@ -283,7 +280,7 @@
   .thread .typing { display: flex; gap: 5px; align-items: center; color: var(--dim); font-size: 12px; } .thread .typing i { width: 6px; height: 6px; border-radius: 50%;
     background: var(--a); animation: blink 1.2s infinite ease-in-out both; } .thread .typing i:nth-child(2) { animation-delay: .15s; } .thread .typing i:nth-child(3) { animation-delay: .3s; }
   #report form.composer { position: static; display: flex; gap: 8px; max-width: none; margin: 0; align-items: flex-end; }
-  #r-q { flex: 1; min-width: 0; resize: none; max-height: 30dvh; padding: 11px 12px; font: inherit; font-size: max(16px, 1em); color: var(--c); background: rgba(2,20,30,.8);
+  #r-q { flex: 1; min-width: 0; resize: none; max-height: 30dvh; padding: 11px 12px; font: inherit; font-size: max(16px, 1em); color: var(--c); background: rgba(255,250,243,.6);
     border: 1px solid var(--dim); border-radius: 4px; outline: none; } #r-q:focus { border-color: var(--a); box-shadow: 0 0 10px var(--dim); }
   #r-attach, #r-send { height: 46px; } #r-attach { width: 44px; padding: 0; display: grid; place-items: center; }
   #r-attach svg { width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
@@ -298,7 +295,7 @@
   .thread p.you, .thread p.bot { -webkit-tap-highlight-color: transparent; -webkit-touch-callout: none; }
   .thread p.held { animation: held .6s cubic-bezier(.2,.9,.25,1.2); }
   @keyframes held { 0% { scale: 1; } 35% { scale: .96; box-shadow: 0 0 22px 2px color-mix(in srgb, var(--c) 55%, transparent); } 100% { scale: 1; box-shadow: none; } }
-  #msgmenu { position: fixed; z-index: 50; display: flex; gap: 4px; padding: 4px; border-radius: 12px; background: rgba(10,12,18,.96); border: 1px solid rgba(var(--rgb),.35); box-shadow: 0 8px 28px rgba(0,0,0,.5); }
+  #msgmenu { position: fixed; z-index: 50; display: flex; gap: 4px; padding: 4px; border-radius: 12px; background: rgba(255,250,243,.9); border: 1px solid rgba(var(--rgb),.35); box-shadow: 0 8px 28px rgba(0,0,0,.5); }
   #msgmenu[hidden] { display: none; }
   #msgmenu button { font: inherit; font-size: 14px; color: var(--c); background: none; border: 0; padding: 9px 14px; border-radius: 8px; cursor: pointer; }
   #msgmenu button:hover, #msgmenu button:focus-visible { background: rgba(var(--rgb),.15); outline: none; }
@@ -333,15 +330,130 @@
   .strip b { display: inline-block; min-width: 1ch; }
   .calm *, .calm *::before, .calm *::after { animation-duration: .01ms !important; animation-delay: 0s !important; transition-duration: .01ms !important; }
   @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-delay: 0s !important; transition-duration: .01ms !important; } }
+
+  /* ── robot look: warm beige, glass panels, the robot companion where the ring was ── */
+  html.robot { --c: #2B1D14; --bg: #D6CBC0; --dim: rgba(43,29,20,.6); background-color: #D6CBC0; }
+  html.robot, html.robot body { background: radial-gradient(120% 90% at 50% 40%, #E6DDD3, #D6CBC0 55%, #BFB2A5) fixed; }
+  html.robot #wordmark { font: 900 italic min(24vw, 360px)/.8 "Archivo", sans-serif; letter-spacing: -.05em; color: #EF8746; background: none; filter: none; animation: none; transform: translate(-50%, -50%);
+    text-shadow: 1px 1px 0 #D9773F, 2px 2px 0 #C86A36, 3px 3px 0 #B85F30, 16px 22px 40px rgba(60,35,20,.22); }
+  html.robot :is(.card, #f > *, .pop, .tabs, #log p, dialog#ag, dialog#ap) { background: rgba(255,250,243,.45); -webkit-backdrop-filter: blur(18px) saturate(1.5); backdrop-filter: blur(18px) saturate(1.5);
+    border: 1px solid rgba(255,255,255,.7); box-shadow: inset 0 1px 0 rgba(255,255,255,.85), inset 0 -1px 0 rgba(43,29,20,.08), 0 18px 36px -12px rgba(43,29,20,.4); color: var(--c); text-shadow: none; }
+  html.robot :is(.pop, .tabs, dialog#ag, dialog#ap) { background: rgba(255,250,243,.82); }
+  html.robot :is(.tin, #ap-note, #ap .pre, select) { background: rgba(255,255,255,.55); color: var(--c); }
+  html.robot :is(#status, .card b, #welcome, #welcome small) { text-shadow: none; color: var(--c); } html.robot body:has(#welcome:not([hidden])) #status { opacity: 0; } html.robot ::placeholder { color: rgba(43,29,20,.45); }
+  html.robot .card { border-radius: 16px; } html.robot #f > * { border-radius: 999px; } html.robot #f button:last-child { background: #2B1D14; color: #FFF8EF; }
+  html.robot .cards { top: auto; transform: none; flex-direction: row; width: auto; overflow-x: auto; bottom: calc(78px + env(safe-area-inset-bottom)); }
+  html.robot .cards.l { left: 16px; right: 50%; justify-content: flex-end; } html.robot .cards.r { left: 50%; right: 16px; }
+  html.robot .card { flex: 0 1 190px; min-width: 0; }
+  html.robot #log { bottom: calc(176px + env(safe-area-inset-bottom)); }
+  @media (max-width: 900px) { html.robot .cards.l, html.robot .cards.r { left: 16px; right: 16px; justify-content: flex-start; } html.robot .cards.l { bottom: calc(136px + env(safe-area-inset-bottom)); } html.robot .card { flex: 1 1 0; } html.robot #log { bottom: calc(204px + env(safe-area-inset-bottom)); } }
+  /* the robot: upper body only, cut off by the screen edge (desktop) or standing behind the cards (phone) */
+  #bot { position: fixed; right: 0; bottom: calc(196px + env(safe-area-inset-bottom)); width: min(86vw, 420px); aspect-ratio: 560 / 625; overflow: hidden; pointer-events: none; z-index: 1; filter: drop-shadow(-14px 20px 18px rgba(60,35,20,.28)); }
+  #bot canvas { width: 100%; height: 100%; display: block; }
+  @media (max-width: 900px) { #bot canvas { -webkit-mask-image: linear-gradient(#000 80%, transparent); mask-image: linear-gradient(#000 80%, transparent); } }   /* fade on the sprite, not the box: the box would clip the drop shadow */
+  html.robot #status.quiet { visibility: hidden; }
+  html.robot #wordmark { top: calc(84px + env(safe-area-inset-top)); translate: none; transform: translateX(-50%); font-size: min(21vw, 320px); z-index: 0; }
+  html.robot #status { top: auto; left: 16px; right: auto; bottom: calc(196px + min(86vw, 420px) * .9 + env(safe-area-inset-bottom)); z-index: 2; padding: 10px 16px; border-radius: 18px 18px 18px 6px; max-width: 60vw;
+    letter-spacing: .01em; text-transform: none; font: 600 15px/1.3 var(--sans); }
+  html.robot #welcome { top: calc(110px + min(21vw, 320px) + env(safe-area-inset-top)); }
+  @media (max-width: 600px) {
+    html.robot .corner.tl { display: block; }
+    html.robot .corner.tl .pill { padding: 9px 11px; gap: 6px; cursor: pointer; pointer-events: auto; }
+    html.robot .corner.tl .pill > span { display: none; }
+    html.robot .corner.tl .pill::after { content: attr(data-n); font: 700 13px var(--sans); }
+    #busytip { position: absolute; top: 100%; left: 0; margin-top: 6px; padding: 7px 12px; border-radius: 999px; white-space: nowrap; font: 700 12px var(--sans); text-transform: uppercase; background: rgba(255,250,243,.9); box-shadow: 0 10px 24px -8px rgba(43,29,20,.35); opacity: 0; transition: opacity .2s; pointer-events: none; }
+    #busytip.show { opacity: 1; }
+  }
+  html.robot :is(#status, .pill, .icons) { background: rgba(255,250,243,.5); -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); border: 1px solid rgba(255,255,255,.7); box-shadow: inset 0 1px 0 rgba(255,255,255,.85), 0 18px 36px -12px rgba(43,29,20,.35); }
+  html.robot .corner { padding: 0; margin: 14px 16px 0; position: fixed; color: var(--c); letter-spacing: .04em; font: 700 13px var(--sans); }
+  .pill { display: inline-flex; align-items: center; gap: 8px; padding: 11px 16px; border-radius: 999px; text-transform: uppercase; }
+  .pill i { width: 8px; height: 8px; border-radius: 50%; background: #9DB8A2; } .pill.on i { background: #2F8F5B; animation: pulse 1.2s infinite; }
+  html.robot .icons { gap: 2px; padding: 5px; border-radius: 999px; }
+  html.robot .icons .ic { width: auto; height: 38px; padding: 0 14px; border: 0; border-radius: 999px; background: none; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; font: 600 13.5px var(--sans); letter-spacing: 0; text-transform: none; color: var(--c); }
+  html.robot .icons .ic[aria-expanded="true"] { background: #2B1D14; color: #FFF8EF; }
+  html.robot .icons .badge:not([hidden]) { position: static; display: inline-block; vertical-align: middle; background: none; color: inherit; padding: 0; font: inherit; } html.robot .icons .badge { margin-left: 5px; } html.robot .icons #bell svg { width: 19px; height: 19px; vertical-align: middle; } html.robot .icons .ic { white-space: nowrap; display: inline-flex; align-items: center; } html.robot .icons a.ic { text-decoration: none; }
+  html.robot :is(.corner, #status, .st, .chip, .kpi span, .card span, #chathead h2) { font-family: var(--sans); }
+  html.robot .card .st { font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: rgba(43,29,20,.7); }
+  html.robot .card .st::before { content: none; } html.robot .card b { font: 900 italic 20px/1.15 "Archivo", var(--sans); letter-spacing: -.01em; }
+  /* agent cards: tilt toward the pointer with a moving glint; working cards breathe a light sweep and a live bar */
+  html.robot .card.agent { position: relative; overflow: hidden; transform: perspective(700px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(var(--ty, 0)); transition: transform .5s cubic-bezier(.2,.8,.2,1), box-shadow .5s; will-change: transform; text-align: left; }
+  html.robot .card.agent:hover { --ty: -6px; box-shadow: inset 0 1px 0 rgba(255,255,255,.85), 0 30px 50px -18px rgba(43,29,20,.45); }
+  html.robot .card.agent:active { --ty: -2px; transition-duration: .15s; }
+  html.robot .card.agent::after { content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0; transition: opacity .4s; background: radial-gradient(240px circle at var(--mx, 50%) var(--my, 0%), rgba(255,255,255,.55), transparent 60%); }
+  html.robot .card.agent:hover::after { opacity: 1; }
+  html.robot .card .mono-a { position: absolute; top: 12px; right: 12px; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; font: 900 italic 15px "Archivo", var(--sans); color: #FFF8EF; background: #2B1D14; box-shadow: inset 0 1px 0 rgba(255,255,255,.25), 0 6px 12px -4px rgba(43,29,20,.5); }
+  html.robot .card.s-working .mono-a::after { content: ""; position: absolute; inset: -4px; border-radius: 50%; border: 2px solid #2F8F5B; animation: ring 1.8s cubic-bezier(.2,.8,.2,1) infinite; }
+  @keyframes ring { from { transform: scale(.85); opacity: 1; } to { transform: scale(1.5); opacity: 0; } }
+  html.robot .card.s-working::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: linear-gradient(105deg, transparent 35%, rgba(255,255,255,.5) 50%, transparent 65%) no-repeat; background-size: 250% 100%; animation: sweep 3.2s ease-in-out infinite; }
+  @keyframes sweep { from { background-position: 130% 0; } to { background-position: -30% 0; } }
+  html.robot .card .live { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; display: none; overflow: hidden; background: rgba(43,29,20,.08); }
+  html.robot .card.s-working .live { display: block; }
+  html.robot .card .live::before { content: ""; position: absolute; top: 0; bottom: 0; width: 40%; background: linear-gradient(90deg, transparent, #2B1D14, transparent); animation: live 1.6s cubic-bezier(.45,0,.55,1) infinite; }
+  @keyframes live { from { left: -40%; } to { left: 100%; } }
+  html.robot .card .st { padding-right: 36px; }
+  @media (prefers-reduced-motion: reduce) { html.robot .card.agent { transform: none; } html.robot .card.s-working::before, html.robot .card .live::before, html.robot .card.s-working .mono-a::after { animation: none; } }
+  html.robot .card small { color: rgba(43,29,20,.75); } html.robot #agents-l .card:nth-child(3n+2), html.robot #agents-r .card:nth-child(3n) { background: rgba(239,135,70,.55); } html.robot #agents-l .card:nth-child(3n), html.robot #agents-r .card:nth-child(3n+1) { background: rgba(194,226,198,.6); } html.robot .card.s-offline { opacity: .7; }
+  html.robot dialog { background: rgba(255,250,243,.72); -webkit-backdrop-filter: blur(24px) saturate(1.4); backdrop-filter: blur(24px) saturate(1.4); border: 1px solid rgba(255,255,255,.7); border-radius: 24px; box-shadow: 0 40px 80px -20px rgba(43,29,20,.45); color: var(--c); }
+  html.robot dialog::backdrop { background: rgba(214,203,192,.25); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); }
+
+  /* chat screen, new look */
+  html.robot #chathead button { border-radius: 999px; padding: 0 16px; height: 40px; font: 600 13.5px var(--sans); letter-spacing: 0; background: rgba(255,250,243,.5); -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); border: 1px solid rgba(255,255,255,.7); color: var(--c); }
+  html.robot #chathead h2 { font: 900 italic 22px "Archivo", var(--sans); letter-spacing: -.01em; text-transform: none; color: #EF8746; }
+  html.robot body.chat #wordmark { opacity: .12; }
+  html.robot body.chat #log p.vega { align-self: flex-start; max-width: 82%; padding: 12px 16px; border-radius: 18px 18px 18px 6px; color: var(--c); background: rgba(255,250,243,.55); -webkit-backdrop-filter: blur(18px); backdrop-filter: blur(18px); border: 1px solid rgba(255,255,255,.7); }
+  html.robot body.chat #log p.you { background: #2B1D14; color: #FFF8EF; border: 0; border-radius: 18px 18px 6px 18px; }
+  html.robot #log p pre { background: rgba(43,29,20,.08); }
+  @media (min-width: 901px) { html.robot body.chat #chathead { left: 4vw; translate: none; } html.robot body.chat #log { left: 4vw; translate: none; width: min(54vw, 760px); } html.robot body.chat .corner.tl { opacity: 0; pointer-events: none; } }
+  @media (min-width: 901px) {
+    #bot { right: -1vw; bottom: 0; width: min(46vw, 78vh, 760px); }
+    html.robot #wordmark { top: 92px; font-size: min(19.5vw, 320px); }
+    html.robot #status { left: auto; right: calc(min(46vw, 78vh, 760px) * .55); bottom: calc(min(46vw, 78vh, 760px) * .8); max-width: 340px; border-radius: 20px 20px 6px 20px; }
+    html.robot form { left: 4vw; right: auto; width: min(54vw, 760px); margin: 0; z-index: 3; }
+    html.robot .cards { z-index: 3; justify-content: flex-start; overflow: visible; }
+    html.robot .cards.l { left: 4vw; right: auto; width: min(54vw, 760px); bottom: calc(80px + env(safe-area-inset-bottom)); }
+    html.robot .cards.r { left: 4vw; right: auto; width: min(54vw, 760px); bottom: calc(184px + env(safe-area-inset-bottom)); }
+    html.robot .card { flex: 1 1 0; max-width: 250px; padding: 14px 16px; border-radius: 20px; }
+    html.robot #log { left: 4vw; bottom: calc(288px + env(safe-area-inset-bottom)); width: min(54vw, 760px); }
+    html.robot #welcome { left: 4vw; translate: none; top: calc(100px + min(19.5vw, 320px) * .95); text-align: left; width: min(54vw, 760px); }
+    html.robot .corner { margin: 22px 4vw 0; }
+  }
+
+  @media (max-width: 600px) { html.robot .card .mono-a { display: none; } html.robot .card b { font-size: 14px; } }
+  /* map pop-up */
+  dialog#mapdlg { position: fixed; inset: 0; margin: calc(env(safe-area-inset-top, 0px) + 8px) auto calc(env(safe-area-inset-bottom, 0px) + 8px) !important; width: min(1100px, calc(100vw - 16px)); height: calc(100dvh - 16px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)); padding: 0; border: 1px solid rgba(255,255,255,.7); border-radius: 22px; overflow: hidden; background: #0E0D12; }
+  dialog#mapdlg::backdrop { background: rgba(214,203,192,.2); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); }
+  #map-f { width: 100%; height: 100%; border: 0; display: block; }
+  #map-x { position: absolute; top: 12px; right: 12px; z-index: 5; width: 42px; height: 42px; border-radius: 50%; border: 1px solid rgba(255,255,255,.3); background: rgba(30,27,34,.7); color: #F4EDE4; font-size: 17px; cursor: pointer; }
+  /* agent chat: clearer header, readable bubbles, a disguised mini Neesmo in the corner */
+  #report .rp > header { align-items: center; padding: 10px 12px; border-radius: 14px; background: color-mix(in srgb, var(--a) 22%, rgba(255,250,243,.9)); border: 1px solid color-mix(in srgb, var(--a) 55%, transparent); }
+  #report .rp > header h2 { font-size: 20px; color: var(--c); }
+  #report .rp > header h2::before { content: ""; display: inline-block; width: 11px; height: 11px; border-radius: 50%; background: var(--a); margin-right: 9px; box-shadow: 0 0 0 3px color-mix(in srgb, var(--a) 30%, transparent); }
+  #r-sub { font-size: 12.5px; color: rgba(43,29,20,.75); }
+  #report #r-mini { position: static; inset: auto; flex: none; width: clamp(60px, 17vw, 92px); height: auto; aspect-ratio: 200 / 210; margin: 0 -4px -4px 0; filter: drop-shadow(0 6px 6px rgba(43,29,20,.25)); pointer-events: none; }
+  #report form.composer textarea { min-width: 0; flex: 1 1 0; padding: 9px 10px; }
+  #report form.composer textarea::placeholder { font-size: 13px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #report form.composer #r-send, #report form.composer #r-attach { flex: none; padding-left: 10px; padding-right: 10px; }
+  @media (max-width: 480px) { #report form.composer { gap: 6px; } #report form.composer #r-attach { padding: 0 9px; } }
+  #report .thread p.bot { color: var(--c); background: rgba(255,255,255,.6); border: 1px solid rgba(43,29,20,.12); border-left: 4px solid var(--a); border-radius: 6px 16px 16px 16px; padding: 10px 14px; max-width: 92%; font-size: 15px; }
+  #report .thread p.you { font-size: 15px; color: var(--c); background: color-mix(in srgb, var(--a) 28%, #fff); }
+  #report .thread { border-top: 0; }
+  @media (max-width: 700px) { #report .rp > header h2 { font-size: 17px; } }
+  @media (max-width: 600px) {   /* phone: Back / Chat / New chat sit under the Approvals-Map-Settings bar, not over it */
+    html.robot body.chat #chathead { top: calc(var(--vvt, 0px) + 70px + env(safe-area-inset-top)); }
+    html.robot body.chat #log { top: calc(var(--vvt, 0px) + 122px + env(safe-area-inset-top)); }
+    html.robot #status { bottom: calc(196px + min(86vw, 420px) * 1.06 + env(safe-area-inset-bottom)); }   /* bubble above the robot head */
+  }
 </style>
+<link rel="stylesheet" href="/static/studio.css">
 </head>
 <body class="boot">
 <div id="wordmark" aria-hidden="true">NEESMO</div>
-<canvas id="hud" aria-hidden="true"></canvas>
-<div class="corner tl">Neesmo // online<br><b id="clock">--:--:--</b><br><span id="date"></span></div>
+<div id="bot" aria-hidden="true"><canvas width="560" height="625"></canvas></div>
+<div class="corner tl"><span class="pill" id="busy" data-n="0"><i></i><span>Agents</span></span><span id="busytip"></span></div>
 <div class="corner tr"><div class="icons">
-  <button type="button" class="ic" id="bell" aria-label="Notifications" aria-expanded="false" aria-controls="pop-n"><svg viewBox="0 0 24 24"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10.3 21a1.9 1.9 0 0 0 3.4 0"/></svg><span class="badge" id="badge" hidden>0</span></button>
-  <button type="button" class="ic" id="gear" aria-label="Settings" aria-expanded="false" aria-controls="pop-s"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg></button>
+  <button type="button" class="ic" id="bell" aria-label="Notifications" aria-expanded="false" aria-controls="pop-n"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15z"/><path d="M10 21h4"/></svg><span class="badge" id="badge" hidden>0</span></button>
+  <button type="button" class="ic" id="mapbtn" aria-haspopup="dialog">Map</button>
+  <button type="button" class="ic" id="gear" aria-label="Settings" aria-expanded="false" aria-controls="pop-s">Settings</button>
 </div></div>
 <div class="pop wide" id="pop-s" hidden role="dialog" aria-label="Settings">
   <div class="tabs" role="tablist" aria-label="Settings sections">
@@ -360,10 +472,8 @@
   </section>
   <section class="tab" data-tab="look" role="tabpanel" hidden>
     <h3>Appearance</h3>
-    <div class="row"><label>Colour</label><div class="swatches" id="swatches"></div></div>
     <div class="row"><label for="fsize">Text size</label><select id="fsize"><option value="13px">Small</option><option value="14px">Medium</option><option value="16px">Large</option></select></div>
-    <div class="row"><div><label id="l-mark">NEESMO lettering</label><small class="sub">The big faded name behind the ring.</small></div><button type="button" class="tog" role="switch" id="t-mark" aria-labelledby="l-mark"></button></div>
-    <div class="row"><div><label id="l-scan">Scan lines</label><small class="sub">Thin horizontal lines over the screen, like an old CRT monitor. Turn off for a cleaner look.</small></div><button type="button" class="tog" role="switch" id="t-scan" aria-labelledby="l-scan"></button></div>
+    <div class="row"><div><label id="l-mark">NEESMO lettering</label><small class="sub">The big orange name behind the robot.</small></div><button type="button" class="tog" role="switch" id="t-mark" aria-labelledby="l-mark"></button></div>
     <div class="row"><div><label id="l-calm">Calm motion</label><small class="sub">Fewer and shorter animations.</small></div><button type="button" class="tog" role="switch" id="t-calm" aria-labelledby="l-calm"></button></div>
     <small class="sub">Saved on this device only.</small>
   </section>
@@ -402,6 +512,7 @@
   <div class="nhead"><h3>History</h3><button type="button" id="nclear">Clear all</button></div>
   <ul class="nlist" id="nlist"><li><small>Nothing yet</small></li></ul>
 </div>
+<dialog id="mapdlg" aria-label="Code map"><button type="button" id="map-x" aria-label="Close map">✕</button><iframe id="map-f" title="Code map"></iframe></dialog>
 <dialog id="ap" aria-labelledby="ap-title"><div class="rp">
   <header><div><h2 id="ap-title">Approval</h2><small id="ap-sub"></small></div><button type="button" id="ap-close" aria-label="Close">✕</button></header>
   <p class="what" id="ap-what"></p>
@@ -457,11 +568,12 @@
     <input type="file" id="r-files" multiple hidden>
     <textarea id="r-q" rows="1" placeholder="Reply…" aria-label="Message for this agent"></textarea>
     <button type="submit" id="r-send">Send</button>
+    <canvas id="r-mini" width="200" height="210" aria-hidden="true"></canvas>
   </form>
   <div class="rfoot"><button type="button" id="r-new">New thread</button><span class="rlink" id="r-link"></span><button type="button" id="r-stop" hidden>Stop</button></div>
 </div></dialog>
 <div id="welcome" hidden aria-hidden="true"></div>
-<div id="status" role="status" aria-live="polite">Standby</div>
+<div id="status" class="quiet" role="status" aria-live="polite">Standby</div>
 <div id="chathead"><button type="button" id="chat-back" aria-label="Back to the home screen">← Back</button><h2>CHAT</h2><button type="button" id="chat-new">New chat</button></div>
 <div id="log" aria-live="polite"></div>
 <div id="atts" aria-label="Attached files"></div>
@@ -479,6 +591,7 @@ const statusEl = $('#status'), logEl = $('#log'), voiceSel = $('#voice');
 let ac, analyser, level = 0, mode = 'idle', rec, chunks = [], micStream, micSrc;
 
 function setStatus(t, err) {
+  statusEl.classList.toggle('quiet', t === 'Standby');   // the speech bubble only shows when there is news
   statusEl.textContent = t; statusEl.classList.toggle('err', !!err); clearTimeout(setStatus.t);
   if (t === 'Heard nothing') setStatus.t = setTimeout(() => { if (statusEl.textContent === t && mode === 'idle') setStatus('Standby'); }, 2500);
 }
@@ -527,11 +640,10 @@ function audio() {
 }
 
 // ── appearance settings (this device only) ──
-const THEMES = { green: ['#3dff8f', '61,255,143', '#c6ff4a'], cyan: ['#3fe0ff', '63,224,255', '#ffb547'], amber: ['#ffb547', '255,181,71', '#ff6b3d'],
-  violet: ['#b388ff', '179,136,255', '#ff7ac6'], red: ['#ff5f6d', '255,95,109', '#ffd166'] };
-let PREFS = { theme: 'green', fs: '14px', mark: true, scan: true, calm: false, wel: true, welName: '', welText: '{greeting}, {name}. {busy}', welVoice: false };
+const THEMES = { robot: ['#EF8746', '239,135,70', '#2F8F5B'] };
+let PREFS = { theme: 'robot', fs: '14px', mark: true, calm: false, wel: true, welName: '', welText: '{greeting}, {name}. {busy}', welVoice: false };
 try { Object.assign(PREFS, JSON.parse(localStorage.getItem('neesmo-prefs') || '{}')); } catch {}
-const THEME = {};
+PREFS.theme = 'robot';
 // The greeting (on/off, name, message, spoken) is kept on the server, so every device greets the same way.
 const WEL_KEYS = ['wel', 'welName', 'welText', 'welVoice'];
 let welSent = null;
@@ -545,34 +657,32 @@ const welLoaded = fetch('/api/welcome').then(r => r.ok ? r.json() : {}).catch(()
   Object.assign(PREFS, w); welSent = welNow(); if (typeof applyPrefs === 'function') applyPrefs();
 });
 function applyPrefs() {
-  const [hex, rgb, c2] = THEMES[PREFS.theme] || THEMES.green, root = document.documentElement;
-  Object.assign(THEME, { hex, rgb, c2 });
+  const [hex, rgb, c2] = THEMES.robot, root = document.documentElement;
   root.style.setProperty('--rgb', rgb); root.style.setProperty('--c2', c2); root.style.setProperty('--fs', PREFS.fs);
-  root.classList.toggle('no-mark', !PREFS.mark); root.classList.toggle('calm', !!PREFS.calm); root.classList.toggle('no-scan', !PREFS.scan);
-  for (const [k, id] of [['mark', '#t-mark'], ['scan', '#t-scan'], ['calm', '#t-calm'], ['wel', '#t-wel'], ['welVoice', '#t-welv']]) $(id).setAttribute('aria-checked', String(!!PREFS[k]));
+  root.classList.toggle('no-mark', !PREFS.mark); root.classList.toggle('calm', !!PREFS.calm); root.classList.add('robot');
+  for (const [k, id] of [['mark', '#t-mark'], ['calm', '#t-calm'], ['wel', '#t-wel'], ['welVoice', '#t-welv']]) $(id).setAttribute('aria-checked', String(!!PREFS[k]));
   $('#fsize').value = PREFS.fs;
-  for (const b of document.querySelectorAll('#swatches .sw')) b.setAttribute('aria-pressed', String(b.dataset.t === PREFS.theme));
   try { localStorage.setItem('neesmo-prefs', JSON.stringify(PREFS)); } catch {}
   syncWelcome();
   if (typeof reduce !== 'undefined') reduce = matchMedia('(prefers-reduced-motion: reduce)').matches || PREFS.calm;
 }
-$('#swatches').innerHTML = Object.entries(THEMES).map(([k, [hex]]) => `<button type="button" class="sw" data-t="${k}" style="--s:${hex}" aria-label="${k}"></button>`).join('');
-$('#swatches').onclick = e => { const b = e.target.closest('.sw'); if (b) { PREFS.theme = b.dataset.t; applyPrefs(); } };
 $('#fsize').onchange = e => { PREFS.fs = e.target.value; applyPrefs(); };
-for (const [k, id] of [['mark', '#t-mark'], ['scan', '#t-scan'], ['calm', '#t-calm'], ['wel', '#t-wel'], ['welVoice', '#t-welv']]) $(id).onclick = () => { PREFS[k] = !PREFS[k]; applyPrefs(); };
+for (const [k, id] of [['mark', '#t-mark'], ['calm', '#t-calm'], ['wel', '#t-wel'], ['welVoice', '#t-welv']]) $(id).onclick = () => { PREFS[k] = !PREFS[k]; applyPrefs(); };
 applyPrefs();
 
 // ── voices ──
 (async () => {
   const cfg = await (await fetch('/api/config')).json();
-  try {
+  for (let tryN = 0; tryN < 3; tryN++) try {   // the voice engine can lag behind the page: retry before giving up
     const { voices } = await (await api('/api/voices')).json();
     voiceSel.innerHTML = '';
     for (const v of voices) voiceSel.add(new Option(`${v.name}${v.type === 'profile' ? '' : ' (alias)'}`, v.id));
     voiceSel.value = localStorage.getItem('neesmo-voice-v2') || cfg.voice;
     if (!voiceSel.value) voiceSel.selectedIndex = 0;
     $('#vs').textContent = 'voice: linked';
+    return;
   } catch (e) {
+    if (tryN < 2) { await new Promise(r => setTimeout(r, 4000)); continue; }
     voiceSel.innerHTML = `<option value="${cfg.voice}">${cfg.voice}</option>`;
     $('#vs').textContent = 'voice: offline';
     setStatus('Voice offline — text only', true);
@@ -594,7 +704,7 @@ async function ask(text, { typed = false } = {}) {
     }
     const { reply } = await (await api('/api/chat', { method: 'POST', headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ text, typed, files: paths }) })).json();
-    typing(false); say(reply, 'vega');
+    typing(false); say(reply, 'vega'); botReply = Date.now() + Math.min(6000, 1500 + reply.length * 25);
     if (!typed) await speak(reply);   // spoken questions get a spoken answer; typed chat stays quiet
   } catch (e) { typing(false); setStatus(e.message, true); if (chatOpen()) say('⚠ ' + e.message, 'vega', { restore: true }); }
   finally { typing(false); if (mode !== 'idle') { mode = 'idle'; if (!statusEl.classList.contains('err')) setStatus('Standby'); } }
@@ -610,7 +720,6 @@ function onViewport() {
   if (kb < 80 && Date.now() < kbWait) return;
   if (kb > 120) { kbWait = 0; try { localStorage.setItem('neesmo-kb', String(Math.round(kb + top))); } catch {} }
   st.setProperty('--vvt', `${Math.max(0, top)}px`); st.setProperty('--kb', `${kb}px`);
-  if (typeof layoutHud === 'function') layoutHud();
 }
 // iPhone pushes the whole page up when an input near the bottom gets focus, then we pull it back: a bounce.
 // Instead, put the input where it will sit above the keyboard *before* focusing, so iOS has nothing to scroll.
@@ -631,12 +740,12 @@ if (iOS) $('#q').addEventListener('touchend', e => {
 window.visualViewport?.addEventListener('resize', onViewport); window.visualViewport?.addEventListener('scroll', onViewport);
 function openChat() {
   if (chatOpen()) return;
-  const go = () => { document.body.classList.add('chat'); $('#q').placeholder = 'Message Neesmo…'; logEl.scrollTop = 1e9; layoutHud?.(); };
+  const go = () => { document.body.classList.add('chat'); $('#q').placeholder = 'Message Neesmo…'; logEl.scrollTop = 1e9; };
   document.startViewTransition && !reduce && !coarse ? document.startViewTransition(go) : go();
 }
 function closeChat() {
   if (!chatOpen()) return;
-  const go = () => { document.body.classList.remove('chat'); $('#q').placeholder = 'Ask Neesmo anything'; $('#q').blur(); layoutHud?.(); };
+  const go = () => { document.body.classList.remove('chat'); $('#q').placeholder = 'Ask Neesmo anything'; $('#q').blur(); };
   document.startViewTransition && !reduce && !coarse ? document.startViewTransition(go) : go();
 }
 $('#q').addEventListener('focus', openChat);
@@ -770,9 +879,11 @@ async function loadAgents() {
   try {
     const { agents } = await (await api('/api/agents')).json(), half = Math.ceil(agents.length / 2);
     learnAgents(agents); lastAgents = agents;
-    const card = (a, i) => `<button type="button" class="card agent${AGENT_DEV.has(a.id) ? ' dev' : ''}" style="--a:${AGENT_COLORS[a.id] || '#3dff8f'};--i:${i}" data-id="${esc(a.id)}" aria-label="${esc(a.name)} report">
-      <span class="st ${AGENT_DEV.has(a.id) ? 'dev' : esc(a.status)}">${AGENT_DEV.has(a.id) ? 'in dev' : esc(a.status)}<span class="ago"> · ${esc(a.last_active_ago || '—')}</span></span><b>${esc(AGENT_SHORT[a.id] || a.name)}</b>
-      <small>${esc(a.last_reply || a.role)}</small></button>`;
+    const busy = agents.filter(a => a.status === 'working').length;
+    $('#busy').dataset.n = busy; $('#busy').classList.toggle('on', busy > 0); $('#busy span').textContent = busy ? `${busy} agent${busy > 1 ? 's' : ''} working` : 'All agents resting';
+    const card = (a, i) => `<button type="button" class="card agent s-${AGENT_DEV.has(a.id) ? 'dev' : esc(a.status)}${AGENT_DEV.has(a.id) ? ' dev' : ''}" style="--a:${AGENT_COLORS[a.id] || '#3dff8f'};--i:${i}" data-id="${esc(a.id)}" aria-label="${esc(a.name)} report">
+      <i class="mono-a" aria-hidden="true">${esc((AGENT_SHORT[a.id] || a.name).trim()[0] || '?')}</i><span class="st">${esc(AGENT_SHORT[a.id] || a.name)}</span><b>${AGENT_DEV.has(a.id) ? 'In dev' : { working: 'Working', idle: 'Resting', offline: 'Offline' }[a.status] || esc(a.status)}</b>
+      <small>${esc(a.last_reply || a.role)}</small><i class="live" aria-hidden="true"></i></button>`;
     $('#agents-l').innerHTML = agents.slice(0, half).map(card).join('')
       || '<button type="button" class="card" id="first-agent" style="--a:#3dff8f"><span class="st">start here</span><b>Add an agent</b><small>An agent is a helper with its own folder and job. Tap to make your first one.</small></button>';
     if ($('#first-agent')) $('#first-agent').onclick = e => { e.stopPropagation(); setTimeout(() => { if ($('#pop-s').hidden) $('#gear').click(); showTab('agents'); }, 0); };
@@ -780,7 +891,6 @@ async function loadAgents() {
     if (!loadAgents.done) { loadAgents.done = true; document.querySelectorAll('.agent b').forEach((b, i) => setTimeout(() => decode(b), 200 + i * 80)); setTimeout(() => document.body.classList.remove('boot'), 2500); }
     for (const a of agents) { const prev = loadAgents.seen?.[a.id]; if (prev && prev !== a.last_reply) document.querySelector(`.agent[data-id="${CSS.escape(a.id)}"]`)?.classList.add('flash'); }
     loadAgents.seen = Object.fromEntries(agents.map(a => [a.id, a.last_reply]));
-    layoutHud();
   } catch (e) { $('#agents-l').innerHTML = '<div class="card"><span>Agents</span><small>offline</small></div>'; }
 }
 document.addEventListener('click', e => { if (dragEnded()) { e.preventDefault(); e.stopPropagation(); return; } }, true);
@@ -793,6 +903,7 @@ async function openReport(id) {
     const r = await (await api('/api/agents/' + encodeURIComponent(id))).json(); if (reportFor !== id) return;
     const t = r.today || {}, g = r.git || {}, ctxPct = Math.min(100, Math.round((r.context_tokens || 0) / 1e6 * 100));
     $('#report').style.setProperty('--a', AGENT_COLORS[r.id] || '#3dff8f');
+    setMini(r.id, AGENT_COLORS[r.id] || '#3dff8f', r.status === 'working');
     $('#r-name').textContent = AGENT_DEV.has(r.id) ? `${AGENT_SHORT[r.id]} (in development)` : r.name;
     $('#r-sub').innerHTML = `<span class="st ${esc(r.status)}">${esc(r.status)}</span> · ${esc(r.role)} · last active ${esc(r.last_active_ago || '—')}${r.model ? ' · ' + esc(r.model) : ''}`;
     const last = (g.commits || [])[0], now = (r.requests || [])[0];
@@ -885,6 +996,7 @@ $('#report').addEventListener('close', () => { reportFor = null; clearTimeout(rP
 loadAgents(); setInterval(() => { if (!document.hidden) { loadAgents(); if (reportFor) openReport(reportFor); } }, 15000);
 
 // ── home-screen app: notifications + replies that arrive on their own ──
+$('#busy').addEventListener('click', () => { const t = $('#busytip'); t.textContent = $('#busy span').textContent; t.classList.add('show'); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove('show'), 2500); });
 const standalone = matchMedia('(display-mode: standalone)').matches || navigator.standalone;
 const b64 = s => Uint8Array.from(atob((s + '='.repeat((4 - s.length % 4) % 4)).replace(/-/g, '+').replace(/_/g, '/')), c => c.charCodeAt(0));
 // Notifications on/off lives in the bell menu; history + approvals below.
@@ -922,6 +1034,8 @@ function togglePop(btn, pop, open = pop.hidden) {
   pop.hidden = !open; btn.setAttribute('aria-expanded', String(open));
   if (open && pop.id === 'pop-n') { loadNotes(); pushState().catch(() => {}); }
 }
+$('#mapbtn').onclick = async () => { const f = $('#map-f'); if (!f.srcdoc) { try { f.srcdoc = (await (await fetch('/static/robot/graph.html')).text()).replace('<head>', '<head><base href="/"><script>window.EMBED = 1<\/script>'); } catch {} } $('#pop-s').hidden = $('#pop-n').hidden = true; $('#mapdlg').showModal(); };
+$('#map-x').onclick = () => $('#mapdlg').close();
 $('#gear').onclick = () => { togglePop($('#gear'), $('#pop-s')); if (!$('#pop-s').hidden) { loadLicense(); showTab(settingsTab); } };
 // ── agents editor ──
 let agCfg = { agents: [], colors: [] }, agEdit = -1, agColor = '';
@@ -1182,6 +1296,7 @@ const asks = n => n.kind === 'approval' || n.kind === 'review';
 async function loadNotes() {
   try { notes = (await (await api('/api/notifications')).json()).items; } catch { return; }
   const pending = notes.filter(n => n.status === 'pending').length, unread = notes.filter(n => n.id > seenId).length;
+  botPending = pending;
   const badge = $('#badge'); badge.hidden = !(pending || unread); badge.textContent = pending || unread;
   try { (pending || unread) ? navigator.setAppBadge?.(pending || unread) : navigator.clearAppBadge?.(); } catch {}  // home-screen icon badge
   $('#nlist').innerHTML = notes.map(n => `<li><button type="button" data-n="${n.id}" class="${n.id > seenId ? 'unread' : ''}" style="--a:${AGENT_COLORS[n.agent] || 'var(--dim)'}">
@@ -1309,108 +1424,161 @@ if (window.Motion) {
     .observe(statusEl, { childList: true, characterData: true, subtree: true });
 }
 
-// ── clock ──
-setInterval(() => { const d = new Date(); $('#clock').textContent = d.toLocaleTimeString(); $('#date').textContent = d.toDateString(); }, 1000);
+// ── robot companion: drawn frames blended into fluid motion. The body never moves; it only sways a hair, and the head tilts ──
+const BOT = { approve: 2.6, listening: 2.6, working: 2.2 };   // seconds per pass
+const HEAD = [[40,175],[150,55],[300,38],[335,38],[368,100],[368,215],[300,240],[250,262],[190,305],[95,302],[36,240]];   // head outline in still frames
+const botCv = $('#bot canvas'), botCx = botCv.getContext('2d'), botImgs = {};
+const off = () => Object.assign(document.createElement('canvas'), { width: 560, height: 625 });
+const bufA = off(), bufB = off(), bufP = off();
+for (const n of ['still', 'reading', 'approve', 'listening', 'working']) (botImgs[n] = new Image()).src = `/static/robot/${n}.webp`;
+let botPending = 0, botAsked = 0, botReply = 0, botAct = '', botActT = 0, botBlink = Date.now() + 3000;
+let botCur = '', botFrom = 0;   // current mood and when the crossfade into it began
+const bufT = [off(), off()];
+function frame(c, name, i, tilt = 0) {   // one drawn frame; still frames can tilt the head on its neck
+  const img = botImgs[name]; if (!img.complete) return;
+  if (!tilt) return c.drawImage(img, i * 560, 0, 560, 625, 0, 0, 560, 625);
+  const tc = bufT[i ? 1 : 0], x = tc.getContext('2d'), head = () => { HEAD.forEach(([a, b], k) => k ? x.lineTo(a, b) : x.moveTo(a, b)); x.closePath(); };
+  x.clearRect(0, 0, 560, 625);
+  x.save(); x.beginPath(); x.rect(0, 0, 560, 625); head(); x.clip('evenodd'); x.drawImage(img, i * 560, 0, 560, 625, 0, 0, 560, 625); x.restore();
+  x.save(); x.translate(265, 258); x.rotate(tilt); x.translate(-265, -258); x.beginPath(); head(); x.clip(); x.drawImage(img, i * 560, 0, 560, 625, 0, 0, 560, 625); x.restore();
+  c.drawImage(tc, 0, 0);
+}
+function mix(c, drawA, drawB, k) {   // exact crossfade of two transparent drawings: (1-k)·A + k·B
+  c.clearRect(0, 0, 560, 625);
+  c.globalAlpha = 1 - k; drawA(c); c.globalCompositeOperation = 'lighter'; c.globalAlpha = k; drawB(c);
+  c.globalAlpha = 1; c.globalCompositeOperation = 'source-over';
+}
+const ease = x => x * x * (3 - 2 * x);
+function strip(c, name, pos, loop) {   // a float position through 8 frames: hold each drawing, then melt into the next
+  const i = Math.floor(pos) % 8, j = loop ? (i + 1) % 8 : Math.min(i + 1, 7), f = pos - Math.floor(pos);
+  mix(c, x => frame(x, name, i), x => frame(x, name, j), ease(Math.max(0, (f - .35) / .65)));
+}
+const audioLevel = () => {
+  if (mode !== 'speaking' || !analyser) return 0;
+  const d = new Uint8Array(analyser.frequencyBinCount); analyser.getByteFrequencyData(d);
+  return Math.min(1, d.reduce((a, b) => a + b, 0) / d.length / 90);
+};
+let botLvl = 0;
 
-// ── HUD ──
-const cv = $('#hud'), g = cv.getContext('2d'), data = new Uint8Array(128);
+// ── mini Neesmo in the agent chat: the same frames, sway and blink as the big one; only the orange becomes the agent's colour; each wears a disguise ──
+const DISGUISE = ['stache', 'tophat', 'cap', 'stache+beret', 'cowboy', 'beret'];
+const mini = { id: '', color: '', hue: 0, sat: 1, kind: '', working: false, blink: Date.now() + 2000, last: 0, from: Date.now(), cur: '' };
+const mBig = off(), mSm = Object.assign(document.createElement('canvas'), { width: 200, height: 210 });
+const mBufs = [off(), off(), off()];
+function rgb2hsv(r, g, b) { const m = Math.max(r, g, b), d = m - Math.min(r, g, b); let h = 0;
+  if (d) h = m === r ? ((g - b) / d + 6) % 6 : m === g ? (b - r) / d + 2 : (r - g) / d + 4; return [h * 60, m ? d / m : 0, m / 255]; }
+function hsv2rgb(h, s, v) { const f = n => { const k = (n + h / 60) % 6; return v - v * s * Math.max(0, Math.min(k, 4 - k, 1)); }; return [f(5) * 255, f(3) * 255, f(1) * 255]; }
+function setMini(id, color, working) {
+  const hex = color.replace('#', ''), full = hex.length === 3 ? hex.replace(/./g, '$&$&') : hex;
+  const n = parseInt(full, 16), [h, sa] = rgb2hsv(n >> 16 & 255, n >> 8 & 255, n & 255);
+  if (mini.id !== id || mini.color !== color) Object.assign(mini, { id, color, hue: h, sat: Math.max(.45, sa), kind: DISGUISE[[...id].reduce((a, c) => a + c.charCodeAt(0), 0) % DISGUISE.length] });
+  mini.working = !!working;
+}
+function disguise(c, tilt) {
+  const ink = '#2B1D14', color = mini.color, kind = mini.kind;
+  c.save(); c.translate(265, 258); c.rotate(tilt); c.translate(-265, -258);
+  if (kind.includes('stache')) { c.save(); c.translate(188, 238); c.rotate(-.42); c.fillStyle = ink; c.beginPath();
+    c.moveTo(0, -6); c.bezierCurveTo(-20, -26, -62, -22, -72, 4); c.bezierCurveTo(-48, -2, -26, 12, 0, 8);
+    c.bezierCurveTo(26, 12, 48, -2, 72, 4); c.bezierCurveTo(62, -22, 20, -26, 0, -6); c.fill(); c.restore(); }
+  if (kind !== 'stache') { const k = kind.split('+')[1] || kind; c.save(); c.translate(212, 72); c.rotate(-.28); c.fillStyle = ink;
+    if (k === 'tophat') { c.fillRect(-46, -88, 92, 84); c.beginPath(); c.ellipse(0, -4, 84, 15, 0, 0, 7); c.fill(); c.fillStyle = color; c.fillRect(-46, -24, 92, 14); }
+    else if (k === 'cap') { c.fillStyle = color; c.beginPath(); c.ellipse(0, -8, 62, 46, 0, Math.PI, 0); c.fill(); c.fillStyle = ink; c.fillRect(-72, -10, 150, 11); }
+    else if (k === 'cowboy') { c.beginPath(); c.ellipse(0, -4, 100, 18, 0, 0, 7); c.fill(); c.beginPath(); c.moveTo(-52, -4); c.quadraticCurveTo(-48, -78, -10, -66); c.quadraticCurveTo(18, -80, 52, -4); c.fill(); c.fillStyle = color; c.fillRect(-52, -22, 104, 9); }
+    else { c.fillStyle = color; c.beginPath(); c.ellipse(0, -14, 76, 28, 0, 0, 7); c.fill(); c.fillStyle = ink; c.fillRect(-4, -50, 8, 14); }
+    c.restore(); }
+  c.restore();
+}
+function miniTick(now, t) {
+  const cv = $('#r-mini'); if (!cv || !$('#report').open || !botImgs.still.complete || now - mini.last < 33) return; mini.last = now;
+  const mood = mini.working ? 'working' : 'still';
+  if (mood !== mini.cur) { mini.cur = mood; mini.from = now; }
+  if (now > mini.blink + 200) mini.blink = now + 2500 + Math.random() * 5500;
+  const blink = now > mini.blink ? ease(1 - Math.abs((now - mini.blink) / 100 - 1)) : 0;
+  const a = mBig.getContext('2d'); let tilt = 0;
+  if (mood === 'working') { const el = (now - mini.from) / 1000 / BOT.working * 8; strip(a, 'working', el % 8, true); }
+  else { tilt = reduce ? 0 : Math.sin(t * .7) * .018 + Math.sin(t * .23) * .012; mix(a, x => frame(x, 'still', 0, tilt), x => frame(x, 'still', 5, tilt), blink); }
+  const sm = mSm.getContext('2d', { willReadFrequently: true }); sm.clearRect(0, 0, 200, 210); sm.drawImage(mBig, 0, -50, 460, 480, 0, 0, 200, 210);
+  const im = sm.getImageData(0, 0, 200, 210), d = im.data;
+  for (let i = 0; i < d.length; i += 4) {
+    if (d[i + 3] < 8) continue;
+    const [h, s, v] = rgb2hsv(d[i], d[i + 1], d[i + 2]);
+    if (h > 55 && h < 345 || s < .4 || v < .3) continue;   // eyes, metal, shadows stay; only the orange family moves
+    const hh = (h > 300 ? h - 360 : h) - 25, r = hsv2rgb((mini.hue + hh * .5 + 360) % 360, Math.min(1, s * (mini.sat + .25)), v);
+    d[i] = r[0]; d[i + 1] = r[1]; d[i + 2] = r[2];
+  }
+  sm.putImageData(im, 0, 0);
+  const c = cv.getContext('2d'); c.setTransform(1, 0, 0, 1, 0, 0); c.clearRect(0, 0, 200, 210);
+  const sway = reduce ? 0 : Math.sin(t * .9) * .006 + Math.sin(t * .37) * .004, br = reduce ? 1 : 1 + Math.sin(t * 1.6) * .004;
+  c.translate(100, 210); c.rotate(sway); c.scale(1, br); c.translate(-100, -210);
+  c.drawImage(mSm, 0, 0);
+  
+}
+function listenPose(c, k) {   // frame 2 of the listening strip, held; the eyes squash shut for a blink
+  const img = botImgs.listening; if (!img.complete) return;
+  c.clearRect(0, 0, 560, 625);   // the buffer still holds the last mood: wipe it or the two robots stack
+  c.drawImage(img, 2 * 560, 0, 560, 625, 0, 0, 560, 625);
+  if (k <= 0) return;
+  for (const [ex, ey, rx, ry] of [[121, 203, 40, 60], [229, 165, 50, 64]]) {   // each eye: dark patch, then the eye squashed flat inside it
+    const h = ry * 2 * (1 - k * .9);
+    c.save(); c.beginPath(); c.ellipse(ex, ey, rx, ry, 0, 0, 7); c.clip();
+    c.globalCompositeOperation = 'source-atop'; c.fillStyle = '#2a1114'; c.fillRect(ex - rx, ey - ry, rx * 2, ry * 2);
+    c.drawImage(img, 2 * 560 + ex - rx, ey - ry, rx * 2, ry * 2, ex - rx, ey - h / 2, rx * 2, h); c.restore();
+  }
+}
+function botTick() {
+  requestAnimationFrame(botTick);
+
+  if (document.hidden) return;
+  const now = Date.now(), t = now / 1000;
+  const want = mode === 'listening' ? 'listening' : mode === 'thinking' ? 'working'
+    : mode === 'speaking' || now < botReply ? 'talking' : chatOpen() ? 'reading' : '';
+  if (botPending > botAsked && !want && now > botActT) { botAct = 'approve'; botActT = now + BOT.approve * 1000; }   // something new waits for you: ask once
+  botAsked = botPending;
+  const mood = want || (now < botActT ? botAct : 'still');
+  if (mood !== botCur) {   // freeze what is on screen and melt from it into the new mood
+    const p = bufP.getContext('2d'); p.clearRect(0, 0, 560, 625); p.drawImage(bufA, 0, 0);
+    botCur = mood; botFrom = now;
+  }
+  if (now > botBlink + 200) botBlink = now + 2500 + Math.random() * 5500;
+  const blink = now > botBlink ? ease(1 - Math.abs((now - botBlink) / 100 - 1)) : 0;   // 200 ms: shut and open
+  botLvl += (audioLevel() - botLvl) * .25;
+  const a = bufA.getContext('2d');
+  if (mood === 'still' || mood === 'talking') {
+    const talk = mood === 'talking';
+    const tilt = reduce ? 0 : talk ? (Math.sin(t * 5.3) * .025 + Math.sin(t * 2.1) * .02) * (.6 + botLvl * 1.6) - botLvl * .03
+      : Math.sin(t * .7) * .018 + Math.sin(t * .23) * .012;   // idle: the head drifts a little, like it is thinking
+    mix(a, x => frame(x, 'still', 0, tilt), x => frame(x, 'still', 5, tilt), blink);
+  } else if (mood === 'listening') listenPose(a, blink);   // hand at the ear, held still; blink and sway only
+  else if (mood === 'reading') mix(a, x => frame(x, 'reading', 0), x => frame(x, 'reading', 5), blink);
+  else {
+    const el = (now - botFrom) / 1000 / BOT[mood] * 8, loop = mood === 'listening' || mood === 'working';
+    strip(a, mood, loop ? el % 8 : Math.min(el, 7.999), loop);
+  }
+  const k = Math.min(1, (now - botFrom) / 350);
+  const b = bufB.getContext('2d');
+  if (k < 1) mix(b, x => x.drawImage(bufP, 0, 0), x => x.drawImage(bufA, 0, 0), ease(k));
+  const src = k < 1 ? bufB : bufA;
+  botCx.setTransform(1, 0, 0, 1, 0, 0); botCx.clearRect(0, 0, 560, 625);
+  const sway = reduce ? 0 : Math.sin(t * .9) * .006 + Math.sin(t * .37) * .004;   // a breath of sway around the waist
+  const breath = reduce ? 1 : 1 + Math.sin(t * 1.6) * .004;
+  botCx.translate(280, 625); botCx.rotate(sway); botCx.scale(1, breath); botCx.translate(-280, -625);
+  botCx.drawImage(src, 0, 0);
+  miniTick(now, t);
+}
+requestAnimationFrame(botTick);
+
+// agent cards lean toward the pointer, the glint follows it
+document.querySelectorAll('.cards').forEach(box => {
+  box.addEventListener('pointermove', e => {
+    const c = e.target.closest('.card.agent'); if (!c || reduce || e.pointerType !== 'mouse') return;
+    const r = c.getBoundingClientRect(), x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+    c.style.setProperty('--mx', `${x * 100}%`); c.style.setProperty('--my', `${y * 100}%`);
+    c.style.setProperty('--ry', `${(x - .5) * 14}deg`); c.style.setProperty('--rx', `${(.5 - y) * 12}deg`);
+  });
+  box.addEventListener('pointerout', e => { const c = e.target.closest('.card.agent'); if (c && !c.contains(e.relatedTarget)) ['--rx', '--ry'].forEach(p => c.style.removeProperty(p)); });
+});
+
 var reduce = matchMedia('(prefers-reduced-motion: reduce)').matches || PREFS.calm;
-// Buffer sized from the canvas's real on-screen box (not innerWidth/innerHeight, which differ from it
-// on iPhone with the toolbar or as a home-screen app), so the ring is never stretched.
-function resize() {
-  const r = cv.getBoundingClientRect(), w = Math.round(r.width * devicePixelRatio), h = Math.round(r.height * devicePixelRatio);
-  if (cv.width !== w || cv.height !== h) { cv.width = w; cv.height = h; }
-}
-addEventListener('resize', resize); window.ResizeObserver && new ResizeObserver(resize).observe(cv); resize();
-function arc(r, a0, a1, w, color, blur) { g.beginPath(); g.arc(0, 0, r, a0, a1); g.lineWidth = w; g.strokeStyle = color; g.shadowBlur = blur || 0; g.shadowColor = color; g.stroke(); }
-// Ring placement: centred in the free space (between the header and the cards on phones,
-// above the input on desktop), sized so the ring, its NEESMO lettering and the status line fit.
-const hud = { cy: innerHeight / 2, R: 100, tcy: 0, tR: 0, init: false };
-function layoutHud() {
-  const narrow = innerWidth <= 900, gap = 34;   // room for the status line under the ring
-  if (document.body.classList.contains('chat')) {   // chat open: the ring sits large and dim behind the conversation
-    const vv = window.visualViewport, vt = vv ? vv.offsetTop : 0, cs = getComputedStyle(document.documentElement);
-    const kb = parseFloat(cs.getPropertyValue('--kb')) || 0, vh = Math.max(200, innerHeight - kb - vt);   // the part of the screen above the keyboard
-    hud.tR = Math.min(innerWidth, vh) * .3; hud.tcy = vt + vh / 2; return;
-  }
-  const top = narrow ? $('.corner.tr').getBoundingClientRect().bottom + 6 : 0;
-  const cards = $('#agents-l'), cardTop = cards.children.length ? cards.getBoundingClientRect().top : innerHeight - 160;
-  const bottom = (narrow ? cardTop : $('#f').getBoundingClientRect().top) - 6;
-  const avail = Math.max(120, bottom - top - gap);
-  hud.tR = Math.max(40, Math.min(Math.min(innerWidth, innerHeight) * .22, avail / 3.4, innerWidth / 3.6));
-  hud.tcy = top + avail / 2;
-}
-// The wordmark and status line ride on the ring's glide, so all three move together.
-// The wordmark moves on the GPU (translate, sub-pixel), the status line snaps to whole pixels.
-let markY = -1, statY = -1;
-function followRing() {
-  const y = Math.round(hud.cy * 10) / 10, sy = Math.round(hud.cy + hud.R * 1.45);
-  if (y !== markY) { markY = y; $('#wordmark').style.translate = `0 ${y}px`; }
-  if (sy !== statY && !document.body.classList.contains('chat')) { statY = sy; statusEl.style.top = `${sy}px`; }
-}
-// A critically damped spring per value: smooth start, no overshoot, same speed at any frame rate,
-// and a retarget mid-glide (the keyboard's real height arriving) bends the path instead of jerking it.
-const spring = { vy: 0, vr: 0, last: 0 };
-function glide(now) {
-  const dt = Math.min(.05, spring.last ? (now - spring.last) / 1000 : .016); spring.last = now;
-  if (reduce) { hud.cy = hud.tcy; hud.R = hud.tR; return; }
-  const w = 11;   // stiffness: ~0.4 s to settle
-  spring.vy += (-2 * w * spring.vy - w * w * (hud.cy - hud.tcy)) * dt; hud.cy += spring.vy * dt;
-  spring.vr += (-2 * w * spring.vr - w * w * (hud.R - hud.tR)) * dt; hud.R += spring.vr * dt;
-}
-// Wordmark: measured so the slanted word fills ~94% of a phone's width (62% on desktop), centred.
-function fitWordmark() {
-  const el = $('#wordmark'); el.style.fontSize = '100px';
-  const perPx = el.getBoundingClientRect().width / 100 / 1.015;  // box already includes the slant; 1.015 = mid breathing zoom
-  const target = innerWidth <= 900 ? innerWidth * .94 : Math.min(innerWidth * .62, 1100);
-  el.style.fontSize = `${target / perPx}px`;
-}
-document.fonts?.ready.then(fitWordmark); addEventListener('resize', fitWordmark); fitWordmark();
-addEventListener('resize', layoutHud); setInterval(layoutHud, 1000); layoutHud();
-function frame(t) {
-  if (!hud.init && hud.tR) { hud.cy = hud.tcy; hud.R = hud.tR; hud.init = true; }
-  glide(t); followRing();
-  t = reduce ? 0 : t / 1000;
-  if (analyser && mode !== 'idle' && mode !== 'thinking') { analyser.getByteFrequencyData(data); level += (data.reduce((a, b) => a + b, 0) / data.length / 255 * 2.2 - level) * .3; }
-  else level *= .9;
-  const dpr = devicePixelRatio, R = hud.R * dpr * (1 + Math.min(level, 1.5) * .09), hot = mode === 'listening' ? THEME.c2 : THEME.hex;
-  g.setTransform(1, 0, 0, 1, 0, 0); g.clearRect(0, 0, cv.width, cv.height);
-  g.translate(cv.width / 2, hud.cy * cv.height / (cv.clientHeight || innerHeight));   // layout coords, like the wordmark (iOS reports the rect shifted while the keyboard is up)
-  // core glow
-  const core = g.createRadialGradient(0, 0, 0, 0, 0, R * (.45 + level * .25));
-  core.addColorStop(0, '#f2fff6'); core.addColorStop(.25, hot); core.addColorStop(1, 'transparent');
-  g.fillStyle = core; g.beginPath(); g.arc(0, 0, R * (.45 + level * .25), 0, 7); g.fill();
-  // inner ring + spokes
-  arc(R * .32, 0, 7, 2, hot, 20);
-  for (let i = 0; i < 12; i++) { const a = i / 12 * 6.283 + t * .4; arc(R * .4, a, a + .3, 6, `rgba(${THEME.rgb},.7)`, 10); }
-  // audio-reactive bars
-  g.save(); g.shadowBlur = 12; g.shadowColor = hot; g.strokeStyle = hot; g.lineWidth = 2;
-  for (let i = 0; i < 96; i++) {
-    const a = i / 96 * 6.283 - t * .1, v = analyser && level > .02 ? data[i % 64] / 255 : (Math.sin(t * 2 + i * .5) + 1) * .04;
-    const r0 = R * .58, r1 = r0 + R * (.04 + v * .5);
-    g.beginPath(); g.moveTo(Math.cos(a) * r0, Math.sin(a) * r0); g.lineTo(Math.cos(a) * r1, Math.sin(a) * r1); g.stroke();
-  }
-  g.restore();
-  if (mode === 'listening' && analyser) {   // the voice itself, drawn round the core
-    const wav = new Uint8Array(analyser.fftSize); analyser.getByteTimeDomainData(wav);
-    g.beginPath();
-    for (let i = 0; i <= 128; i++) { const a = i / 128 * 6.283, v = (wav[(i * 2) % wav.length] - 128) / 128, r = R * (.8 + v * .35);
-      i ? g.lineTo(Math.cos(a) * r, Math.sin(a) * r) : g.moveTo(Math.cos(a) * r, Math.sin(a) * r); }
-    g.closePath(); g.lineWidth = 2; g.strokeStyle = THEME.c2; g.shadowBlur = 16; g.shadowColor = THEME.c2; g.stroke(); g.shadowBlur = 0;
-  }
-  // rotating segmented rings
-  for (let i = 0; i < 3; i++) { const a = t * -(.25 + level * .6) + i * 2.094; arc(R * 1.02, a, a + 1.5, 3, `rgba(${THEME.rgb},.8)`, 12); }
-  for (let i = 0; i < 4; i++) { const a = t * .15 + i * 1.571; arc(R * 1.15, a, a + 1.1, 1.5, `rgba(${THEME.rgb},.45)`); }
-  arc(R * 1.25, 0, 7, 1, `rgba(${THEME.rgb},.2)`);
-  // tick marks
-  g.strokeStyle = `rgba(${THEME.rgb},.4)`; g.lineWidth = 1; g.shadowBlur = 0;
-  for (let i = 0; i < 120; i++) { const a = i / 120 * 6.283 + t * .05, l = i % 10 ? 6 : 14, r = R * 1.32;
-    g.beginPath(); g.moveTo(Math.cos(a) * r, Math.sin(a) * r); g.lineTo(Math.cos(a) * (r + l), Math.sin(a) * (r + l)); g.stroke(); }
-  // thinking sweep
-  if (mode === 'thinking') { const a = t * 4; arc(R * .85, a, a + .8, 4, THEME.c2, 18); arc(R * .85, a + 3.14, a + 3.94, 4, THEME.c2, 18); }
-  requestAnimationFrame(frame);
-}
-requestAnimationFrame(frame);
 
 // ── reply menu: hold a message (phone) or right-click it (PC) to copy it or hear it read aloud; a plain tap does nothing ──
 (() => {
@@ -1452,5 +1620,6 @@ requestAnimationFrame(frame);
   $('#report').addEventListener('close', close);
 })();
 </script>
+<script src="/static/studio.js"></script>
 </body>
 </html>
