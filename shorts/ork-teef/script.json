@@ -1,0 +1,189 @@
+{
+ "layout": {
+  "page1": [
+   [
+    0.33,
+    [
+     1
+    ]
+   ],
+   [
+    0.31,
+    [
+     0.45,
+     0.55
+    ]
+   ],
+   [
+    0.36,
+    [
+     0.6,
+     0.4
+    ]
+   ]
+  ],
+  "page2": [
+   [
+    0.3,
+    [
+     1
+    ]
+   ],
+   [
+    0.34,
+    [
+     0.5,
+     0.5
+    ]
+   ],
+   [
+    0.36,
+    [
+     1
+    ]
+   ]
+  ]
+ },
+ "voices": {
+  "rookie": "TX3LPaxmHKxFdv7VOQHJ",
+  "sarge": "M5E055lOUxMi0kJpGyE9",
+  "commissar": "onwK4e9ZLuTAKqWW03F9",
+  "boss": "SOYHLrjzK2X1ezoPC6cr",
+  "mek": "N2lVS1w4EtoT3dr4eOWO"
+ },
+ "voice_fx": {
+  "boss": "asetrate=44100*0.8,aresample=48000,atempo=1.12,acrusher=bits=10:mix=0.2",
+  "mek": "asetrate=44100*0.9,aresample=48000,atempo=1.06,acrusher=bits=12:mix=0.15"
+ },
+ "lines": [
+  {
+   "id": "l01",
+   "who": "rookie",
+   "say": "[whispering, alarmed] Sarge! That Ork just paid for a buggy with his own teeth. Why?!",
+   "text": "SARGE! THAT ORK JUST PAID FOR A BUGGY WITH HIS OWN TEETH. WHY?!"
+  },
+  {
+   "id": "l02",
+   "who": "sarge",
+   "say": "[deadpan] Teef, son. Ork money. And it grows back.",
+   "text": "TEEF, SON. ORK MONEY. AND IT GROWS BACK."
+  },
+  {
+   "id": "l03",
+   "who": "mek",
+   "say": "[smug] Fifty teef for da buggy. Dat's da price.",
+   "text": "FIFTY TEEF FOR DA BUGGY. DAT'S DA PRICE."
+  },
+  {
+   "id": "l04",
+   "who": "boss",
+   "say": "[growling] Fifty? Easy. Hold on.",
+   "text": "FIFTY? EASY. HOLD ON."
+  },
+  {
+   "id": "l05",
+   "who": "rookie",
+   "say": "[squeaky] HE PUNCHED HIMSELF TO PAY?!",
+   "text": "HE PUNCHED HIMSELF TO PAY?!"
+  },
+  {
+   "id": "l06",
+   "who": "sarge",
+   "say": "[flat] Ork teef keep growing. Fight more, get richer.",
+   "text": "ORK TEEF KEEP GROWING. FIGHT MORE, GET RICHER."
+  },
+  {
+   "id": "l07",
+   "who": "rookie",
+   "say": "[amazed] So their bank is... a brawl?",
+   "text": "SO THEIR BANK IS... A BRAWL?"
+  },
+  {
+   "id": "l08",
+   "who": "sarge",
+   "say": "[dry] The richest Orks are the Flash Gitz. Loudest guns, biggest brawls.",
+   "text": "THE RICHEST ORKS ARE THE FLASH GITZ. LOUDEST GUNS, BIGGEST BRAWLS."
+  },
+  {
+   "id": "l09",
+   "who": "boss",
+   "say": "[grinning, loud] Oi, squishy! Nice teef! Wot'll ya take for 'em?",
+   "text": "OI, SQUISHY! NICE TEEF! WOT'LL YA TAKE FOR 'EM?"
+  },
+  {
+   "id": "l10",
+   "who": "rookie",
+   "say": "[panicked] They DON'T grow back!",
+   "text": "THEY DON'T GROW BACK!"
+  },
+  {
+   "id": "l11",
+   "who": "boss",
+   "say": "[delighted] Den dey're WORF A FORTUNE!",
+   "text": "DEN DEY'RE WORF A FORTUNE!"
+  },
+  {
+   "id": "l12",
+   "who": "sarge",
+   "say": "[quiet, deadpan] Congratulations, son. You're rich.",
+   "text": "CONGRATULATIONS, SON. YOU'RE RICH."
+  },
+  {
+   "id": "l13",
+   "who": "rookie",
+   "say": "[lisping, dazed] Why did da Ork pay wib MY teef?!",
+   "text": "WHY DID DA ORK PAY WIB MY TEEF?!"
+  }
+ ],
+ "sfx": {
+  "shell": [
+   "Distant artillery shell explosion, rumbling",
+   3.0
+  ],
+  "pistol": [
+   "Heavy bolt pistol cocking click, metallic",
+   1.0
+  ],
+  "boom": [
+   "Big bolt pistol shot boom, echo",
+   1.5
+  ],
+  "charge": [
+   "Army of men and monsters charging, boots and roaring",
+   3.0
+  ],
+  "cheer": [
+   "Crowd of rowdy brutish monsters roaring",
+   3.0
+  ],
+  "gasp": [
+   "Soldier gasps in shock",
+   1.0
+  ],
+  "page": [
+   "Comic book page turning quickly, paper whoosh",
+   1.0
+  ],
+  "whoosh": [
+   "Quick soft camera whoosh swipe transition",
+   0.6
+  ],
+  "puff": [
+   "Man exhales a long puff of cigar smoke, slow breath",
+   1.5
+  ],
+  "wind": [
+   "Strong gust of wind blast, flapping cloth",
+   1.2
+  ],
+  "crack": [
+   "Heavy punch to the jaw, crunch and teeth rattling",
+   1.2
+  ],
+  "coins": [
+   "Handful of small teeth poured into a metal bucket, rattling",
+   1.5
+  ]
+ },
+ "music": "Tense grimdark war drums, low brass, building to a heroic charge, then a dry sombre cello ending, instrumental, no vocals, 110 bpm"
+}
