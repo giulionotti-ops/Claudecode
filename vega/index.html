@@ -426,10 +426,10 @@
 
   @media (max-width: 600px) { html.robot .card .mono-a { display: none; } html.robot .card b { font-size: 14px; } }
   /* map pop-up */
-  dialog#mapdlg { position: fixed; inset: 0; margin: calc(env(safe-area-inset-top, 0px) + 8px) auto calc(env(safe-area-inset-bottom, 0px) + 8px) !important; width: min(1100px, calc(100vw - 16px)); height: calc(100dvh - 16px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)); padding: 0; border: 1px solid rgba(255,255,255,.7); border-radius: 22px; overflow: hidden; background: #0E0D12; }
+  dialog#mapdlg { position: fixed; inset: 0; margin: calc(env(safe-area-inset-top, 0px) + 8px) auto calc(env(safe-area-inset-bottom, 0px) + 8px) !important; width: min(1100px, calc(100vw - 16px)); height: calc(100dvh - 16px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)); padding: 0; border: 1px solid rgba(255,255,255,.7); border-radius: 22px; overflow: hidden; background: #17110E; }
   dialog#mapdlg::backdrop { background: rgba(214,203,192,.2); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); }
   #map-f { width: 100%; height: 100%; border: 0; display: block; }
-  #map-x { position: absolute; top: 12px; right: 12px; z-index: 5; width: 42px; height: 42px; border-radius: 50%; border: 1px solid rgba(255,255,255,.3); background: rgba(30,27,34,.7); color: #F4EDE4; font-size: 17px; cursor: pointer; }
+  #map-x { position: absolute; top: 12px; right: 12px; z-index: 5; width: 42px; height: 42px; border-radius: 50%; border: 1px solid rgba(255,255,255,.3); background: rgba(30,23,19,.7); color: #F4EDE4; font-size: 17px; cursor: pointer; }
   /* agent chat: clearer header, readable bubbles, a disguised mini Neesmo in the corner */
   #report .rp > header { align-items: center; padding: 10px 12px; border-radius: 14px; background: color-mix(in srgb, var(--a) 22%, rgba(255,250,243,.9)); border: 1px solid color-mix(in srgb, var(--a) 55%, transparent); }
   #report .rp > header h2 { font-size: 20px; color: var(--c); }
@@ -478,27 +478,30 @@
   html.robot .sw { width: 30px; height: 30px; border: 0; box-shadow: inset 0 0 0 .5px rgba(43,29,20,.2), 0 3px 8px -3px rgba(43,29,20,.4); transition: transform .2s; }
   html.robot .sw[aria-pressed="true"] { transform: scale(1.12); box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--s), 0 4px 10px -3px rgba(43,29,20,.4); }
   /* ── Espresso background (Settings → Appearance → Background): warm near-black, green eye glow ── */
-  html.robot.night { --c: #F3E9DF; --bg: #17110E; --dim: rgba(243,233,223,.62); background-color: #17110E; color-scheme: dark;
+  html.robot.night:not(#z) { --c: #F3E9DF; --bg: #17110E; --dim: rgba(243,233,223,.62); background-color: #17110E; color-scheme: dark;
     --glass: rgba(255,255,255,.06); --edge: rgba(255,255,255,.12); --lift: inset 0 1px 0 rgba(255,255,255,.12), 0 24px 48px -22px rgba(0,0,0,.7); }
   html.robot.night, html.robot.night body { background: radial-gradient(60% 50% at 78% 60%, rgba(20,226,161,.10), transparent 70%), radial-gradient(55% 45% at 18% 20%, rgba(239,135,70,.10), transparent 70%),
     radial-gradient(120% 90% at 50% 35%, #241A15, #17110E 55%, #0D0A08) fixed; }
-  html.robot.night body, html.robot.night :is(.card, .card b, .card small, #status, #log p, .pop, dialog, .tabs, h1, h2, h3, label, small, p) { color: var(--c); }
-  html.robot.night :is(.card small, .sub, .pop small, dialog small, .muted) { color: var(--dim); }
-  html.robot.night #wordmark { text-shadow: 1px 1px 0 #D9773F, 2px 2px 0 #C86A36, 3px 3px 0 #B85F30, 16px 22px 50px rgba(0,0,0,.55); }
-  html.robot.night #agents-l .card:nth-child(n), html.robot.night #agents-r .card:nth-child(n) { background: linear-gradient(160deg, color-mix(in srgb, var(--a) 22%, rgba(255,255,255,.05)), rgba(255,255,255,.03)); }
-  html.robot.night .card.agent:hover { box-shadow: inset 0 1px 0 rgba(255,255,255,.16), 0 34px 60px -24px rgba(0,0,0,.8); }
-  html.robot.night :is(.pop, dialog, dialog#ag, dialog#ap) { background: rgba(30,23,19,.78); border-color: rgba(255,255,255,.12); box-shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 50px 100px -30px rgba(0,0,0,.8); }
-  html.robot.night dialog::backdrop { background: rgba(0,0,0,.35); }
-  html.robot.night .tabs { background: rgba(255,255,255,.08); }
-  html.robot.night .tabs button { color: rgba(243,233,223,.7); } html.robot.night .tabs button[aria-selected="true"] { background: rgba(255,255,255,.16); color: #fff; box-shadow: 0 3px 8px -2px rgba(0,0,0,.4); }
-  html.robot.night .tog { background: rgba(255,255,255,.16); }
-  html.robot.night :is(.tin, #ap-note, #ap .pre, select, input:not([type=file]), textarea), html.robot.night :is(.pop, dialog) :is(input:not([type=file]), select, textarea) { background: rgba(255,255,255,.07); border-color: rgba(255,255,255,.14); color: var(--c); }
-  html.robot.night ::placeholder { color: rgba(243,233,223,.4); }
-  html.robot.night :is(#ag-save, #c-save, #b-save, #send, button[type=submit]) { background: #F3E9DF; color: #17110E; }
-  html.robot.night :is(.pop .row, dialog .row) { border-top-color: rgba(255,255,255,.08); }
-  html.robot.night .pop h3 { color: rgba(243,233,223,.5); }
-  html.robot.night :is(.pop, dialog) button:not(.tog):not(.sw):not([role=tab]):not(.look):not(.vid):not(#ag-save):not(#c-save):not(#b-save) { color: var(--c); }
-  html.robot.night .live, html.robot.night .dot.on { background: #14E2A1; box-shadow: 0 0 10px rgba(20,226,161,.6); }
+  html.robot.night:not(#z) body, html.robot.night:not(#z) :is(.card, .card b, .card small, #status, #log p, .pop, dialog, .tabs, h1, h2, h3, label, small, p) { color: var(--c); }
+  html.robot.night:not(#z) :is(.card small, .sub, .pop small, dialog small, .muted) { color: var(--dim); }
+  html.robot.night:not(#z) #wordmark { text-shadow: 1px 1px 0 #D9773F, 2px 2px 0 #C86A36, 3px 3px 0 #B85F30, 16px 22px 50px rgba(0,0,0,.55); }
+  html.robot.night:not(#z) #agents-l .card:nth-child(n), html.robot.night:not(#z) #agents-r .card:nth-child(n) { background: linear-gradient(160deg, color-mix(in srgb, var(--a) 22%, rgba(255,255,255,.05)), rgba(255,255,255,.03)); }
+  html.robot.night:not(#z) .card.agent:hover { box-shadow: inset 0 1px 0 rgba(255,255,255,.16), 0 34px 60px -24px rgba(0,0,0,.8); }
+  html.robot.night:not(#z) :is(.pop, dialog, dialog#ag, dialog#ap) { background: rgba(30,23,19,.78); border-color: rgba(255,255,255,.12); box-shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 50px 100px -30px rgba(0,0,0,.8); }
+  html.robot.night:not(#z) dialog::backdrop { background: rgba(0,0,0,.35); }
+  html.robot.night:not(#z) .tabs { background: rgba(255,255,255,.08); }
+  html.robot.night:not(#z) .tabs button { color: rgba(243,233,223,.7); } html.robot.night:not(#z) .tabs button[aria-selected="true"] { background: rgba(255,255,255,.16); color: #fff; box-shadow: 0 3px 8px -2px rgba(0,0,0,.4); }
+  html.robot.night:not(#z) .tog { background: rgba(255,255,255,.16); }
+  html.robot.night:not(#z) :is(.tin, #ap-note, #ap .pre, select, input:not([type=file]), textarea), html.robot.night:not(#z) :is(.pop, dialog) :is(input:not([type=file]), select, textarea) { background: rgba(255,255,255,.07); border-color: rgba(255,255,255,.14); color: var(--c); }
+  html.robot.night:not(#z) ::placeholder { color: rgba(243,233,223,.4); }
+  html.robot.night:not(#z) :is(#ag-save, #c-save, #b-save, #send, button[type=submit]) { background: #F3E9DF; color: #17110E; }
+  html.robot.night:not(#z) :is(.pop .row, dialog .row) { border-top-color: rgba(255,255,255,.08); }
+  html.robot.night:not(#z) .pop h3 { color: rgba(243,233,223,.5); }
+  html.robot.night:not(#z) :is(.pop, dialog) button:not(.tog):not(.sw):not([role=tab]):not(.look):not(.vid):not(#ag-save):not(#c-save):not(#b-save):not([type=submit]):not(.main) { color: var(--c); }
+  html.robot.night:not(#z) button:where(:not(.tog, .sw, [role=tab])) { background-color: rgba(255,255,255,.08); }
+  html.robot.night:not(#z) :is(#ag-save, #c-save, #b-save, #send, button[type=submit], .pop button.main, .lic button) { background: #F3E9DF; color: #17110E; }
+  html.robot.night:not(#z) #r-q { background: rgba(255,255,255,.07); color: var(--c); }
+  html.robot.night:not(#z) .live, html.robot.night:not(#z) .dot.on { background: #14E2A1; box-shadow: 0 0 10px rgba(20,226,161,.6); }
 </style>
 <link rel="stylesheet" href="/static/studio.css">
 </head>

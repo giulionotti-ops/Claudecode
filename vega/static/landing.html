@@ -49,7 +49,8 @@ section{padding:clamp(56px,8vw,112px) 0;position:relative}
 /* nav */
 .nav{position:sticky;top:12px;z-index:30;margin-top:12px}
 .nav__bar{display:flex;justify-content:space-between;align-items:center;padding:10px 12px 10px 24px;border-radius:999px}
-.logo{font:900 italic 26px/1 "Archivo",sans-serif;letter-spacing:-.05em;text-transform:uppercase;color:#EF8746;text-decoration:none;text-shadow:1px 1px 0 #D9773F,2px 2px 0 #C86A36,3px 3px 0 #B85F30}
+.logo{position:relative;display:block;font:900 italic 96px/0 "Archivo",sans-serif;height:26px;display:flex;align-items:center;letter-spacing:-.05em;text-transform:uppercase;color:#EF8746;text-decoration:none;text-shadow:1px 1px 0 #C86A36;white-space:nowrap;z-index:2}
+@media(max-width:720px){.logo{font-size:36px}.nav__links .btn{white-space:nowrap;padding:9px 14px;margin-left:0}}
 .nav__links{display:flex;align-items:center;gap:2px}
 .nav__links a{text-decoration:none;color:var(--ink);font-size:14px;font-weight:500;padding:8px 13px;border-radius:999px;transition:background .2s}
 .nav__links a:hover{background:rgba(255,255,255,.1)}
@@ -78,8 +79,7 @@ section{padding:clamp(56px,8vw,112px) 0;position:relative}
 .robotbox{position:relative;justify-self:center;width:min(100%,500px);will-change:transform}
 .robotbox::before{content:"";position:absolute;inset:8% 4% 0;border-radius:50%;background:radial-gradient(closest-side,rgba(239,135,70,.28),rgba(239,135,70,0));filter:blur(14px);z-index:0}
 .robotbox::after{content:"";position:absolute;left:6%;right:6%;bottom:2%;height:34%;border-radius:50%;background:radial-gradient(closest-side,rgba(20,226,161,.35),rgba(20,226,161,0));filter:blur(16px);z-index:0;pointer-events:none}
-.robot{position:relative;z-index:1;display:block;width:100%;aspect-ratio:560/625;background:url(/static/robot/working.webp) 0 0/800% 100% no-repeat;animation:work 1s steps(1,end) infinite;filter:drop-shadow(0 18px 22px rgba(0,0,0,.5));-webkit-mask:linear-gradient(to left,transparent,#000 14%) ,linear-gradient(to top,transparent,#000 16%);-webkit-mask-composite:source-in;mask:linear-gradient(to left,transparent,#000 14%) ,linear-gradient(to top,transparent,#000 16%);mask-composite:intersect}
-@keyframes work{0%{background-position:0 0}12.5%{background-position:14.2857% 0}25%{background-position:28.5714% 0}37.5%{background-position:42.8571% 0}50%{background-position:57.1429% 0}62.5%{background-position:71.4286% 0}75%{background-position:85.7143% 0}87.5%{background-position:100% 0}}
+.robot{position:relative;z-index:1;display:block;width:100%;aspect-ratio:560/625;background:url(/static/robot/working.webp) 0 0/800% 100% no-repeat;filter:drop-shadow(0 18px 22px rgba(0,0,0,.5));-webkit-mask:linear-gradient(to left,transparent,#000 14%) ,linear-gradient(to top,transparent,#000 16%);-webkit-mask-composite:source-in;mask:linear-gradient(to left,transparent,#000 14%) ,linear-gradient(to top,transparent,#000 16%);mask-composite:intersect}
 @keyframes float{50%{transform:translateY(-16px) rotate(-1.2deg)}}
 .chip{position:absolute;z-index:2;padding:9px 16px;border-radius:99px;font-size:13px;font-weight:600;white-space:nowrap;animation:float 7s ease-in-out infinite}
 .chip b{color:var(--green);text-shadow:0 0 8px rgba(20,226,161,.8)}
@@ -499,7 +499,7 @@ footer a{color:var(--mut)}footer a:hover{color:var(--green)}footer nav{display:f
           <p class="l" style="--i:6"><span class="ok">ok</span> marketing skills</p>
           <p class="l" style="--i:7"><span class="ok">ok</span> video skills</p>
           <p class="l dim" style="--i:8">Neesmo is running</p>
-          <small>Run <b>./install.sh</b> once. Everything it installs is free and open source: nothing that charges credits. Logins (GitHub, YouTube) come with step-by-step help.</small>
+          <small>Run <b>./install.sh</b> once. Everything it installs is free and open source: nothing that charges credits. Logins (GitHub, YouTube, Instagram) come with step-by-step help.</small>
         </div>
       </div>
     </div>
