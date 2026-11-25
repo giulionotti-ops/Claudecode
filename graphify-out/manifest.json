@@ -2088,9 +2088,9 @@
     "semantic_hash": ""
   },
   "vega/agents.py": {
-    "mtime": 1795457357.7644389,
-    "seen": 1795458116.8118377,
-    "ast_hash": "98a1e11b9a07f59916760affb4c501d9",
+    "mtime": 1795641818.8799975,
+    "seen": 1795642558.4796424,
+    "ast_hash": "b75deed909e923fe6667c586913d7b68",
     "semantic_hash": ""
   },
   "vega/approval_hook.py": {
@@ -5688,9 +5688,9 @@
     "semantic_hash": ""
   },
   "vega/index.html": {
-    "mtime": 1795556391.2886598,
-    "seen": 1795557356.274984,
-    "ast_hash": "020df7660bfbe5bf426d3027ebb64a10",
+    "mtime": 1795641827.41997,
+    "seen": 1795642558.482518,
+    "ast_hash": "d417096ed25bb0de0f1e5778251ff8e6",
     "semantic_hash": ""
   },
   "vega/requirements.txt": {
@@ -6516,9 +6516,9 @@
     "semantic_hash": ""
   },
   "vega/static/landing.html": {
-    "mtime": 1794868999.7867475,
-    "seen": 1795458116.8145459,
-    "ast_hash": "e7f1ca691855bf69e5f748716fb27c2c",
+    "mtime": 1795642374.3372455,
+    "seen": 1795642558.4825318,
+    "ast_hash": "c08577251f13cd3a1f936b5f3b945ba1",
     "semantic_hash": ""
   },
   "vega/static/vendor/motion.js": {
@@ -6636,9 +6636,9 @@
     "semantic_hash": ""
   },
   "site/index.html": {
-    "mtime": 1795458964.5448234,
-    "seen": 1795459148.685281,
-    "ast_hash": "5ab4b6502de5b2fd7698b2389ed927d0",
+    "mtime": 1795642223.3707151,
+    "seen": 1795642558.4825077,
+    "ast_hash": "dec17bf58e26a4c5ba48cc1c350fbe1c",
     "semantic_hash": ""
   },
   "site/assets/icons/tmux.svg": {
@@ -6792,9 +6792,9 @@
     "semantic_hash": ""
   },
   "vega/studio/routes.py": {
-    "mtime": 1795556356.9996111,
-    "seen": 1795557356.2727578,
-    "ast_hash": "3c0bc01df598f15300aeceb06105d838",
+    "mtime": 1795642239.6816642,
+    "seen": 1795642558.479711,
+    "ast_hash": "a75a7daef786bff7b8376dfada9668ed",
     "semantic_hash": ""
   },
   "vega/studio/state.py": {
@@ -6876,9 +6876,9 @@
     "semantic_hash": ""
   },
   "vega/static/studio.js": {
-    "mtime": 1795557054.203319,
-    "seen": 1795557356.2727225,
-    "ast_hash": "0327ab3c699dfc46ce864a25fb403057",
+    "mtime": 1795642239.6816642,
+    "seen": 1795642558.479677,
+    "ast_hash": "9da257f8bdb021ebaf7215fc316ad8c3",
     "semantic_hash": ""
   },
   "vega/studio/skills/vox-explainer-skill/README.md": {
@@ -19575,6 +19575,54 @@
     "mtime": 1795381961.7722166,
     "seen": 1795557356.2784214,
     "ast_hash": "0c5f5c36c62a210a52902f02e5e676cf",
+    "semantic_hash": ""
+  },
+  "site/img/app-dashboard.webp": {
+    "mtime": 1795641757.7701957,
+    "seen": 1795642558.4871786,
+    "ast_hash": "057ce9bd83f18a23082749ebb838efb6",
+    "semantic_hash": ""
+  },
+  "site/img/app-desktop.webp": {
+    "mtime": 1795641755.6402028,
+    "seen": 1795642558.4871814,
+    "ast_hash": "ad88054bfdca1fbf13b4643db0c24d32",
+    "semantic_hash": ""
+  },
+  "site/img/app-phone.webp": {
+    "mtime": 1795641756.5152,
+    "seen": 1795642558.4871838,
+    "ast_hash": "80de4b5bb0aa2ea3f09c70e0e6dd3460",
+    "semantic_hash": ""
+  },
+  "site/img/robot-hero.webp": {
+    "mtime": 1795641757.9921951,
+    "seen": 1795642558.4871888,
+    "ast_hash": "07e56dcf9469da5abf40f4d7cbed4bba",
+    "semantic_hash": ""
+  },
+  "site/img/robot-still.webp": {
+    "mtime": 1795641758.028195,
+    "seen": 1795642558.487191,
+    "ast_hash": "20203c0ed4b336edcc06481e59f43240",
+    "semantic_hash": ""
+  },
+  "vega/static/robot/app-dashboard.webp": {
+    "mtime": 1795641757.9651952,
+    "seen": 1795642558.487201,
+    "ast_hash": "057ce9bd83f18a23082749ebb838efb6",
+    "semantic_hash": ""
+  },
+  "vega/static/robot/app-desktop.webp": {
+    "mtime": 1795641757.9651952,
+    "seen": 1795642558.4872031,
+    "ast_hash": "ad88054bfdca1fbf13b4643db0c24d32",
+    "semantic_hash": ""
+  },
+  "vega/static/robot/app-phone.webp": {
+    "mtime": 1795641757.9651952,
+    "seen": 1795642558.487205,
+    "ast_hash": "80de4b5bb0aa2ea3f09c70e0e6dd3460",
     "semantic_hash": ""
   }
 }
