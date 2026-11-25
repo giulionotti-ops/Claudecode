@@ -7,7 +7,7 @@ You run in a fresh, short session. Keep it lean: read only the files named here.
 1. `neesmo/requests.md` - the owner's requests. **Open requests beat everything else**, including the style.
 2. `neesmo/brief.md` - what the channel is about and who it is for.
 3. `neesmo/lessons.md` - what the analyst measured. Follow it.
-4. `neesmo/board.md` - the last ~40 lines: notes to `@marketer` from the other roles.
+4. `neesmo/board.md` - the last ~40 lines: notes to `@marketer` from the Director and the other roles. A `@marketer next:` line from the Director picks the next topic or angle; follow it.
 5. `neesmo/queue.json` - videos already made (never repeat a topic).
 6. `inspiration/` - images the owner gave as inspiration (list them; look at new ones).
 

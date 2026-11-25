@@ -1,8 +1,9 @@
 """Channel agents: one card on the home screen that runs a whole YouTube channel or Instagram account.
 
-A channel agent is a folder plus four roles that run as short, separate Claude sessions:
-marketer (topic, hooks, script), producer (the video), supervisor (the main agent's check) and analyst
-(numbers -> lessons). They talk through `neesmo/board.md`; the owner talks to them through
+A channel agent is a folder with a main agent, the Director (the session the owner talks to; it runs the
+channel and decides what's next), plus four subagent roles that run as short, separate Claude sessions:
+marketer (topic, hooks, script), producer (the video), supervisor (checks every video before the owner
+sees it) and analyst (numbers -> lessons). They talk through `neesmo/board.md`; the owner talks to them through
 `neesmo/requests.md` (from the home chat, by tagging the agent). Everything the scripts can do
 (scheduling, gates, uploads, stats) is plain Python, so tokens go only to creative work.
 
@@ -32,10 +33,10 @@ from pathlib import Path
 from . import state
 
 ROLES = ["marketer", "producer", "supervisor", "analyst"]
-ROLE_LABEL = {"marketer": "Hooks & scripts", "producer": "Video", "supervisor": "Main agent", "analyst": "Analysis"}
+ROLE_LABEL = {"marketer": "Hooks & scripts", "producer": "Video", "supervisor": "Quality check", "analyst": "Analysis"}
 # Skills by group. The channel folder links only the general ones (every role sees those); each role
 # runs in its own folder .roles/<role>/ that links its group's skills too, so a session loads only
-# what its job needs. Main agent (supervisor) = general only.
+# what its job needs. Supervisor = general only.
 SKILL_GROUPS = {
     "general": ["neesmo-viral-rules"],
     "marketing": ["viral-hooks", "viral-captions-and-ctas", "viral-short-form", "viral-short-form-ideas",
@@ -195,10 +196,36 @@ def _claude_settings(d: Path) -> None:
     write_json(p, s)
 
 
+def _write_claude_md(p: dict) -> None:
+    """Brief every session in the channel folder reads: the Director (main agent) and the rules for the roles."""
+    title = (p["brief"].read_text().splitlines() or ["# Channel"])[0] if p["brief"].exists() else "# Channel"
+    name = title.lstrip("# ").strip() or "Channel"
+    (p["dir"] / "CLAUDE.md").write_text(
+        f"# {name} - a Neesmo channel agent\n\n"
+        "This folder is one channel run by Neesmo.\n\n"
+        "## The Director (main agent)\n"
+        "A session opened in this folder (no role brief given) is the Director: it runs the channel, talks to the owner\n"
+        "and decides what's next. Its team is four subagents that Neesmo runs as short, separate sessions, each\n"
+        "with its brief in `neesmo/prompts/`:\n"
+        "- **Marketer**: ideas, hooks, script, title.\n"
+        "- **Producer**: makes the video (voice, picture, sound, render).\n"
+        "- **Supervisor**: checks every video before the owner sees it and sends it back with fixes when needed.\n"
+        "- **Analyst**: reads the views and writes what works into `neesmo/lessons.md`.\n"
+        "The Director steers them through `neesmo/board.md` (one line, `@role NNN: ...` or `@marketer next: ...`)\n"
+        "and turns owner wishes into open items in `neesmo/requests.md`. It does not make videos itself.\n\n"
+        "## Rules for every session\n"
+        "- Open requests in `neesmo/requests.md` come first, then `neesmo/lessons.md`, then `neesmo/style.json`.\n"
+        "- Talk to the other roles only through `neesmo/board.md` (one line, `@role NNN: ...`).\n"
+        "- Use the skills named in your brief for real (Skill tool); the supervisor checks.\n"
+        "- Never upload, publish or delete anything yourself; Neesmo's scripts post after approval.\n"
+        "- Keep runs lean: read only the files you need; no polling loops.\n")
+
+
 def refresh(aid: str) -> None:
     """Re-copy the role briefs and re-link skills (after an update or a new kit install)."""
     p = paths(aid)
     p["prompts"].mkdir(parents=True, exist_ok=True)
+    _write_claude_md(p)
     for r in ROLES:
         shutil.copy(state.STUDIO / "roles" / f"{r}.md", p["prompts"] / f"{r}.md")
     _link_skills(p["dir"])
@@ -232,15 +259,6 @@ def create(name: str, brief: str, edition: str | None = None, style: str | None 
             p[k].write_text(text)
     if not p["queue"].exists():
         save_queue(aid, [])
-    (p["dir"] / "CLAUDE.md").write_text(
-        f"# {name} - a Neesmo channel agent\n\n"
-        "This folder is one channel run by Neesmo. Each session plays one role; its brief is in `neesmo/prompts/`.\n"
-        "Rules for every session:\n"
-        "- Open requests in `neesmo/requests.md` come first, then `neesmo/lessons.md`, then `neesmo/style.json`.\n"
-        "- Talk to the other roles only through `neesmo/board.md` (one line, `@role NNN: ...`).\n"
-        "- Use the skills named in your brief for real (Skill tool); the supervisor checks.\n"
-        "- Never upload, publish or delete anything yourself; Neesmo's scripts post after approval.\n"
-        "- Keep runs lean: read only the files you need; no polling loops.\n")
     state.save_channel(aid)  # write defaults
     refresh(aid)
     _git_init(p["dir"], aid)
@@ -249,7 +267,7 @@ def create(name: str, brief: str, edition: str | None = None, style: str | None 
                   "role": f"Runs the {name} {WHERE.get(edition, 'YouTube channel')}",
                   "kind": "channel", **({"color": color} if color else {})})
     agents.save(items)
-    event(aid, "created", f"{name} is ready. The marketer, producer, analyst and the main agent are set up.")
+    event(aid, "created", f"{name} is ready. The Director and its team (marketer, producer, supervisor, analyst) are set up.")
     return next(a for a in agents.load() if a["id"] == aid)
 
 

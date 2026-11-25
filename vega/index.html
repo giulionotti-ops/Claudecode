@@ -477,6 +477,28 @@
   html.robot .pop h3 { color: rgba(43,29,20,.55); font: 700 11px var(--sans); letter-spacing: .08em; }
   html.robot .sw { width: 30px; height: 30px; border: 0; box-shadow: inset 0 0 0 .5px rgba(43,29,20,.2), 0 3px 8px -3px rgba(43,29,20,.4); transition: transform .2s; }
   html.robot .sw[aria-pressed="true"] { transform: scale(1.12); box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--s), 0 4px 10px -3px rgba(43,29,20,.4); }
+  /* ── Espresso background (Settings → Appearance → Background): warm near-black, green eye glow ── */
+  html.robot.night { --c: #F3E9DF; --bg: #17110E; --dim: rgba(243,233,223,.62); background-color: #17110E; color-scheme: dark;
+    --glass: rgba(255,255,255,.06); --edge: rgba(255,255,255,.12); --lift: inset 0 1px 0 rgba(255,255,255,.12), 0 24px 48px -22px rgba(0,0,0,.7); }
+  html.robot.night, html.robot.night body { background: radial-gradient(60% 50% at 78% 60%, rgba(20,226,161,.10), transparent 70%), radial-gradient(55% 45% at 18% 20%, rgba(239,135,70,.10), transparent 70%),
+    radial-gradient(120% 90% at 50% 35%, #241A15, #17110E 55%, #0D0A08) fixed; }
+  html.robot.night body, html.robot.night :is(.card, .card b, .card small, #status, #log p, .pop, dialog, .tabs, h1, h2, h3, label, small, p) { color: var(--c); }
+  html.robot.night :is(.card small, .sub, .pop small, dialog small, .muted) { color: var(--dim); }
+  html.robot.night #wordmark { text-shadow: 1px 1px 0 #D9773F, 2px 2px 0 #C86A36, 3px 3px 0 #B85F30, 16px 22px 50px rgba(0,0,0,.55); }
+  html.robot.night #agents-l .card:nth-child(n), html.robot.night #agents-r .card:nth-child(n) { background: linear-gradient(160deg, color-mix(in srgb, var(--a) 22%, rgba(255,255,255,.05)), rgba(255,255,255,.03)); }
+  html.robot.night .card.agent:hover { box-shadow: inset 0 1px 0 rgba(255,255,255,.16), 0 34px 60px -24px rgba(0,0,0,.8); }
+  html.robot.night :is(.pop, dialog, dialog#ag, dialog#ap) { background: rgba(30,23,19,.78); border-color: rgba(255,255,255,.12); box-shadow: inset 0 1px 0 rgba(255,255,255,.1), 0 50px 100px -30px rgba(0,0,0,.8); }
+  html.robot.night dialog::backdrop { background: rgba(0,0,0,.35); }
+  html.robot.night .tabs { background: rgba(255,255,255,.08); }
+  html.robot.night .tabs button { color: rgba(243,233,223,.7); } html.robot.night .tabs button[aria-selected="true"] { background: rgba(255,255,255,.16); color: #fff; box-shadow: 0 3px 8px -2px rgba(0,0,0,.4); }
+  html.robot.night .tog { background: rgba(255,255,255,.16); }
+  html.robot.night :is(.tin, #ap-note, #ap .pre, select, input:not([type=file]), textarea), html.robot.night :is(.pop, dialog) :is(input:not([type=file]), select, textarea) { background: rgba(255,255,255,.07); border-color: rgba(255,255,255,.14); color: var(--c); }
+  html.robot.night ::placeholder { color: rgba(243,233,223,.4); }
+  html.robot.night :is(#ag-save, #c-save, #b-save, #send, button[type=submit]) { background: #F3E9DF; color: #17110E; }
+  html.robot.night :is(.pop .row, dialog .row) { border-top-color: rgba(255,255,255,.08); }
+  html.robot.night .pop h3 { color: rgba(243,233,223,.5); }
+  html.robot.night :is(.pop, dialog) button:not(.tog):not(.sw):not([role=tab]):not(.look):not(.vid):not(#ag-save):not(#c-save):not(#b-save) { color: var(--c); }
+  html.robot.night .live, html.robot.night .dot.on { background: #14E2A1; box-shadow: 0 0 10px rgba(20,226,161,.6); }
 </style>
 <link rel="stylesheet" href="/static/studio.css">
 </head>
@@ -507,6 +529,7 @@
   </section>
   <section class="tab" data-tab="look" role="tabpanel" hidden>
     <h3>Appearance</h3>
+    <div class="row"><div><label for="bgsel">Background</label><small class="sub">Beige, or Espresso: warm near-black.</small></div><select id="bgsel"><option value="beige">Beige</option><option value="night">Espresso</option></select></div>
     <div class="row"><label for="fsize">Text size</label><select id="fsize"><option value="13px">Small</option><option value="14px">Medium</option><option value="16px">Large</option></select></div>
     <div class="row"><div><label id="l-mark">NEESMO lettering</label><small class="sub">The big orange name behind the robot.</small></div><button type="button" class="tog" role="switch" id="t-mark" aria-labelledby="l-mark"></button></div>
     <div class="row"><div><label id="l-calm">Calm motion</label><small class="sub">Fewer and shorter animations.</small></div><button type="button" class="tog" role="switch" id="t-calm" aria-labelledby="l-calm"></button></div>
@@ -676,7 +699,7 @@ function audio() {
 
 // ── appearance settings (this device only) ──
 const THEMES = { robot: ['#EF8746', '239,135,70', '#2F8F5B'] };
-let PREFS = { theme: 'robot', fs: '14px', mark: true, calm: false, wel: true, welName: '', welText: '{greeting}, {name}. {busy}', welVoice: false };
+let PREFS = { theme: 'robot', bg: 'beige', fs: '14px', mark: true, calm: false, wel: true, welName: '', welText: '{greeting}, {name}. {busy}', welVoice: false };
 try { Object.assign(PREFS, JSON.parse(localStorage.getItem('neesmo-prefs') || '{}')); } catch {}
 PREFS.theme = 'robot';
 // The greeting (on/off, name, message, spoken) is kept on the server, so every device greets the same way.
@@ -694,14 +717,16 @@ const welLoaded = fetch('/api/welcome').then(r => r.ok ? r.json() : {}).catch(()
 function applyPrefs() {
   const [hex, rgb, c2] = THEMES.robot, root = document.documentElement;
   root.style.setProperty('--rgb', rgb); root.style.setProperty('--c2', c2); root.style.setProperty('--fs', PREFS.fs);
-  root.classList.toggle('no-mark', !PREFS.mark); root.classList.toggle('calm', !!PREFS.calm); root.classList.add('robot');
+  root.classList.toggle('no-mark', !PREFS.mark); root.classList.toggle('calm', !!PREFS.calm); root.classList.toggle('night', PREFS.bg === 'night'); root.classList.add('robot');
   for (const [k, id] of [['mark', '#t-mark'], ['calm', '#t-calm'], ['wel', '#t-wel'], ['welVoice', '#t-welv']]) $(id).setAttribute('aria-checked', String(!!PREFS[k]));
-  $('#fsize').value = PREFS.fs;
+  $('#fsize').value = PREFS.fs; $('#bgsel').value = PREFS.bg || 'beige';
+  document.querySelector('meta[name=theme-color]')?.setAttribute('content', PREFS.bg === 'night' ? '#17110E' : '#D6CBC0');
   try { localStorage.setItem('neesmo-prefs', JSON.stringify(PREFS)); } catch {}
   syncWelcome();
   if (typeof reduce !== 'undefined') reduce = matchMedia('(prefers-reduced-motion: reduce)').matches || PREFS.calm;
 }
 $('#fsize').onchange = e => { PREFS.fs = e.target.value; applyPrefs(); };
+$('#bgsel').onchange = e => { PREFS.bg = e.target.value; applyPrefs(); };
 for (const [k, id] of [['mark', '#t-mark'], ['calm', '#t-calm'], ['wel', '#t-wel'], ['welVoice', '#t-welv']]) $(id).onclick = () => { PREFS[k] = !PREFS[k]; applyPrefs(); };
 applyPrefs();
 

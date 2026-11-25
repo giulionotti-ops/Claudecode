@@ -103,7 +103,7 @@ def _buffer(aid: str) -> None:
             channel.update_video(aid, v["id"], status="failed", summary="The run stopped before it finished.")
         return
     if len(waiting) < cap and len(made_today) < per_day + 1:
-        channel.event(aid, "start", "Main agent started a new video")
+        channel.event(aid, "start", "The Director started a new video")
         spawn("make", aid)
 
 

@@ -203,3 +203,13 @@ html.robot .card .mono-a:has(img) { background: #fff; padding: 0; overflow: hidd
 #ag .agtab[data-agtab="channel"] .row > div { display: flex; flex-direction: column; gap: 2px; }
 #ag .agtab[data-agtab="channel"] .row label { margin: 0; }
 #ag .agtab[data-agtab="channel"] .row .sub { font-size: 12px; opacity: .75; }
+
+/* Espresso night background (Settings > Appearance > Background) */
+html.robot.night dialog.chd, html.robot.night #onb > div { background: rgba(30,23,19,.82); border-color: rgba(255,255,255,.12); color: var(--c); }
+html.robot.night :is(.chd .kp div, .chd .vlist .vid, .chd .vid, .chd .roles span, .chd header .hb button, .chd ol.ev, .chd pre, .chd .vlog, .chd #vd-f input, #onb .look, .agent.chan .dash) { background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.12); color: var(--c); }
+html.robot.night .chd .vlist .vid:hover { background: rgba(255,255,255,.11); }
+html.robot.night .chd .roles span.on { background: color-mix(in srgb, var(--a, #14E2A1) 30%, transparent); }
+html.robot.night .chd :is(small, .sub, .when, time) { color: var(--dim); }
+html.robot.night .agent.chan :is(.tag, .short, .kicker) { color: var(--dim); }
+html.robot.night .chd .main, html.robot.night #onb .btns .main { background: #14E2A1; color: #0d1712; }
+html.robot.night .card :is(.st, .run) { color: rgba(243,233,223,.62); }

@@ -146,7 +146,7 @@ def _fix_rounds(aid: str, vid: str, vdir: Path, verdict: dict) -> dict:
         by_role: dict[str, list[str]] = {}
         for i in issues:
             by_role.setdefault(i.get("role", "producer"), []).append(i.get("fix", ""))
-        channel.event(aid, "fix", f"Main agent sent video {vid} back (round {rounds}): "
+        channel.event(aid, "fix", f"The supervisor sent video {vid} back (round {rounds}): "
                       + " | ".join(f"{r}: {'; '.join(f)}" for r, f in by_role.items())[:300], video=vid)
         if "marketer" in by_role:
             _role(aid, vid, vdir, "marketer", "FIX ROUND. Change only this, keep the rest:\n- " + "\n- ".join(by_role["marketer"]))
