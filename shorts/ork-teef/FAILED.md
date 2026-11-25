@@ -5,3 +5,6 @@ Nothing rendered, nothing scheduled. Script (`script.json`), prompts (`page1.txt
 (copied from commissar-gun, coordinates need checking against the new art) are ready.
 Fix: top up Gemini credits at https://ai.studio/projects, then run the commands in `../red-wunz/README.md` from this folder.
 Lore to cite: Lexicanum "Teef" (Ork currency, teeth regrow), "Flash Gitz" (richest Ork clan-type mobs).
+
+## Retry 2026-11-25
+Gemini still 402 RESOURCE_EXHAUSTED (credits depleted). No art, nothing rendered or scheduled. Same fix as above.
