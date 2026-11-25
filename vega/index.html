@@ -1182,21 +1182,14 @@ async function welPreview() { $('#wel-name').value = PREFS.welName || ''; $('#we
 $('#wel-name').oninput = $('#wel-text').oninput = async () => { PREFS.welName = $('#wel-name').value; PREFS.welText = $('#wel-text').value || '{greeting}, {name}. {busy}'; applyPrefs(); $('#wel-prev').textContent = welText(await welBusy()); };
 $('#wel-try').onclick = () => { try { audio().resume(); } catch {} togglePop($('#gear'), $('#pop-s'), false); welcome('voice'); };   // unlock sound inside the tap (iPhone), then say it
 async function welcome(force) {
-  const text = welText(await welBusy()), el = $('#welcome');
+  const text = welText(await welBusy());
   if (PREFS.welVoice || force === 'voice') {   // spoken: just say it, no text on screen
     const go = () => speak(text).catch(() => {});
     try { await audio().resume(); } catch {}
     if (ac?.state === 'running') go(); else addEventListener('pointerdown', () => { audio().resume().then(go); }, { once: true });
     return;
   }
-  el.innerHTML = `<span></span><small>Neesmo online</small>`; el.hidden = false;
-  decode(el.firstChild, text, 900);
-  if (window.Motion && !reduce) Motion.animate(el, { opacity: [0, 1], scale: [.92, 1], filter: ['blur(8px)', 'blur(0px)'] }, { type: 'spring', stiffness: 220, damping: 20 });
-  clearTimeout(welcome.t);
-  welcome.t = setTimeout(() => {
-    const hide = () => { el.hidden = true; };
-    if (window.Motion && !reduce) Motion.animate(el, { opacity: 0, scale: 1.04, filter: 'blur(6px)' }, { duration: .5 }).then(hide); else hide();
-  }, 4200);
+  // the greeting is never written on screen; it is only spoken when Say it out loud is on
 }
 (() => { let seen = false; try { seen = sessionStorage.getItem('neesmo-welcomed'); sessionStorage.setItem('neesmo-welcomed', '1'); } catch {}
   welLoaded.then(() => { if (PREFS.wel && !seen) setTimeout(() => welcome(), 1300); }); })();
