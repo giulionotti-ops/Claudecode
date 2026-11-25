@@ -3,133 +3,631 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Neesmo</title>
-<meta name="description" content="A command centre for Claude Code on your own server: voice, agents, approvals and chat in one screen.">
+<title>Neesmo: the AI that runs your YouTube channel or Instagram account</title>
+<meta name="description" content="Neesmo runs your YouTube channel or Instagram account for you: a team of Claude Code agents writes, makes, checks, schedules and learns from every video, on your own computer. You approve. Buy once, free updates. €59.">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Neesmo: the AI that runs your YouTube channel or Instagram account">
+<meta property="og:description" content="A team of agents that makes, checks and schedules your videos and learns from each one. You approve. Buy once, free updates. €59.">
+
+<meta name="twitter:card" content="summary_large_image">
 <link rel="icon" type="image/png" href="/static/icon-192.png">
-<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..700&family=Archivo:ital,wght@0,400;0,600;0,700;1,900&display=swap" rel="stylesheet">
+<link rel="apple-touch-icon" href="/static/icon-180.png">
 <meta name="theme-color" content="#D6CBC0">
+<!-- <link rel="canonical" href="https://neesmo.example/"> -->
+<meta name="site-kind" content="software">
+<meta name="page-type" content="software">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..700&family=Geist+Mono:wght@400..500&family=Archivo:ital,wght@0,400;0,600;0,700;1,900&display=swap" rel="stylesheet">
+<script>document.documentElement.classList.add('js')</script>
 <style>
-  :root { --ink: #2B1D14; --mut: rgba(43,29,20,.65); --or: #EF8746; --or2: #C86A36; --green: #2F8F5B; --sage: rgba(194,226,198);
-    --glass: rgba(255,255,255,.38); --line: rgba(255,255,255,.65); --sh: inset 0 1px 0 rgba(255,255,255,.9), 0 24px 48px -20px rgba(43,29,20,.35); }
-  * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; overflow-x: clip; background: #D6CBC0; }
-  body { margin: 0; color: var(--ink); background: radial-gradient(120% 90% at 50% 40%, #E6DDD3, #D6CBC0 55%, #BFB2A5) fixed;
-    font: 17px/1.6 "Geist", system-ui, -apple-system, sans-serif; overflow-x: clip; }
-  a { color: var(--or2); }
-  .wrap { width: min(1080px, 100% - 32px); margin-inline: auto; }
-  .glass { background: var(--glass); -webkit-backdrop-filter: blur(30px) saturate(1.8); backdrop-filter: blur(30px) saturate(1.8); border: 1px solid var(--line); box-shadow: var(--sh); }
-  .head { position: sticky; top: 12px; z-index: 20; margin-top: 12px; }
-  nav { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px 10px 24px; border-radius: 999px; }
-  nav b { font: italic 900 26px/1 "Archivo", sans-serif; letter-spacing: -.04em; color: var(--or); text-shadow: 1px 1px 0 #D9773F, 2px 2px 0 #C86A36; }
-  nav span { display: flex; align-items: center; gap: 4px; }
-  nav a { text-decoration: none; font-size: 14px; font-weight: 500; color: var(--ink); padding: 8px 14px; border-radius: 999px; }
-  nav a:hover { background: rgba(255,255,255,.5); }
-  .hero { position: relative; padding: clamp(48px, 8vw, 110px) 0 clamp(56px, 8vw, 100px); }
-  .hero .txt { position: relative; z-index: 2; max-width: 760px; }
-  h1 { margin: 0; font: italic 900 clamp(48px, 6.6vw, 96px)/.94 "Archivo", sans-serif; letter-spacing: -.04em; word-spacing: .06em; color: var(--or);
-    text-shadow: 1px 1px 0 #D9773F, 2px 2px 0 #C86A36, 3px 3px 0 #B85F30, 16px 22px 40px rgba(60,35,20,.22); }
-  .sub { max-width: 52ch; margin: 24px 0 30px; color: var(--mut); font-size: 18px; }
-  .robot { position: absolute; z-index: 1; right: calc(-1 * clamp(30px, 6vw, 120px)); top: 0; width: clamp(280px, 36vw, 520px); height: auto; pointer-events: none;
-    filter: drop-shadow(-14px 20px 18px rgba(60,35,20,.28)); }
-  .btn { display: inline-block; padding: 14px 28px; border-radius: 999px; background: var(--ink); color: #FFF8EF; font-weight: 600; font-size: 15px; text-decoration: none;
-    border: 1px solid var(--ink); box-shadow: 0 10px 24px -10px rgba(43,29,20,.55); transition: transform .2s; }
-  .btn:hover { transform: translateY(-2px); }
-  .btn.ghost { background: var(--glass); color: var(--ink); border: 1px solid var(--line); box-shadow: var(--sh); -webkit-backdrop-filter: blur(30px) saturate(1.8); backdrop-filter: blur(30px) saturate(1.8); margin-left: 8px; }
-  @media (min-width: 861px) { .hero { min-height: calc(clamp(280px, 36vw, 520px) * 1.167 + 100px); } }
-  .shot { margin: 0 0 8px; padding: 10px; border-radius: 28px; }
-  .shot img { display: block; width: 100%; height: auto; border-radius: 20px; }
-  section { padding: clamp(48px, 7vw, 96px) 0; }
-  h2 { margin: 0 0 28px; font: italic 900 clamp(32px, 4.6vw, 56px)/1 "Archivo", sans-serif; letter-spacing: -.04em; word-spacing: .06em; color: var(--or);
-    text-shadow: 1px 1px 0 #D9773F, 2px 2px 0 #C86A36, 3px 3px 0 #B85F30, 16px 22px 40px rgba(60,35,20,.22); }
-  .feats { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; }
-  .feats div { padding: 26px 24px; border-radius: 28px; }
-  .feats b { display: block; margin-bottom: 6px; font-weight: 700; letter-spacing: -.01em; }
-  .feats p { margin: 0; color: var(--mut); font-size: 15px; }
-  .steps { counter-reset: s; display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; }
-  .steps div { padding: 26px 24px; border-radius: 28px; }
-  .steps div::before { counter-increment: s; content: "0" counter(s); display: block; font: italic 900 46px/1 "Archivo", sans-serif; letter-spacing: -.04em; color: var(--or); text-shadow: 1px 1px 0 #D9773F, 2px 2px 0 #C86A36; margin-bottom: 10px; }
-  .steps p { margin: 0; color: var(--mut); }
-  code { background: rgba(43,29,20,.08); padding: 2px 8px; border-radius: 8px; color: var(--or2); font-family: "Geist Mono", ui-monospace, Menlo, monospace; font-size: .9em; }
-  .bundle { display: flex; flex-wrap: wrap; gap: 10px; }
-  .bundle span { padding: 10px 18px; border-radius: 999px; font-size: 14px; }
-  .bundle span::before { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--green); margin-right: 9px; vertical-align: 1px; }
-  details { padding: 18px 24px; border-radius: 24px; margin-bottom: 12px; }
-  summary { cursor: pointer; font-weight: 600; }
-  details p { margin: 10px 0 0; color: var(--mut); }
-  .cta { text-align: center; }
-  .cta .sub { margin-inline: auto; }
-  .cta .panel { padding: clamp(36px, 6vw, 72px) 24px; border-radius: 28px; }
-  footer { padding: 30px 0 50px; font-size: 13px; color: var(--mut); }
-  .reveal { opacity: 0; transform: translateY(18px); transition: opacity .7s cubic-bezier(.2,.8,.2,1), transform .7s cubic-bezier(.2,.8,.2,1); }
-  .reveal.in { opacity: 1; transform: none; }
-  @media (prefers-reduced-motion: reduce) { .reveal { opacity: 1; transform: none; transition: none; } }
-  @media (max-width: 860px) {
-    .robot { position: relative; display: block; width: 76vw; right: auto; margin: 10px -22vw -30px auto; transform: translateX(0); }
-    .hero .txt { max-width: none; }
-  }
-  @media (max-width: 560px) { nav a:not(.btn) { display: none; } nav { padding-left: 18px; } .btn.ghost { margin: 10px 0 0; } .btn { display: block; text-align: center; } }
+:root{--ink:#2B1D14;--mut:rgba(43,29,20,.66);--or:#EF8746;--or2:#C86A36;--green:#2F8F5B;
+  --glass:rgba(255,255,255,.4);--line:rgba(255,255,255,.7);
+  --sh:inset 0 1px 0 rgba(255,255,255,.9),0 24px 48px -20px rgba(43,29,20,.35);
+  --ease:cubic-bezier(.2,.8,.2,1)}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;overflow-x:clip;background:#D6CBC0;scroll-padding-top:84px}
+body{margin:0;color:var(--ink);background:radial-gradient(120% 90% at 50% 40%,#E9E0D6,#D6CBC0 60%,#C4B7AA) fixed;
+  font:17px/1.6 "Geist",system-ui,-apple-system,sans-serif;overflow-x:clip;-webkit-font-smoothing:antialiased}
+a{color:var(--or2)}
+img{max-width:100%}
+.wrap{width:min(1120px,100% - 32px);margin-inline:auto}
+.glass{background:var(--glass);-webkit-backdrop-filter:blur(30px) saturate(1.8);backdrop-filter:blur(30px) saturate(1.8);border:1px solid var(--line);box-shadow:var(--sh)}
+.skip{position:absolute;left:-999px}.skip:focus{left:16px;top:8px;z-index:50;background:#fff;padding:8px 14px;border-radius:99px}
+h1,h2,h3{margin:0}
+.display,h1,h2{font:italic 900 clamp(34px,4.8vw,60px)/1 "Archivo",sans-serif;letter-spacing:-.04em;word-spacing:.06em;color:var(--or);
+  text-shadow:1px 1px 0 #D9773F,2px 2px 0 #C86A36,3px 3px 0 #B85F30,16px 22px 40px rgba(60,35,20,.22)}
+h1{font-size:clamp(44px,6.1vw,92px);line-height:.93}
+.eyebrow{display:inline-block;font:600 12px/1 "Geist Mono",ui-monospace,monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--or2);margin-bottom:14px}
+.lead{max-width:56ch;color:var(--mut);font-size:18px;margin:18px 0 0}
+.muted{color:var(--mut)}
+section{padding:clamp(56px,8vw,112px) 0;position:relative}
+.head{max-width:720px;margin-bottom:36px}
+.center{text-align:center}.center .head,.center.head{margin-inline:auto}.center .lead{margin-inline:auto}
+
+/* nav */
+.nav{position:sticky;top:12px;z-index:30;margin-top:12px}
+.nav__bar{display:flex;justify-content:space-between;align-items:center;padding:10px 12px 10px 24px;border-radius:999px}
+.logo{font:italic 900 26px/1 "Archivo",sans-serif;letter-spacing:-.04em;color:var(--or);text-decoration:none;text-shadow:1px 1px 0 #D9773F,2px 2px 0 #C86A36}
+.nav__links{display:flex;align-items:center;gap:2px}
+.nav__links a{text-decoration:none;color:var(--ink);font-size:14px;font-weight:500;padding:8px 13px;border-radius:999px;transition:background .2s}
+.nav__links a:hover{background:rgba(255,255,255,.55)}
+.nav__links .btn{color:#FFF8EF;margin-left:6px;padding:10px 20px}
+.nav__links .btn:hover{background:var(--ink)}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:15px 30px;border-radius:999px;background:var(--ink);color:#FFF8EF!important;font:600 15px/1 "Geist",sans-serif;text-decoration:none;border:1px solid var(--ink);
+  box-shadow:0 10px 24px -10px rgba(43,29,20,.55);transition:transform .25s var(--ease),box-shadow .25s}
+.btn:hover{transform:translateY(-3px);box-shadow:0 16px 28px -10px rgba(43,29,20,.55)}
+.btn--or{background:var(--or);border-color:var(--or2)}
+.btn--ghost{background:var(--glass);color:var(--ink)!important;border:1px solid var(--line);box-shadow:var(--sh);-webkit-backdrop-filter:blur(30px) saturate(1.8);backdrop-filter:blur(30px) saturate(1.8)}
+.btn-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+
+/* hero */
+.hero{padding:clamp(40px,6vw,84px) 0 clamp(40px,6vw,70px);overflow:visible}
+.hero .wrap{position:relative;display:grid;grid-template-columns:1.25fr .75fr;align-items:center;gap:20px;min-height:min(78vh,720px)}
+.pill{display:inline-flex;gap:10px;align-items:center;padding:8px 16px;border-radius:99px;font-size:13px;font-weight:500;text-decoration:none;color:var(--ink);margin-bottom:22px}
+.pill i{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 0 rgba(47,143,91,.6);animation:ping 2s infinite}
+@keyframes ping{70%{box-shadow:0 0 0 10px rgba(47,143,91,0)}100%{box-shadow:0 0 0 0 rgba(47,143,91,0)}}
+.hero .lead{font-size:19px;max-width:50ch}
+.w{display:inline-block}
+.js .w{opacity:0;transform:translateY(60%) rotate(3deg);filter:blur(8px);animation:wordUp .9s var(--ease) forwards;animation-delay:calc(var(--i)*90ms + 150ms)}
+@keyframes wordUp{to{opacity:1;transform:none;filter:none}}
+.js .hero .fadein{opacity:0;transform:translateY(20px);animation:wordUp .9s var(--ease) forwards;animation-delay:var(--d,800ms)}
+.robotbox{position:relative;justify-self:center;width:min(100%,500px);will-change:transform}
+.robotbox::before{content:"";position:absolute;inset:12% 6% 4%;border-radius:50%;background:radial-gradient(closest-side,rgba(239,135,70,.5),rgba(239,135,70,0));filter:blur(10px);z-index:0}
+.robot{position:relative;z-index:1;display:block;width:100%;height:auto;animation:float 6s ease-in-out infinite;filter:drop-shadow(-14px 20px 18px rgba(60,35,20,.28))}
+@keyframes float{50%{transform:translateY(-16px) rotate(-1.2deg)}}
+.chip{position:absolute;z-index:2;padding:9px 16px;border-radius:99px;font-size:13px;font-weight:600;white-space:nowrap;animation:float 7s ease-in-out infinite}
+.chip b{color:var(--green)}
+.chip--a{left:-4%;top:16%;animation-delay:-1s}.chip--b{right:-2%;top:42%;animation-delay:-3s}.chip--c{left:4%;bottom:8%;animation-delay:-5s}
+.scrollhint{position:absolute;left:50%;bottom:-6px;width:22px;height:36px;border:2px solid rgba(43,29,20,.35);border-radius:14px;transform:translateX(-50%)}
+.scrollhint::after{content:"";position:absolute;left:50%;top:6px;width:4px;height:7px;margin-left:-2px;border-radius:3px;background:var(--ink);animation:wheel 1.6s infinite}
+@keyframes wheel{0%{opacity:1;transform:translateY(0)}80%,100%{opacity:0;transform:translateY(12px)}}
+
+/* marquee */
+.marq{padding:0;overflow:hidden;border-block:1px solid rgba(255,255,255,.6);background:rgba(255,255,255,.25)}
+.marq__t{display:flex;width:max-content;animation:marq 38s linear infinite;padding:16px 0}
+.marq:hover .marq__t{animation-play-state:paused}
+.marq__t span{display:flex;align-items:center;gap:26px;padding-right:26px;font:italic 900 22px/1 "Archivo",sans-serif;letter-spacing:-.02em;white-space:nowrap}
+.marq__t span i{font-style:normal;color:var(--or);font-size:14px}
+.marq__note{font:500 11px/1 "Geist Mono",monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);text-align:center;padding:0 0 12px}
+@keyframes marq{to{transform:translateX(-50%)}}
+
+/* reveal */
+.js .rv{opacity:0;transform:translateY(34px);filter:blur(6px);transition:opacity .8s var(--ease),transform .8s var(--ease),filter .8s var(--ease);transition-delay:calc(var(--i,0)*90ms)}
+.js .rv.in{opacity:1;transform:none;filter:none}
+.js .rv.from-l{transform:translateX(-50px)}.js .rv.from-r{transform:translateX(50px)}
+.js .rv.in.from-l,.js .rv.in.from-r{transform:none}
+
+/* crew */
+.crew{display:grid;grid-template-columns:repeat(5,1fr);gap:16px}
+.card{padding:26px 22px 28px;border-radius:28px;transition:transform .25s var(--ease),box-shadow .25s;transform-style:preserve-3d}
+.tilt{transform:perspective(900px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg))}
+.js .rv.tilt:not(.in){transform:translateY(34px)}
+.js .rv.tilt.in{transition:opacity .8s var(--ease),filter .8s var(--ease),transform .2s ease-out}
+.role__ic{width:54px;height:54px;border-radius:18px;display:grid;place-items:center;background:linear-gradient(145deg,#F5A672,var(--or));color:#fff;box-shadow:0 10px 20px -8px rgba(200,106,54,.7),inset 0 1px 0 rgba(255,255,255,.5);margin-bottom:18px}
+.role__ic svg{width:28px;height:28px;stroke:#fff;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.card h3{font:700 20px/1.2 "Geist",sans-serif;letter-spacing:-.02em;margin-bottom:6px}
+.card p{margin:0;color:var(--mut);font-size:15px;line-height:1.5}
+.role__n{font:500 11px/1 "Geist Mono",monospace;color:var(--or2);letter-spacing:.1em;margin-bottom:10px;display:block}
+.crew .card:first-child{background:linear-gradient(160deg,rgba(255,255,255,.62),rgba(255,255,255,.3))}
+
+/* pipeline */
+.pipe{height:560vh;padding:0}
+.pipe__stick{position:sticky;top:0;height:100vh;height:100svh;display:flex;flex-direction:column;justify-content:center;padding:84px 0 24px}
+.pipe__head{text-align:center;margin-bottom:clamp(18px,4vh,40px)}
+.pipe__head h2{font-size:clamp(30px,4.2vw,54px)}
+.track{position:relative;display:grid;grid-template-columns:repeat(7,1fr);margin:0 auto;width:min(960px,100%);padding:0}
+.track::before,.track__fill{content:"";position:absolute;left:calc(100%/14);right:calc(100%/14);top:21px;height:4px;border-radius:4px;background:rgba(43,29,20,.14)}
+.track__fill{background:linear-gradient(90deg,var(--or),#F5A672);right:calc(100%/14);transform-origin:left;transform:scaleX(var(--fill,0));box-shadow:0 0 14px rgba(239,135,70,.7)}
+.node{position:relative;z-index:1;text-align:center;list-style:none}
+.node b{display:grid;place-items:center;width:46px;height:46px;margin:0 auto 10px;border-radius:50%;font:italic 900 18px/1 "Archivo",sans-serif;color:var(--mut);background:rgba(255,255,255,.6);border:2px solid rgba(255,255,255,.9);transition:transform .45s var(--ease),background .3s,color .3s,box-shadow .4s}
+.node span{display:block;font-size:13px;font-weight:600;color:var(--mut);transition:color .3s}
+.node.on b{background:var(--or);color:#fff;border-color:#FFD9BF}
+.node.on span{color:var(--ink)}
+.node.cur b{transform:scale(1.22);box-shadow:0 0 0 7px rgba(239,135,70,.25),0 10px 22px -6px rgba(200,106,54,.7)}
+.stage{position:relative;width:min(760px,100%);margin:clamp(20px,5vh,48px) auto 0;min-height:230px}
+.slide{position:absolute;inset:0;display:grid;grid-template-columns:1fr 1fr;gap:22px;align-items:center;padding:28px 30px;border-radius:30px;opacity:0;transform:translateY(24px) scale(.97);pointer-events:none;transition:opacity .5s var(--ease),transform .6s var(--ease)}
+.slide.cur{opacity:1;transform:none;pointer-events:auto}
+.slide h3{font:italic 900 clamp(26px,3.2vw,38px)/1 "Archivo",sans-serif;letter-spacing:-.04em;color:var(--or);text-shadow:1px 1px 0 #D9773F,2px 2px 0 #C86A36;margin-bottom:10px}
+.slide p{margin:0;color:var(--mut);font-size:16px;line-height:1.5}
+.slide small{display:block;margin-top:12px;font:500 11px/1 "Geist Mono",monospace;text-transform:uppercase;letter-spacing:.1em;color:var(--or2)}
+.mock{padding:16px 18px;border-radius:20px;background:rgba(255,255,255,.6);border:1px solid rgba(255,255,255,.9);font-size:14px;line-height:1.4}
+.mock em{display:block;font:500 10px/1 "Geist Mono",monospace;text-transform:uppercase;letter-spacing:.12em;color:var(--mut);font-style:normal;margin-bottom:8px}
+.mock b{display:block;font-weight:700}
+.mock .tag{display:inline-block;margin-top:10px;padding:5px 12px;border-radius:99px;font-size:12px;font-weight:600;background:var(--or);color:#fff}
+.mock .tag.ok{background:var(--green)}
+.mock .bar{height:8px;border-radius:8px;background:rgba(43,29,20,.12);margin-top:12px;overflow:hidden}
+.mock .bar i{display:block;height:100%;width:100%;border-radius:8px;background:var(--or);transform-origin:left;transform:scaleX(0)}
+.slide.cur .bar i{animation:fillbar 1.6s var(--ease) .2s forwards}
+@keyframes fillbar{to{transform:scaleX(var(--w,.7))}}
+.mock .row{display:flex;gap:8px;margin-top:10px}.mock .row span{flex:1;text-align:center;padding:7px;border-radius:99px;font-size:12px;font-weight:600;background:rgba(43,29,20,.08)}
+.mock .row span:first-child{background:var(--green);color:#fff}
+.pipe__prog{margin:18px auto 0;font:500 11px/1 "Geist Mono",monospace;letter-spacing:.1em;text-transform:uppercase;color:var(--mut);text-align:center}
+/* without pinning (no JS, reduced motion): everything shown in a normal flow */
+html:not(.js) .pipe,.rm .pipe{height:auto;padding:clamp(56px,8vw,112px) 0}
+html:not(.js) .pipe__stick,.rm .pipe__stick{position:static;height:auto;padding:0}
+html:not(.js) .stage,.rm .stage{min-height:0;display:grid;gap:14px}
+html:not(.js) .slide,.rm .slide{position:static;opacity:1;transform:none;pointer-events:auto}
+html:not(.js) .node b,.rm .node b{background:var(--or);color:#fff}
+html:not(.js) .track__fill,.rm .track__fill{transform:none}
+
+/* learns */
+.learn{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:stretch}
+.notes{display:grid;gap:14px;align-content:start}
+.note{padding:18px 20px 18px 56px;border-radius:22px;position:relative;font-size:16px;line-height:1.45;font-weight:500}
+.note::before{content:"";position:absolute;left:20px;top:20px;width:20px;height:20px;background:var(--or);-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 20h9'/%3E%3Cpath d='M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M12 20h9'/%3E%3Cpath d='M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z'/%3E%3C/svg%3E") center/contain no-repeat}
+.note small{display:block;margin-top:6px;font:500 10px/1 "Geist Mono",monospace;text-transform:uppercase;letter-spacing:.12em;color:var(--or2)}
+.js .note.rv{filter:none;transform:translateY(16px) rotate(-1deg)}
+.js .note.rv .t{display:block;clip-path:inset(0 100% 0 0);transition:clip-path 1.5s steps(34,end) calc(var(--i,0)*400ms + 500ms)}
+.js .note.rv.in .t{clip-path:inset(0 0 0 0)}
+.js .note.rv.in{transform:none}
+.chart{padding:24px;border-radius:28px;display:flex;flex-direction:column}
+.chart__top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:6px}
+.chart__top b{font:700 16px/1.2 "Geist",sans-serif}
+.badge{font:600 10px/1 "Geist Mono",monospace;letter-spacing:.12em;text-transform:uppercase;padding:6px 10px;border-radius:99px;background:rgba(43,29,20,.1);color:var(--mut);white-space:nowrap}
+.chart svg{width:100%;height:auto;flex:1;margin-top:10px;overflow:visible}
+.cbar{transform-box:fill-box;transform-origin:bottom;fill:rgba(239,135,70,.55)}
+.cbar.hot{fill:var(--or)}
+.js .cbar{transform:scaleY(0);transition:transform 1s var(--ease) calc(var(--i)*110ms + 200ms)}
+.js .chart.in .cbar{transform:none}
+.line{fill:none;stroke:var(--ink);stroke-width:2.5;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:1}
+.js .chart.in .line{animation:draw 2s ease .9s forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+html:not(.js) .line,.rm .line{stroke-dashoffset:0}
+.axis{font:500 10px "Geist Mono",monospace;fill:var(--mut)}
+.counters{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:24px}
+.counter{padding:22px 18px;border-radius:24px;text-align:center}
+.counter b{display:block;font:italic 900 clamp(38px,5vw,60px)/1 "Archivo",sans-serif;letter-spacing:-.04em;color:var(--or);text-shadow:1px 1px 0 #D9773F,2px 2px 0 #C86A36}
+.counter span{display:block;margin-top:8px;font-size:14px;color:var(--mut);line-height:1.35}
+
+/* boss */
+.boss{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:center}
+.ticks{list-style:none;margin:24px 0 0;padding:0;display:grid;gap:12px}
+.ticks li{display:flex;gap:12px;align-items:flex-start;font-size:16px}
+.ticks li::before{content:"";flex:none;width:22px;height:22px;margin-top:2px;border-radius:50%;background:var(--green) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4 8-9'/%3E%3C/svg%3E") center/70% no-repeat}
+.phonewrap{display:grid;place-items:center;perspective:1200px;padding:20px 0}
+.phone{position:relative;width:min(290px,70vw);padding:11px;border-radius:44px;background:linear-gradient(150deg,#3b2a1f,#1c120c);box-shadow:0 40px 70px -24px rgba(43,29,20,.7),inset 0 0 0 2px rgba(255,255,255,.12)}
+.phone::before{content:"";position:absolute;top:18px;left:50%;width:70px;height:20px;margin-left:-35px;border-radius:99px;background:#0c0705;z-index:2}
+.phone img{display:block;width:100%;height:auto;border-radius:34px;aspect-ratio:1170/2532;object-fit:cover}
+.js .phone.rv{transform:translateX(120px) rotateY(-35deg) rotateZ(6deg);filter:none}
+.js .phone.rv.in{transform:rotateY(-8deg) rotateZ(2deg);transition-duration:1.2s}
+.pnote{position:absolute;z-index:3;padding:10px 16px;border-radius:18px;font-size:13px;font-weight:600;animation:float 6s ease-in-out infinite}
+.pnote--a{left:-18%;top:20%}.pnote--b{right:-14%;bottom:18%;animation-delay:-3s}
+
+/* studios */
+.two{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.studio{padding:34px 30px;border-radius:32px;position:relative;overflow:hidden}
+.studio h3{font:italic 900 clamp(26px,3vw,36px)/1 "Archivo",sans-serif;letter-spacing:-.04em;color:var(--or);text-shadow:1px 1px 0 #D9773F,2px 2px 0 #C86A36;margin:14px 0 10px}
+.studio .glyph{width:60px;height:60px;border-radius:20px;display:grid;place-items:center;background:var(--ink)}
+.studio .glyph svg{width:30px;height:30px}
+.studio ul{margin:16px 0 0;padding:0;list-style:none;display:grid;gap:10px}
+.studio li{padding-left:26px;position:relative;font-size:15.5px}
+.studio li::before{content:"";position:absolute;left:0;top:7px;width:9px;height:9px;border-radius:50%;background:var(--or)}
+.studio::after{content:"";position:absolute;right:-60px;top:-60px;width:180px;height:180px;border-radius:50%;background:radial-gradient(closest-side,rgba(239,135,70,.35),transparent)}
+
+/* setup */
+.setup{display:grid;grid-template-columns:1.1fr .9fr;gap:24px;align-items:start}
+.steps{list-style:none;margin:0;padding:0;display:grid;gap:12px;counter-reset:s}
+.steps li{counter-increment:s;padding:16px 20px 16px 70px;border-radius:22px;position:relative}
+.steps li::before{content:counter(s);position:absolute;left:18px;top:50%;margin-top:-18px;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font:italic 900 17px "Archivo",sans-serif;background:var(--or);color:#fff}
+.steps b{display:block;font-weight:700}
+.steps span{color:var(--mut);font-size:14.5px;line-height:1.45;display:block}
+.term{padding:22px 24px;border-radius:24px;background:#2B1D14;color:#F4E9DD;font:14px/1.8 "Geist Mono",ui-monospace,monospace;box-shadow:0 30px 50px -24px rgba(43,29,20,.7)}
+.term p{margin:0}.term .dim{opacity:.55}.term .ok{color:#7BE0A4}
+.js .term .l{opacity:0;transform:translateX(-10px);transition:opacity .4s,transform .4s;transition-delay:calc(var(--i)*260ms + 300ms)}
+.js .term.in .l{opacity:1;transform:none}
+.term small{display:block;margin-top:14px;font:12px/1.5 "Geist",sans-serif;opacity:.7}
+
+/* pricing */
+.price{font:italic 900 56px/1 "Archivo",sans-serif;letter-spacing:-.04em;color:var(--ink);margin:6px 0 4px}
+.price small{font:500 14px "Geist",sans-serif;letter-spacing:0;color:var(--mut)}
+.pcard{padding:34px 30px;border-radius:32px;display:flex;flex-direction:column}
+.pcard h3{font:700 24px/1.2 "Geist",sans-serif;letter-spacing:-.02em}
+.pcard ul{list-style:none;margin:16px 0 26px;padding:0;display:grid;gap:10px;flex:1}
+.pcard li{padding-left:28px;position:relative;font-size:15.5px}
+.pcard li::before{content:"";position:absolute;left:0;top:3px;width:19px;height:19px;border-radius:50%;background:var(--green) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 12.5l4 4 8-9'/%3E%3C/svg%3E") center/70% no-repeat}
+.pcard .btn{align-self:flex-start}
+.pcard--hot{position:relative}
+.pcard--hot::before{content:"";position:absolute;inset:-2px;border-radius:34px;padding:2px;background:conic-gradient(from var(--a,0deg),var(--or),transparent 30%,transparent 70%,var(--or));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none;opacity:.8;animation:spin 6s linear infinite}
+@property --a{syntax:"<angle>";inherits:false;initial-value:0deg}
+@keyframes spin{to{--a:360deg}}
+.fine{margin-top:22px;font-size:14px}
+
+/* faq */
+.faq{max-width:820px;margin-inline:auto;display:grid;gap:12px}
+details{border-radius:24px;padding:0 24px}
+summary{cursor:pointer;font-weight:600;padding:20px 0;list-style:none;display:flex;justify-content:space-between;align-items:center;gap:16px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";flex:none;width:30px;height:30px;border-radius:50%;display:grid;place-items:center;background:var(--or);color:#fff;font-size:20px;line-height:1;transition:transform .35s var(--ease)}
+details[open] summary::after{transform:rotate(135deg)}
+details p{margin:0;padding:0 0 20px;color:var(--mut);animation:faq .45s var(--ease)}
+@keyframes faq{from{opacity:0;transform:translateY(-8px)}}
+
+/* cta + footer */
+.cta{text-align:center;padding:clamp(48px,7vw,96px) 22px;border-radius:40px;position:relative;overflow:hidden}
+.cta::before{content:"";position:absolute;left:50%;top:50%;width:140%;aspect-ratio:1;translate:-50% -50%;background:conic-gradient(from 0deg,rgba(239,135,70,.0),rgba(239,135,70,.22),rgba(239,135,70,0) 40%);animation:rot 14s linear infinite;pointer-events:none}
+@keyframes rot{to{rotate:360deg}}
+.cta>*{position:relative}
+.cta h2{font-size:clamp(40px,6vw,76px)}
+.cta .lead{margin-inline:auto}.cta .btn-row{justify-content:center}
+footer{padding:36px 0 56px;font-size:13px;color:var(--mut)}
+footer .row{display:flex;flex-wrap:wrap;justify-content:space-between;gap:12px 24px;align-items:center}
+footer a{color:var(--mut)}footer nav{display:flex;gap:18px;flex-wrap:wrap}
+
+/* responsive */
+@media (max-width:980px){
+  .crew{grid-template-columns:repeat(2,1fr)}
+  .counters{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:860px){
+  .hero .wrap{grid-template-columns:1fr;min-height:0}
+  .robotbox{width:min(78vw,380px);margin-top:10px}
+  .chip--a{left:-6%}.chip--b{right:-6%}
+  .learn,.boss,.two,.setup{grid-template-columns:1fr}
+  .boss .phonewrap{order:-1}
+  .pnote--a{left:-4%}.pnote--b{right:-4%}
+  .scrollhint{display:none}
+}
+@media (max-width:640px){
+  body{font-size:16px}
+  .nav__links a:not(.btn){display:none}
+  .nav__bar{padding-left:18px}
+  .crew{grid-template-columns:1fr}
+  .btn-row .btn{width:100%}
+  .chip{font-size:12px;padding:7px 12px}
+  .track::before,.track__fill{top:15px}
+  .node b{width:32px;height:32px;font-size:14px;margin-bottom:6px}
+  .node span{font-size:9.5px;letter-spacing:-.01em}
+  .stage{min-height:360px}
+  .slide{grid-template-columns:1fr;padding:22px 20px;gap:14px;align-content:center}
+  .pipe__stick{padding-top:76px}
+  .counters{gap:10px}
+  .counter{padding:18px 10px}
+  .counter span{font-size:12.5px}
+  .marq__t span{font-size:18px}
+  .pcard,.studio{padding:28px 22px}
+  details{padding:0 18px}
+  .footer-statement{display:none}
+}
+@media (max-width:640px){.rm .stage,html:not(.js) .stage{min-height:0}}
+
+/* reduced motion */
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  .js .rv,.js .w,.js .hero .fadein,.js .cbar,.js .note.rv .t,.js .term .l,.js .phone.rv{opacity:1!important;transform:none!important;filter:none!important;clip-path:none!important}
+  .js .phone.rv{transform:rotateY(-8deg)!important}
+  .marq__t{width:auto;flex-wrap:wrap;justify-content:center}
+  .marq__t span[aria-hidden]{display:none}
+  .line{stroke-dashoffset:0}
+  .mock .bar i{transform:scaleX(var(--w,.7))}
+}
 </style>
 </head>
 <body>
-<div class="wrap head">
-  <nav class="glass"><b>Neesmo</b><span><a href="#features">Features</a><a href="#how">Install</a><a href="#faq">FAQ</a></span></nav>
-</div>
-<header class="hero">
-  <div class="wrap" style="position:relative">
-    <div class="txt">
-      <h1>Run Claude Code<br>from <em style="font-style:inherit">one screen</em></h1>
-      <p class="sub">Neesmo runs on your own server. Speak or type a job, hand it to an agent, approve its requests from your phone, and get a notification when it's done.</p>
-      <a class="btn" href="#buy">Get Neesmo</a><a class="btn ghost" href="#how">How it works</a>
-    </div>
-    <img class="robot" src="/static/robot/hero_cut.webp" alt="" width="771" height="900" fetchpriority="high">
+<a class="skip" href="#top">Skip to content</a>
+<div class="wrap nav">
+  <div class="nav__bar glass">
+    <a class="logo" href="#top">Neesmo</a>
+    <nav class="nav__links" aria-label="Main">
+      <a href="#crew">The studio</a><a href="#pipeline">How it works</a><a href="#boss">You approve</a><a href="#setup">Setup</a><a href="#faq">FAQ</a>
+      <a class="btn" href="#pricing">Get your Studio</a>
+    </nav>
   </div>
-</header>
-<main class="wrap">
-  <figure class="shot glass reveal"><img src="/static/robot/app-desktop.webp" alt="The Neesmo home screen with the robot companion and a channel card" width="2880" height="1800"></figure>
-  <section id="features" class="reveal">
-    <h2>What you get</h2>
-    <div class="feats">
-      <div class="glass"><b>Voice or text</b><p>Speak or type a command. The assistant sends the job to the right agent.</p></div>
-      <div class="glass"><b>Your real Claude Code sessions</b><p>Each card is a live Claude Code session on your server, in its own folder. Chat with it, answer its questions with a tap, or attach from a terminal: it is the same session.</p></div>
-      <div class="glass"><b>Works while you're away</b><p>Agents keep going in the background. You get a push notification when they reply.</p></div>
-      <div class="glass"><b>Approvals from your phone</b><p>When an agent asks for permission, approve, deny or ignore it straight from the notification.</p></div>
-      <div class="glass"><b>A chat that feels like Claude</b><p>Markdown answers, file attachments and new chats, all on top of the live HUD.</p></div>
-      <div class="glass"><b>Make it yours</b><p>A welcome greeting when you open it, drag-and-drop agent order, colours, and on/off switches for every plugin and skill.</p></div>
-      <div class="glass"><b>Your server, your login</b><p>Password login with remembered devices. No VPN needed: put it behind a Cloudflare Tunnel.</p></div>
+</div>
+
+<main id="top">
+<!-- HERO -->
+<section class="hero" aria-labelledby="hero-h">
+  <div class="wrap">
+    <div class="hero__txt">
+      <a class="pill glass fadein" style="--d:100ms" href="#pricing"><i></i>Early build: YouTube or Instagram Studio, €59</a>
+      <h1 id="hero-h" aria-label="A whole studio for your channel."><span class="w" style="--i:0" aria-hidden="true">A</span> <span class="w" style="--i:1" aria-hidden="true">whole</span> <span class="w" style="--i:2" aria-hidden="true">studio</span> <span class="w" style="--i:3" aria-hidden="true">for</span> <span class="w" style="--i:4" aria-hidden="true">your</span> <span class="w" style="--i:5" aria-hidden="true">channel.</span></h1>
+      <p class="lead fadein" style="--d:1000ms">Neesmo is a team of AI agents that finds the ideas, writes the hooks, makes the videos, checks them, posts them and learns from the numbers. You approve. Your channel grows.</p>
+      <div class="btn-row fadein" style="--d:1200ms"><a class="btn btn--or" href="#pricing">Get your Studio</a><a class="btn btn--ghost" href="#pipeline">See how it works</a></div>
     </div>
-  </section>
-  <section class="reveal">
-    <h2>Included in the box</h2>
-    <div class="bundle"><span class="glass">OmniRoute: free models for cheap text jobs</span><span class="glass">graphify: code knowledge graph</span><span class="glass">claude-mem: long-term memory</span><span class="glass">caveman: short, plain answers</span><span class="glass">55 skills: engineering, review, video, link reading, skill finder</span></div>
-  </section>
-  <section id="how" class="reveal">
-    <h2>Up in three steps</h2>
-    <div class="steps">
-      <div class="glass"><p>Run <code>./install.sh</code> on a Linux PC or server. It sets up the app, the service and the extras you choose.</p></div>
-      <div class="glass"><p>Open Neesmo in a browser, set your password, and add it to your phone's home screen.</p></div>
-      <div class="glass"><p>Add your agents in Settings, give them jobs, and let them work.</p></div>
+    <div class="robotbox" id="robotbox">
+      <img class="robot" src="/static/robot/hero_cut.webp" alt="The Neesmo robot" width="771" height="900" fetchpriority="high">
+      <span class="chip glass chip--a"><b>&bull;</b> Marketer: 3 hooks ready</span>
+      <span class="chip glass chip--b"><b>&bull;</b> Supervisor: checked</span>
+      <span class="chip glass chip--c"><b>&bull;</b> Waiting for your OK</span>
     </div>
-  </section>
-  <section id="faq" class="reveal">
-    <h2>Questions</h2>
-    <details class="glass"><summary>What do I need?</summary><p>A Linux PC or server (a home PC works; Windows through WSL; a small VPS keeps agents running all day) with Python 3.10+ and Node 20+, and Claude Code signed in with a Claude subscription or API key.</p></details>
-    <details class="glass"><summary>Where does my data go?</summary><p>Nowhere new. Neesmo runs on your server and talks to Claude through your own Claude Code.</p></details>
-    <details class="glass"><summary>Do I need a VPN?</summary><p>No. Use the built-in login and a Cloudflare Tunnel, or keep it on your private network.</p></details>
-    <details class="glass"><summary>Is it made by Anthropic?</summary><p>No. Neesmo is an independent product that works with Claude Code.</p></details>
-  </section>
-  <section id="buy" class="cta reveal">
-    <div class="panel glass">
-      <h2>Get Neesmo</h2>
-      <p class="sub">One license key per server. Paste it in Settings → License.</p>
-      <a class="btn" href="mailto:?subject=Neesmo%20license">Ask for a license</a>
+    <span class="scrollhint" aria-hidden="true"></span>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marq" aria-label="Example video titles">
+  <div class="marq__t">
+    <span><b>The war that lasted 38 minutes</b><i>&#9679;</i><b>Why Napoleon was not short</b><i>&#9679;</i><b>The emu war Australia lost</b><i>&#9679;</i><b>The dancing plague of 1518</b><i>&#9679;</i><b>Why octopuses have 3 hearts</b><i>&#9679;</i><b>The loudest animal on Earth</b><i>&#9679;</i></span>
+    <span aria-hidden="true"><b>The war that lasted 38 minutes</b><i>&#9679;</i><b>Why Napoleon was not short</b><i>&#9679;</i><b>The emu war Australia lost</b><i>&#9679;</i><b>The dancing plague of 1518</b><i>&#9679;</i><b>Why octopuses have 3 hearts</b><i>&#9679;</i><b>The loudest animal on Earth</b><i>&#9679;</i></span>
+  </div>
+  <p class="marq__note" style="margin:0">Example video titles</p>
+</div>
+
+<!-- CREW -->
+<section id="crew" aria-labelledby="crew-h">
+  <div class="wrap">
+    <div class="head rv"><span class="eyebrow">The crew</span><h2 id="crew-h">Meet the studio</h2><p class="lead">Every channel gets its own team. Five agents, each with one job, working together around the clock while you do something else.</p></div>
+    <div class="crew">
+      <article class="card glass rv tilt" style="--i:0"><span class="role__n">01</span><div class="role__ic"><svg viewBox="0 0 24 24"><path d="M3 20l4-14 5 8 4-6 5 12z"/><circle cx="12" cy="4" r="1.5"/></svg></div><h3>Director</h3><p>Runs the channel and decides what is next.</p></article>
+      <article class="card glass rv tilt" style="--i:1"><span class="role__n">02</span><div class="role__ic"><svg viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 00-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0012 3z"/></svg></div><h3>Marketer</h3><p>Finds the ideas and writes the hooks and titles.</p></article>
+      <article class="card glass rv tilt" style="--i:2"><span class="role__n">03</span><div class="role__ic"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 9.5v5l4.5-2.5z"/></svg></div><h3>Producer</h3><p>Makes the video: script, voice, pictures and captions.</p></article>
+      <article class="card glass rv tilt" style="--i:3"><span class="role__n">04</span><div class="role__ic"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg></div><h3>Supervisor</h3><p>Checks every video before you see it.</p></article>
+      <article class="card glass rv tilt" style="--i:4"><span class="role__n">05</span><div class="role__ic"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg></div><h3>Analyst</h3><p>Reads the views and learns what works.</p></article>
     </div>
-  </section>
+  </div>
+</section>
+
+<!-- PIPELINE -->
+<section class="pipe" id="pipeline" aria-labelledby="pipe-h">
+  <div class="pipe__stick">
+    <div class="wrap">
+      <div class="pipe__head"><span class="eyebrow">One video, start to finish</span><h2 id="pipe-h">From idea to posted. You just say OK.</h2></div>
+      <ol class="track" id="track" style="padding:0;margin-top:0;margin-bottom:0">
+        <li class="track__fill" id="fill" aria-hidden="true" style="list-style:none"></li>
+        <li class="node"><b>1</b><span>Idea</span></li>
+        <li class="node"><b>2</b><span>Hook</span></li>
+        <li class="node"><b>3</b><span>Video</span></li>
+        <li class="node"><b>4</b><span>Check</span></li>
+        <li class="node"><b>5</b><span>Your OK</span></li>
+        <li class="node"><b>6</b><span>Posted</span></li>
+        <li class="node"><b>7</b><span>Learn</span></li>
+      </ol>
+      <div class="stage" id="stage">
+        <article class="slide glass"><div><h3>Idea</h3><p>The Marketer finds the next idea for your channel and puts it on the list.</p><small>Marketer</small></div><div class="mock"><em>Example idea</em><b>The emu war Australia lost</b><span class="tag">New idea</span></div></article>
+        <article class="slide glass"><div><h3>Hook</h3><p>It writes several hooks and a title. The strongest one opens the video.</p><small>Marketer</small></div><div class="mock"><em>Example hook</em><b>"Australia sent soldiers to fight birds. The birds won."</b><span class="tag">Hook picked</span></div></article>
+        <article class="slide glass"><div><h3>Video</h3><p>The Producer makes the whole video: script, voice, pictures and captions.</p><small>Producer</small></div><div class="mock"><em>Example: rendering</em><b>emu-war.mp4</b><div class="bar" style="--w:.82"><i></i></div></div></article>
+        <article class="slide glass"><div><h3>Check</h3><p>The Supervisor checks every video before you see it. If something is off, it goes back.</p><small>Supervisor</small></div><div class="mock"><em>Example check</em><b>Sound, captions, facts</b><span class="tag ok">Checked</span></div></article>
+        <article class="slide glass"><div><h3>Your OK</h3><p>You get a notification on your phone. Watch the video, then approve it or ask for a change.</p><small>You</small></div><div class="mock"><em>Example notification</em><b>New video is ready. Schedule it?</b><div class="row"><span>Approve</span><span>Change</span></div></div></article>
+        <article class="slide glass"><div><h3>Posted</h3><p>Once you say yes, Neesmo schedules the video and posts it.</p><small>Director</small></div><div class="mock"><em>Example</em><b>Scheduled for 19:30</b><span class="tag ok">Live</span></div></article>
+        <article class="slide glass"><div><h3>Learn</h3><p>The Analyst reads the numbers. The team writes down what to do better, and the next video starts from there.</p><small>Analyst</small></div><div class="mock"><em>Example lesson</em><b>Hooks that open on a question keep more viewers.</b><span class="tag">Saved</span></div></article>
+      </div>
+      <p class="pipe__prog" id="prog" aria-hidden="true">Scroll: step 1 of 7</p>
+    </div>
+  </div>
+</section>
+
+<!-- LEARNS -->
+<section id="learn" aria-labelledby="learn-h">
+  <div class="wrap">
+    <div class="head rv"><span class="eyebrow">Gets better every video</span><h2 id="learn-h">It learns what works.</h2><p class="lead">After every video the Analyst reads the numbers and the team writes a lesson. The next video uses it.</p></div>
+    <div class="learn">
+      <div class="notes" id="notes">
+        <div class="note glass rv" style="--i:0"><span class="t">Hooks that open on a question keep more viewers past 3 seconds.</span><small>Example lesson</small></div>
+        <div class="note glass rv" style="--i:1"><span class="t">Posts at 19:30 get more views than 13:30.</span><small>Example lesson</small></div>
+        <div class="note glass rv" style="--i:2"><span class="t">Big captions are easier to read on a phone.</span><small>Example lesson</small></div>
+      </div>
+      <div class="chart glass rv from-r" id="chart">
+        <div class="chart__top"><b>Views per video</b><span class="badge">Example, not real data</span></div>
+        <svg viewBox="0 0 320 170" role="img" aria-label="Example chart: views rising from video to video">
+          <g stroke="rgba(43,29,20,.12)"><path d="M0 150H320M0 110H320M0 70H320M0 30H320"/></g>
+          <rect class="cbar" style="--i:0" x="10" y="120" width="26" height="30" rx="6"/>
+          <rect class="cbar" style="--i:1" x="50" y="108" width="26" height="42" rx="6"/>
+          <rect class="cbar" style="--i:2" x="90" y="112" width="26" height="38" rx="6"/>
+          <rect class="cbar" style="--i:3" x="130" y="90" width="26" height="60" rx="6"/>
+          <rect class="cbar" style="--i:4" x="170" y="76" width="26" height="74" rx="6"/>
+          <rect class="cbar" style="--i:5" x="210" y="62" width="26" height="88" rx="6"/>
+          <rect class="cbar" style="--i:6" x="250" y="48" width="26" height="102" rx="6"/>
+          <rect class="cbar hot" style="--i:7" x="290" y="26" width="26" height="124" rx="6"/>
+          <path class="line" pathLength="1" d="M23 112L63 98L103 104L143 78L183 62L223 48L263 36L303 14"/>
+          <text class="axis" x="0" y="166">Video 1</text><text class="axis" x="270" y="166">Video 8</text>
+        </svg>
+      </div>
+    </div>
+    <div class="counters" id="counters">
+      <div class="counter glass rv" style="--i:0"><b data-count="5">5</b><span>agents in every channel's crew</span></div>
+      <div class="counter glass rv" style="--i:1"><b data-count="7">7</b><span>steps for every single video</span></div>
+      <div class="counter glass rv" style="--i:2"><b data-count="10">10</b><span>days of watching first, before the first post</span></div>
+      <div class="counter glass rv" style="--i:3"><b data-count="1">1</b><span>week where every video waits for your OK</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- BOSS -->
+<section id="boss" aria-labelledby="boss-h">
+  <div class="wrap boss">
+    <div class="rv from-l">
+      <span class="eyebrow">You stay the boss</span>
+      <h2 id="boss-h">Approve from your phone.</h2>
+      <p class="lead">For the first week, every video waits for your OK before it is scheduled. After that, Neesmo asks if it may schedule by itself. You can switch it back any time.</p>
+      <ul class="ticks">
+        <li>Notifications only for what matters: new videos and important things.</li>
+        <li>Add it to the iPhone home screen or install it on Android, with push notifications.</li>
+        <li>Reach it through a Cloudflare Tunnel or your own private network. Each device signs in once, for a year.</li>
+      </ul>
+    </div>
+    <div class="phonewrap">
+      <div style="position:relative">
+        <div class="phone rv" id="phone"><img src="/static/robot/app-phone.webp" alt="Neesmo on an iPhone: the ring and the agent cards" width="1170" height="2532" loading="lazy"></div>
+        <span class="pnote glass pnote--a">New video is ready</span>
+        <span class="pnote glass pnote--b">Approve</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STUDIOS -->
+<section id="studios" aria-labelledby="studios-h">
+  <div class="wrap">
+    <div class="head rv center"><span class="eyebrow">Two studios</span><h2 id="studios-h">YouTube and Instagram.</h2><p class="lead">Pick the platform you want to grow. Each Studio is a full crew built for it.</p></div>
+    <div class="two">
+      <article class="studio glass rv tilt from-l" style="--i:0">
+        <div class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="#EF8746" stroke-width="1.8" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="14" rx="4"/><path d="M10 9.2v5.6l5-2.8z" fill="#EF8746"/></svg></div>
+        <h3>YouTube Studio</h3>
+        <p class="muted" style="margin:0">A channel agent with a marketer, a producer, a supervisor and an analyst.</p>
+        <ul><li>Writes, makes, checks and schedules your videos</li><li>Avatar and banner drawn for you, in the style you pick</li><li>Learns from every video's numbers</li></ul>
+      </article>
+      <article class="studio glass rv tilt from-r" style="--i:1">
+        <div class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="#EF8746" stroke-width="1.8"><rect x="3" y="3" width="18" height="18" rx="5.5"/><circle cx="12" cy="12" r="4"/><circle cx="17.2" cy="6.8" r="1" fill="#EF8746"/></svg></div>
+        <h3>Instagram Studio</h3>
+        <p class="muted" style="margin:0">An account agent with the same crew, built for your posts.</p>
+        <ul><li>Writes, makes, checks and schedules your posts</li><li>Avatar drawn for you, in the style you pick</li><li>Learns from every post's numbers</li></ul>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- SETUP -->
+<section id="setup" aria-labelledby="setup-h">
+  <div class="wrap">
+    <div class="head rv"><span class="eyebrow">Setup</span><h2 id="setup-h">From setup to first video.</h2><p class="lead">Neesmo tells you what to do at each step. Follow every one: that is how channels go viral.</p></div>
+    <div class="setup">
+      <ol class="steps">
+        <li class="glass rv" style="--i:0"><b>Setup</b><span>Installs every free tool and skill, then helps you connect GitHub and your account</span></li>
+        <li class="glass rv" style="--i:1"><b>Name and look</b><span>Pick a name. Neesmo draws an avatar (and a YouTube banner) in several art styles. You pick your favourite</span></li>
+        <li class="glass rv" style="--i:2"><b>Ten days as a viewer</b><span>Watch, like and follow like a normal person. No posts yet. Neesmo counts the days</span></li>
+        <li class="glass rv" style="--i:3"><b>Your channel agent</b><span>It appears on the home screen as a card. Inside, a marketer, a producer, a supervisor and an analyst work together</span></li>
+        <li class="glass rv" style="--i:4"><b>A fresh session per video</b><span>Each video starts clean, in the style of the last one, so Claude use stays low</span></li>
+        <li class="glass rv" style="--i:5"><b>Learn and repeat</b><span>After every video the analyst reads the numbers and the team writes down what to do better</span></li>
+      </ol>
+      <div>
+        <div class="term rv from-r" id="term" role="img" aria-label="The installer printing a tick for each part">
+          <p class="l dim" style="--i:0">$ ./install.sh</p>
+          <p class="l" style="--i:1"><span class="ok">ok</span> tmux</p>
+          <p class="l" style="--i:2"><span class="ok">ok</span> OmniRoute</p>
+          <p class="l" style="--i:3"><span class="ok">ok</span> graphify</p>
+          <p class="l" style="--i:4"><span class="ok">ok</span> claude-mem</p>
+          <p class="l" style="--i:5"><span class="ok">ok</span> caveman</p>
+          <p class="l" style="--i:6"><span class="ok">ok</span> marketing skills</p>
+          <p class="l" style="--i:7"><span class="ok">ok</span> video skills</p>
+          <p class="l dim" style="--i:8">Neesmo is running</p>
+          <small>Run <b>./install.sh</b> once. Everything it installs is free and open source: nothing that charges credits. Logins (GitHub, YouTube) come with step-by-step help.</small>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section id="pricing" aria-labelledby="pricing-h">
+  <div class="wrap">
+    <div class="head rv center"><span class="eyebrow">Pricing</span><h2 id="pricing-h">Pick a Neesmo Studio.</h2><p class="lead">Buy once: every update is free and installs itself. No subscription.</p></div>
+    <div class="two">
+      <article class="pcard glass pcard--hot rv tilt" style="--i:0">
+        <h3>Neesmo YouTube Studio</h3>
+        <p class="price">€59 <small>early build, then €99</small></p>
+        <ul><li>A channel agent that writes, makes, checks and schedules your videos</li><li>Avatar and banner drawn for you, in the style you pick</li><li>Buy once, every update free</li></ul>
+        <a class="btn btn--or" href="https://buy.stripe.com/8x29AT1Ih9YA0z70Ms0Fi06">Buy YouTube Studio</a>
+      </article>
+      <article class="pcard glass pcard--hot rv tilt" style="--i:1">
+        <h3>Neesmo Instagram Studio</h3>
+        <p class="price">€59 <small>early build, then €99</small></p>
+        <ul><li>An account agent that writes, makes, checks and schedules your posts</li><li>Avatar drawn for you, in the style you pick</li><li>Buy once, every update free</li></ul>
+        <a class="btn btn--or" href="https://buy.stripe.com/8x200j86F4Eg2Hfdze0Fi05">Buy Instagram Studio</a>
+      </article>
+    </div>
+    <p class="muted fine rv">Needs a Linux PC or server (Windows works through WSL) and Claude Code signed in with your own Claude plan or API key. Claude usage is not included. A Roblox games setup is coming later.</p>
+  </div>
+</section>
+
+<!-- FAQ -->
+<section id="faq" aria-labelledby="faq-h">
+  <div class="wrap">
+    <div class="head rv center"><span class="eyebrow">FAQ</span><h2 id="faq-h">Questions before you buy.</h2></div>
+    <div class="faq">
+      <details class="glass rv" style="--i:0"><summary>Do I need a VPS for Neesmo?</summary><p>No. A home PC running Linux works, and so does Windows through WSL. Agents only work while it is switched on, so a small VPS suits you if you want them running all day.</p></details>
+      <details class="glass rv" style="--i:1"><summary>How does the Neesmo license check work?</summary><p>Your own computer checks the key. It checks in with the store about once a week, and a key works on 2 computers.</p></details>
+      <details class="glass rv" style="--i:2"><summary>Is Claude usage included in Neesmo?</summary><p>No. Neesmo runs on your Claude Code, signed in with your own Claude plan or API key.</p></details>
+      <details class="glass rv" style="--i:3"><summary>Will it post without asking me?</summary><p>Not in the first week: every video waits for your OK. After that it asks if it may schedule by itself, and you can say no.</p></details>
+      <details class="glass rv" style="--i:4"><summary>Why wait 10 days before the first post?</summary><p>New accounts that post on day one often look like spam. Neesmo has you use the account like a normal viewer first, and counts the days for you.</p></details>
+      <details class="glass rv" style="--i:5"><summary>Do I pay again for updates?</summary><p>No. Buy once and every update is free. Neesmo checks for them, and your channels, settings and keys stay as they are.</p></details>
+      <details class="glass rv" style="--i:6"><summary>What about Neesmo refunds?</summary><p>Questions? <a href="mailto:hello@neesmo.example">Email us</a></p></details>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section id="contact" aria-labelledby="close-h" style="padding-top:20px">
+  <div class="wrap">
+    <div class="cta glass rv">
+      <h2 id="close-h">Get your Studio.</h2>
+      <p class="lead">YouTube or Instagram Studio, €59 while the early build lasts.</p>
+      <div class="btn-row"><a class="btn btn--or" href="#pricing">See the Studios</a></div>
+    </div>
+  </div>
+</section>
 </main>
-<footer class="wrap">Neesmo is not affiliated with Anthropic. Claude and Claude Code are trademarks of Anthropic, PBC. Third-party notices ship with the app.</footer>
+
+<footer>
+  <div class="wrap">
+    <div class="row">
+      <span>&copy; 2026 Neesmo. Product names and logos are trademarks of their owners.</span>
+      <nav aria-label="Footer"><a href="mailto:hello@neesmo.example">Email us</a></nav>
+    </div>
+  </div>
+</footer>
+
 <script>
-const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add('in'); io.unobserve(e.target); } }), { threshold: .12 });
-document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+(function(){
+  var rm=window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var root=document.documentElement;
+  if(rm) root.classList.add('rm');
+  var $=function(s,c){return Array.prototype.slice.call((c||document).querySelectorAll(s))};
+
+  /* scroll reveal */
+  var rv=$('.rv');
+  if(!('IntersectionObserver' in window)||rm){rv.forEach(function(e){e.classList.add('in')})}
+  else{
+    var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}})},{threshold:.12,rootMargin:'0px 0px -6% 0px'});
+    rv.forEach(function(e){io.observe(e)});
+  }
+
+  /* counters */
+  var counters=$('[data-count]');
+  function run(el){
+    var to=+el.getAttribute('data-count'),t0=null,d=1400;
+    function f(t){if(!t0)t0=t;var p=Math.min(1,(t-t0)/d),e=1-Math.pow(1-p,3);el.textContent=Math.round(to*e);if(p<1)requestAnimationFrame(f)}
+    el.textContent='0';requestAnimationFrame(f);
+  }
+  if(!rm&&'IntersectionObserver' in window){
+    var co=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){run(e.target);co.unobserve(e.target)}})},{threshold:.6});
+    counters.forEach(function(c){co.observe(c)});
+  }
+
+  /* card tilt */
+  if(!rm&&window.matchMedia('(hover:hover)').matches){
+    $('.tilt').forEach(function(c){
+      var raf=0;
+      c.addEventListener('pointermove',function(e){
+        var r=c.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;
+        cancelAnimationFrame(raf);raf=requestAnimationFrame(function(){c.style.setProperty('--ry',(x*9).toFixed(2)+'deg');c.style.setProperty('--rx',(-y*9).toFixed(2)+'deg')});
+      });
+      c.addEventListener('pointerleave',function(){cancelAnimationFrame(raf);c.style.setProperty('--ry','0deg');c.style.setProperty('--rx','0deg')});
+    });
+  }
+
+  /* robot parallax + pipeline progress (rAF) */
+  var robot=document.getElementById('robotbox'),mx=0,my=0;
+  var pipe=document.getElementById('pipeline'),fill=document.getElementById('fill'),prog=document.getElementById('prog');
+  var nodes=$('.node'),slides=$('.slide'),last=-1,ticking=false;
+  function frame(){
+    ticking=false;
+    var sy=window.scrollY||0;
+    if(robot&&!rm){robot.style.transform='translate3d('+(mx*14).toFixed(1)+'px,'+(sy*-.12+my*10).toFixed(1)+'px,0)'}
+    if(pipe&&!rm){
+      var top=pipe.offsetTop,h=pipe.offsetHeight-window.innerHeight;
+      var p=Math.max(0,Math.min(1,(sy-top)/Math.max(1,h)));
+      var t=p*7,a=Math.min(6,Math.floor(t));
+      fill.style.setProperty('--fill',Math.min(1,t/6).toFixed(4));
+      if(a!==last){
+        last=a;
+        nodes.forEach(function(n,i){n.classList.toggle('on',i<=a);n.classList.toggle('cur',i===a)});
+        slides.forEach(function(s,i){s.classList.toggle('cur',i===a)});
+        prog.textContent='Scroll: step '+(a+1)+' of 7';
+      }
+    }
+  }
+  function req(){if(!ticking){ticking=true;requestAnimationFrame(frame)}}
+  if(!rm){
+    window.addEventListener('scroll',req,{passive:true});
+    window.addEventListener('resize',req);
+    window.addEventListener('pointermove',function(e){mx=e.clientX/window.innerWidth-.5;my=e.clientY/window.innerHeight-.5;req()},{passive:true});
+  }
+  frame();
+})();
 </script>
 </body>
 </html>
