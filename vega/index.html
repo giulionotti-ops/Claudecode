@@ -449,6 +449,34 @@
     html.robot body.chat #log { top: calc(var(--vvt, 0px) + 122px + env(safe-area-inset-top)); }
     html.robot #status { bottom: calc(196px + min(86vw, 420px) * 1.06 + env(safe-area-inset-bottom)); }   /* bubble above the robot head */
   }
+
+  /* ── frosted glass, Apple style: thinner frames, deeper blur, iOS controls ── */
+  html.robot { --glass: rgba(255,255,255,.34); --glass-hi: rgba(255,255,255,.62); --edge: rgba(255,255,255,.66); --blur: blur(30px) saturate(1.9);
+    --lift: inset 0 1px 0 rgba(255,255,255,.9), inset 0 0 0 .5px rgba(255,255,255,.4), 0 24px 48px -22px rgba(43,29,20,.38), 0 2px 6px -2px rgba(43,29,20,.12); }
+  html.robot :is(.card, #f > *, #log p, #status, .pill, .icons) { background: var(--glass); -webkit-backdrop-filter: var(--blur); backdrop-filter: var(--blur); border: .5px solid var(--edge); box-shadow: var(--lift); }
+  html.robot #agents-l .card:nth-child(n), html.robot #agents-r .card:nth-child(n) { background: linear-gradient(160deg, color-mix(in srgb, var(--a) 16%, rgba(255,255,255,.5)), rgba(255,255,255,.26)); }
+  html.robot .card.agent:hover { box-shadow: inset 0 1px 0 rgba(255,255,255,.95), 0 34px 60px -24px rgba(43,29,20,.48); }
+  html.robot :is(.pop, dialog, dialog#ag, dialog#ap) { background: rgba(250,246,241,.66); -webkit-backdrop-filter: blur(40px) saturate(2); backdrop-filter: blur(40px) saturate(2);
+    border: .5px solid rgba(255,255,255,.75); border-radius: 26px; box-shadow: inset 0 1px 0 rgba(255,255,255,.9), 0 50px 100px -30px rgba(43,29,20,.5); }
+  html.robot .pop { border-radius: 22px; }
+  html.robot dialog::backdrop { background: rgba(60,40,25,.12); -webkit-backdrop-filter: blur(20px) saturate(1.3); backdrop-filter: blur(20px) saturate(1.3); }
+  /* iOS segmented control for settings tabs */
+  html.robot .tabs { display: flex; gap: 2px; padding: 3px; border-radius: 12px; background: rgba(118,98,82,.12); border: 0; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; overflow-x: auto; scrollbar-width: none; }
+  html.robot .tabs button { flex: 1 0 auto; border: 0; border-radius: 9px; padding: 6px 12px; font: 600 12.5px var(--sans); letter-spacing: 0; text-transform: none; color: rgba(43,29,20,.7); background: none; transition: background .25s, color .25s, box-shadow .25s; }
+  html.robot .tabs button[aria-selected="true"] { background: rgba(255,255,255,.92); color: var(--c); box-shadow: 0 3px 8px -2px rgba(43,29,20,.18), 0 0 0 .5px rgba(43,29,20,.06); }
+  /* iOS switch */
+  html.robot .tog { width: 51px; height: 31px; padding: 0; border: 0; border-radius: 999px; background: rgba(120,104,92,.22); transition: background .25s; box-shadow: none; }
+  html.robot .tog::after { top: 2px; left: 2px; width: 27px; height: 27px; background: #fff; box-shadow: 0 3px 8px rgba(0,0,0,.15), 0 1px 1px rgba(0,0,0,.08); transition: transform .3s cubic-bezier(.3,1.3,.5,1); }
+  html.robot .tog[aria-checked="true"] { background: #34C759; } html.robot .tog[aria-checked="true"]::after { transform: translateX(20px); background: #fff; }
+  /* inputs and buttons: soft fields, pill buttons */
+  html.robot :is(.pop, dialog) :is(input:not([type=file]), select, textarea) { border-radius: 12px; border: .5px solid rgba(43,29,20,.14); background: rgba(255,255,255,.62); color: var(--c); }
+  html.robot :is(.pop, dialog) :is(input, select, textarea):focus { border-color: rgba(var(--rgb),.7); box-shadow: 0 0 0 4px rgba(var(--rgb),.16); }
+  html.robot :is(.pop, dialog) button:not(.tog):not(.sw):not([role=tab]):not(.look):not(.vid) { border-radius: 999px; }
+  html.robot :is(#ag-save, #c-save, #b-save) { background: #2B1D14; color: #FFF8EF; border: 0; font-weight: 600; }
+  html.robot .pop .row { border-top: .5px solid rgba(43,29,20,.1); }
+  html.robot .pop h3 { color: rgba(43,29,20,.55); font: 700 11px var(--sans); letter-spacing: .08em; }
+  html.robot .sw { width: 30px; height: 30px; border: 0; box-shadow: inset 0 0 0 .5px rgba(43,29,20,.2), 0 3px 8px -3px rgba(43,29,20,.4); transition: transform .2s; }
+  html.robot .sw[aria-pressed="true"] { transform: scale(1.12); box-shadow: 0 0 0 2px #fff, 0 0 0 4px var(--s), 0 4px 10px -3px rgba(43,29,20,.4); }
 </style>
 <link rel="stylesheet" href="/static/studio.css">
 </head>
@@ -854,7 +882,9 @@ addEventListener('keyup', e => { if (e.code === 'Space' && e.target === document
 // ── agent cards + report ──
 // label, colour and "in development" come from the agent config on the server (Settings → Agents)
 const AGENT_SHORT = {}, AGENT_COLORS = {}, AGENT_DEV = new Set();
-function learnAgents(list) { for (const a of list) { AGENT_SHORT[a.id] = a.short || a.name; AGENT_COLORS[a.id] = a.color || '#3dff8f'; a.dev ? AGENT_DEV.add(a.id) : AGENT_DEV.delete(a.id); } }
+const OLD_HUES = { '#ff6b6b': '#E5674F', '#ff7ac6': '#D9829B', '#5cc8ff': '#6E9CC9', '#b388ff': '#9D86C4', '#ffd166': '#E2AE4A', '#3dff8f': '#7FAF7A', '#ff9f43': '#EF8746', '#7ee8fa': '#5FA8A0' };
+const hue = c => OLD_HUES[(c || '').toLowerCase()] || c || '#EF8746';
+function learnAgents(list) { for (const a of list) { AGENT_SHORT[a.id] = a.short || a.name; AGENT_COLORS[a.id] = hue(a.color); a.dev ? AGENT_DEV.add(a.id) : AGENT_DEV.delete(a.id); } }
 const fmt = n => n == null ? '—' : Number(n).toLocaleString();
 const kfmt = n => !n ? '0' : n >= 1e6 ? (n / 1e6).toFixed(1) + 'M' : n >= 1e3 ? Math.round(n / 1e3) + 'k' : String(n);
 const esc = t => String(t ?? '').replace(/[&<>"]/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
@@ -1044,7 +1074,7 @@ async function loadAgentCfg() {
 }
 function openAgentEditor(i) {
   agEdit = i; const a = agCfg.agents[i] || {};
-  agColor = a.color || agCfg.colors[agCfg.agents.length % agCfg.colors.length] || '#3dff8f';
+  agColor = a.color ? hue(a.color) : agCfg.colors[agCfg.agents.length % agCfg.colors.length] || '#EF8746';
   $('#ag-title').textContent = i < 0 ? 'New agent' : a.name;
   $('#ag-name').value = a.name || ''; $('#ag-short').value = a.short || ''; $('#ag-role').value = a.role || '';
   $('#ag-folder').value = a.folder || ''; $('#ag-inst').value = a.instructions || '';

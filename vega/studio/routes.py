@@ -13,7 +13,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-from fastapi import APIRouter, HTTPException, UploadFile
+from fastapi import APIRouter, Form, HTTPException, UploadFile
 from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
@@ -342,7 +342,70 @@ def channel_get(aid: str):
                      "nums": {p: {"views": n.get("views"), "likes": n.get("likes")} for p, n in (r.get("platforms") or {}).items()}})
     out["videos"] = vids
     out["platforms"] = state.platforms()
+    out.update(_brand(aid))
     return out
+
+
+# ---------------------------------------------------------------- channel brand: name, avatar, banner
+def _brand(aid: str) -> dict:
+    """Avatar and banner files in the channel folder (neesmo/avatar.*, neesmo/banner.*), with an mtime to bust caches.
+    A channel without its own takes the pictures picked at setup (state look) the first time it is asked."""
+    n = channel.paths(aid)["n"]
+    out = {}
+    for kind in ("avatar", "banner"):
+        f = next((x for x in sorted(n.glob(kind + ".*")) if x.suffix.lower() in (".png", ".jpg", ".webp")), None)
+        if not f:   # first time: copy the picture picked at setup into the channel folder
+            src = (state.load().get("look") or {}).get(kind)
+            ext = {".jpeg": ".jpg"}.get(Path(src).suffix.lower(), Path(src).suffix.lower()) if src else ""
+            if src and ext in (".png", ".jpg", ".webp") and Path(src).is_file() and Path(src).stat().st_size < 8_000_000 \
+                    and len([a for a in agents.load() if channel.is_channel(a)]) == 1:
+                n.mkdir(parents=True, exist_ok=True)
+                f = n / (kind + ext)
+                f.write_bytes(Path(src).read_bytes())
+        if f:
+            out[kind] = str(f)
+            out[kind + "_v"] = int(f.stat().st_mtime)
+    return out
+
+
+IMG_TYPES = {b"\x89PNG": ".png", b"\xff\xd8\xff": ".jpg", b"RIFF": ".webp"}
+
+
+@router.post("/channels/{aid}/brand")
+async def channel_brand(aid: str, name: str = Form(""), avatar: UploadFile | None = None, banner: UploadFile | None = None):
+    """Owner edits the channel's name, avatar and banner from the channel settings."""
+    _channel_or_404(aid)
+    n = channel.paths(aid)["n"]
+    files = {}
+    for kind, up in (("avatar", avatar), ("banner", banner)):   # check both pictures before writing anything
+        if not up or not up.filename:
+            continue
+        data = await up.read(8_000_001)
+        if len(data) > 8_000_000:
+            raise HTTPException(400, f"The {kind} picture is too big (8 MB max).")
+        ext = next((e for sig, e in IMG_TYPES.items() if data.startswith(sig)), None)
+        if not ext or (ext == ".webp" and data[8:12] != b"WEBP"):
+            raise HTTPException(400, f"The {kind} must be a PNG, JPG or WebP picture.")
+        files[kind] = (ext, data)
+    name = name.strip()[:40]
+    if name:
+        raw = [dict(a) for a in agents._raw()]
+        hit = next((a for a in raw if a.get("id") == aid), None)
+        if not hit:
+            raise HTTPException(404, "no such channel agent")
+        hit["name"], hit["id"] = name, aid
+        try:
+            agents.save(raw)
+        except ValueError as e:
+            raise HTTPException(400, str(e))
+        if len([a for a in agents.load() if channel.is_channel(a)]) == 1:
+            state.save(channel_name=name)
+    n.mkdir(parents=True, exist_ok=True)
+    for kind, (ext, data) in files.items():
+        for old in n.glob(kind + ".*"):
+            old.unlink()
+        (n / (kind + ext)).write_bytes(data)
+    return {"ok": True, "name": name or None, **_brand(aid)}
 
 
 # ---------------------------------------------------------------- one video: numbers per platform + its chat

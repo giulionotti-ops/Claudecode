@@ -16,7 +16,8 @@ HOME = Path.home()
 NEESMO_DIR = Path(os.environ.get("NEESMO_DIR", HOME / ".config" / "neesmo"))
 CONFIG = NEESMO_DIR / "agents.json"   # made by the setup wizard / Settings → Agents
 AGENT_HOME = Path(os.environ.get("NEESMO_AGENT_HOME", HOME / "neesmo-agents"))  # default folder for new agents
-COLORS = ["#ff6b6b", "#ff7ac6", "#5cc8ff", "#b388ff", "#ffd166", "#3dff8f", "#ff9f43", "#7ee8fa"]
+# warm palette that sits on the beige glass look: orange, tomato, amber, sage, teal, dusty blue, lavender, rose
+COLORS = ["#EF8746", "#E5674F", "#E2AE4A", "#7FAF7A", "#5FA8A0", "#6E9CC9", "#9D86C4", "#D9829B"]
 # Without agents.json a product copy starts with no agents. The owner's own install keeps its setup in
 # private.json ({"agents": [...], "prompt": "..."}), a file that is never shipped.
 def _private() -> dict:

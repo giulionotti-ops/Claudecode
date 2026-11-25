@@ -232,9 +232,12 @@ async function enhance() {
     if (!d || Date.now() - d._t > 14000) { try { d = S.ch[id] = { ...(await G('/channels/' + encodeURIComponent(id))), _t: Date.now() }; } catch { continue; } }
     const c = d.counts || {}, r = d.running || {};
     const run = d.busy && r.role ? `${(d.roles.find(x => x.id === r.role) || {}).label || r.role} · video ${r.video || ''}` : d.warmup_left ? `Warm-up: ${d.warmup_left} days` : d.settings?.paused ? 'Paused' : 'Waiting for the next slot';
-    el.querySelector('small').insertAdjacentHTML('afterend', `${d.last_poster ? `<img class="pv" src="${media(id, d.last_poster)}" alt="">` : ''}
+    const pic = d.banner ? media(id, d.banner) + '&v=' + d.banner_v : d.last_poster ? media(id, d.last_poster) : '';
+    if (d.avatar && el.querySelector('.mono-a')) el.querySelector('.mono-a').innerHTML = `<img src="${media(id, d.avatar)}&v=${d.avatar_v}" alt="">`;
+    // compact card; the banner, numbers and current step unfold on hover (desktop) or keyboard focus
+    el.querySelector('small').insertAdjacentHTML('afterend', `<span class="more"><span class="more-in">${pic ? `<img class="pv${d.banner ? ' bn' : ''}" src="${pic}" alt="">` : ''}
       <span class="dash"><span><b>${(c.ready_for_review || 0) + (c.needs_owner || 0)}</b>review</span><span><b>${c.scheduled || 0}</b>sched.</span><span><b>${c.posted || 0}</b>live</span><span><b>${kfmt(d.stats?.views)}</b>views</span></span>
-      <span class="run${d.busy ? ' on' : ''}">${esc(run)}</span>`);
+      <span class="run${d.busy ? ' on' : ''}">${esc(run)}</span></span></span>`);
     if (d.busy) el.querySelector('b').textContent = 'Working';
   }
   if (S.chd && $('#chd').open && !S.vd) openChd(S.chd, true);
@@ -414,6 +417,11 @@ $('#ap-no').addEventListener('click', e => {
 // ------------------------------------------------------------------ agent settings: Channel tab
 $('#ag-tabs').insertAdjacentHTML('beforeend', '<button type="button" role="tab" data-agtab="channel" aria-selected="false" hidden>Channel</button>');
 $('#ag-form .agtab[data-agtab="plugins"]').insertAdjacentHTML('afterend', `<div class="agtab" data-agtab="channel" role="tabpanel" hidden>
+  <div class="brand"><label class="bn-pick" title="Change banner"><img id="c-bn" alt="" hidden><span>Change banner</span><input type="file" id="c-bnf" accept="image/png,image/jpeg,image/webp" hidden></label>
+    <label class="av-pick" title="Change avatar"><img id="c-av" alt="" hidden><i id="c-avl"></i><span>Edit</span><input type="file" id="c-avf" accept="image/png,image/jpeg,image/webp" hidden></label></div>
+  <label for="c-name">Channel name</label><input id="c-name" maxlength="40" placeholder="e.g. Bitesized History">
+  <p id="b-err" role="alert"></p><div class="btns"><button type="button" id="b-save">Save name and pictures</button></div>
+  <h3 class="c-h">Posting</h3>
   <div class="row"><div><label id="l-cas">Schedule by itself</label><small class="sub" id="cas-note">Videos go out without waiting for your OK.</small></div><button type="button" class="tog" role="switch" id="c-auto" aria-labelledby="l-cas"></button></div>
   <label for="c-per">Videos per day</label><select id="c-per"><option>1</option><option>2</option><option>3</option><option>4</option></select>
   <label for="c-times">Post times (24h, comma separated)</label><input id="c-times" placeholder="13:30, 19:30">
@@ -431,6 +439,7 @@ openAgentEditor = i => {
   $('#ag-form').dataset.chan = a.id;
   G('/channels/' + encodeURIComponent(a.id)).then(d => {
     const s = d.settings || {};
+    showBrand(a, d);
     tog($('#c-auto'), s.auto_schedule); tog($('#c-pause'), s.paused);
     $('#c-auto').disabled = d.in_trial || !!d.warmup_left;
     $('#cas-note').textContent = d.in_trial || d.warmup_left ? `Unlocks after the ${S.st.trial_days}-day trial week. Until then every video waits for your OK.` : 'Videos go out without waiting for your OK.';
@@ -450,6 +459,34 @@ $('#c-save').onclick = async () => {
       timezone: $('#c-tz').value.trim() || Intl.DateTimeFormat().resolvedOptions().timeZone }, 'PUT');
     $('#c-err').textContent = 'Saved.'; delete S.ch[id];
   } catch (x) { $('#c-err').textContent = x.message; }
+};
+
+// channel brand: name, avatar and banner, previewed before saving
+function showBrand(a, d) {
+  for (const k of ['av', 'bn']) { $(`#c-${k}f`).value = ''; }
+  const set = (img, p, v) => { img.hidden = !p; if (p) img.src = media(a.id, p) + '&v=' + v; };
+  set($('#c-av'), d.avatar, d.avatar_v); set($('#c-bn'), d.banner, d.banner_v);
+  $('#c-avl').textContent = (a.short || a.name || '?').trim()[0] || '?'; $('#c-avl').hidden = !!d.avatar;
+  $('#c-name').value = a.name || ''; $('#b-err').textContent = '';
+}
+for (const k of ['av', 'bn']) $(`#c-${k}f`).onchange = e => {
+  const f = e.target.files[0]; if (!f) return;
+  const img = $(`#c-${k}`); img.src = URL.createObjectURL(f); img.hidden = false; if (k === 'av') $('#c-avl').hidden = true;
+};
+$('#c-name').addEventListener('keydown', e => { if (e.key === 'Enter') { e.preventDefault(); $('#b-save').click(); } });
+$('#b-save').onclick = async () => {
+  const id = $('#ag-form').dataset.chan, fd = new FormData();
+  fd.append('name', $('#c-name').value.trim());
+  if ($('#c-avf').files[0]) fd.append('avatar', $('#c-avf').files[0]);
+  if ($('#c-bnf').files[0]) fd.append('banner', $('#c-bnf').files[0]);
+  $('#b-save').disabled = true; $('#b-err').textContent = 'Saving…';
+  try {
+    const r = await J(`/channels/${encodeURIComponent(id)}/brand`, fd);
+    const a = agCfg.agents.find(x => x.id === id);
+    if (r.name) { $('#ag-title').textContent = r.name; $('#ag-name').value = r.name; if (a) a.name = r.name; }
+    showBrand(a || { id, name: r.name }, r); $('#b-err').textContent = 'Saved.'; delete S.ch[id]; await loadAgents();
+  } catch (x) { $('#b-err').textContent = x.message; }
+  $('#b-save').disabled = false;
 };
 
 // ------------------------------------------------------------------ System settings: permissions, notifications, updates

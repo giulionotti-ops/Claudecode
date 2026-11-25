@@ -12,13 +12,13 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="favicon.png" type="image/png">
 <link rel="apple-touch-icon" href="apple-touch-icon.png">
-<meta name="theme-color" content="#f4f8f5">
+<meta name="theme-color" content="#D6CBC0">
 <!-- <link rel="canonical" href="https://neesmo.example/"> -->
 <meta name="site-kind" content="software">
 <meta name="page-type" content="software">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..700&family=Geist+Mono:wght@400..500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400..700&family=Geist+Mono:wght@400..500&family=Archivo:ital,wght@0,400;0,600;0,700;1,900&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="assets/system.css">
 <link rel="stylesheet" href="assets/ui/cards.css">
 <link rel="stylesheet" href="assets/motion/motion.css">
@@ -31,7 +31,7 @@
   --p-accent: #087a3f; --p-accent-ink: #ffffff; --p-action: #087a3f; --p-action-ink: #ffffff;
   --p-inv-bg: #06140d; --p-inv-surface: #13211a; --p-inv-ink: #f4f8f5; --p-inv-muted: #8f9893;
   --p-inv-accent: #087a3f; --p-inv-accent-ink: #ffffff; --p-inv-action: #087a3f; --p-inv-action-ink: #ffffff;
-  --font-display: "Geist", system-ui, sans-serif;
+  --font-display: "Archivo", "Geist", system-ui, sans-serif;
   --font-text: "Geist", system-ui, sans-serif;
   --font-mono: "Geist Mono", ui-monospace, "SFMono-Regular", Menlo, Consolas, monospace;
   --display-weight: 500;
@@ -124,6 +124,127 @@
 .faq-grid { align-items: start; }
 @media (max-width: 639px) { #approvals .panel, #how .panel { --p-h: 260px; } .price, #pricing .price { font-size: 36px; } }
 </style>
+<style id="neesmo-look">
+/* Neesmo app look: warm beige, orange Archivo, frosted glass */
+:root { --glass: rgba(255,255,255,.38); --glass-line: rgba(255,255,255,.65); --ink2: #2B1D14; --mut2: rgba(43,29,20,.65); --or: #EF8746;
+  --glass-sh: inset 0 1px 0 rgba(255,255,255,.9), 0 24px 48px -20px rgba(43,29,20,.35); }
+html, body { background: #D6CBC0; }
+body { background: radial-gradient(120% 90% at 50% 40%, #E6DDD3, #D6CBC0 55%, #BFB2A5) fixed; color: var(--ink2); font-family: "Geist", system-ui, sans-serif; overflow-x: hidden; }
+.bg-topglow, .bg-deep, .section, .footer, .closing, .hero { background: none !important; box-shadow: none; --bg: transparent; color: var(--ink2); --ink: #2B1D14; --muted: rgba(43,29,20,.65); --accent: #C86A36; }
+.bg-topglow::before, .bg-topglow::after, .bg-deep::before, .bg-deep::after, .hero::before, .hero::after { display: none !important; }
+.section { padding-block: clamp(64px, 9vw, 120px); }
+h1, h2, h3, .nav__logo, .close__word, .mo-la__type, .price { font-family: "Archivo", "Geist", sans-serif; }
+h1, h2, .nav__logo, .close__word, .mo-la__type {
+  font-weight: 900; font-style: italic; letter-spacing: -.04em; color: #EF8746;
+  text-shadow: 1px 1px 0 #D9773F, 2px 2px 0 #C86A36, 3px 3px 0 #B85F30, 16px 22px 40px rgba(60,35,20,.22); }
+h2 { font-size: clamp(34px, 5.2vw, 64px); line-height: 1; }
+h3 { font-weight: 700; letter-spacing: -.02em; color: var(--ink2); }
+.price { font-weight: 900; font-style: italic; letter-spacing: -.04em; color: #2B1D14; }
+.mo-la__type, .mo-la__type * { color: #EF8746 !important; }
+.mo-la__sub, .hero__lead, .section-head p, p { color: var(--mut2); }
+.hero__lead { max-width: 52ch; }
+a { color: #C86A36; }
+/* nav */
+.nav { background: transparent !important; box-shadow: none !important; border: 0 !important; position: sticky; top: 12px; z-index: 50; height: auto; }
+.nav__bar { margin-top: 0; padding: 10px 12px 10px 24px; border-radius: 999px; background: var(--glass); -webkit-backdrop-filter: blur(30px) saturate(1.8); backdrop-filter: blur(30px) saturate(1.8);
+  border: 1px solid var(--glass-line); box-shadow: var(--glass-sh); height: 64px; }
+.nav__logo { font-size: 26px; text-shadow: 1px 1px 0 #D9773F, 2px 2px 0 #C86A36; }
+.nav__link { color: var(--ink2) !important; border-radius: 999px; }
+.nav__link:hover { background: rgba(255,255,255,.5); }
+.nav__menu { background: rgba(255,248,239,.92) !important; -webkit-backdrop-filter: blur(30px); backdrop-filter: blur(30px); border-radius: 24px; border: 1px solid var(--glass-line); }
+/* buttons */
+.btn { border-radius: 999px !important; font-weight: 600; letter-spacing: 0; transition: transform .2s, box-shadow .2s; }
+.btn--primary { background: #2B1D14 !important; color: #FFF8EF !important; border: 1px solid #2B1D14; box-shadow: 0 10px 24px -10px rgba(43,29,20,.55); }
+.btn--secondary { background: var(--glass) !important; color: var(--ink2) !important; -webkit-backdrop-filter: blur(30px) saturate(1.8); backdrop-filter: blur(30px) saturate(1.8); border: 1px solid var(--glass-line) !important; box-shadow: var(--glass-sh); }
+.btn:hover { transform: translateY(-2px); }
+.pill { border-radius: 999px !important; background: var(--glass) !important; color: var(--ink2) !important; border: 1px solid var(--glass-line) !important; -webkit-backdrop-filter: blur(30px) saturate(1.8); backdrop-filter: blur(30px) saturate(1.8); box-shadow: var(--glass-sh); }
+.pill .muted { color: var(--mut2) !important; }
+/* glass panels */
+.card, .panel, .rows, .faq__item, .term, .mk, .d-win, .ui-panel, .ui-chat, .ui-notify, .shot, .footer .closing__links {
+  border-radius: 28px !important; }
+.card { background: var(--glass) !important; -webkit-backdrop-filter: blur(30px) saturate(1.8); backdrop-filter: blur(30px) saturate(1.8);
+  border: 1px solid var(--glass-line) !important; box-shadow: var(--glass-sh) !important; color: var(--ink2); }
+.card--open { background: var(--glass) !important; }
+.panel { background: rgba(255,255,255,.28) !important; border: 1px solid var(--glass-line) !important; overflow: hidden; border-radius: 24px !important; box-shadow: inset 0 1px 0 rgba(255,255,255,.7); }
+.rows { background: var(--glass); -webkit-backdrop-filter: blur(30px) saturate(1.8); backdrop-filter: blur(30px) saturate(1.8); border: 1px solid var(--glass-line); box-shadow: var(--glass-sh); padding: 8px 28px; list-style: none; }
+.rows li { border-color: rgba(43,29,20,.1) !important; color: var(--ink2); }
+.rows .rows__name { color: var(--ink2); font-weight: 600; }
+.rows .rows__name small { color: var(--mut2) !important; }
+.faq .faq__item { background: var(--glass); border: 1px solid var(--glass-line); border-radius: 24px; padding: 20px 24px; margin-bottom: 12px; box-shadow: var(--glass-sh); -webkit-backdrop-filter: blur(30px) saturate(1.8); backdrop-filter: blur(30px) saturate(1.8); }
+.faq .faq__item h3 { margin: 0 0 6px; }
+.checks li::before { background: #2F8F5B; border-radius: 50%; }
+.shot { margin: 0 0 var(--s-6, 32px); padding: 10px; background: var(--glass); border: 1px solid var(--glass-line); box-shadow: var(--glass-sh); -webkit-backdrop-filter: blur(30px) saturate(1.8); backdrop-filter: blur(30px) saturate(1.8); }
+.shot img { display: block; width: 100%; height: auto; border-radius: 20px; }
+.phone-shot { border-radius: 22px; }
+.logos img { filter: brightness(0) saturate(100%) invert(10%) sepia(20%) saturate(900%) hue-rotate(345deg); opacity: .8; }
+/* the product mock inside the hero and cards: light glass instead of dark HUD */
+.d-win { --ink: #2B1D14; background: var(--glass); color: var(--ink2); -webkit-backdrop-filter: blur(30px) saturate(1.8); backdrop-filter: blur(30px) saturate(1.8);
+  border: 1px solid var(--glass-line); box-shadow: var(--glass-sh); }
+.d-win__bar { border-bottom: 1px solid rgba(43,29,20,.1); color: var(--mut2); }
+.d-win__dots i { background: rgba(43,29,20,.18); }
+.hud { padding: 16px 20px; }
+.hud__clock { color: var(--ink2); font-weight: 600; }
+.hud__clock b { color: #C86A36; }
+.hud::before { width: 260px; border: 1.5px solid rgba(239,135,70,.5); background: radial-gradient(circle, #fff 0 4%, rgba(239,135,70,.55) 9%, rgba(239,135,70,.18) 28%, transparent 48%); box-shadow: none; }
+.hud::after { content: "NEESMO"; font: 900 italic 150px/1 "Archivo", sans-serif; color: #EF8746; opacity: .14; }
+.hc, .perm { background: rgba(255,255,255,.55); border: 1px solid rgba(255,255,255,.8); border-left: 3px solid var(--c); border-radius: 16px; }
+.hc small { color: var(--mut2); } .hc span, .mk__nums { color: var(--mut2); } .hc b { color: var(--ink2); }
+.hc--warn small { color: #C86A36; }
+.d-msg { background: rgba(255,255,255,.6); border: 1px solid rgba(255,255,255,.85); border-radius: 18px; color: var(--ink2); }
+.d-msg--me { background: #2B1D14; color: #FFF8EF; border-color: #2B1D14; }
+.d-msg--bot small, .d-tool { color: var(--mut2); }
+.d-tool::before { border-color: #2F8F5B; border-right-color: transparent; }
+.acts span { color: #C86A36; } .acts span + span { color: var(--ink2); }
+.mk { background: rgba(255,255,255,.3); color: var(--ink2); box-shadow: none; border: 1px solid var(--glass-line); }
+.mk__row span { background: #2B1D14; color: #FFF8EF; border-radius: 999px; } .mk__row span + span { background: transparent; color: var(--ink2); box-shadow: inset 0 0 0 1px rgba(43,29,20,.25); }
+.mk__bar { background: rgba(43,29,20,.1); border-radius: 4px; } .mk__bar i { background: #EF8746; border-radius: 4px; } .mk__nums b { color: var(--ink2); }
+.ui-chat, .ui-notify { --fx-bg: rgba(255,255,255,.55); --fx-surface: rgba(255,255,255,.4); --fx-ink: #2B1D14; --fx-muted: rgba(43,29,20,.65); --fx-accent: #2B1D14; --fx-accent-ink: #FFF8EF; }
+.ui-chat .ui-msg--me .ui-msg__text { border-radius: 18px; }
+.ui-btn { border-radius: 999px !important; }
+.term { background: rgba(43,29,20,.9); color: #FFF8EF; box-shadow: var(--glass-sh); border-radius: 24px; } .term .ok { color: #7BE0A3; } .term .dim { color: rgba(255,248,239,.6); }
+main > section, main > .section, footer.closing { height: auto !important; min-height: 0 !important; }
+main > section > .wrap, footer.closing > .wrap { height: auto !important; }
+.term p { color: inherit; } .term p.dim { color: rgba(255,248,239,.6); }
+.card { padding: clamp(22px, 3vw, 34px) !important; gap: 14px; }
+.card .panel { margin-top: auto; }
+.phone-shot { width: min(250px, 70%) !important; height: auto !important; margin: 18px auto 0; border-radius: 28px 28px 0 0; box-shadow: 0 0 0 6px #2B1D14, 0 20px 40px -12px rgba(43,29,20,.4); }
+#approvals .panel:has(.phone-shot) { --p-h: 440px; }
+.card .logos { justify-content: flex-start; gap: 28px; margin: 4px 0; }
+.logos { justify-content: flex-start; gap: 28px; }
+@media (max-width: 639px) { .ui-note { flex-wrap: wrap; } .ui-note__text { flex: 1 1 calc(100% - 50px); min-width: 0; } .ui-note__btn { margin-left: 44px; } .hud { min-height: 280px !important; } #approvals .panel:has(.phone-shot) { --p-h: 400px; } }
+/* hero */
+html, body { overflow-x: clip; }
+main > .hero--centred { height: auto !important; min-height: 0 !important; display: block !important; overflow: visible; padding: calc(var(--nav, 72px) + 40px) 0 clamp(40px, 6vw, 80px); }
+.hero--centred > .wrap { height: auto !important; display: block !important; position: relative; }
+.hero--centred > .wrap > .hero-text { display: block !important; height: auto !important; }
+.hero--centred .hero__c { display: grid; justify-items: start; text-align: left; max-width: 640px; margin: 0; gap: 18px; position: relative; z-index: 2; }
+.hero--centred h1 { font-size: clamp(54px, 8.4vw, 124px); line-height: .94; margin: 6px 0 0; max-width: 8.5em; }
+.hero--centred .ly-mark { display: none; }
+.hero--centred .btn-row { justify-content: flex-start; margin-top: 8px; }
+.hero__robot { position: absolute; right: calc(-1 * clamp(30px, 6vw, 120px)); top: -40px; width: clamp(300px, 44vw, 640px); height: auto; z-index: 1; pointer-events: none;
+  filter: drop-shadow(-14px 20px 18px rgba(60,35,20,.28)); }
+.hero--centred .hero__window { flex: none; -webkit-mask-image: none; mask-image: none; overflow: visible; background: none; min-height: 0; margin-top: clamp(48px, 7vw, 96px); position: relative; z-index: 2; max-width: 860px; }
+.hero--centred .hero__window > .ly-piece, .hero--centred .hero__window > .ly-piece.d-win { position: relative !important; left: 0 !important; top: 0 !important; transform: none !important; width: 100% !important; }
+h1, h2, .mo-la__type, .close__word { word-spacing: .06em; }
+@media (max-width: 860px) {
+  .hero__robot { width: 74vw; right: -20vw; top: auto; bottom: auto; position: relative; display: block; margin: 8px 0 -40px auto; }
+  .hero--centred .hero__c { max-width: none; }
+  .hero--centred .hero__window { margin-top: 24px; }
+}
+@media (max-width: 639px) {
+  main > .hero--centred { padding-top: 96px; }
+  .hero--centred h1 { font-size: 52px; }
+  .nav__bar { padding-left: 18px; height: 56px; }
+  .mo-la__type { font-size: 20vw; }
+  .hud::after { font-size: 70px; }
+  .rows { padding: 4px 18px; }
+}
+.close__word { font-size: clamp(64px, 17vw, 250px); white-space: nowrap; overflow: visible; }
+.closing, .footer { border: 0 !important; }
+.footer__col a, .footer__legal, .footer__lede { color: var(--mut2); }
+.footer h3 { color: var(--ink2); }
+:focus-visible { outline: 2px solid #C86A36; outline-offset: 3px; }
+</style>
 </head>
 <body>
 <!-- type: software. category: self-hosted voice command centre for Claude Code.
@@ -157,6 +278,7 @@
         <p class="hero__lead">Neesmo is an AI companion that runs your YouTube channel or Instagram account. A team of agents writes the hooks, makes the videos, checks them and learns from the numbers. You approve. It runs on your own computer.</p>
         <div class="btn-row"><a class="btn btn--primary" href="#pricing">See the Studios</a><a class="btn btn--secondary" href="#steps">See how it starts</a></div>
       </div>
+      <img class="hero__robot" src="img/robot-hero.webp" alt="" width="771" height="900" fetchpriority="high">
       <div class="hero__window" role="img" aria-label="The Neesmo screen: a glowing voice ring, agent cards on both sides, and Neesmo answering what every agent is doing">
         <div class="ly-piece d-win" aria-hidden="true">
           <div class="d-win__bar"><span class="d-win__dots"><i></i><i></i><i></i></span><span>neesmo.local</span><span class="sp"></span><span>1 channel</span></div>
@@ -205,6 +327,7 @@
         <h2 id="how-h">Every channel is a card</h2>
         <p>Your channel agent sits on the home screen. Talk to it from there, tag it, or open it full screen.</p>
       </div>
+      <figure class="shot"><img src="img/app-dashboard.webp" alt="A Neesmo channel dashboard: views, subscribers, videos waiting, scheduled and live" width="2880" height="1800" loading="lazy"></figure>
       <div class="grid">
         <article class="card card--row card--open span-6">
           <h3>A live dashboard per channel</h3>
@@ -260,7 +383,7 @@
             <img class="ic" data-icon="cloudflare" src="assets/icons/cloudflare.svg" alt="Cloudflare" width="40" height="18">
           </div>
           <div class="panel" role="img" aria-label="Neesmo on an iPhone: the ring and the agent cards">
-            <div class="stage"><img class="phone-shot" src="img/hud-phone.webp" alt="" width="700" height="1192" loading="lazy"></div>
+            <div class="stage"><img class="phone-shot" src="img/app-phone.webp" alt="" width="1170" height="2532" loading="lazy"></div>
           </div>
         </article>
       </div>
