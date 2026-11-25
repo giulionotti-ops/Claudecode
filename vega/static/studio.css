@@ -212,7 +212,13 @@ html.robot.night:not(#z) .chd .roles span.on { background: color-mix(in srgb, va
 html.robot.night:not(#z) .chd :is(small, .sub, .when, time) { color: var(--dim); }
 html.robot.night:not(#z) .agent.chan :is(.tag, .short, .kicker) { color: var(--dim); }
 html.robot.night:not(#z) .chd .main, html.robot.night:not(#z) #onb .btns .main { background: #14E2A1; color: #0d1712; }
-html.robot.night:not(#z) .card :is(.st, .run) { color: rgba(243,233,223,.62); }
+html.robot.night:not(#z) .card .run { color: rgba(243,233,223,.62); }
+html.robot.night:not(#z) .card .st { color: #FFF8EF; }
+html.robot.night:not(#z) :is(#ap, #ag) .rp > header, html.robot.night:not(#z) .tabs { background: rgba(30,23,19,.92); border-bottom-color: rgba(255,255,255,.08); }
+html.robot.night:not(#z) #report .rp > header { background: color-mix(in srgb, var(--a) 22%, rgba(30,23,19,.92)); }
+html.robot.night:not(#z) :is(#ap, #ag) .rp > header :is(h2, small, p) { color: var(--c); }
 html.robot.night:not(#z) .chd .vlog .vega, html.robot.night:not(#z) body.chat #log p.vega { background: rgba(255,255,255,.08); border-color: rgba(255,255,255,.12); color: var(--c); }
 html.robot.night:not(#z) .chd #vd-f button { background: #F3E9DF; color: #17110E; }
 html.robot.night:not(#z) .chd .vlog .you { background: #EF8746; color: #17110E; }
+html.robot.night:not(#z) .card.s-offline { opacity: 1; }
+html.robot.night:not(#z) .card.s-offline b { color: rgba(243,233,223,.6); }
