@@ -475,6 +475,13 @@
   }
 
   @media (max-width: 600px) { html.robot .card .mono-a { display: none; } html.robot .card b { font-size: 14px; } }
+  /* phone upright: the robot never climbs over NEESMO, the studio name or the speech bubble under it; it shrinks on short phones instead */
+  @media (max-width: 900px) and (orientation: portrait) {
+    html.robot { --labb: calc(84px + env(safe-area-inset-top) + min(21vw, 320px) * .82 + 30px); --bw: min(86vw, 420px, calc((100dvh - 196px - env(safe-area-inset-bottom) - var(--labb) - 52px) * .896)); }
+    #bot { width: var(--bw); }
+    html.robot #studio-label { z-index: 2; }
+    html.robot:not(#z) #status { top: calc(var(--labb) + 4px); bottom: auto; }
+  }
   /* phone turned sideways: short screen. NEESMO top left, robot on the right under the top bar, cards in two rows over its legs, chat uses the full height */
   @media (orientation: landscape) and (max-height: 500px) {
     html.robot { --sl: max(16px, env(safe-area-inset-left)); --sr: max(16px, env(safe-area-inset-right)); --bw: min(40vw, calc((100dvh - 60px) * .896)); }
@@ -971,8 +978,10 @@ async function speak(text) {
       const ctx = audio(), src = ctx.createBufferSource();
       src.buffer = await ctx.decodeAudioData(await job);
       src.connect(analyser); analyser.connect(ctx.destination);
+      if (ctx.state !== 'running') await Promise.race([ctx.resume(), new Promise(r => setTimeout(r, 800))]).catch(() => {});
+      if (ctx.state !== 'running') break;   // iPhone blocks sound until the first tap: skip quietly instead of a stuck "Speaking"
       mode = 'speaking'; setStatus('Speaking');
-      await new Promise(res => { src.onended = res; src.start(); });
+      await new Promise(res => { src.onended = res; src.start(); setTimeout(res, src.buffer.duration * 1000 + 1500); });
       analyser.disconnect();
     }
   } catch (e) { setStatus('Voice: ' + e.message, true); }
@@ -1570,8 +1579,12 @@ async function speakLocal(text, lang) {
   const v = localVoice(lang);
   if (!v) return speak(text);   // no voice for this language on this device: fall back to Neesmo's own voice
   const u = new SpeechSynthesisUtterance(text); u.voice = v; u.lang = v.lang; u.rate = 1;
-  mode = 'speaking'; setStatus('Speaking');
-  await new Promise(res => { u.onend = u.onerror = res; speechSynthesis.cancel(); speechSynthesis.speak(u); });
+  await new Promise(res => {
+    const quit = setTimeout(() => { speechSynthesis.cancel(); res(); }, 2000);   // never started (sound blocked until a tap): give up
+    u.onstart = () => { clearTimeout(quit); mode = 'speaking'; setStatus('Speaking'); };
+    u.onend = u.onerror = () => { clearTimeout(quit); res(); };
+    speechSynthesis.cancel(); speechSynthesis.speak(u);
+  });
   if (mode === 'speaking') { mode = 'idle'; setStatus('Standby'); }
 }
 // the greeting and the name are said in the name's language; the agents' status in the app's language
