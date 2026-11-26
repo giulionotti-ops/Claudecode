@@ -25,8 +25,8 @@ document.body.insertAdjacentHTML('beforeend', `
 async function refresh() {
   try { S.st = await G('/state'); } catch { return; }
   if (!S.hinted && typeof loadNotes === 'function') { S.hinted = true; loadNotes(); }  // auto-permission tip needs the state
+  const lab = $('#studio-label'); if (lab) { lab.textContent = S.st.studio_label || ''; lab.hidden = !S.st.studio_label; }   // shown even before setup is finished
   if (!S.st.studio) return;
-  const lab = $('#studio-label'); if (lab) { lab.textContent = S.st.studio_label || ''; lab.hidden = !S.st.studio_label; }
   onboarding();
   settingsBlock();
 }
