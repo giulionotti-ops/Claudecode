@@ -549,6 +549,7 @@ class WelcomeIn(BaseModel):
     welText: str = Field("", max_length=160)
     welVoice: bool = False
     welLang: str = Field("en", max_length=5)
+    appLang: str = Field("en", max_length=5)
 
 
 WELCOME = agents.NEESMO_DIR / "welcome.json"   # the greeting is the same on every device

@@ -206,6 +206,7 @@
   .lay-ic.folder { grid-template-columns: repeat(2, 7px); padding: 2px; border-radius: 4px; outline: 1.5px solid currentColor; } .lay-ic.folder i { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
   .namebox { display: flex; gap: 6px; align-items: center; flex: 1; min-width: 0; justify-content: flex-end; } .namebox .tin { max-width: 190px; }
   .flagbtn { flex: none; width: 40px; height: 34px; padding: 0; display: grid; place-items: center; border-radius: 10px; border: 1px solid rgba(var(--rgb),.25); background: rgba(255,255,255,.55); cursor: pointer; }
+  .langbtn { width: auto; padding: 0 10px; gap: 8px; display: inline-flex; align-items: center; font: inherit; font-size: .9em; color: inherit; }
   .flagbtn svg, .wmenu svg { width: 24px; height: 16px; border-radius: 3px; box-shadow: 0 0 0 1px rgba(0,0,0,.12); display: block; }
   #wel-ed { min-height: 44px; line-height: 2; white-space: pre-wrap; word-break: break-word; outline: none; cursor: text; }
   #wel-ed:focus { border-color: var(--a, #EF8746); box-shadow: 0 0 0 3px rgba(239,135,70,.18); }
@@ -614,6 +615,10 @@
     <ul class="nlist aglist" id="aglist"></ul>
   </section>
   <section class="tab" data-tab="system" role="tabpanel" hidden>
+    <div id="lang-sys"><h3>Language</h3>
+    <div class="grp">
+      <div class="row"><i class="ri" data-i="globe"></i><span class="rl"><b>App language</b><small class="sub">The whole app uses this language. The flag next to your name changes only the greeting and how your name is said.</small></span><button type="button" id="app-lang" class="flagbtn langbtn" aria-haspopup="menu" aria-label="App language"></button></div>
+    </div></div>
     <h3>Add-ons</h3>
     <div class="grp">
       <details class="xd-plug"><summary class="row"><i class="ri" data-i="puzzle"></i><span class="rl"><b>Plugins</b><small class="sub" id="pcount"></small></span><i class="chev" data-i="chev"></i></summary>
@@ -789,11 +794,11 @@ function audio() {
 
 // ── appearance settings (this device only) ──
 const THEMES = { robot: ['#EF8746', '239,135,70', '#2F8F5B'] };
-let PREFS = { theme: 'robot', bg: 'beige', fs: '14px', mark: true, calm: false, wel: true, welName: '', welText: '{greeting}, {name}. {busy}', welVoice: false, welLang: 'en', agLay: 'pages', apHint: true };
+let PREFS = { theme: 'robot', bg: 'beige', fs: '14px', mark: true, calm: false, wel: true, welName: '', welText: '{greeting}, {name}. {busy}', welVoice: false, welLang: 'en', appLang: 'en', agLay: 'pages', apHint: true };
 try { Object.assign(PREFS, JSON.parse(localStorage.getItem('neesmo-prefs') || '{}')); } catch {}
 PREFS.theme = 'robot';
 // The greeting (on/off, name, message, spoken) is kept on the server, so every device greets the same way.
-const WEL_KEYS = ['wel', 'welName', 'welText', 'welVoice', 'welLang'];
+const WEL_KEYS = ['wel', 'welName', 'welText', 'welVoice', 'welLang', 'appLang'];
 let welSent = null;
 const welNow = () => JSON.stringify(Object.fromEntries(WEL_KEYS.map(k => [k, PREFS[k]])));
 function syncWelcome() {
@@ -815,6 +820,7 @@ function applyPrefs() {
   document.querySelector('meta[name=theme-color]')?.setAttribute('content', PREFS.bg === 'night' ? '#17110E' : '#D6CBC0');
   try { localStorage.setItem('neesmo-prefs', JSON.stringify(PREFS)); } catch {}
   syncWelcome();
+  if (window.i18nReady) setAppLang(PREFS.appLang);
   if (typeof reduce !== 'undefined') reduce = matchMedia('(prefers-reduced-motion: reduce)').matches || PREFS.calm;
 }
 $('#aglay').onclick = e => { const b = e.target.closest('[data-lay]'); if (b) { PREFS.agLay = b.dataset.lay; agPage = 0; applyPrefs(); loadAgents(); } };
@@ -960,7 +966,7 @@ const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
 let sr = null, useServerSTT = !SR;
 function startBrowserRec() {
   if (sr || mode === 'thinking') return;
-  sr = new SR(); sr.lang = navigator.language || 'en-US'; sr.interimResults = false; sr.maxAlternatives = 1;
+  sr = new SR(); sr.lang = PREFS.appLang && PREFS.appLang !== 'en' ? A().v : (navigator.language || 'en-US'); sr.interimResults = false; sr.maxAlternatives = 1;
   let heard = '';
   sr.onresult = e => { heard = Array.from(e.results).map(r => r[0].transcript).join(' ').trim(); };
   sr.onerror = e => {
@@ -1378,7 +1384,8 @@ const LANGS = {
     b: { none: 'Lägg till en agent i Inställningar för att börja.', one: 'Din agent står redo.', all: n => `Alla ${n} agenter står redo.`, w1: a => `${a} arbetar.`, w2: (a, c) => `${a} och ${c} arbetar.`, wn: n => `${n} agenter arbetar.`, ap1: 'Ett godkännande väntar på dig.', apn: n => `${n} godkännanden väntar på dig.`, off: 'Systemen är igång.' } },
 };
 const GREETS = ['auto', 'hello', 'hi', 'hey', 'welcome'];
-const L = () => LANGS[PREFS.welLang] || LANGS.en;
+const L = () => LANGS[PREFS.welLang] || LANGS.en;   // greeting and name voice
+const A = () => LANGS[PREFS.appLang] || LANGS.en;   // everything else
 const flagSvg = k => `<svg viewBox="0 0 30 20" aria-hidden="true">${(LANGS[k] || LANGS.en).f}</svg>`;
 function greetWord(g) {
   const w = L().g, h = new Date().getHours();
@@ -1386,14 +1393,14 @@ function greetWord(g) {
   return w[{ hello: 3, hi: 4, hey: 5, welcome: 6 }[g] ?? 3];
 }
 const WEL_DEF = '{greeting}, {name}. {busy}';
-function welText(busy) {
-  return (PREFS.welText || WEL_DEF).replace(/\{greeting(?::(\w+))?\}/g, (_, g) => greetWord(g)).replace(/\{name\}/g, (PREFS.welName || '').trim()).replace(/\{busy\}/g, busy)
+function welText(busy, src = PREFS.welText || WEL_DEF) {
+  return src.replace(/\{greeting(?::(\w+))?\}/g, (_, g) => greetWord(g)).replace(/\{name\}/g, (PREFS.welName || '').trim()).replace(/\{busy\}/g, busy)
     .replace(/,\s*(?=[.!?]|$)/g, '').replace(/\s+([.,!?])/g, '$1').replace(/\s{2,}/g, ' ').trim();
 }
 var lastAgents = null;
 // what the agents are really doing right now: who is working, and approvals waiting
 async function welBusy() {
-  const b = L().b, race = p => Promise.race([p, new Promise((_, no) => setTimeout(no, 1500))]);
+  const b = A().b, race = p => Promise.race([p, new Promise((_, no) => setTimeout(no, 1500))]);
   try {   // use what is already loaded; never hold the greeting for more than 1.5 s
     const [agents, items] = await Promise.all([lastAgents || race(api('/api/agents').then(r => r.json()).then(d => d.agents)),
       notes.length ? notes : race(api('/api/notifications').then(r => r.json()).then(d => d.items)).catch(() => [])]);
@@ -1421,7 +1428,7 @@ function edRender() {
 async function edFill() {
   const busy = await welBusy(), nm = (PREFS.welName || '').trim();
   for (const c of document.querySelectorAll('#wel-ed .tok')) {
-    c.textContent = c.dataset.t === 'greeting' ? greetWord(c.dataset.g) : c.dataset.t === 'name' ? (nm || L().you) : busy;
+    c.textContent = c.dataset.t === 'greeting' ? greetWord(c.dataset.g) : c.dataset.t === 'name' ? (nm || A().you) : busy;
     c.classList.toggle('empty', c.dataset.t === 'name' && !nm);
   }
   const lb = $('#wel-lang'); lb.innerHTML = flagSvg(PREFS.welLang); lb.setAttribute('aria-label', 'Language and voice: ' + L().n); lb.title = L().n;
@@ -1443,11 +1450,11 @@ function menu(anchor, items, pick) {
   m.onclick = e => { const b = e.target.closest('[data-i]'); if (!b) return; m.hidden = true; pick(items[+b.dataset.i]); };
   m.querySelector('[aria-checked=true], button')?.focus();
 }
-document.addEventListener('pointerdown', e => { const m = $('#wmenu'); if (!m.hidden && !m.contains(e.target) && !e.target.closest('#wel-lang, .tok-greeting')) m.hidden = true; }, true);
+document.addEventListener('pointerdown', e => { const m = $('#wmenu'); if (!m.hidden && !m.contains(e.target) && !e.target.closest('#wel-lang, #app-lang, .tok-greeting')) m.hidden = true; }, true);
 document.addEventListener('keydown', e => { if (e.key === 'Escape' && !$('#wmenu').hidden) { $('#wmenu').hidden = true; e.stopPropagation(); } }, true);
 function greetMenu(chip) {
   const cur = chip.dataset.g || 'auto';
-  menu(chip, GREETS.map(g => ({ g, on: g === cur, html: g === 'auto' ? `<span>${esc(greetWord())}<br><small>${esc(L().auto)}</small></span>` : `<span>${esc(greetWord(g))}</span>` })),
+  menu(chip, GREETS.map(g => ({ g, on: g === cur, html: g === 'auto' ? `<span>${esc(greetWord())}<br><small>${esc(A().auto)}</small></span>` : `<span>${esc(greetWord(g))}</span>` })),
     it => { if (it.g === 'auto') delete chip.dataset.g; else chip.dataset.g = it.g; edSave(); edFill(); });
 }
 const ed = $('#wel-ed');
@@ -1466,6 +1473,70 @@ document.querySelector('.wel-add').addEventListener('click', e => {
 });
 $('#wel-lang').onclick = e => menu(e.currentTarget, Object.entries(LANGS).map(([k, v]) => ({ k, on: k === (PREFS.welLang || 'en'), html: `${flagSvg(k)}<span>${esc(v.n)}</span>` })),
   it => { PREFS.welLang = it.k; applyPrefs(); edFill(); });
+// ── app language: swaps the interface text; agent names, chats and your own text stay as they are ──
+const I18N = { lang: 'en', dict: null, nodes: new Map(), attrs: new Map(), cache: {} };
+const I18N_ATTRS = ['placeholder', 'title', 'aria-label'];
+const I18N_SKIP = 'script,style,svg,#log,#wel-ed,.tok,textarea,input,[contenteditable=true],.xlist code', I18N_SKIP_ATTR = 'script,style,#log,#wel-ed,.tok';
+function trStr(s) {
+  const d = I18N.dict, t = s.replace(/\s+/g, ' ').trim();
+  if (!d || !t) return null;
+  const pad = m => s.match(m)?.[0] || '', wrap = x => pad(/^\s*/) + x + pad(/\s*$/);
+  if (d[t]) return wrap(d[t]);
+  const nums = t.match(/\d+/g);
+  if (nums) { const k = t.replace(/\d+/g, '#'); if (d[k]) { let i = 0; return wrap(d[k].replace(/#/g, () => nums[i++] ?? '')); } }
+  return null;
+}
+function trTree(root) {
+  if (!I18N.dict || !root) return;
+  if (root.nodeType === 3) root = root.parentElement ? { tn: root } : null;
+  if (!root) return;
+  const doText = n => {
+    const pe = n.parentElement; if (!pe || pe.closest(I18N_SKIP)) return;
+    const rec = I18N.nodes.get(n); if (rec && n.data === rec.out) return;
+    const out = trStr(n.data); if (out == null) return;
+    I18N.nodes.set(n, { src: n.data, out }); n.data = out;
+  };
+  const doEl = el => {
+    if (el.closest(I18N_SKIP_ATTR)) return;
+    for (const a of I18N_ATTRS) {
+      const v = el.getAttribute(a); if (!v) continue;
+      const m = I18N.attrs.get(el) || {}, rec = m[a]; if (rec && v === rec.out) continue;
+      const out = trStr(v); if (out == null) continue;
+      m[a] = { src: v, out }; I18N.attrs.set(el, m); el.setAttribute(a, out);
+    }
+  };
+  if (root.tn) return doText(root.tn);
+  if (root.nodeType !== 1) return;
+  doEl(root); root.querySelectorAll('[placeholder],[title],[aria-label]').forEach(doEl);
+  const w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT); let n;
+  while ((n = w.nextNode())) doText(n);
+}
+function trRestore() {
+  for (const [n, r] of I18N.nodes) if (n.data === r.out) n.data = r.src;
+  for (const [el, m] of I18N.attrs) for (const a in m) if (el.getAttribute(a) === m[a].out) el.setAttribute(a, m[a].src);
+  I18N.nodes.clear(); I18N.attrs.clear();
+}
+new MutationObserver(ms => {
+  if (!I18N.dict) return;
+  for (const m of ms) {
+    if (m.type === 'childList') m.addedNodes.forEach(trTree);
+    else trTree(m.type === 'characterData' ? m.target : m.target);
+  }
+}).observe(document.body, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: I18N_ATTRS });
+async function setAppLang(lang) {
+  lang = LANGS[lang] ? lang : 'en';
+  const b = $('#app-lang'); if (b) { b.innerHTML = `${flagSvg(lang)}<span>${esc(LANGS[lang].n)}</span>`; }
+  if (lang === I18N.lang) return;
+  I18N.lang = lang; document.documentElement.lang = lang;
+  trRestore(); I18N.dict = null;
+  if (lang === 'en') return edFill?.();
+  try { I18N.cache[lang] ||= await fetch(`/static/i18n/${lang}.json`).then(r => r.json()); } catch { return; }
+  if (I18N.lang !== lang) return;
+  I18N.dict = I18N.cache[lang]; trTree(document.body); edFill?.();
+}
+$('#app-lang').onclick = e => menu(e.currentTarget, Object.entries(LANGS).map(([k, v]) => ({ k, on: k === (PREFS.appLang || 'en'), html: `${flagSvg(k)}<span>${esc(v.n)}</span>` })),
+  it => { PREFS.appLang = it.k; applyPrefs(); });
+window.i18nReady = true; setAppLang(PREFS.appLang);
 async function welPreview() { $('#wel-name').value = PREFS.welName || ''; if (document.activeElement !== ed) edRender(); }
 $('#wel-name').oninput = () => { PREFS.welName = $('#wel-name').value; applyPrefs(); edFill(); };
 $('#wel-try').onclick = () => { try { audio().resume(); } catch {} togglePop($('#gear'), $('#pop-s'), false); welcome('voice'); };   // unlock sound inside the tap (iPhone), then say it
@@ -1483,10 +1554,17 @@ async function speakLocal(text, lang) {
   await new Promise(res => { u.onend = u.onerror = res; speechSynthesis.cancel(); speechSynthesis.speak(u); });
   if (mode === 'speaking') { mode = 'idle'; setStatus('Standby'); }
 }
+// the greeting and the name are said in the name's language; the agents' status in the app's language
+function welParts(busy) {
+  const src = PREFS.welText || WEL_DEF, i = src.indexOf('{busy}'), wl = PREFS.welLang || 'en', al = PREFS.appLang || 'en';
+  if (i < 0 || wl === al) return [[welText(busy), wl]];
+  return [[welText(busy, src.slice(0, i)), wl], [welText(busy, src.slice(i)), al]].filter(p => p[0]);
+}
+const sayIn = (text, lang) => lang && lang !== 'en' ? speakLocal(text, (LANGS[lang] || LANGS.en).v) : speak(text);
 async function welcome(force) {
-  const text = welText(await welBusy());
+  const parts = welParts(await welBusy());
   if (PREFS.welVoice || force === 'voice') {   // spoken: just say it, no text on screen
-    const go = () => (PREFS.welLang && PREFS.welLang !== 'en' ? speakLocal(text, L().v) : speak(text)).catch(() => {});
+    const go = async () => { for (const [t, l] of parts) await sayIn(t, l).catch(() => {}); };
     try { await audio().resume(); } catch {}
     if (ac?.state === 'running') go(); else addEventListener('pointerdown', () => { audio().resume().then(go); }, { once: true });
     return;

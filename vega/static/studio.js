@@ -508,7 +508,7 @@ function settingsBlock() {
   const st = S.st, sys = $('.tab[data-tab="system"]');
   let el = $('#studio-sys');
   if (!el) {
-    sys.insertAdjacentHTML('afterbegin', `<div id="studio-sys">
+    (sys.querySelector('#lang-sys') || sys).insertAdjacentHTML(sys.querySelector('#lang-sys') ? 'afterend' : 'afterbegin', `<div id="studio-sys">
       <h3>Neesmo Studio</h3>
       <div class="grp">
         <div class="row"><i class="ri" data-i="shield"></i><div class="rl"><label id="l-sap">Auto permissions</label><small class="sub">Safe steps run by themselves, so you get fewer questions.</small></div><button type="button" class="tog" role="switch" id="s-ap" aria-labelledby="l-sap"></button></div>
