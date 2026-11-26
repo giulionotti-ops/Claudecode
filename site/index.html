@@ -3,11 +3,11 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Neesmo: the AI that runs your YouTube channel or Instagram account</title>
-<meta name="description" content="Neesmo runs your YouTube channel or Instagram account for you: a team of Claude Code agents writes, makes, checks, schedules and learns from every video, on your own computer. You approve. Buy once, free updates. €59.">
+<title>Neesmo: Hollywood-quality videos from an AI crew</title>
+<meta name="description" content="Neesmo makes your videos like a Hollywood creative team would: writers room, director, editor, sound and colour. Studio quality for your YouTube channel or Instagram account, not AI slop. You approve. Buy once, free updates. €59.">
 <meta property="og:type" content="website">
-<meta property="og:title" content="Neesmo: the AI that runs your YouTube channel or Instagram account">
-<meta property="og:description" content="A team of agents that makes, checks and schedules your videos and learns from each one. You approve. Buy once, free updates. €59.">
+<meta property="og:title" content="Neesmo: Hollywood-quality videos from an AI crew">
+<meta property="og:description" content="A full creative crew of AI agents makes every video at studio quality. Not AI slop. You approve. Buy once, free updates. €59.">
 <!--OG_IMAGE--><meta property="og:image" content="share.jpg">
 <meta name="twitter:card" content="summary_large_image">
 <!--ICONS--><link rel="icon" href="favicon.png" type="image/png">
@@ -39,6 +39,7 @@ h1,h2,h3{margin:0}
 .display,h1,h2{font:italic 900 clamp(34px,4.8vw,60px)/1 "Archivo",sans-serif;letter-spacing:-.04em;word-spacing:.06em;color:var(--or);
   text-shadow:1px 1px 0 #D9773F,2px 2px 0 #C86A36,3px 3px 0 #B85F30,16px 22px 40px rgba(0,0,0,.5)}
 h1{font-size:clamp(44px,6.1vw,92px);line-height:.93}
+.pill{max-width:100%}
 .eyebrow{display:inline-block;font:600 12px/1 "Geist Mono",ui-monospace,monospace;letter-spacing:.14em;text-transform:uppercase;color:var(--or2);margin-bottom:14px}
 .lead{max-width:56ch;color:var(--mut);font-size:18px;margin:18px 0 0}
 .muted{color:var(--mut)}
@@ -50,7 +51,24 @@ section{padding:clamp(56px,8vw,112px) 0;position:relative}
 .nav{position:sticky;top:12px;z-index:30;margin-top:12px}
 .nav__bar{display:flex;justify-content:space-between;align-items:center;padding:10px 12px 10px 24px;border-radius:999px}
 .logo{position:relative;display:block;font:900 italic 96px/0 "Archivo",sans-serif;height:26px;display:flex;align-items:center;letter-spacing:-.05em;text-transform:uppercase;color:#EF8746;text-decoration:none;text-shadow:1px 1px 0 #C86A36;white-space:nowrap;z-index:2}
-@media(max-width:720px){.logo{font-size:36px}.nav__links .btn{white-space:nowrap;padding:9px 14px;margin-left:0}}
+@media(max-width:720px){.logo{font-size:36px}.nav__links .btn{white-space:nowrap;padding:12px 18px;min-height:44px;margin-left:0}}
+
+/* intro: big wordmark that shrinks into the nav logo on scroll */
+.intro,.bw,.intro__tag,.intro__cue{display:none}
+.intro-on .intro{display:block;height:calc(100svh - 84px);min-height:460px}
+.intro-on .logo{visibility:hidden}
+.intro-on .bw{display:flex;position:fixed;left:0;top:0;z-index:40;margin:0;align-items:center;height:calc(var(--hr,.2708)*1em);font:900 italic min(18.5vw,260px,40vh)/0 "Archivo",sans-serif;letter-spacing:-.05em;text-transform:uppercase;color:#EF8746;text-decoration:none;text-shadow:var(--sh1,.0104em) var(--sh1,.0104em) 0 #C86A36;white-space:nowrap;transform-origin:0 0;will-change:transform;pointer-events:none;visibility:hidden}
+.intro-on .bw.ready{visibility:visible}
+.intro-on .bw.docked{pointer-events:auto}
+.bw span{display:inline-block;line-height:0}
+.intro-on .bw.ready span{animation:bwUp 1s var(--ease) both;animation-delay:calc(var(--i)*70ms + 120ms)}
+@keyframes bwUp{from{opacity:0;transform:translateY(.45em) skewX(-6deg)}to{opacity:1;transform:none}}
+.intro-on .intro__tag{display:block;position:fixed;left:0;right:0;z-index:39;text-align:center;padding:0 24px;color:var(--mut);font-size:clamp(16px,2vw,22px);line-height:1.4;text-wrap:balance;pointer-events:none;opacity:0;transition:opacity .6s var(--ease) .9s}
+.intro-on .intro__tag.ready{opacity:var(--o,1);transition:none}
+.intro-on .intro__tag.ready.first{transition:opacity .8s var(--ease) 1s}
+.intro-on .intro__cue{display:block;position:fixed;left:50%;bottom:26px;width:22px;height:36px;margin-left:-11px;border:2px solid rgba(243,233,223,.4);border-radius:14px;z-index:39;pointer-events:none;opacity:var(--o,1)}
+.intro__cue::after{content:"";position:absolute;left:50%;top:6px;width:4px;height:7px;margin-left:-2px;border-radius:3px;background:var(--ink);animation:wheel 1.6s infinite}
+.intro-on .hero:not(.go) .w,.intro-on .hero:not(.go) .fadein{animation-play-state:paused}
 .nav__links{display:flex;align-items:center;gap:2px}
 .nav__links a{text-decoration:none;color:var(--ink);font-size:14px;font-weight:500;padding:8px 13px;border-radius:999px;transition:background .2s}
 .nav__links a:hover{background:rgba(255,255,255,.1)}
@@ -66,7 +84,7 @@ section{padding:clamp(56px,8vw,112px) 0;position:relative}
 .btn-row{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
 
 /* hero */
-.hero{padding:clamp(40px,6vw,84px) 0 clamp(40px,6vw,70px);overflow:visible}
+.hero{padding:clamp(24px,4vw,56px) 0 clamp(40px,6vw,70px);overflow:visible}
 .hero .wrap{position:relative;display:grid;grid-template-columns:1.25fr .75fr;align-items:center;gap:20px;min-height:min(78vh,720px)}
 .pill{display:inline-flex;gap:10px;align-items:center;padding:8px 16px;border-radius:99px;font-size:13px;font-weight:500;text-decoration:none;color:var(--ink);margin-bottom:22px}
 .pill i{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 0 0 rgba(20,226,161,.6);animation:ping 2s infinite}
@@ -279,13 +297,38 @@ footer a{color:var(--mut)}footer a:hover{color:var(--green)}footer nav{display:f
   body{font-size:16px}
   .nav__links a:not(.btn){display:none}
   .nav__bar{padding-left:18px}
-  .crew{grid-template-columns:1fr}
+  .dsk{display:none}
+  section{padding:clamp(44px,12vw,64px) 0}
+  .head{margin-bottom:24px}
+  .lead{font-size:16.5px;margin-top:14px}
+  .btn{padding:17px 28px;min-height:52px}
+  .btn-row{gap:10px;margin-top:24px}
   .btn-row .btn{width:100%}
-  .chip{font-size:12px;padding:7px 12px}
+  .chip,.pnote,.marq,.studio::after,.studio .glyph{display:none}
+  .pill{font-size:12.5px;padding:9px 14px;margin-bottom:18px}
+  .hero .lead{font-size:17px}
+  .robotbox{width:min(62vw,280px);margin:6px auto 0}
+  .crew{grid-template-columns:1fr;gap:10px}
+  .card{display:grid;grid-template-columns:48px 1fr;column-gap:14px;align-items:center;padding:14px 16px;border-radius:22px}
+  .card .role__n{display:none}
+  .card .role__ic{grid-row:1/3;width:48px;height:48px;margin:0;border-radius:15px}
+  .card .role__ic svg{width:24px;height:24px}
+  .card h3{font-size:18px;margin:0}
+  .card p{font-size:14px}
+  .pipe{height:440vh}
   .track::before,.track__fill{top:15px}
-  .node b{width:32px;height:32px;font-size:14px;margin-bottom:6px}
-  .node span{font-size:9.5px;letter-spacing:-.01em}
-  .stage{min-height:360px}
+  .node b{width:32px;height:32px;font-size:14px;margin-bottom:0}
+  .node span{display:none}
+  .stage{min-height:340px}
+  .notes .note:nth-child(3),.counters .counter:nth-child(n+3),.steps li:nth-child(n+5),.term .l:nth-of-type(n+7){display:none}
+  .chart{padding:18px}
+  .note{padding:16px 18px 16px 52px}
+  .ticks li:nth-child(3){display:none}
+  .phone{width:min(240px,64vw)}
+  .studio ul li:nth-child(3),.pcard li:nth-child(2){display:none}
+  .steps li{padding:14px 16px 14px 64px}
+  .steps li::before{left:16px}
+  .pipe__prog{display:none}
   .slide{grid-template-columns:1fr;padding:22px 20px;gap:14px;align-content:center}
   .pipe__stick{padding-top:76px}
   .counters{gap:10px}
@@ -302,7 +345,7 @@ footer a{color:var(--mut)}footer a:hover{color:var(--green)}footer nav{display:f
 @media (prefers-reduced-motion:reduce){
   html{scroll-behavior:auto}
   *,*::before,*::after{animation:none!important;transition:none!important}
-  .js .rv,.js .w,.js .hero .fadein,.js .cbar,.js .note.rv .t,.js .term .l,.js .phone.rv{opacity:1!important;transform:none!important;filter:none!important;clip-path:none!important}
+  .js .rv,.js .w,.js .hero .fadein,.intro-on .bw span,.js .cbar,.js .note.rv .t,.js .term .l,.js .phone.rv{opacity:1!important;transform:none!important;filter:none!important;clip-path:none!important}
   .js .phone.rv{transform:rotateY(-8deg)!important}
   .marq__t{width:auto;flex-wrap:wrap;justify-content:center}
   .marq__t span[aria-hidden]{display:none}
@@ -323,14 +366,19 @@ footer a{color:var(--mut)}footer a:hover{color:var(--green)}footer nav{display:f
   </div>
 </div>
 
+<a class="bw" id="bw" href="#top" aria-label="Neesmo, back to top"><span style="--i:0" aria-hidden="true">N</span><span style="--i:1" aria-hidden="true">E</span><span style="--i:2" aria-hidden="true">E</span><span style="--i:3" aria-hidden="true">S</span><span style="--i:4" aria-hidden="true">M</span><span style="--i:5" aria-hidden="true">O</span></a>
+<p class="intro__tag" id="itag" aria-hidden="true">Hollywood-quality videos, made by an AI crew.</p>
+<span class="intro__cue" id="icue" aria-hidden="true"></span>
+
 <main id="top">
+<div class="intro" aria-hidden="true"></div>
 <!-- HERO -->
 <section class="hero" aria-labelledby="hero-h">
   <div class="wrap">
-    <div class="hero__txt">
+    <div class="hero__txt" id="herotxt">
       <a class="pill glass fadein" style="--d:100ms" href="#pricing"><i></i>Early build: YouTube or Instagram Studio, €59</a>
-      <h1 id="hero-h" aria-label="A whole studio for your channel."><span class="w" style="--i:0" aria-hidden="true">A</span> <span class="w" style="--i:1" aria-hidden="true">whole</span> <span class="w" style="--i:2" aria-hidden="true">studio</span> <span class="w" style="--i:3" aria-hidden="true">for</span> <span class="w" style="--i:4" aria-hidden="true">your</span> <span class="w" style="--i:5" aria-hidden="true">channel.</span></h1>
-      <p class="lead fadein" style="--d:1000ms">Neesmo is a team of AI agents that finds the ideas, writes the hooks, makes the videos, checks them, posts them and learns from the numbers. You approve. Your channel grows.</p>
+      <h1 id="hero-h" aria-label="A Hollywood crew for your channel."><span class="w" style="--i:0" aria-hidden="true">A</span> <span class="w" style="--i:1" aria-hidden="true">Hollywood</span> <span class="w" style="--i:2" aria-hidden="true">crew</span> <span class="w" style="--i:3" aria-hidden="true">for</span> <span class="w" style="--i:4" aria-hidden="true">your</span> <span class="w" style="--i:5" aria-hidden="true">channel.</span></h1>
+      <p class="lead fadein" style="--d:1000ms">A writers room, a director, an editor, sound and colour: Neesmo's AI crew makes every video the way a film studio would. Studio quality, not AI slop. <span class="dsk">For your YouTube channel or Instagram account. You approve.</span></p>
       <div class="btn-row fadein" style="--d:1200ms"><a class="btn btn--or" href="#pricing">Get your Studio</a><a class="btn btn--ghost" href="#pipeline">See how it works</a></div>
     </div>
     <div class="robotbox" id="robotbox">
@@ -355,12 +403,12 @@ footer a{color:var(--mut)}footer a:hover{color:var(--green)}footer nav{display:f
 <!-- CREW -->
 <section id="crew" aria-labelledby="crew-h">
   <div class="wrap">
-    <div class="head rv"><span class="eyebrow">The crew</span><h2 id="crew-h">Meet the studio</h2><p class="lead">Every channel gets its own team. Five agents, each with one job, working together around the clock while you do something else.</p></div>
+    <div class="head rv"><span class="eyebrow">The crew</span><h2 id="crew-h">A full creative crew.</h2><p class="lead">Not one prompt and a prayer. A Director leads a team of specialists, the way a film studio works. <span class="dsk">Writers room, editor, sound and colour, all on every video.</span></p></div>
     <div class="crew">
-      <article class="card glass rv tilt" style="--i:0"><span class="role__n">01</span><div class="role__ic"><svg viewBox="0 0 24 24"><path d="M3 20l4-14 5 8 4-6 5 12z"/><circle cx="12" cy="4" r="1.5"/></svg></div><h3>Director</h3><p>Runs the channel and decides what is next.</p></article>
-      <article class="card glass rv tilt" style="--i:1"><span class="role__n">02</span><div class="role__ic"><svg viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 00-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0012 3z"/></svg></div><h3>Marketer</h3><p>Finds the ideas and writes the hooks and titles.</p></article>
-      <article class="card glass rv tilt" style="--i:2"><span class="role__n">03</span><div class="role__ic"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 9.5v5l4.5-2.5z"/></svg></div><h3>Producer</h3><p>Makes the video: script, voice, pictures and captions.</p></article>
-      <article class="card glass rv tilt" style="--i:3"><span class="role__n">04</span><div class="role__ic"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg></div><h3>Supervisor</h3><p>Checks every video before you see it.</p></article>
+      <article class="card glass rv tilt" style="--i:0"><span class="role__n">01</span><div class="role__ic"><svg viewBox="0 0 24 24"><path d="M3 20l4-14 5 8 4-6 5 12z"/><circle cx="12" cy="4" r="1.5"/></svg></div><h3>Director</h3><p>Leads the crew like a film director and decides what is next.</p></article>
+      <article class="card glass rv tilt" style="--i:1"><span class="role__n">02</span><div class="role__ic"><svg viewBox="0 0 24 24"><path d="M9 18h6M10 21h4M12 3a6 6 0 00-4 10.5c.7.7 1 1.5 1 2.5h6c0-1 .3-1.8 1-2.5A6 6 0 0012 3z"/></svg></div><h3>Marketer</h3><p>The writers room: ideas, hooks and titles.</p></article>
+      <article class="card glass rv tilt" style="--i:2"><span class="role__n">03</span><div class="role__ic"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="3"/><path d="M10 9.5v5l4.5-2.5z"/></svg></div><h3>Producer</h3><p>Script, voice, picture, edit, sound and captions.</p></article>
+      <article class="card glass rv tilt" style="--i:3"><span class="role__n">04</span><div class="role__ic"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg></div><h3>Supervisor</h3><p>Quality control. Nothing weak reaches you.</p></article>
       <article class="card glass rv tilt" style="--i:4"><span class="role__n">05</span><div class="role__ic"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-8M22 20H2"/></svg></div><h3>Analyst</h3><p>Reads the views and learns what works.</p></article>
     </div>
   </div>
@@ -370,7 +418,7 @@ footer a{color:var(--mut)}footer a:hover{color:var(--green)}footer nav{display:f
 <section class="pipe" id="pipeline" aria-labelledby="pipe-h">
   <div class="pipe__stick">
     <div class="wrap">
-      <div class="pipe__head"><span class="eyebrow">One video, start to finish</span><h2 id="pipe-h">From idea to posted. You just say OK.</h2></div>
+      <div class="pipe__head"><span class="eyebrow">One video, start to finish</span><h2 id="pipe-h">One video, made like a film.</h2></div>
       <ol class="track" id="track" style="padding:0;margin-top:0;margin-bottom:0">
         <li class="track__fill" id="fill" aria-hidden="true" style="list-style:none"></li>
         <li class="node"><b>1</b><span>Idea</span></li>
@@ -384,8 +432,8 @@ footer a{color:var(--mut)}footer a:hover{color:var(--green)}footer nav{display:f
       <div class="stage" id="stage">
         <article class="slide glass"><div><h3>Idea</h3><p>The Marketer finds the next idea for your channel and puts it on the list.</p><small>Marketer</small></div><div class="mock"><em>Example idea</em><b>The emu war Australia lost</b><span class="tag">New idea</span></div></article>
         <article class="slide glass"><div><h3>Hook</h3><p>It writes several hooks and a title. The strongest one opens the video.</p><small>Marketer</small></div><div class="mock"><em>Example hook</em><b>"Australia sent soldiers to fight birds. The birds won."</b><span class="tag">Hook picked</span></div></article>
-        <article class="slide glass"><div><h3>Video</h3><p>The Producer makes the whole video: script, voice, pictures and captions.</p><small>Producer</small></div><div class="mock"><em>Example: rendering</em><b>emu-war.mp4</b><div class="bar" style="--w:.82"><i></i></div></div></article>
-        <article class="slide glass"><div><h3>Check</h3><p>The Supervisor checks every video before you see it. If something is off, it goes back.</p><small>Supervisor</small></div><div class="mock"><em>Example check</em><b>Sound, captions, facts</b><span class="tag ok">Checked</span></div></article>
+        <article class="slide glass"><div><h3>Video</h3><p>The Producer shoots the cut: script, voice, pictures, edit, sound and captions.</p><small>Producer</small></div><div class="mock"><em>Example: rendering</em><b>emu-war.mp4</b><div class="bar" style="--w:.82"><i></i></div></div></article>
+        <article class="slide glass"><div><h3>Check</h3><p>The Supervisor holds the studio bar. If something is off, it goes back for a re-cut.</p><small>Supervisor</small></div><div class="mock"><em>Example check</em><b>Sound, captions, facts</b><span class="tag ok">Checked</span></div></article>
         <article class="slide glass"><div><h3>Your OK</h3><p>You get a notification on your phone. Watch the video, then approve it or ask for a change.</p><small>You</small></div><div class="mock"><em>Example notification</em><b>New video is ready. Schedule it?</b><div class="row"><span>Approve</span><span>Change</span></div></div></article>
         <article class="slide glass"><div><h3>Posted</h3><p>Once you say yes, Neesmo schedules the video and posts it.</p><small>Director</small></div><div class="mock"><em>Example</em><b>Scheduled for 19:30</b><span class="tag ok">Live</span></div></article>
         <article class="slide glass"><div><h3>Learn</h3><p>The Analyst reads the numbers. The team writes down what to do better, and the next video starts from there.</p><small>Analyst</small></div><div class="mock"><em>Example lesson</em><b>Hooks that open on a question keep more viewers.</b><span class="tag">Saved</span></div></article>
@@ -398,7 +446,7 @@ footer a{color:var(--mut)}footer a:hover{color:var(--green)}footer nav{display:f
 <!-- LEARNS -->
 <section id="learn" aria-labelledby="learn-h">
   <div class="wrap">
-    <div class="head rv"><span class="eyebrow">Gets better every video</span><h2 id="learn-h">It learns what works.</h2><p class="lead">After every video the Analyst reads the numbers and the team writes a lesson. The next video uses it.</p></div>
+    <div class="head rv"><span class="eyebrow">Gets better every video</span><h2 id="learn-h">The crew learns what works.</h2><p class="lead">After every video the Analyst reads the numbers and the team writes a lesson. The next cut starts there.</p></div>
     <div class="learn">
       <div class="notes" id="notes">
         <div class="note glass rv" style="--i:0"><span class="t">Hooks that open on a question keep more viewers past 3 seconds.</span><small>Example lesson</small></div>
@@ -437,7 +485,7 @@ footer a{color:var(--mut)}footer a:hover{color:var(--green)}footer nav{display:f
     <div class="rv from-l">
       <span class="eyebrow">You stay the boss</span>
       <h2 id="boss-h">Approve from your phone.</h2>
-      <p class="lead">For the first week, every video waits for your OK before it is scheduled. After that, Neesmo asks if it may schedule by itself. You can switch it back any time.</p>
+      <p class="lead">For the first week, every video waits for your OK. After that, Neesmo asks if it may schedule by itself. <span class="dsk">You can switch it back any time.</span></p>
       <ul class="ticks">
         <li>Notifications only for what matters: new videos and important things.</li>
         <li>Add it to the iPhone home screen or install it on Android, with push notifications.</li>
@@ -457,7 +505,7 @@ footer a{color:var(--mut)}footer a:hover{color:var(--green)}footer nav{display:f
 <!-- STUDIOS -->
 <section id="studios" aria-labelledby="studios-h">
   <div class="wrap">
-    <div class="head rv center"><span class="eyebrow">Two studios</span><h2 id="studios-h">YouTube and Instagram.</h2><p class="lead">Pick the platform you want to grow. Each Studio is a full crew built for it.</p></div>
+    <div class="head rv center"><span class="eyebrow">Two studios</span><h2 id="studios-h">YouTube and Instagram.</h2><p class="lead">Pick your platform. Each Studio is a full creative crew built for it.</p></div>
     <div class="two">
       <article class="studio glass rv tilt from-l" style="--i:0">
         <div class="glyph"><svg viewBox="0 0 24 24" fill="none" stroke="#EF8746" stroke-width="1.8" stroke-linejoin="round"><rect x="2.5" y="5" width="19" height="14" rx="4"/><path d="M10 9.2v5.6l5-2.8z" fill="#EF8746"/></svg></div>
@@ -478,7 +526,7 @@ footer a{color:var(--mut)}footer a:hover{color:var(--green)}footer nav{display:f
 <!-- SETUP -->
 <section id="setup" aria-labelledby="setup-h">
   <div class="wrap">
-    <div class="head rv"><span class="eyebrow">Setup</span><h2 id="setup-h">From setup to first video.</h2><p class="lead">Neesmo tells you what to do at each step. Follow every one: that is how channels go viral.</p></div>
+    <div class="head rv"><span class="eyebrow">Setup</span><h2 id="setup-h">From setup to first video.</h2><p class="lead">Neesmo tells you what to do at each step. <span class="dsk">Follow every one: that is how channels go viral.</span></p></div>
     <div class="setup">
       <ol class="steps">
         <li class="glass rv" style="--i:0"><b>Setup</b><span>Installs every free tool and skill, then helps you connect GitHub and your account</span></li>
@@ -549,7 +597,7 @@ footer a{color:var(--mut)}footer a:hover{color:var(--green)}footer nav{display:f
   <div class="wrap">
     <div class="cta glass rv">
       <h2 id="close-h">Get your Studio.</h2>
-      <p class="lead">YouTube or Instagram Studio, €59 while the early build lasts.</p>
+      <p class="lead">A Hollywood crew for your channel. YouTube or Instagram Studio, €59 while the early build lasts.</p>
       <div class="btn-row"><a class="btn btn--or" href="#pricing">See the Studios</a></div>
     </div>
   </div>
@@ -604,6 +652,45 @@ footer a{color:var(--mut)}footer a:hover{color:var(--green)}footer nav{display:f
     });
   }
 
+  /* intro wordmark: scroll-linked shrink into the nav logo */
+  var bw=document.getElementById('bw'),itag=document.getElementById('itag'),icue=document.getElementById('icue');
+  var introOn=!rm&&bw&&window.requestAnimationFrame;
+  var B={bx:0,by:0,tx:0,ty:0,s:1,d:1,ok:false};
+  function measure(){
+    var lr=document.querySelector('.logo').getBoundingClientRect();
+    var vw=window.innerWidth,vh=window.innerHeight,W=bw.offsetWidth,H=bw.offsetHeight;
+    if(!W||!lr.width)return;
+    bw.style.setProperty('--hr',(vw<=720?26/36:26/96).toFixed(4));
+    bw.style.setProperty('--sh1',(vw<=720?1/36:1/96).toFixed(4)+'em');
+    H=bw.offsetHeight;
+    B.bx=(vw-W)/2;B.by=vh*.42-H/2;B.tx=lr.left;B.ty=lr.top;B.s=lr.width/W;B.d=Math.max(240,vh*.5);B.ok=true;
+    itag.style.top=(B.by+H+Math.max(14,vh*.05))+'px';
+    introFrame();
+  }
+  function introFrame(){
+    if(!B.ok)return;
+    var p=Math.max(0,Math.min(1,(window.scrollY||0)/B.d)),e=p*p*(3-2*p);
+    var x=B.bx+(B.tx-B.bx)*e,y=B.by+(B.ty-B.by)*e,s=1+(B.s-1)*e;
+    bw.style.transform='translate3d('+x.toFixed(2)+'px,'+y.toFixed(2)+'px,0) scale('+s.toFixed(5)+')';
+    var o=Math.max(0,1-p*3.2).toFixed(3);
+    itag.style.setProperty('--o',o);icue.style.setProperty('--o',o);
+    bw.classList.toggle('docked',p>=1);
+  }
+  if(introOn){
+    root.classList.add('intro-on');
+    measure();
+    bw.classList.add('ready');itag.classList.add('ready');itag.classList.add('first');
+    setTimeout(function(){itag.classList.remove('first')},2200);
+    window.addEventListener('resize',measure);
+    window.addEventListener('load',measure);
+    if(document.fonts&&document.fonts.ready)document.fonts.ready.then(measure);
+    var hero=document.querySelector('.hero');
+    if('IntersectionObserver' in window){
+      var ho=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){hero.classList.add('go');ho.disconnect()}})},{threshold:.25});
+      ho.observe(hero);
+    }else hero.classList.add('go');
+  }
+
   /* robot parallax + pipeline progress (rAF) */
   var robot=document.getElementById('robotbox'),mx=0,my=0;
   var pipe=document.getElementById('pipeline'),fill=document.getElementById('fill'),prog=document.getElementById('prog');
@@ -611,6 +698,7 @@ footer a{color:var(--mut)}footer a:hover{color:var(--green)}footer nav{display:f
   function frame(){
     ticking=false;
     var sy=window.scrollY||0;
+    if(introOn)introFrame();
     if(robot&&!rm){robot.style.transform='translate3d('+(mx*14).toFixed(1)+'px,'+(sy*-.12+my*10).toFixed(1)+'px,0)'}
     if(pipe&&!rm){
       var top=pipe.offsetTop,h=pipe.offsetHeight-window.innerHeight;
@@ -627,7 +715,7 @@ footer a{color:var(--mut)}footer a:hover{color:var(--green)}footer nav{display:f
   }
   function req(){if(!ticking){ticking=true;requestAnimationFrame(frame)}}
   if(!rm){
-    window.addEventListener('scroll',req,{passive:true});
+    window.addEventListener('scroll',function(){if(introOn)introFrame();req()},{passive:true});
     window.addEventListener('resize',req);
     window.addEventListener('pointermove',function(e){mx=e.clientX/window.innerWidth-.5;my=e.clientY/window.innerHeight-.5;req()},{passive:true});
   }

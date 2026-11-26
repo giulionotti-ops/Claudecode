@@ -517,55 +517,86 @@
 </div></div>
 <div class="pop wide" id="pop-s" hidden role="dialog" aria-label="Settings">
   <div class="tabs" role="tablist" aria-label="Settings sections">
-    <button type="button" role="tab" data-tab="general" aria-selected="true">General</button><button type="button" role="tab" data-tab="look" aria-selected="false">Appearance</button><button type="button" role="tab" data-tab="agents" aria-selected="false">Agents</button><button type="button" role="tab" data-tab="system" aria-selected="false">System</button><button type="button" role="tab" data-tab="license" aria-selected="false">License</button>
+    <button type="button" role="tab" data-tab="general" aria-selected="true"><i data-i="home"></i>General</button><button type="button" role="tab" data-tab="look" aria-selected="false"><i data-i="palette"></i>Look</button><button type="button" role="tab" data-tab="agents" aria-selected="false"><i data-i="users"></i>Agents</button><button type="button" role="tab" data-tab="system" aria-selected="false"><i data-i="cpu"></i>System</button>
   </div>
   <section class="tab" data-tab="general" role="tabpanel">
     <h3>Welcome</h3>
-    <div class="row"><div><label id="l-wel">Greet me when Neesmo opens</label></div><button type="button" class="tog" role="switch" id="t-wel" aria-labelledby="l-wel"></button></div>
-    <div class="row"><label for="wel-name">Your name</label><input id="wel-name" class="tin" maxlength="30" placeholder="optional" autocomplete="given-name"></div>
-    <div class="row col"><label for="wel-text">Message</label><input id="wel-text" class="tin" maxlength="160"><small>Use {greeting} (good morning…), {name} and {busy} (what your agents are doing).</small></div>
-    <div class="row"><div><label id="l-welv">Say it out loud</label><small class="sub">If the browser blocks sound, it speaks on your first tap.</small></div><button type="button" class="tog" role="switch" id="t-welv" aria-labelledby="l-welv"></button></div>
-    <div class="row" id="wel-row"><small id="wel-prev"></small><button type="button" id="wel-try">Try it</button></div>
+    <div class="grp">
+      <div class="row"><i class="ri" data-i="wave"></i><div class="rl"><label id="l-wel">Greet me when Neesmo opens</label></div><button type="button" class="tog" role="switch" id="t-wel" aria-labelledby="l-wel"></button></div>
+      <div class="row"><i class="ri" data-i="user"></i><label for="wel-name" class="rl">Your name</label><input id="wel-name" class="tin" maxlength="30" placeholder="optional" autocomplete="given-name"></div>
+      <div class="row col"><div class="rh"><i class="ri" data-i="chat"></i><label for="wel-text" class="rl">Message</label></div><input id="wel-text" class="tin" maxlength="160"><small>Use {greeting} (good morning…), {name} and {busy} (what your agents are doing).</small></div>
+      <div class="row"><i class="ri" data-i="speaker"></i><div class="rl"><label id="l-welv">Say it out loud</label><small class="sub">If the browser blocks sound, it speaks on your first tap.</small></div><button type="button" class="tog" role="switch" id="t-welv" aria-labelledby="l-welv"></button></div>
+      <div class="row" id="wel-row"><small id="wel-prev"></small><button type="button" id="wel-try" class="ib"><i data-i="play"></i>Try it</button></div>
+    </div>
     <h3>Voice</h3>
-    <div class="row"><label for="voice">Voice</label><select id="voice"><option>loading…</option></select></div>
-    <div class="row"><small>Status</small><small id="vs">voice: …</small></div>
+    <div class="grp">
+      <div class="row"><i class="ri" data-i="mic"></i><label for="voice" class="rl">Voice</label><select id="voice"><option>loading…</option></select></div>
+      <div class="row"><i class="ri" data-i="info"></i><small class="rl">Status</small><small id="vs">voice: …</small></div>
+    </div>
+    <h3>Approvals</h3>
+    <div class="grp">
+      <div class="row"><i class="ri" data-i="shield"></i><div class="rl"><label id="l-aph">Suggest auto permissions</label><small class="sub">When approval requests keep coming, Neesmo offers to switch on auto permissions.</small></div><button type="button" class="tog" role="switch" id="t-aph" aria-labelledby="l-aph"></button></div>
+    </div>
   </section>
   <section class="tab" data-tab="look" role="tabpanel" hidden>
-    <h3>Appearance</h3>
-    <div class="row"><div><label for="bgsel">Background</label><small class="sub">Beige, or Espresso: warm near-black.</small></div><select id="bgsel"><option value="beige">Beige</option><option value="night">Espresso</option></select></div>
-    <div class="row"><label for="fsize">Text size</label><select id="fsize"><option value="13px">Small</option><option value="14px">Medium</option><option value="16px">Large</option></select></div>
-    <div class="row"><div><label id="l-mark">NEESMO lettering</label><small class="sub">The big orange name behind the robot.</small></div><button type="button" class="tog" role="switch" id="t-mark" aria-labelledby="l-mark"></button></div>
-    <div class="row"><div><label id="l-calm">Calm motion</label><small class="sub">Fewer and shorter animations.</small></div><button type="button" class="tog" role="switch" id="t-calm" aria-labelledby="l-calm"></button></div>
-    <small class="sub">Saved on this device only.</small>
+    <h3>Background</h3>
+    <div class="swatches" role="radiogroup" aria-label="Background">
+      <button type="button" class="sw-bg" role="radio" data-bg="beige" aria-checked="true"><span class="sw-prev beige"><i></i><i></i><i></i></span><b>Beige</b></button>
+      <button type="button" class="sw-bg" role="radio" data-bg="night" aria-checked="false"><span class="sw-prev night"><i></i><i></i><i></i></span><b>Espresso</b></button>
+    </div>
+    <h3>Text size</h3>
+    <div class="seg" role="radiogroup" aria-label="Text size" id="fsize">
+      <button type="button" role="radio" data-fs="13px" aria-label="Small"><span style="font-size:12px">Aa</span>Small</button><button type="button" role="radio" data-fs="14px" aria-label="Medium"><span style="font-size:15px">Aa</span>Medium</button><button type="button" role="radio" data-fs="16px" aria-label="Large"><span style="font-size:19px">Aa</span>Large</button>
+    </div>
+    <h3>Extras</h3>
+    <div class="grp">
+      <div class="row"><i class="ri" data-i="type"></i><div class="rl"><label id="l-mark">NEESMO lettering</label><small class="sub">The big orange name behind the robot.</small></div><button type="button" class="tog" role="switch" id="t-mark" aria-labelledby="l-mark"></button></div>
+      <div class="row"><i class="ri" data-i="wind"></i><div class="rl"><label id="l-calm">Calm motion</label><small class="sub">Fewer and shorter animations.</small></div><button type="button" class="tog" role="switch" id="t-calm" aria-labelledby="l-calm"></button></div>
+    </div>
+    <small class="sub foot-note">Saved on this device only.</small>
   </section>
   <section class="tab" data-tab="agents" role="tabpanel" hidden>
-    <div class="nhead"><h3>Agents</h3><button type="button" id="ag-add">+ Add</button></div>
+    <div class="nhead"><h3>Agents</h3><button type="button" id="ag-add" class="ib"><i data-i="plus"></i>Add</button></div>
     <small class="sub">Tap to edit. Drag to change the order (hold, then move on a phone). You can also drag the cards on the home screen.</small>
     <ul class="nlist aglist" id="aglist"></ul>
   </section>
   <section class="tab" data-tab="system" role="tabpanel" hidden>
-    <div class="links"><a href="/guide" target="_blank" rel="noopener">Guide</a><a href="/welcome" target="_blank" rel="noopener">Website</a><a href="#notices" id="to-notices">Licenses</a></div>
-    <h3>Plugins</h3>
-    <ul class="xlist" id="plist"><li><small>loading…</small></li></ul>
-    <details id="pjob" hidden><summary></summary><small class="sub">Made for some jobs only (code, git, GitHub, web). Switched on here, they run in every chat. Better: switch them off here and on for the agents that need them (agent chat → gear → Plugins).</small><ul class="xlist" id="plist2"></ul></details>
-    <h3>Skills</h3>
-    <ul class="xlist" id="slist"><li><small>loading…</small></li></ul>
-    <small class="sub" id="x-note">The list on top is the universal ones every Claude session on this server gets. Changes apply to sessions started after the switch.</small>
+    <h3>Add-ons</h3>
+    <div class="grp">
+      <details class="xd-plug"><summary class="row"><i class="ri" data-i="puzzle"></i><span class="rl"><b>Plugins</b><small class="sub" id="pcount"></small></span><i class="chev" data-i="chev"></i></summary>
+        <ul class="xlist" id="plist"><li><small>loading…</small></li></ul>
+        <details id="pjob" hidden><summary></summary><small class="sub">Made for some jobs only (code, git, GitHub, web). Switched on here, they run in every chat. Better: switch them off here and on for the agents that need them (agent chat → gear → Plugins).</small><ul class="xlist" id="plist2"></ul></details>
+      </details>
+      <details class="xd-skill"><summary class="row"><i class="ri" data-i="spark"></i><span class="rl"><b>Skills</b><small class="sub" id="scount"></small></span><i class="chev" data-i="chev"></i></summary>
+        <ul class="xlist" id="slist"><li><small>loading…</small></li></ul>
+        <small class="sub" id="x-note">The list on top is the universal ones every Claude session on this server gets. Changes apply to sessions started after the switch.</small>
+      </details>
+    </div>
     <div id="acct" hidden>
-      <div class="nhead"><h3>Devices</h3><button type="button" id="logout">Sign out</button></div>
+      <div class="nhead"><h3>Devices</h3><button type="button" id="logout" class="ib"><i data-i="logout"></i>Sign out</button></div>
       <ul class="nlist" id="devlist"></ul>
     </div>
-    <h3>Open-source licenses</h3>
-    <small class="sub">Everything Neesmo ships or installs, and the license each one uses.</small>
-    <div id="notices"><small>loading…</small></div>
   </section>
   <section class="tab" data-tab="license" role="tabpanel" hidden>
-    <h3>Your key</h3>
-    <div class="row"><small>Status</small><small id="lic-state">…</small></div>
+    <div class="nhead back"><button type="button" class="ib bk" data-back><i data-i="back"></i>Back</button><h3>Your key</h3></div>
+    <div class="grp">
+      <div class="row"><i class="ri" data-i="key"></i><small class="rl">Status</small><small id="lic-state">…</small></div>
+    </div>
     <form id="lic-form" class="licf" hidden><input id="lic-key" placeholder="License key" aria-label="License key" autocomplete="off" spellcheck="false"><button type="submit">Activate</button></form>
     <small id="lic-msg" class="licmsg"></small>
     <div class="links"><a href="#" id="lic-buy" target="_blank" rel="noopener" hidden>Buy a key</a><a href="#" id="lic-rm" hidden>Remove key</a></div>
   </section>
+  <section class="tab" data-tab="notices" role="tabpanel" hidden>
+    <div class="nhead back"><button type="button" class="ib bk" data-back><i data-i="back"></i>Back</button><h3>Open-source licenses</h3></div>
+    <small class="sub">Everything Neesmo ships or installs, and the license each one uses.</small>
+    <div id="notices"><small>loading…</small></div>
+  </section>
+  <nav class="sfoot" aria-label="More">
+    <a href="/guide" target="_blank" rel="noopener"><i data-i="book"></i>Guide</a>
+    <a href="/welcome" target="_blank" rel="noopener"><i data-i="globe"></i>Website</a>
+    <button type="button" data-go="license" id="to-license"><i data-i="key"></i>License</button>
+    <button type="button" data-go="notices" id="to-notices"><i data-i="scroll"></i>Open source</button>
+  </nav>
 </div>
 <div class="pop" id="pop-n" hidden role="dialog" aria-label="Notifications">
   <div class="row"><label id="l-push">Notifications</label><button type="button" class="tog" role="switch" id="t-push" aria-labelledby="l-push"></button></div>
@@ -702,7 +733,7 @@ function audio() {
 
 // ── appearance settings (this device only) ──
 const THEMES = { robot: ['#EF8746', '239,135,70', '#2F8F5B'] };
-let PREFS = { theme: 'robot', bg: 'beige', fs: '14px', mark: true, calm: false, wel: true, welName: '', welText: '{greeting}, {name}. {busy}', welVoice: false };
+let PREFS = { theme: 'robot', bg: 'beige', fs: '14px', mark: true, calm: false, wel: true, welName: '', welText: '{greeting}, {name}. {busy}', welVoice: false, apHint: true };
 try { Object.assign(PREFS, JSON.parse(localStorage.getItem('neesmo-prefs') || '{}')); } catch {}
 PREFS.theme = 'robot';
 // The greeting (on/off, name, message, spoken) is kept on the server, so every device greets the same way.
@@ -721,17 +752,23 @@ function applyPrefs() {
   const [hex, rgb, c2] = THEMES.robot, root = document.documentElement;
   root.style.setProperty('--rgb', rgb); root.style.setProperty('--c2', c2); root.style.setProperty('--fs', PREFS.fs);
   root.classList.toggle('no-mark', !PREFS.mark); root.classList.toggle('calm', !!PREFS.calm); root.classList.toggle('night', PREFS.bg === 'night'); root.classList.add('robot');
-  for (const [k, id] of [['mark', '#t-mark'], ['calm', '#t-calm'], ['wel', '#t-wel'], ['welVoice', '#t-welv']]) $(id).setAttribute('aria-checked', String(!!PREFS[k]));
-  $('#fsize').value = PREFS.fs; $('#bgsel').value = PREFS.bg || 'beige';
+  for (const [k, id] of [['mark', '#t-mark'], ['calm', '#t-calm'], ['wel', '#t-wel'], ['welVoice', '#t-welv'], ['apHint', '#t-aph']]) $(id).setAttribute('aria-checked', String(!!PREFS[k]));
+  for (const b of document.querySelectorAll('#fsize [data-fs]')) b.setAttribute('aria-checked', String(b.dataset.fs === PREFS.fs));
+  for (const b of document.querySelectorAll('.sw-bg')) b.setAttribute('aria-checked', String(b.dataset.bg === (PREFS.bg || 'beige')));
   document.querySelector('meta[name=theme-color]')?.setAttribute('content', PREFS.bg === 'night' ? '#17110E' : '#D6CBC0');
   try { localStorage.setItem('neesmo-prefs', JSON.stringify(PREFS)); } catch {}
   syncWelcome();
   if (typeof reduce !== 'undefined') reduce = matchMedia('(prefers-reduced-motion: reduce)').matches || PREFS.calm;
 }
-$('#fsize').onchange = e => { PREFS.fs = e.target.value; applyPrefs(); };
-$('#bgsel').onchange = e => { PREFS.bg = e.target.value; applyPrefs(); };
-for (const [k, id] of [['mark', '#t-mark'], ['calm', '#t-calm'], ['wel', '#t-wel'], ['welVoice', '#t-welv']]) $(id).onclick = () => { PREFS[k] = !PREFS[k]; applyPrefs(); };
+$('#fsize').onclick = e => { const b = e.target.closest('[data-fs]'); if (b) { PREFS.fs = b.dataset.fs; applyPrefs(); } };
+for (const b of document.querySelectorAll('.sw-bg')) b.onclick = () => { PREFS.bg = b.dataset.bg; applyPrefs(); };
+for (const [k, id] of [['mark', '#t-mark'], ['calm', '#t-calm'], ['wel', '#t-wel'], ['welVoice', '#t-welv'], ['apHint', '#t-aph']]) $(id).onclick = () => { PREFS[k] = !PREFS[k]; applyPrefs(); };
 applyPrefs();
+// ── line icons: <i data-i="name"> gets an inline SVG ──
+const ICONS = { "eye":"<path d=\"M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7S2 12 2 12z\"/><circle cx=\"12\" cy=\"12\" r=\"3\"/>", "clock":"<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 7v5l3 2\"/>", "inbox":"<path d=\"M3 13l3-8h12l3 8v6H3zM3 13h5l1 3h6l1-3h5\"/>", "coin":"<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M14.8 9.2c-.5-.8-1.5-1.2-2.8-1.2-1.7 0-2.8.8-2.8 2s1.2 1.6 2.8 2 2.8.8 2.8 2-1.1 2-2.8 2c-1.3 0-2.3-.4-2.8-1.2M12 6v2M12 16v2\"/>", "pen":"<path d=\"M4 20l1-4L16 5l3 3L8 19zM14 7l3 3\"/>", "film":"<rect x=\"3\" y=\"5\" width=\"18\" height=\"14\" rx=\"2\"/><path d=\"M7 5v14M17 5v14M3 9h4M3 15h4M17 9h4M17 15h4\"/>", "check":"<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M8 12.5l2.7 2.7L16 9.5\"/>", "chart":"<path d=\"M4 20V4M4 20h16M8 16v-5M12 16V8M16 16v-3\"/>","home": "<path d=\"M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z\"/>", "palette": "<path d=\"M12 3a9 9 0 1 0 0 18c1.1 0 1.6-.8 1.6-1.6 0-1.2-1-1.6-1-2.7 0-.9.7-1.7 1.7-1.7H17a4 4 0 0 0 4-4C21 6.6 17 3 12 3z\"/><circle cx=\"7.5\" cy=\"11\" r=\"1.2\"/><circle cx=\"10.5\" cy=\"7.2\" r=\"1.2\"/><circle cx=\"15\" cy=\"7.5\" r=\"1.2\"/>", "users": "<circle cx=\"9\" cy=\"8\" r=\"3.5\"/><path d=\"M2.5 20c.8-3.5 3.4-5.5 6.5-5.5s5.7 2 6.5 5.5\"/><path d=\"M16 4.6a3.5 3.5 0 0 1 0 6.8M18 14.8c2 .7 3.2 2.5 3.6 5.2\"/>", "cpu": "<rect x=\"6\" y=\"6\" width=\"12\" height=\"12\" rx=\"2.5\"/><path d=\"M10 10h4v4h-4zM9 2v4M15 2v4M9 18v4M15 18v4M2 9h4M2 15h4M18 9h4M18 15h4\"/>", "wave": "<path d=\"M7 12V6.5a1.5 1.5 0 0 1 3 0V11M10 10.5V4.5a1.5 1.5 0 0 1 3 0v6M13 10V5.5a1.5 1.5 0 0 1 3 0V12M16 9.5a1.5 1.5 0 0 1 3 0V14a7 7 0 0 1-12.6 4.2L3.8 14.6a1.6 1.6 0 0 1 2.4-2L7 13.5\"/>", "user": "<circle cx=\"12\" cy=\"8\" r=\"4\"/><path d=\"M4 21c1-4.2 4.2-6.5 8-6.5s7 2.3 8 6.5\"/>", "chat": "<path d=\"M4 5h16v11H9l-5 4z\"/>", "speaker": "<path d=\"M4 9.5h4l5-4v13l-5-4H4z\"/><path d=\"M16.5 9a4 4 0 0 1 0 6M19 6.5a7.5 7.5 0 0 1 0 11\"/>", "play": "<path d=\"M7 4.5v15l12-7.5z\"/>", "mic": "<rect x=\"9\" y=\"3\" width=\"6\" height=\"11\" rx=\"3\"/><path d=\"M5.5 11a6.5 6.5 0 0 0 13 0M12 17.5V21\"/>", "info": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M12 11v5.5M12 7.6v.1\"/>", "shield": "<path d=\"M12 3l8 3v6c0 4.5-3.3 8-8 9-4.7-1-8-4.5-8-9V6z\"/><path d=\"M8.5 12l2.5 2.5 4.5-5\"/>", "type": "<path d=\"M5 7V5h14v2M12 5v14M9 19h6\"/>", "wind": "<path d=\"M3 8h11a3 3 0 1 0-3-3M3 12h16a3 3 0 1 1-3 3M3 16h7\"/>", "plus": "<path d=\"M12 5v14M5 12h14\"/>", "puzzle": "<path d=\"M10 4a2 2 0 0 1 4 0v2h4v4h-2a2 2 0 0 0 0 4h2v4h-4v-2a2 2 0 0 0-4 0v2H6v-4h2a2 2 0 0 0 0-4H6V6h4z\"/>", "spark": "<path d=\"M12 3l1.9 5.6L19.5 10.5 13.9 12.4 12 18l-1.9-5.6L4.5 10.5l5.6-1.9z\"/><path d=\"M19 16v4M17 18h4\"/>", "chev": "<path d=\"M9 6l6 6-6 6\"/>", "back": "<path d=\"M15 6l-6 6 6 6\"/>", "logout": "<path d=\"M14 4h5v16h-5M10 8l-4 4 4 4M6 12h10\"/>", "key": "<circle cx=\"8\" cy=\"15\" r=\"4\"/><path d=\"M11 12l8-8M16 7l2.5 2.5M14 9l2 2\"/>", "book": "<path d=\"M4 5.5A2.5 2.5 0 0 1 6.5 3H20v15H6.5A2.5 2.5 0 0 0 4 20.5zM4 20.5A2.5 2.5 0 0 0 6.5 23H20v-5\"/>", "globe": "<circle cx=\"12\" cy=\"12\" r=\"9\"/><path d=\"M3 12h18M12 3c2.5 2.7 3.7 5.7 3.7 9s-1.2 6.3-3.7 9c-2.5-2.7-3.7-5.7-3.7-9S9.5 5.7 12 3z\"/>", "scroll": "<path d=\"M7 3h10a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2zM9 8h6M9 12h6M9 16h4\"/>", "bell": "<path d=\"M6 16V11a6 6 0 0 1 12 0v5l1.5 2h-15zM10 20.5a2 2 0 0 0 4 0\"/>", "refresh": "<path d=\"M20 11a8 8 0 0 0-14.5-4.5L4 8M4 4v4h4M4 13a8 8 0 0 0 14.5 4.5L20 16M20 20v-4h-4\"/>", "download": "<path d=\"M12 4v11M7 10l5 5 5-5M5 20h14\"/>", "tag": "<path d=\"M3 12V4h8l10 10-8 8z\"/><circle cx=\"7.5\" cy=\"8.5\" r=\"1.3\"/>", "phone": "<rect x=\"7\" y=\"2.5\" width=\"10\" height=\"19\" rx=\"2.5\"/><path d=\"M11 18.5h2\"/>"};
+window.paintIcons = paintIcons;
+function paintIcons(root = document) { for (const el of root.querySelectorAll('i[data-i]:not(.done)')) { const d = ICONS[el.dataset.i]; if (!d) continue; el.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${d}</svg>`; el.classList.add('done'); } }
+paintIcons();
 
 // ── voices ──
 (async () => {
@@ -1156,11 +1193,14 @@ function showTab(t) {
   if (!document.querySelector(`.tab[data-tab="${t}"]`)) t = 'general';
   settingsTab = t; try { localStorage.setItem('neesmo-tab', t); } catch {}
   for (const b of document.querySelectorAll('.tabs [data-tab]')) b.setAttribute('aria-selected', String(b.dataset.tab === t));
+  for (const b of document.querySelectorAll('.sfoot [data-go]')) b.classList.toggle('on', b.dataset.go === t);
+  if (!['license', 'notices'].includes(t)) showTab.last = t;
   document.querySelector(`.tabs [data-tab="${t}"]`)?.scrollIntoView({ block: "nearest", inline: "nearest" });
   for (const p of document.querySelectorAll('.tab')) p.hidden = p.dataset.tab !== t;
-  ({ general: welPreview, agents: loadAgentCfg, system: () => { loadExtensions(); loadDevices(); loadNotices(); }, license: loadLicense }[t] || (() => {}))();
+  ({ general: welPreview, agents: loadAgentCfg, system: () => { loadExtensions(); loadDevices(); }, notices: loadNotices, license: loadLicense }[t] || (() => {}))();
 }
-$('#to-notices').onclick = e => { e.preventDefault(); $('#notices').scrollIntoView({ behavior: 'smooth', block: 'start' }); };
+$('.sfoot').onclick = e => { const b = e.target.closest('[data-go]'); if (b) { e.preventDefault(); showTab(settingsTab === b.dataset.go ? (showTab.last || 'general') : b.dataset.go); $('#pop-s').scrollTop = 0; } };
+$('#pop-s').addEventListener('click', e => { if (e.target.closest('[data-back]')) showTab(showTab.last || 'general'); });
 $('.tabs').onclick = e => { const b = e.target.closest('[data-tab]'); if (b) showTab(b.dataset.tab); };
 // ── skills and plugins (Settings → System) ──
 async function loadExtensions() {
@@ -1172,6 +1212,8 @@ async function loadExtensions() {
   $('#plist2').innerHTML = job.map(prow).join(''); $('#pjob').hidden = !job.length;
   $('#pjob summary').textContent = `Job plugins (${job.length}${jobOn ? `, ${jobOn} on in every chat` : ''})`;
   $('#plist').innerHTML = x.plugins.filter(p => !p.job).map(p => row('plugins', p.id, p.name, p.on, p.suggested ? p.description + ' · installs when switched on' : (p.version ? 'v' + p.version : ''), p.license)).join('') || '<li><small>No user-wide plugins installed.</small></li>';
+  const pOn = x.plugins.filter(p => p.on).length, sOn = x.skills.filter(k => k.on).length;
+  $('#pcount').textContent = `${pOn} of ${x.plugins.length} on`; $('#scount').textContent = `${sOn} of ${x.skills.length} on`;
   $('#slist').innerHTML = x.skills.map(k => row('skills', k.name, k.name, k.on, k.description, k.license)).join('')
     || `<li><small>No general skills in ${esc(x.skills_dir)}. Skills inside a project folder belong to that project.</small></li>`;
 }
@@ -1316,7 +1358,7 @@ function showLicense(l) {
   const txt = { owner: 'Owner copy · no key needed', licensed: `Licensed · ${l.plan || 'pro'}${l.to ? ' · ' + l.to : ''}${l.expires ? ' · until ' + l.expires : ''}`,
     trial: `Trial · ${l.days_left} day${l.days_left === 1 ? '' : 's'} left`, expired: 'Trial ended · add a key', invalid: 'Key problem: ' + (l.error || '') };
   $('#lic-state').textContent = txt[l.state] || l.state;
-  $('.tabs [data-tab="license"]').hidden = l.state === 'owner';
+  $('#to-license').hidden = l.state === 'owner';
   if (l.state === 'owner' && settingsTab === 'license' && !$('#pop-s').hidden) showTab('system');
   if (l.state === 'licensed' && /early/.test(l.plan || '')) $('#lic-state').textContent += ' · thank you for backing Neesmo early. Every update is yours, free.';
   const buy = $('#lic-buy'); buy.hidden = !l.buy || !['trial', 'expired', 'invalid'].includes(l.state); if (l.buy) buy.href = l.buy;
@@ -1344,17 +1386,34 @@ addEventListener('keydown', e => { if (e.key === 'Escape') { $('#pop-s').hidden 
 let notes = [], seenId = +(localStorage.getItem('neesmo-seen') || 0);
 const chipText = { pending: 'needs approval', approved: 'approved', denied: 'denied', expired: 'expired', ignored: 'ignored', 'changes asked': 'changes asked' };
 const asks = n => n.kind === 'approval' || n.kind === 'review';
+// approvals keep coming and auto permissions is off: offer to switch it on (Settings → General turns this tip off)
+function apHintCard(pending) {
+  let snooze = 0; try { snooze = +(localStorage.getItem('neesmo-aphint') || 0); } catch {}
+  const st = window.studioSt?.(), approvals = notes.filter(n => n.kind === 'approval').length;
+  if (!PREFS.apHint || !st || st.auto_permissions === true || Date.now() < snooze || !(pending >= 2 || approvals >= 3)) return '';
+  return `<li class="aphint"><div><b>Turn on auto permissions?</b><span>Neesmo keeps asking you to approve steps. With auto permissions, safe steps run by themselves and you only get the important questions.</span>
+    <span class="aph-btns"><button type="button" class="main" data-aph="on">Turn on</button><button type="button" data-aph="later">Not now</button></span><small>You can turn this tip off in Settings → General.</small></div></li>`;
+}
 async function loadNotes() {
   try { notes = (await (await api('/api/notifications')).json()).items; } catch { return; }
   const pending = notes.filter(n => n.status === 'pending').length, unread = notes.filter(n => n.id > seenId).length;
   botPending = pending;
   const badge = $('#badge'); badge.hidden = !(pending || unread); badge.textContent = pending || unread;
   try { (pending || unread) ? navigator.setAppBadge?.(pending || unread) : navigator.clearAppBadge?.(); } catch {}  // home-screen icon badge
-  $('#nlist').innerHTML = notes.map(n => `<li><button type="button" data-n="${n.id}" class="${n.id > seenId ? 'unread' : ''}" style="--a:${AGENT_COLORS[n.agent] || 'var(--dim)'}">
+  $('#nlist').innerHTML = apHintCard(pending) + notes.map(n => `<li><button type="button" data-n="${n.id}" class="${n.id > seenId ? 'unread' : ''}" style="--a:${AGENT_COLORS[n.agent] || 'var(--dim)'}">
     ${asks(n) ? `<em class="chip ${esc(n.status)}">${chipText[n.status] || esc(n.status)}</em>` : ''}<b>${esc(n.title)}</b><span>${esc(n.at)} · ${esc(n.body)}</span></button>${n.status === 'pending' ? `<button type="button" class="x ign" data-ign="${n.id}" aria-label="Ignore">Ignore</button>` : `<button type="button" class="x" data-del="${n.id}" aria-label="Delete">✕</button>`}</li>`).join('') || '<li><small>Nothing yet</small></li>';
   if (!$('#pop-n').hidden && notes.length) { seenId = Math.max(seenId, notes[0].id); try { localStorage.setItem('neesmo-seen', seenId); } catch {} }
 }
 $('#nlist').addEventListener('click', async e => {
+  const h = e.target.closest('[data-aph]');
+  if (h) {
+    if (h.dataset.aph === 'on') {
+      h.disabled = true;
+      try { await api('/api/studio/settings', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ auto_permissions: true }) }); const st = window.studioSt?.(); if (st) st.auto_permissions = true; if ($('#s-ap')) $('#s-ap').setAttribute('aria-checked', 'true'); }
+      catch (x) { h.disabled = false; h.textContent = 'Try again'; return; }
+    } else { try { localStorage.setItem('neesmo-aphint', String(Date.now() + 3 * 864e5)); } catch {} }
+    return loadNotes();
+  }
   const g = e.target.closest('[data-ign]');
   if (g) { await api('/api/notifications/' + g.dataset.ign + '/ignore', { method: 'POST' }).catch(() => {}); return loadNotes(); }
   const d = e.target.closest('[data-del]');

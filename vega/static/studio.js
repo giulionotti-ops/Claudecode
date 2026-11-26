@@ -3,6 +3,7 @@
 // Does nothing on a plain Neesmo install (no studio/state.json on the server).
 (() => {
 const S = { st: null, ch: {}, chd: null, timer: 0 };
+window.studioSt = () => S.st;   // read by the auto-permission tip in index.html
 const J = (path, body, method = 'POST') => api('/api/studio' + path, body instanceof FormData ? { method, body }
   : { method, headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body ?? {}) }).then(r => r.json());
 const G = path => api('/api/studio' + path).then(r => r.json());
@@ -23,6 +24,7 @@ document.body.insertAdjacentHTML('beforeend', `
 
 async function refresh() {
   try { S.st = await G('/state'); } catch { return; }
+  if (!S.hinted && typeof loadNotes === 'function') { S.hinted = true; loadNotes(); }  // auto-permission tip needs the state
   if (!S.st.studio) return;
   const lab = $('#studio-label'); if (lab) { lab.textContent = S.st.studio_label || ''; lab.hidden = !S.st.studio_label; }
   onboarding();
@@ -250,6 +252,12 @@ document.addEventListener('click', e => {
   e.stopImmediatePropagation(); e.preventDefault(); openChd(b.dataset.id);
 }, true);
 
+const ROLE_ICON = { marketer: 'pen', producer: 'film', supervisor: 'check', main: 'check', analyst: 'chart' };
+// ring progress: share of the channel's videos that are live
+function ring(n, of) {
+  const p = of ? n / of : 0, C = 2 * Math.PI * 24;
+  return `<span class="ring" role="img" aria-label="${Math.round(p * 100)}% of videos live"><svg viewBox="0 0 60 60"><circle cx="30" cy="30" r="24"/><circle cx="30" cy="30" r="24" class="on" stroke-dasharray="${(p * C).toFixed(1)} ${C.toFixed(1)}"/></svg><b>${Math.round(p * 100)}%</b><small>live</small></span>`;
+}
 async function openChd(id, soft) {
   S.chd = id; const dlg = $('#chd'), box = $('#chd-b');
   let d; try { d = S.ch[id] = { ...(await G('/channels/' + encodeURIComponent(id))), _t: Date.now() }; } catch (x) { return say(x.message, 'vega'); }
@@ -261,10 +269,15 @@ async function openChd(id, soft) {
   if (soft && document.activeElement?.closest?.('#chd form')) return;   // don't redraw under typing
   box.innerHTML = `<header><div><h2 id="chd-t">${esc(a.name)}</h2><small>${esc(sub)}${s.paused ? ' · paused' : ''}</small></div>
     <div class="hb"><button type="button" id="chd-make" class="main">Make a video now</button><button type="button" id="chd-set">Settings</button><button type="button" id="chd-full">${dlg.classList.contains('full') ? 'Exit full screen' : 'Full screen'}</button><button type="button" id="chd-x" aria-label="Close">✕</button></div></header>
-    <div class="kp"><div><b>${kfmt(st.views)}</b><small>views</small></div><div><b>${kfmt(st.subs)}</b><small>${yt() ? 'subscribers gained' : 'followers gained'}</small></div>
-    <div><b>${c.posted || 0}</b><small>live</small></div><div><b>${c.scheduled || 0}</b><small>scheduled</small></div>
-    <div><b>${(c.ready_for_review || 0) + (c.needs_owner || 0)}</b><small>waiting for you</small></div><div><b>$${(d.cost_usd || 0).toFixed(2)}</b><small>Claude use (est.)</small></div></div>
-    <div class="roles">${d.roles.map(x => `<span class="${d.busy && r.role === x.id ? 'on' : ''}">${esc(x.label)}${d.busy && r.role === x.id ? ' · working' : ''}</span>`).join('')}</div>
+    <div class="kp">
+      <div class="k hero o"><span class="kh"><i class="ri" data-i="eye"></i><small>Views</small></span><b>${kfmt(st.views)}</b><small>across ${(d.platforms || ['youtube']).length} platform${(d.platforms || []).length > 1 ? 's' : ''}</small></div>
+      <div class="k hero g"><div><span class="kh"><i class="ri" data-i="users"></i><small>${yt() ? 'Subscribers' : 'Followers'}</small></span><b>+${kfmt(st.subs)}</b><small>gained</small></div>${ring(c.posted || 0, (c.posted || 0) + (c.scheduled || 0) + (c.ready_for_review || 0) + (c.needs_owner || 0))}</div>
+      <div class="k"><i class="ri" data-i="play"></i><b>${c.posted || 0}</b><small>live</small></div>
+      <div class="k"><i class="ri" data-i="clock"></i><b>${c.scheduled || 0}</b><small>scheduled</small></div>
+      <div class="k${(c.ready_for_review || 0) + (c.needs_owner || 0) ? ' hot' : ''}"><i class="ri" data-i="inbox"></i><b>${(c.ready_for_review || 0) + (c.needs_owner || 0)}</b><small>waiting for you</small></div>
+      <div class="k"><i class="ri" data-i="coin"></i><b>$${(d.cost_usd || 0).toFixed(2)}</b><small>Claude use (est.)</small></div>
+    </div>
+    <nav class="roles" aria-label="Crew">${d.roles.map(x => `<span class="${d.busy && r.role === x.id ? 'on' : ''}"><i data-i="${ROLE_ICON[x.id] || 'spark'}"></i>${esc(x.label)}${d.busy && r.role === x.id ? ' · working' : ''}</span>`).join('')}</nav>
     <div class="cols">
       <section class="vlist"><h3>Videos</h3><div class="vids">${vids.map(v => vRow(id, v, d.platforms || ['youtube'])).join('') || '<small>No videos yet.</small>'}</div></section>
       <section><h3>Timeline</h3><ol class="ev">${(d.events || []).slice().reverse().map(e => `<li><small>${esc(ago(e.ts))}</small>${esc(e.text)}</li>`).join('') || '<li>Nothing yet.</li>'}</ol></section>
@@ -273,6 +286,7 @@ async function openChd(id, soft) {
         <h3 style="margin-top:12px">Inspiration</h3><small>Pictures or clips you like. The marketer and producer use them as reference.</small>
         <input type="file" id="chd-insp" accept="image/*,video/mp4" multiple></section>
     </div>`;
+  window.paintIcons?.(box);
   const q = sel => box.querySelector(sel);
   q('#chd-x').onclick = () => dlg.close();
   q('#chd-full').onclick = () => { dlg.classList.toggle('full'); openChd(id, true); };
@@ -496,17 +510,23 @@ function settingsBlock() {
   if (!el) {
     sys.insertAdjacentHTML('afterbegin', `<div id="studio-sys">
       <h3>Neesmo Studio</h3>
-      <div class="row"><div><label id="l-sap">Auto permissions</label><small class="sub">Safe steps run by themselves, so you get fewer questions. Off: Claude asks before each step.</small></div><button type="button" class="tog" role="switch" id="s-ap" aria-labelledby="l-sap"></button></div>
-      <div class="row"><label for="s-nt">Phone notifications</label><select id="s-nt"><option value="important">Videos and important only</option><option value="all">Everything</option><option value="off">Off</option></select></div>
+      <div class="grp">
+        <div class="row"><i class="ri" data-i="shield"></i><div class="rl"><label id="l-sap">Auto permissions</label><small class="sub">Safe steps run by themselves, so you get fewer questions.</small></div><button type="button" class="tog" role="switch" id="s-ap" aria-labelledby="l-sap"></button></div>
+        <div class="row col"><div class="rh"><i class="ri" data-i="bell"></i><span class="rl" id="l-snt">Phone notifications</span></div>
+          <div class="seg sm" id="s-nt" role="radiogroup" aria-labelledby="l-snt"><button type="button" role="radio" data-v="important">Important</button><button type="button" role="radio" data-v="all">Everything</button><button type="button" role="radio" data-v="off">Off</button></div></div>
+      </div>
       <h3>Updates</h3>
-      <div class="row"><small>Version</small><small id="s-ver"></small></div>
-      <div class="row"><div><label id="l-sau">Update by itself</label><small class="sub">Free forever. Your channels, settings and keys are never touched.</small></div><button type="button" class="tog" role="switch" id="s-au" aria-labelledby="l-sau"></button></div>
-      <div class="row"><small id="s-upd"></small><span><button type="button" id="s-chk">Check</button> <button type="button" id="s-go" hidden>Update now</button></span></div>
+      <div class="grp">
+        <div class="row"><i class="ri" data-i="tag"></i><small class="rl">Version</small><small id="s-ver"></small></div>
+        <div class="row"><i class="ri" data-i="refresh"></i><div class="rl"><label id="l-sau">Update by itself</label><small class="sub">Free forever. Channels, settings and keys are never touched.</small></div><button type="button" class="tog" role="switch" id="s-au" aria-labelledby="l-sau"></button></div>
+        <div class="row"><small id="s-upd" class="rl"></small><span class="btns"><button type="button" id="s-chk" class="ib"><i data-i="refresh"></i>Check</button><button type="button" id="s-go" class="ib main" hidden><i data-i="download"></i>Update now</button></span></div>
+      </div>
     </div>`);
+    paintIcons(sys);
     el = $('#studio-sys');
     $('#s-ap').onclick = async () => { const on = $('#s-ap').getAttribute('aria-checked') !== 'true'; tog($('#s-ap'), on); try { await J('/settings', { auto_permissions: on }); } catch (x) { tog($('#s-ap'), !on); $('#s-upd').textContent = x.message; } };
     $('#s-au').onclick = async () => { const on = $('#s-au').getAttribute('aria-checked') !== 'true'; tog($('#s-au'), on); try { await J('/settings', { auto_update: on }); } catch (x) { tog($('#s-au'), !on); $('#s-upd').textContent = x.message; } };
-    $('#s-nt').onchange = () => J('/settings', { notify: $('#s-nt').value }).catch(x => { $('#s-upd').textContent = x.message; });
+    $('#s-nt').onclick = e => { const b = e.target.closest('[data-v]'); if (!b) return; paintNt(b.dataset.v); J('/settings', { notify: b.dataset.v }).catch(x => { $('#s-upd').textContent = x.message; }); };
     $('#s-chk').onclick = async () => { $('#s-upd').textContent = 'Checking…'; try { S.st.update = await G('/update'); paintUpd(); } catch (x) { $('#s-upd').textContent = x.message; } };
     $('#s-go').onclick = async () => {
       $('#s-go').disabled = true; $('#s-upd').textContent = 'Updating… Neesmo restarts by itself.';
@@ -515,10 +535,11 @@ function settingsBlock() {
       $('#s-go').disabled = false;
     };
   }
-  tog($('#s-ap'), st.auto_permissions); tog($('#s-au'), st.auto_update); $('#s-nt').value = st.notify || 'important';
+  tog($('#s-ap'), st.auto_permissions); tog($('#s-au'), st.auto_update); paintNt(st.notify || 'important');
   $('#s-ver').textContent = `${st.version} · ${st.studio_label || platform() + ' edition'}`;
   paintUpd();
 }
+function paintNt(v) { for (const b of document.querySelectorAll('#s-nt [data-v]')) b.setAttribute('aria-checked', String(b.dataset.v === v)); }
 function paintUpd() {
   const u = S.st.update || {};
   $('#s-upd').textContent = u.available ? `New: ${u.latest}${u.notes ? ' · ' + u.notes : ''}` : u.error ? 'Could not check right now.' : u.latest ? 'Up to date.' : '';
