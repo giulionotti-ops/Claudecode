@@ -176,7 +176,7 @@
   .agtab[hidden] { display: none; } .agtab { display: flex; flex-direction: column; gap: 6px; }
   #wel-try { flex: none; white-space: nowrap; }
   #agpg { position: fixed; z-index: 4; display: flex; align-items: center; justify-content: center; gap: 10px; height: 22px; pointer-events: none; }
-  #agpg[hidden] { display: none; } #agpg > * { pointer-events: auto; }
+  #agpg[hidden], body.chat #agpg { display: none; } #agpg > * { pointer-events: auto; }
   #agpg .dots { display: flex; gap: 6px; padding: 5px 8px; border-radius: 999px; background: rgba(255,250,243,.55); -webkit-backdrop-filter: blur(12px); backdrop-filter: blur(12px); }
   #agpg .dots button { width: 7px; height: 7px; padding: 0; border: 0; border-radius: 999px; background: rgba(43,29,20,.28); cursor: pointer; transition: width .25s, background .25s; }
   #agpg .dots button[aria-selected=true] { width: 20px; background: #EF8746; }
@@ -475,6 +475,26 @@
   }
 
   @media (max-width: 600px) { html.robot .card .mono-a { display: none; } html.robot .card b { font-size: 14px; } }
+  /* phone turned sideways: short screen. NEESMO top left, robot on the right under the top bar, cards in two rows over its legs, chat uses the full height */
+  @media (orientation: landscape) and (max-height: 500px) {
+    html.robot { --sl: max(16px, env(safe-area-inset-left)); --sr: max(16px, env(safe-area-inset-right)); --bw: min(40vw, calc((100dvh - 60px) * .896)); }
+    html.robot .corner { z-index: 6; margin: 10px var(--sr) 0 var(--sl); }
+    #bot { right: env(safe-area-inset-right); bottom: 0; width: var(--bw); }
+    html.robot #wordmark { top: calc(58px + env(safe-area-inset-top)); left: var(--sl); transform: none; font-size: min(12vw, 22vh); }
+    html.robot #studio-label { top: calc(58px + env(safe-area-inset-top) + min(12vw, 22vh) * .82 + 6px); left: var(--sl); transform: none; }
+    html.robot #welcome { left: var(--sl); translate: none; top: calc(64px + min(12vw, 22vh)); width: min(56vw, 560px); text-align: left; }
+    html.robot #status { left: auto; top: calc(62px + env(safe-area-inset-top)); bottom: auto; right: calc(env(safe-area-inset-right) + var(--bw) * .62); max-width: 40vw; }
+    html.robot form { left: var(--sl); right: var(--sr); width: auto; max-width: none; margin: 0; z-index: 3; bottom: max(calc(10px + env(safe-area-inset-bottom)), calc(var(--kb, 0px) + 8px)); }
+    html.robot .cards { z-index: 3; overflow: visible; justify-content: flex-start; }
+    html.robot .cards.l, html.robot .cards.r { left: var(--sl); right: var(--sr); width: auto; }
+    html.robot .cards.l { bottom: calc(126px + env(safe-area-inset-bottom)); } html.robot .cards.r { bottom: calc(70px + env(safe-area-inset-bottom)); }
+    html.robot .card { flex: 1 1 0; max-width: none; padding: 7px 12px; border-radius: 16px; } html.robot .card b { font-size: 16px; } html.robot .card small { display: none; }
+    html.robot .card .mono-a { top: 50%; translate: 0 -50%; width: 26px; height: 26px; font-size: 13px; }
+    html.robot body.chat #chathead { left: var(--sl); translate: none; top: calc(var(--vvt, 0px) + 12px + env(safe-area-inset-top)); }
+    html.robot body.chat .corner.tl { opacity: 0; pointer-events: none; }
+    html.robot body.chat #log { left: var(--sl); right: var(--sr); translate: none; width: auto; max-width: 900px; top: calc(var(--vvt, 0px) + 64px + env(safe-area-inset-top)); bottom: calc(70px + env(safe-area-inset-bottom)); max-height: none; }
+    .pop { top: calc(58px + env(safe-area-inset-top)); max-height: calc(100dvh - 68px - env(safe-area-inset-top)); width: min(420px, calc(100vw - 32px)); }
+  }
   /* map pop-up */
   dialog#mapdlg { position: fixed; inset: 0; margin: calc(env(safe-area-inset-top, 0px) + 8px) auto calc(env(safe-area-inset-bottom, 0px) + 8px) !important; width: min(1100px, calc(100vw - 16px)); height: calc(100dvh - 16px - env(safe-area-inset-top, 0px) - env(safe-area-inset-bottom, 0px)); padding: 0; border: 1px solid rgba(255,255,255,.7); border-radius: 22px; overflow: hidden; background: #17110E; }
   dialog#mapdlg::backdrop { background: rgba(214,203,192,.2); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); }
