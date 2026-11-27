@@ -11,3 +11,6 @@ Gemini still 402 RESOURCE_EXHAUSTED (credits depleted). No art, nothing rendered
 
 ## Retry 2026-11-26
 Gemini still 402 RESOURCE_EXHAUSTED (credits depleted). No art, nothing rendered or scheduled. Same fix as above.
+
+## Retry 2026-11-27
+Gemini still 402 RESOURCE_EXHAUSTED (credits depleted). No art, nothing rendered or scheduled. Same fix as above.
