@@ -1,12 +1,17 @@
 """Make one video for a channel agent. This script is the orchestrator, so orchestration costs no tokens.
 
-  python3 -m studio.pipeline make <aid>                 # next video, start to "ready for review"
+  python3 -m studio.pipeline make <aid> [--draft]       # next video, start to "ready for review" (--draft: 540x960, 15 fps test)
   python3 -m studio.pipeline fix <aid> <vid> "<note>"   # the owner asked for changes
   python3 -m studio.pipeline analyse <aid>              # analyst session (after stats.py)
 
 Every role is its own fresh, short `claude -p` session in its own folder (.roles/<role>, with only its skills) (new session per video, so
 context and cost stay small). Scripts check what scripts can check (gate.py, audit.py); the supervisor
 session judges the rest and can send the work back up to `max_fix_rounds` times.
+
+Before the producer starts, the supervisor runs a director pass (brief `director.md`, skill `neesmo-director`):
+it reviews the script (and can send it back to the marketer once) and writes `shotlist.json`, the shot-by-shot
+plan the producer builds. `studio.shotlist` checks it; `studio.director_learn` logs every video and rewrites the
+director's playbook from the real numbers, so the director improves with every video.
 """
 import json
 import os
@@ -17,9 +22,11 @@ import sys
 import uuid
 from pathlib import Path
 
-from . import audit, channel, gate, state
+from . import audit, channel, director_learn, gate, shotlist, state
 
-TIMEOUT = {"marketer": 25 * 60, "producer": 75 * 60, "supervisor": 12 * 60, "analyst": 15 * 60}
+TIMEOUT = {"marketer": 25 * 60, "producer": 75 * 60, "supervisor": 12 * 60, "director": 20 * 60, "analyst": 15 * 60}
+LABEL = {**channel.ROLE_LABEL, "director": "Directing"}
+DRAFT_SIZE = "540x960"
 TOOLS = "Bash Read Write Edit Glob Grep Skill Agent WebSearch WebFetch TodoWrite"
 CHANGE_WORDS = re.compile(r"\b(title|hook|script|topic|words?|say|line|caption text|description|facts?|story)\b", re.I)
 
@@ -28,17 +35,21 @@ def _model() -> str:
     return os.environ.get("NEESMO_ROLE_MODEL", "sonnet")
 
 
-def run_role(aid: str, role: str, vdir: Path | None, extra: str = "") -> dict:
-    """One fresh Claude session playing `role`. Returns {ok, session, cost, text}."""
+def run_role(aid: str, role: str, vdir: Path | None, extra: str = "", brief: str | None = None) -> dict:
+    """One fresh Claude session playing `role` (folder, skills, plugins) with brief `brief` (default: the role's own).
+    Returns {ok, session, cost, text}."""
     d = state.channel_dir(aid)
     sid = str(uuid.uuid4())
+    brief = brief or role
     where = f"The video folder is `{vdir.relative_to(d)}`." if vdir else ""
-    prompt = (f"You are the {role} of this channel. Read `neesmo/prompts/{role}.md` and follow it exactly. {where}\n"
+    if vdir and channel.read_json(vdir / "draft.json", {}).get("draft"):
+        where += f" DRAFT run: a cheap test render at {DRAFT_SIZE}, 15 fps, fast preset; keep it short and lean."
+    prompt = (f"You are the {role} of this channel. Read `neesmo/prompts/{brief}.md` and follow it exactly. {where}\n"
               f"{extra}".strip())
     channel.write_json(channel.paths(aid)["n"] / "running.json",
                        {"role": role, "video": vdir.name if vdir else None, "session": sid,
                         "started": state.now().isoformat(timespec="seconds")})
-    channel.event(aid, "role", f"{channel.ROLE_LABEL[role]} started" + (f" on video {vdir.name}" if vdir else ""),
+    channel.event(aid, "role", f"{LABEL[brief]} started" + (f" on video {vdir.name}" if vdir else ""),
                   role=role, video=vdir.name if vdir else None, session=sid)
     claude = shutil.which("claude") or str(Path.home() / ".local" / "bin" / "claude")
     # own folder = only this role's skills; --settings = only this role's plugins
@@ -48,22 +59,22 @@ def run_role(aid: str, role: str, vdir: Path | None, extra: str = "") -> dict:
            "--settings", json.dumps({"enabledPlugins": channel.ROLE_PLUGINS[role]})]
     res = {"ok": False, "session": sid, "cost": 0.0, "text": ""}
     try:
-        r = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True, timeout=TIMEOUT[role],
+        r = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True, timeout=TIMEOUT[brief],
                            env={**os.environ, "NEESMO_ROLE": role, "NEESMO_CHANNEL": aid})
         out = json.loads(r.stdout or "{}")
         res.update(ok=r.returncode == 0 and not out.get("is_error"), cost=float(out.get("total_cost_usd") or 0),
                    text=str(out.get("result") or r.stderr[-400:]).strip())
     except subprocess.TimeoutExpired:
-        res["text"] = f"timed out after {TIMEOUT[role] // 60} min"
+        res["text"] = f"timed out after {TIMEOUT[brief] // 60} min"
     except (OSError, ValueError) as e:
         res["text"] = str(e)
     with open(channel.paths(aid)["n"] / "costs.jsonl", "a") as f:
-        f.write(json.dumps({"ts": state.now().isoformat(timespec="seconds"), "role": role,
+        f.write(json.dumps({"ts": state.now().isoformat(timespec="seconds"), "role": brief,
                             "video": vdir.name if vdir else None, "session": sid, "cost": res["cost"],
                             "ok": res["ok"]}) + "\n")
     last = res["text"].splitlines()[-1][:200] if res["text"] else ""
     channel.event(aid, "role_done" if res["ok"] else "role_failed",
-                  f"{channel.ROLE_LABEL[role]}: {last or ('done' if res['ok'] else 'failed')}",
+                  f"{LABEL[brief]}: {last or ('done' if res['ok'] else 'failed')}",
                   role=role, video=vdir.name if vdir else None, session=sid)
     (channel.paths(aid)["n"] / "running.json").unlink(missing_ok=True)
     return res
@@ -102,15 +113,48 @@ def _add_session(aid: str, vid: str, role: str, sid: str) -> dict:
     return channel.update_video(aid, vid, sessions=v["sessions"])
 
 
-def _role(aid: str, vid: str, vdir: Path, role: str, extra: str = "") -> bool:
-    r = run_role(aid, role, vdir, extra)
-    _add_session(aid, vid, role, r["session"])
+def _role(aid: str, vid: str, vdir: Path, role: str, extra: str = "", brief: str | None = None) -> bool:
+    r = run_role(aid, role, vdir, extra, brief)
+    _add_session(aid, vid, brief or role, r["session"])
     return r["ok"]
+
+
+def _direct(aid: str, vid: str, vdir: Path) -> bool:
+    """Supervisor's director pass: script review (one marketer fix loop), then a checked shot list.
+    Returns True when a valid shotlist.json exists. A failed pass never stops the video: the producer then
+    works from the script as before."""
+    for f in ("script_review.json", "shotlist.json"):
+        (vdir / f).unlink(missing_ok=True)
+    _role(aid, vid, vdir, "supervisor", brief="director")
+    review = channel.read_json(vdir / "script_review.json", {})
+    if review.get("ok") is False and review.get("fixes"):
+        fixes = [f"line {x.get('line', '?')}: {x.get('fix', '')}" if isinstance(x, dict) else str(x) for x in review["fixes"]][:3]
+        channel.event(aid, "direct", f"The director sent the script of {vid} back: " + "; ".join(fixes)[:300], video=vid)
+        _role(aid, vid, vdir, "marketer", "FIX ROUND from the director (before production). Change only this, keep the rest:\n- "
+              + "\n- ".join(fixes))
+        (vdir / "script_review.json").unlink(missing_ok=True)
+        _role(aid, vid, vdir, "supervisor", "The marketer fixed the script. Do not send it back again: set ok true in "
+              "script_review.json and write the shot list.", brief="director")
+    errs = shotlist.check(vdir, channel.read_json(channel.paths(aid)["style"], {}))
+    if errs and (vdir / "shotlist.json").exists():
+        _role(aid, vid, vdir, "supervisor", "Your shot list did not pass the check. Fix exactly these, keep the rest:\n- "
+              + "\n- ".join(errs[:15]), brief="director")
+        errs = shotlist.check(vdir, channel.read_json(channel.paths(aid)["style"], {}))
+    if errs:
+        channel.event(aid, "direct", f"The shot list for {vid} is incomplete ({len(errs)} problems); the producer uses it as a guide.",
+                      video=vid)
+        return (vdir / "shotlist.json").exists()
+    (vdir / "shotlist.md").write_text(shotlist.render_md(vdir))
+    n = len(shotlist.load(vdir).get("shots", []))
+    channel.event(aid, "direct", f"Shot list for {vid} ready: {n} shots", video=vid)
+    return True
 
 
 def _check(aid: str, vid: str, vdir: Path) -> dict:
     """gate + audit (scripts), then the supervisor session. Returns the verdict."""
     style = channel.read_json(channel.paths(aid)["style"], {})
+    if channel.read_json(vdir / "draft.json", {}).get("draft"):
+        style = {**style, "size": DRAFT_SIZE}
     g = gate.check(vdir, style)
     (vdir / "gate.json").write_text(json.dumps(g, indent=1))
     v = next(x for x in channel.queue(aid) if x["id"] == vid)
@@ -150,7 +194,11 @@ def _fix_rounds(aid: str, vid: str, vdir: Path, verdict: dict) -> dict:
                       + " | ".join(f"{r}: {'; '.join(f)}" for r, f in by_role.items())[:300], video=vid)
         if "marketer" in by_role:
             _role(aid, vid, vdir, "marketer", "FIX ROUND. Change only this, keep the rest:\n- " + "\n- ".join(by_role["marketer"]))
-        if "producer" in by_role or "marketer" in by_role:
+        if "director" in by_role or ("marketer" in by_role and (vdir / "shotlist.json").exists()):
+            _role(aid, vid, vdir, "supervisor", "FIX ROUND: update shotlist.json (the script may have changed), keep the "
+                  "shots that still fit, use the neesmo-director skill, and run the check again:\n- "
+                  + "\n- ".join(by_role.get("director", ["match the new script"])), brief="director")
+        if "producer" in by_role or "marketer" in by_role or "director" in by_role:
             _role(aid, vid, vdir, "producer", "FIX ROUND. Re-render with these fixes, keep the rest:\n- "
                   + "\n- ".join(by_role.get("producer", ["The script changed; update voice, scenes and captions."])))
         verdict = _check(aid, vid, vdir)
@@ -169,12 +217,19 @@ def _finish(aid: str, vid: str, vdir: Path, verdict: dict) -> dict:
     channel.event(aid, "video", (f"Video {vid} is ready: {s.get('title', '')}" if ok else
                                  f"Video {vid} still has problems after the fix rounds; it needs your eye."),
                   video=vid, status=status, important=True)
+    try:
+        director_learn.log(aid, vid)   # the director's memory: what this shot list did and how it scored
+    except Exception as e:
+        channel.event(aid, "error", f"Director log failed: {str(e)[:160]}", video=vid)
     channel.backup(aid, f"video {vid}: {s.get('title', '')}")
     return v
 
 
-def make(aid: str) -> dict:
+def make(aid: str, draft: bool = False) -> dict:
     vid, vdir = _new_video(aid)
+    if draft:
+        channel.write_json(vdir / "draft.json", {"draft": True, "size": DRAFT_SIZE, "fps": 15})
+        channel.update_video(aid, vid, draft=True)
     if not _role(aid, vid, vdir, "marketer") or _script_ok(vdir):
         problem = _script_ok(vdir) or "the marketer session failed"
         _role(aid, vid, vdir, "marketer", f"The last try failed: {problem}. Write script.json and SOURCES.md now.")
@@ -182,6 +237,10 @@ def make(aid: str) -> dict:
             channel.update_video(aid, vid, status="failed", summary=_script_ok(vdir))
             channel.event(aid, "failed", f"Video {vid} stopped: {_script_ok(vdir)}", video=vid, important=True)
             return channel.update_video(aid, vid)
+    try:
+        _direct(aid, vid, vdir)
+    except Exception as e:   # a broken director pass never stops the video: the producer works from the script
+        channel.event(aid, "error", f"Director pass failed: {str(e)[:160]}", video=vid)
     _role(aid, vid, vdir, "producer")
     verdict = _check(aid, vid, vdir)
     verdict = _fix_rounds(aid, vid, vdir, verdict)
@@ -224,6 +283,8 @@ def busy(aid: str) -> bool:
 
 
 def main(argv: list[str]) -> int:
+    draft = "--draft" in argv
+    argv = [a for a in argv if a != "--draft"]
     if len(argv) < 2 or argv[0] not in ("make", "fix", "analyse"):
         print(__doc__)
         return 2
@@ -238,7 +299,7 @@ def main(argv: list[str]) -> int:
         return 3
     try:
         if argv[0] == "make":
-            out = make(argv[1])
+            out = make(argv[1], draft=draft)
         elif argv[0] == "fix":
             out = fix(argv[1], argv[2], argv[3])
         else:

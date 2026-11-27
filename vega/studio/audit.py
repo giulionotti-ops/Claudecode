@@ -11,7 +11,9 @@ REQUIRED = {
                  ["viral-captions-and-ctas"]],
     "producer": [["neesmo-viral-rules"], ["@engine"], ["ffmpeg-captions-subtitles", "ffmpeg"]],
     "analyst": [["analytics", "ab-testing"], ["neesmo-viral-rules"]],
+    "director": [["neesmo-director"]],
 }
+FOLDER = {"director": "supervisor"}   # the director pass runs in the supervisor's folder
 
 
 def transcript(folder: Path, session_id: str) -> Path:
@@ -47,7 +49,7 @@ def audit(folder: Path, sessions: dict[str, list[str]], engine: str) -> dict:
         if role not in REQUIRED:
             continue
         used: list[str] = []
-        rd = folder / ".roles" / role   # roles run in their own folder; older videos ran in the channel folder
+        rd = folder / ".roles" / FOLDER.get(role, role)   # roles run in their own folder; older videos ran in the channel folder
         for sid in ids:
             log = transcript(rd, sid) if rd.is_dir() else None
             if not log or not log.exists():

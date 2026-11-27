@@ -63,6 +63,15 @@ def check(vdir: Path, style: dict) -> dict:
         if not (vdir / f).exists():
             problems.append(f"{f} is missing")
     res["contact"] = contact_sheet(video, vdir / "contact.jpg", dur) and "contact.jpg"
+    if (vdir / "shotlist.json").exists():   # the director's plan vs. what was rendered (advice for the supervisor)
+        try:
+            from .shotlist import measure
+        except ImportError:
+            from shotlist import measure
+        try:
+            res["shotlist"] = measure(vdir)
+        except Exception as e:   # measuring must never break the gate
+            res["shotlist"] = {"error": str(e)[:200]}
     res["ok"] = not problems
     return res
 

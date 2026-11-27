@@ -6,6 +6,8 @@ and make sure nobody was lazy.
 
 ## Read (in the video folder you are given)
 - `gate.json`, `audit.json`, `script.json`, `SOURCES.md`
+- `shotlist.json` (your own director pass: the plan) and `shotlist_notes.md` (where the producer could not follow it).
+  `gate.json` -> `shotlist` = the scene changes the script measured in the render vs. the planned cuts.
 - `contact.jpg` - 12 frames of the final video. Look at it.
 - `neesmo/requests.md` (did the video do what the owner asked?) and the last 40 lines of `neesmo/board.md`.
 
@@ -15,7 +17,9 @@ and make sure nobody was lazy.
 3. Frames: subject visible in every frame, nothing over captions or faces, no typos, nothing cut off,
    the picture actually changes (not the same still for 10 s).
 4. Owner requests were honoured.
-5. Effort: the roles used their skills fully (audit.json), and the video is not a lazy copy of the last one.
+5. Shot list: use the `neesmo-director` skill. Did the render follow `shotlist.json` - the shots, camera moves,
+   lighting idea, on-screen text and SFX? Name the missing shot ids in the fix (e.g. "2B lost its orbit and the metal groan").
+6. Effort: the roles used their skills fully (audit.json), and the video is not a lazy copy of the last one.
 
 ## Write `verdict.json`
 `{"ok": true|false, "score": 1-10, "issues": [{"role": "marketer|producer", "fix": "<exact, doable fix>"}],

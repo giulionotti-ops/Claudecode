@@ -129,6 +129,11 @@ def _daily(aid: str) -> None:
     except Exception as e:
         channel.event(aid, "stats_failed", f"Could not read the numbers: {str(e)[:160]}")
         return
+    try:
+        from . import director_learn
+        director_learn.learn(aid)   # the director's playbook follows the new numbers
+    except Exception as e:
+        channel.event(aid, "error", f"Director playbook not updated: {str(e)[:160]}")
     if stats.mature(aid) >= 3 and not pipeline.busy(aid):
         spawn("analyse", aid)
 

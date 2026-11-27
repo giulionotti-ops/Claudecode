@@ -38,7 +38,7 @@ ROLE_LABEL = {"marketer": "Hooks & scripts", "producer": "Video", "supervisor": 
 # runs in its own folder .roles/<role>/ that links its group's skills too, so a session loads only
 # what its job needs. Supervisor = general only.
 SKILL_GROUPS = {
-    "general": ["neesmo-viral-rules"],
+    "general": ["neesmo-viral-rules", "neesmo-director"],
     "marketing": ["viral-hooks", "viral-captions-and-ctas", "viral-short-form", "viral-short-form-ideas",
                   "viral-youtube-shorts", "viral-instagram-reels", "content-strategy", "copywriting", "copy-editing",
                   "marketing-psychology", "social", "marketing-ideas", "competitor-profiling"],
@@ -209,7 +209,9 @@ def _write_claude_md(p: dict) -> None:
         "with its brief in `neesmo/prompts/`:\n"
         "- **Marketer**: ideas, hooks, script, title.\n"
         "- **Producer**: makes the video (voice, picture, sound, render).\n"
-        "- **Supervisor**: checks every video before the owner sees it and sends it back with fixes when needed.\n"
+        "- **Supervisor**: directs before production (reviews the script, writes `shotlist.json`, a shot-by-shot plan\n"
+        "  with camera, light, VFX and sound, from `neesmo/prompts/director.md`), then checks every video before the\n"
+        "  owner sees it and sends it back with fixes when needed. It learns from `neesmo/director/playbook.md`.\n"
         "- **Analyst**: reads the views and writes what works into `neesmo/lessons.md`.\n"
         "The Director steers them through `neesmo/board.md` (one line, `@role NNN: ...` or `@marketer next: ...`)\n"
         "and turns owner wishes into open items in `neesmo/requests.md`. It does not make videos itself.\n\n"
@@ -226,7 +228,7 @@ def refresh(aid: str) -> None:
     p = paths(aid)
     p["prompts"].mkdir(parents=True, exist_ok=True)
     _write_claude_md(p)
-    for r in ROLES:
+    for r in ROLES + ["director"]:   # director.md = the supervisor's pre-production brief
         shutil.copy(state.STUDIO / "roles" / f"{r}.md", p["prompts"] / f"{r}.md")
     _link_skills(p["dir"])
     _claude_settings(p["dir"])

@@ -2112,9 +2112,9 @@
     "semantic_hash": ""
   },
   "vega/server.py": {
-    "mtime": 1795556357.000611,
-    "seen": 1795557356.2727137,
-    "ast_hash": "fe22a663f14101fcf160ec0280508e85",
+    "mtime": 1795721687.8278425,
+    "seen": 1795721881.277282,
+    "ast_hash": "fa66c0b3abf9a34ee5c0810949412ce3",
     "semantic_hash": ""
   },
   "vega/static/sw.js": {
@@ -5688,9 +5688,9 @@
     "semantic_hash": ""
   },
   "vega/index.html": {
-    "mtime": 1795644520.2270136,
-    "seen": 1795644860.3894365,
-    "ast_hash": "e04f83d0a2e216cc7d3324b5915e3dee",
+    "mtime": 1795731738.170022,
+    "seen": 1795790790.3741412,
+    "ast_hash": "10276b21b91bc7d16cc373ec54148c2c",
     "semantic_hash": ""
   },
   "vega/requirements.txt": {
@@ -6516,9 +6516,9 @@
     "semantic_hash": ""
   },
   "vega/static/landing.html": {
-    "mtime": 1795644786.2948089,
-    "seen": 1795644860.3894463,
-    "ast_hash": "d88cc26ad3a3ca6c39df59628fe9d736",
+    "mtime": 1795788984.075051,
+    "seen": 1795790790.3741555,
+    "ast_hash": "c4811695b87b6dceab8d216de2800b3c",
     "semantic_hash": ""
   },
   "vega/static/vendor/motion.js": {
@@ -6636,9 +6636,9 @@
     "semantic_hash": ""
   },
   "site/index.html": {
-    "mtime": 1795644786.293809,
-    "seen": 1795644860.3894298,
-    "ast_hash": "a17ecba777c58a5aa656e1927a44068e",
+    "mtime": 1795788996.8450115,
+    "seen": 1795790790.3741312,
+    "ast_hash": "65c5e4e678fac5436a2a93d2dbc32bf7",
     "semantic_hash": ""
   },
   "site/assets/icons/tmux.svg": {
@@ -6750,21 +6750,21 @@
     "semantic_hash": ""
   },
   "vega/studio/audit.py": {
-    "mtime": 1795556214.2082913,
-    "seen": 1795557356.272738,
-    "ast_hash": "456462cba2228785edbf965165e61d30",
+    "mtime": 1795788837.0385072,
+    "seen": 1795790790.364858,
+    "ast_hash": "7a22b478535fc11d056ea8b04cb38ca6",
     "semantic_hash": ""
   },
   "vega/studio/channel.py": {
-    "mtime": 1795644469.7274508,
-    "seen": 1795644860.3871665,
-    "ast_hash": "59ff7ade56998a9984f1242c9a9fe184",
+    "mtime": 1795788851.1434634,
+    "seen": 1795790790.3648634,
+    "ast_hash": "fa98872ad594e7c5b8744c65f4fe4062",
     "semantic_hash": ""
   },
   "vega/studio/gate.py": {
-    "mtime": 1795457520.470824,
-    "seen": 1795458116.8118908,
-    "ast_hash": "9001789c3bab228878db2c59b0c0bd10",
+    "mtime": 1795788851.1434634,
+    "seen": 1795790790.3648698,
+    "ast_hash": "2d1fc24b31b66847defaeeb8d3b4aace",
     "semantic_hash": ""
   },
   "vega/studio/instagram.py": {
@@ -6780,15 +6780,15 @@
     "semantic_hash": ""
   },
   "vega/studio/manifest.json": {
-    "mtime": 1795459361.7676241,
-    "seen": 1795459696.0637376,
-    "ast_hash": "5784d4642c4c665f3ae3530aea285e20",
+    "mtime": 1795788856.2334476,
+    "seen": 1795790790.3648765,
+    "ast_hash": "4f562eed310e3fe7d178fb767ec3f3aa",
     "semantic_hash": ""
   },
   "vega/studio/pipeline.py": {
-    "mtime": 1795644469.7284508,
-    "seen": 1795644860.3871787,
-    "ast_hash": "c1c8edc245601f4fa352dc51e6a66e44",
+    "mtime": 1795789093.9307106,
+    "seen": 1795790790.3648787,
+    "ast_hash": "0aa90c4e5c767f381835f33e6c5c6557",
     "semantic_hash": ""
   },
   "vega/studio/routes.py": {
@@ -6810,9 +6810,9 @@
     "semantic_hash": ""
   },
   "vega/studio/tick.py": {
-    "mtime": 1795644469.7284508,
-    "seen": 1795644860.3871872,
-    "ast_hash": "c4596f013346668add67c6c3e2ec01d4",
+    "mtime": 1795788851.1434634,
+    "seen": 1795790790.364889,
+    "ast_hash": "6d0a757cbda7de86fdd565e06afcd5c7",
     "semantic_hash": ""
   },
   "vega/studio/update.py": {
@@ -6828,9 +6828,9 @@
     "semantic_hash": ""
   },
   "vega/static/robot/graph.html": {
-    "mtime": 1795439099.8303177,
-    "seen": 1795458116.814549,
-    "ast_hash": "e4a7b25052f14e443a64372501fb7104",
+    "mtime": 1795645709.7507963,
+    "seen": 1795719346.4428036,
+    "ast_hash": "471585bf1082c643e5da9569bc5509b6",
     "semantic_hash": ""
   },
   "vega/studio/roles/analyst.md": {
@@ -6846,15 +6846,15 @@
     "semantic_hash": ""
   },
   "vega/studio/roles/producer.md": {
-    "mtime": 1795457343.8624916,
-    "seen": 1795458116.8145614,
-    "ast_hash": "3365d8aca4fefe39a9fd58649af0bd7c",
+    "mtime": 1795788793.633642,
+    "seen": 1795790790.3741727,
+    "ast_hash": "7789add07afcb36d0cb71f71edda5423",
     "semantic_hash": ""
   },
   "vega/studio/roles/supervisor.md": {
-    "mtime": 1795644469.7294507,
-    "seen": 1795644860.3894563,
-    "ast_hash": "f56415d1e6cfea01e1a4e8dc6bf9e0e8",
+    "mtime": 1795788793.632642,
+    "seen": 1795790790.3741744,
+    "ast_hash": "b10cc330896c1e1f0a799c3f2782bc38",
     "semantic_hash": ""
   },
   "vega/studio/skills/neesmo-viral-rules/SKILL.md": {
@@ -6876,9 +6876,9 @@
     "semantic_hash": ""
   },
   "vega/static/studio.js": {
-    "mtime": 1795642239.6816642,
-    "seen": 1795642558.479677,
-    "ast_hash": "9da257f8bdb021ebaf7215fc316ad8c3",
+    "mtime": 1795730119.482783,
+    "seen": 1795730673.784362,
+    "ast_hash": "61a7ac376e684ad0faf071abdd30495b",
     "semantic_hash": ""
   },
   "vega/studio/skills/vox-explainer-skill/README.md": {
@@ -19590,9 +19590,9 @@
     "semantic_hash": ""
   },
   "site/img/app-phone.webp": {
-    "mtime": 1795641756.5152,
-    "seen": 1795642558.4871838,
-    "ast_hash": "80de4b5bb0aa2ea3f09c70e0e6dd3460",
+    "mtime": 1795647459.1621528,
+    "seen": 1795719346.445985,
+    "ast_hash": "113063deca2cd645a5a9d44e9604d87f",
     "semantic_hash": ""
   },
   "site/img/robot-hero.webp": {
@@ -19620,15 +19620,111 @@
     "semantic_hash": ""
   },
   "vega/static/robot/app-phone.webp": {
-    "mtime": 1795641757.9651952,
-    "seen": 1795642558.487205,
-    "ast_hash": "80de4b5bb0aa2ea3f09c70e0e6dd3460",
+    "mtime": 1795647459.1981542,
+    "seen": 1795719346.4460127,
+    "ast_hash": "113063deca2cd645a5a9d44e9604d87f",
     "semantic_hash": ""
   },
   "site/img/robot-working.webp": {
     "mtime": 1795644491.6852598,
     "seen": 1795644860.3929343,
     "ast_hash": "3ca92be8717527e075abadc6b9b1d5ce",
+    "semantic_hash": ""
+  },
+  "vega/static/i18n/de.json": {
+    "mtime": 1795721636.934304,
+    "seen": 1795721881.277287,
+    "ast_hash": "d300e6fe6ba40831930a3cf8492c6096",
+    "semantic_hash": ""
+  },
+  "vega/static/i18n/es.json": {
+    "mtime": 1795721636.934304,
+    "seen": 1795721881.2772896,
+    "ast_hash": "b8457dbce74873be57c8a7696699acb0",
+    "semantic_hash": ""
+  },
+  "vega/static/i18n/fr.json": {
+    "mtime": 1795721636.9333038,
+    "seen": 1795721881.2772927,
+    "ast_hash": "c9dea6f319af8347d50720321d213c4f",
+    "semantic_hash": ""
+  },
+  "vega/static/i18n/it.json": {
+    "mtime": 1795721636.932304,
+    "seen": 1795721881.2772949,
+    "ast_hash": "a2fc1d363f8436df2a04dc1ecbe4ca02",
+    "semantic_hash": ""
+  },
+  "vega/static/i18n/nl.json": {
+    "mtime": 1795721636.9363039,
+    "seen": 1795721881.2772968,
+    "ast_hash": "330d4e2f7bd09ee16e7c3544a13c92d0",
+    "semantic_hash": ""
+  },
+  "vega/static/i18n/pl.json": {
+    "mtime": 1795721636.9363039,
+    "seen": 1795721881.277299,
+    "ast_hash": "5efa950b49e3f5169953812dcbfaaa78",
+    "semantic_hash": ""
+  },
+  "vega/static/i18n/pt.json": {
+    "mtime": 1795721636.935304,
+    "seen": 1795721881.2773013,
+    "ast_hash": "04346f1449018b04d1d96b2814f623b6",
+    "semantic_hash": ""
+  },
+  "vega/static/i18n/sv.json": {
+    "mtime": 1795721636.937304,
+    "seen": 1795721881.2773027,
+    "ast_hash": "f369d389e9e3c50efa9db46a7ab28903",
+    "semantic_hash": ""
+  },
+  "vega/studio/director_learn.py": {
+    "mtime": 1795789093.9307106,
+    "seen": 1795790790.3648663,
+    "ast_hash": "b46cee258f57273a75d53a4ab66ccad9",
+    "semantic_hash": ""
+  },
+  "vega/studio/shotlist.py": {
+    "mtime": 1795789093.9297106,
+    "seen": 1795790790.3648825,
+    "ast_hash": "0803ecfd5ff1848e7ee800e21e6ef873",
+    "semantic_hash": ""
+  },
+  "vega/studio/roles/director.md": {
+    "mtime": 1795788781.0586812,
+    "seen": 1795790790.374168,
+    "ast_hash": "6dd9c7ebde86b360775bfe88f21c5356",
+    "semantic_hash": ""
+  },
+  "vega/studio/skills/neesmo-director/SKILL.md": {
+    "mtime": 1795788495.63857,
+    "seen": 1795790790.374177,
+    "ast_hash": "c85965892c50aeddaba8d7eac33e3fe3",
+    "semantic_hash": ""
+  },
+  "vega/studio/skills/neesmo-director/references/faceless-viral.md": {
+    "mtime": 1795788648.638093,
+    "seen": 1795790790.3741791,
+    "ast_hash": "f282e4155e7d074a96124938c5af5d30",
+    "semantic_hash": ""
+  },
+  "vega/studio/skills/neesmo-director/references/film-grammar.md": {
+    "mtime": 1795788562.5073614,
+    "seen": 1795790790.3741827,
+    "ast_hash": "95af72933a1e44e415cd045a0dc14912",
+    "semantic_hash": ""
+  },
+  "vega/studio/skills/neesmo-director/references/film-playbook.md": {
+    "mtime": 1795788562.571361,
+    "seen": 1795790790.3741846,
+    "ast_hash": "72cbfdaf3f5979d6daa29e16c04e843a",
+    "semantic_hash": ""
+  },
+  "vega/studio/skills/neesmo-director/references/shotlist-schema.md": {
+    "mtime": 1795788701.02493,
+    "seen": 1795790790.3741872,
+    "ast_hash": "d16255cff1b43883b91ecbd74d91f878",
     "semantic_hash": ""
   }
 }
