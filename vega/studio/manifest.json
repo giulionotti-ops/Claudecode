@@ -27,6 +27,7 @@
      "skills": ["content-strategy", "copywriting", "copy-editing", "marketing-psychology", "social", "analytics", "ab-testing", "marketing-ideas", "competitor-profiling"]},
     {"id": "skills-neesmo-rules", "group": "marketing", "label": "Neesmo's viral rules (what worked on our own channels)", "kind": "local-skill", "path": "studio/skills/neesmo-viral-rules"},
     {"id": "skills-neesmo-director", "group": "marketing", "label": "Neesmo's film director (script review + Hollywood-style shot lists that learn from views)", "kind": "local-skill", "path": "studio/skills/neesmo-director"},
+    {"id": "skills-neesmo-automator", "group": "marketing", "label": "Neesmo's automator (turns your automatic tasks into scripts that run without AI)", "kind": "local-skill", "path": "studio/skills/neesmo-automator"},
 
     {"id": "skills-drawing", "group": "content", "label": "Claude Drawing (80+ art styles drawn by code; makes your avatars and banners)", "kind": "git-skill", "repo": "https://github.com/cloveric/claude-drawing-skill.git", "name": "claude-drawing-skill", "post_pip": "lib/../requirements.txt", "required": true},
     {"id": "skills-huashu", "group": "content", "label": "Huashu Art Motion (animated explainer scenes)", "kind": "skills", "repo": "alchaincyf/huashu-art-motion", "skills": ["huashu-art-motion"]},

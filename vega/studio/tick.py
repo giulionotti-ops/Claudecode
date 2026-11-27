@@ -5,7 +5,7 @@ Each tick:
   - per channel (not paused): post approved videos into the next free slot, send new videos for review,
     keep a small buffer of videos by starting `studio.pipeline make` in the background,
     ask once after the trial week whether Neesmo may schedule by itself, pull stats daily and
-    start the analyst when there is enough data.
+    start the analyst when there is enough data, and run the owner's automation scripts that are due.
 The server passes `notify(kind, title, body, data)` and `review(aid, video)` so notes reach the phone.
 """
 import datetime as dt
@@ -72,6 +72,11 @@ def _post(aid: str, notify) -> None:
                     ids["instagram"] = instagram.publish(v)
                     channel.event(aid, "posted", f"Video {v['id']} is live on Instagram", video=v["id"])
                 channel.update_video(aid, v["id"], status="posted", platform_ids=ids, platform_id=ids.get(plats[0]))
+                try:
+                    from . import automations
+                    automations.on(aid, "after_post", v["id"])
+                except Exception as e:
+                    channel.event(aid, "error", f"Automations after posting failed: {str(e)[:160]}", video=v["id"])
         except Exception as e:   # one bad upload must not stop the others; tell the owner once
             if not v.get("post_error"):
                 channel.update_video(aid, v["id"], post_error=str(e)[:300])
@@ -138,6 +143,15 @@ def _daily(aid: str) -> None:
         spawn("analyse", aid)
 
 
+def _automations(aid: str) -> None:
+    """The owner's automations: plain Python scripts in neesmo/automations, run on their schedule (no tokens)."""
+    from . import automations
+    try:
+        automations.due(aid)
+    except Exception as e:
+        channel.event(aid, "error", f"Automations problem: {str(e)[:160]}")
+
+
 def tick(notify, review) -> None:
     s = state.load()
     left = state.warmup_left(s)
@@ -155,6 +169,7 @@ def tick(notify, review) -> None:
             _trial(aid, notify)
             _buffer(aid)
             _daily(aid)
+            _automations(aid)
         except Exception as e:
             channel.event(aid, "error", f"Tick problem: {str(e)[:200]}")
     if "instagram" in state.platforms():

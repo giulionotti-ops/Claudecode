@@ -12,7 +12,7 @@ producer only has to execute. A vague shot list makes a lazy video. A precise on
 Read in this order:
 1. `neesmo/director/playbook.md` - what this channel has learned (written by `studio.director_learn`
    from real scores and views). **It beats everything below when they disagree.**
-2. `references/faceless-viral.md` - the patterns that make faceless / voiceless shorts go viral.
+2. `references/faceless-viral.md` - the patterns that make faceless / voiceless shorts go viral, plus two proven house styles (x-ray "how does X work?" with a time-scale HUD; editorial paper-cutout with numbered steps).
 3. `references/film-grammar.md` - the vocabulary: shot sizes, lenses, moves, light, colour, transitions, SFX.
 4. `references/film-playbook.md` - real films and the exact technique to borrow, by emotion.
 5. `references/shotlist-schema.md` - the file you write and the rules the script checks.

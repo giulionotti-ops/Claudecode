@@ -6756,9 +6756,9 @@
     "semantic_hash": ""
   },
   "vega/studio/channel.py": {
-    "mtime": 1795788851.1434634,
-    "seen": 1795790790.3648634,
-    "ast_hash": "fa98872ad594e7c5b8744c65f4fe4062",
+    "mtime": 1795791405.817062,
+    "seen": 1795791579.6692424,
+    "ast_hash": "919391f4ff2e98d48b2d7696211895f3",
     "semantic_hash": ""
   },
   "vega/studio/gate.py": {
@@ -6780,15 +6780,15 @@
     "semantic_hash": ""
   },
   "vega/studio/manifest.json": {
-    "mtime": 1795788856.2334476,
-    "seen": 1795790790.3648765,
-    "ast_hash": "4f562eed310e3fe7d178fb767ec3f3aa",
+    "mtime": 1795791412.4120393,
+    "seen": 1795791579.6692555,
+    "ast_hash": "e7ae17d2f269c1320a4b47b86b26149d",
     "semantic_hash": ""
   },
   "vega/studio/pipeline.py": {
-    "mtime": 1795789093.9307106,
-    "seen": 1795790790.3648787,
-    "ast_hash": "0aa90c4e5c767f381835f33e6c5c6557",
+    "mtime": 1795791382.106143,
+    "seen": 1795791579.6692576,
+    "ast_hash": "412ecad14fe2fe0cf80dd542b3e3be51",
     "semantic_hash": ""
   },
   "vega/studio/routes.py": {
@@ -6810,9 +6810,9 @@
     "semantic_hash": ""
   },
   "vega/studio/tick.py": {
-    "mtime": 1795788851.1434634,
-    "seen": 1795790790.364889,
-    "ast_hash": "6d0a757cbda7de86fdd565e06afcd5c7",
+    "mtime": 1795791382.1081429,
+    "seen": 1795791579.6692688,
+    "ast_hash": "c514c22dbaa15e5b46febccddfb68cac",
     "semantic_hash": ""
   },
   "vega/studio/update.py": {
@@ -19698,15 +19698,15 @@
     "semantic_hash": ""
   },
   "vega/studio/skills/neesmo-director/SKILL.md": {
-    "mtime": 1795788495.63857,
-    "seen": 1795790790.374177,
-    "ast_hash": "c85965892c50aeddaba8d7eac33e3fe3",
+    "mtime": 1795791522.2506666,
+    "seen": 1795791579.6735866,
+    "ast_hash": "a2992a2a7674781b5fe41863341b9786",
     "semantic_hash": ""
   },
   "vega/studio/skills/neesmo-director/references/faceless-viral.md": {
-    "mtime": 1795788648.638093,
-    "seen": 1795790790.3741791,
-    "ast_hash": "f282e4155e7d074a96124938c5af5d30",
+    "mtime": 1795791513.6826956,
+    "seen": 1795791579.6735895,
+    "ast_hash": "0caaf51baa678d0011838ebe709b62d0",
     "semantic_hash": ""
   },
   "vega/studio/skills/neesmo-director/references/film-grammar.md": {
@@ -19725,6 +19725,18 @@
     "mtime": 1795788701.02493,
     "seen": 1795790790.3741872,
     "ast_hash": "d16255cff1b43883b91ecbd74d91f878",
+    "semantic_hash": ""
+  },
+  "vega/studio/automations.py": {
+    "mtime": 1795791368.8491883,
+    "seen": 1795791579.6692333,
+    "ast_hash": "d5c5dd6a5debf809df6e37a9f5eeebc8",
+    "semantic_hash": ""
+  },
+  "vega/studio/skills/neesmo-automator/SKILL.md": {
+    "mtime": 1795791405.780062,
+    "seen": 1795791579.6735828,
+    "ast_hash": "bcac8b2609b79fdcfc3e8d66a61a7644",
     "semantic_hash": ""
   }
 }

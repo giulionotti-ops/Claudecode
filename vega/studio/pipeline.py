@@ -221,6 +221,11 @@ def _finish(aid: str, vid: str, vdir: Path, verdict: dict) -> dict:
         director_learn.log(aid, vid)   # the director's memory: what this shot list did and how it scored
     except Exception as e:
         channel.event(aid, "error", f"Director log failed: {str(e)[:160]}", video=vid)
+    try:
+        from . import automations
+        automations.on(aid, "after_video", vid)   # owner automations (plain scripts, no tokens)
+    except Exception as e:
+        channel.event(aid, "error", f"Automations after the video failed: {str(e)[:160]}", video=vid)
     channel.backup(aid, f"video {vid}: {s.get('title', '')}")
     return v
 

@@ -38,7 +38,7 @@ ROLE_LABEL = {"marketer": "Hooks & scripts", "producer": "Video", "supervisor": 
 # runs in its own folder .roles/<role>/ that links its group's skills too, so a session loads only
 # what its job needs. Supervisor = general only.
 SKILL_GROUPS = {
-    "general": ["neesmo-viral-rules", "neesmo-director"],
+    "general": ["neesmo-viral-rules", "neesmo-director", "neesmo-automator"],
     "marketing": ["viral-hooks", "viral-captions-and-ctas", "viral-short-form", "viral-short-form-ideas",
                   "viral-youtube-shorts", "viral-instagram-reels", "content-strategy", "copywriting", "copy-editing",
                   "marketing-psychology", "social", "marketing-ideas", "competitor-profiling"],
@@ -215,6 +215,12 @@ def _write_claude_md(p: dict) -> None:
         "- **Analyst**: reads the views and writes what works into `neesmo/lessons.md`.\n"
         "The Director steers them through `neesmo/board.md` (one line, `@role NNN: ...` or `@marketer next: ...`)\n"
         "and turns owner wishes into open items in `neesmo/requests.md`. It does not make videos itself.\n\n"
+        "## Automations are scripts\n"
+        "When the owner wants something to happen by itself (on a schedule, after each video, after each post), the\n"
+        "Director writes it once as a Python script, so it runs with no AI and no tokens. Use the `neesmo-automator` skill:\n"
+        "`python3 -m studio.automations add <channel> <name> <hourly|daily|weekly|after_video|after_post|manual> \"<what>\"`,\n"
+        "fill in `neesmo/automations/<name>.py`, then `python3 -m studio.automations check <channel> <name>` until it says ok.\n"
+        "Only work that needs judgment or writing (ideas, scripts, shot lists, reviews) stays with an AI role.\n\n"
         "## Rules for every session\n"
         "- Open requests in `neesmo/requests.md` come first, then `neesmo/lessons.md`, then `neesmo/style.json`.\n"
         "- Talk to the other roles only through `neesmo/board.md` (one line, `@role NNN: ...`).\n"
