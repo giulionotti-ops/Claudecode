@@ -72,8 +72,39 @@ def check(vdir: Path, style: dict) -> dict:
             res["shotlist"] = measure(vdir)
         except Exception as e:   # measuring must never break the gate
             res["shotlist"] = {"error": str(e)[:200]}
+    res["qa"] = qa(vdir, video)
+    if (res["qa"].get("flashes") or []):
+        problems.append(f"single-frame flashes at {res['qa']['flashes']} s (a glitch or a broken transition)")
     res["ok"] = not problems
     return res
+
+
+QA_SCRIPT = Path(__file__).parent / "skills" / "video-director" / "scripts" / "qa_video.py"
+
+
+def qa(vdir: Path, video: Path) -> dict:
+    """video-director's measurements (no tokens): flashes, pops, frozen stretches, cuts, loudest moment, silences,
+    plus three sheets the supervisor looks at (qa/hook_sheet.jpg = the muted first 3 s). Never breaks the gate."""
+    if not QA_SCRIPT.exists():
+        return {"error": "qa script missing"}
+    out = vdir / "qa"
+    try:
+        subprocess.run([sys.executable, "-I", str(QA_SCRIPT), str(video), "--out", str(out)],
+                       capture_output=True, text=True, timeout=600)
+        rep = json.loads((out / "report.json").read_text())
+    except Exception as e:
+        return {"error": str(e)[:200]}
+    rows = rep.get("checks") or []
+    keep = {"fail": [], "warn": []}
+    flashes: list = []
+    for r in rows if isinstance(rows, list) else []:
+        lvl = str(r.get("level", "")).lower()
+        if lvl in keep:
+            keep[lvl].append(f"{r.get('check')}: {r.get('detail')}"[:200])
+        if "flash" in str(r.get("check", "")) and lvl == "fail":
+            flashes = [float(x) for x in re.findall(r"\d+\.\d+|\d+", str(r.get("detail")))]
+    return {**keep, "flashes": flashes, "sheets": [f"qa/{n}" for n in ("hook_sheet.jpg", "beats_sheet.jpg", "phone_sheet.jpg")
+                                                    if (out / n).exists()]}
 
 
 def main(argv: list[str]) -> int:

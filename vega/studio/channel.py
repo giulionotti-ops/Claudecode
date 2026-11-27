@@ -38,11 +38,13 @@ ROLE_LABEL = {"marketer": "Hooks & scripts", "producer": "Video", "supervisor": 
 # runs in its own folder .roles/<role>/ that links its group's skills too, so a session loads only
 # what its job needs. Supervisor = general only.
 SKILL_GROUPS = {
-    "general": ["neesmo-viral-rules", "neesmo-director", "neesmo-automator"],
+    "general": ["neesmo-viral-rules", "neesmo-director", "neesmo-automator", "video-director"],
     "marketing": ["viral-hooks", "viral-captions-and-ctas", "viral-short-form", "viral-short-form-ideas",
                   "viral-youtube-shorts", "viral-instagram-reels", "content-strategy", "copywriting", "copy-editing",
                   "marketing-psychology", "social", "marketing-ideas", "competitor-profiling"],
-    "content": ["claude-drawing-skill", "huashu-art-motion", "bang-motion", "short-editing", "clips",
+    "content": ["neesmo-3d", "threejs-fundamentals", "threejs-lighting", "threejs-materials", "threejs-textures",
+                "threejs-geometry", "threejs-animation", "threejs-shaders", "threejs-postprocessing",
+                "claude-drawing-skill", "huashu-art-motion", "bang-motion", "short-editing", "clips",
                 "ffmpeg-captions-subtitles", "ffmpeg", "voicestudio", "moneyprinterturbo-video", "vox-explainer-skill"],
     "analysis": ["analytics", "ab-testing", "ffmpeg-analyse-video", "watch", "task-observer"],
 }
@@ -56,7 +58,7 @@ ROLE_PLUGINS = {r: {**GENERAL_PLUGINS, "superpowers@claude-plugins-official": r 
 PLUGINS = {**GENERAL_PLUGINS, "superpowers@claude-plugins-official": False}
 # which art style (from the avatar picker) maps to which video engine skill
 ENGINE_FOR_STYLE = {"chalk": "claude-drawing-skill", "papercut": "claude-drawing-skill", "flat": "claude-drawing-skill",
-                    "synthwave": "bang-motion", "bold": "huashu-art-motion"}
+                    "synthwave": "bang-motion", "bold": "huashu-art-motion", "real": "neesmo-3d"}
 PLATFORM_NAME = {"youtube": "YouTube", "instagram": "Instagram", "director": "YouTube and Instagram (one video, both versions)"}
 WHERE = {"youtube": "YouTube channel", "instagram": "Instagram account", "director": "YouTube channel and Instagram account"}
 VOICES = {"youtube": "en-US-AndrewNeural", "instagram": "en-US-AvaNeural"}
@@ -257,7 +259,7 @@ def create(name: str, brief: str, edition: str | None = None, style: str | None 
                               "## Audience\n(the marketer fills this in after the first research run)\n")
     if not p["style"].exists():
         write_json(p["style"], {
-            "format": "short", "size": "1080x1920", "max_seconds": 58, "engine": ENGINE_FOR_STYLE.get(style, "huashu-art-motion"),
+            "format": "short", "size": "1080x1920", "max_seconds": 58, "engine": ENGINE_FOR_STYLE.get(style, "neesmo-3d"),
             "art_style": style, "voice": VOICES.get(edition, "en-US-AndrewNeural"), "music_level": 0.3,
             "captions": "top, key word highlighted", "accent": color or "#ff6b35", "template": None})
     for k, text in (("lessons", "# Lessons\n\nNot enough data yet. Follow neesmo-viral-rules.\n"),

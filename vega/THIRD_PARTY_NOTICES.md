@@ -59,3 +59,12 @@ Checked 2026-11-15.
 
 MIT License, Copyright (c) 2017 Vasco Asturiano. https://github.com/vasturiano/3d-force-graph
 Bundles three.js (MIT, Copyright 2010-2024 three.js authors) and d3-force-3d (MIT).
+
+## video-director (vega/studio/skills/video-director)
+
+MIT License, Copyright (c) 2026 win4r. https://github.com/win4r/video-director
+Bundled: SKILL.md, references/, scripts/ (unchanged). Full text in that folder's LICENSE.
+
+## three.js 0.170.0 (installed by vega/studio/skills/neesmo-3d/engine/package.json)
+
+MIT License, Copyright 2010-2024 three.js authors. Downloaded from npm at install time, not shipped.

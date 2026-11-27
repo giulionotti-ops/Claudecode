@@ -1,0 +1,100 @@
+<!doctype html>
+<html><head><meta charset="utf-8">
+<style>html,body{margin:0;background:#0b1020;overflow:hidden}canvas{display:block}</style>
+<script type="importmap">{"imports":{"three":"/node_modules/three/build/three.module.js","three/addons/":"/node_modules/three/examples/jsm/"}}</script>
+</head><body>
+<script type="module">
+// STARTER SCENE for the Neesmo 3D engine ("threejs-cinematic"). Copy it, keep the contract and the look stack,
+// replace the subject. Contract: window.DUR, window.READY, window.seek(t). No clocks, no Math.random (use rng()).
+// Look stack = what makes it read as "real with a filter": physically based materials (metalness/roughness),
+// an HDR-like environment (RoomEnvironment) for reflections, one warm key + cool rim with soft shadows,
+// ACES tone mapping, bloom only on emissive/hot spots, depth of field on the subject, film grain + vignette.
+import * as THREE from 'three';
+import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
+import { BokehPass } from 'three/addons/postprocessing/BokehPass.js';
+import { ShaderPass } from 'three/addons/postprocessing/ShaderPass.js';
+import { OutputPass } from 'three/addons/postprocessing/OutputPass.js';
+
+const q = new URLSearchParams(location.search), W = +q.get('w') || 1080, H = +q.get('h') || 1920;
+const DUR = 6.0;                        // seconds; the renderer reads it
+let seed = 7; const rng = () => (seed = (seed * 16807) % 2147483647) / 2147483647;   // seeded, deterministic
+
+// ---- renderer + look ----
+const r = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true });
+r.setSize(W, H); r.setPixelRatio(1);
+r.toneMapping = THREE.ACESFilmicToneMapping; r.toneMappingExposure = 1.05;
+r.shadowMap.enabled = true; r.shadowMap.type = THREE.PCFSoftShadowMap;
+document.body.appendChild(r.domElement);
+const scene = new THREE.Scene();
+scene.background = new THREE.Color('#0b1020');
+scene.fog = new THREE.FogExp2('#0b1020', 0.06);
+const pmrem = new THREE.PMREMGenerator(r);
+scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+scene.environmentIntensity = 0.35;
+const cam = new THREE.PerspectiveCamera(32, W / H, 0.1, 100);   // 32 deg vertical ~ a 50-70 mm look on 9:16
+
+const key = new THREE.SpotLight('#ffd9a8', 60, 30, 0.5, 0.6, 2);   // warm key, soft edge
+key.position.set(3, 6, 4); key.castShadow = true; key.shadow.mapSize.set(1024, 1024); key.shadow.bias = -0.0004;
+scene.add(key);
+const rim = new THREE.DirectionalLight('#7fb4ff', 2.2); rim.position.set(-4, 3, -5); scene.add(rim);   // cool rim
+
+// ---- subject: a machined gear pair on a dark stage (REPLACE with the video's subject) ----
+const steel = new THREE.MeshStandardMaterial({ color: '#aab1bb', metalness: 1, roughness: 0.22 });
+const brass = new THREE.MeshStandardMaterial({ color: '#d6a24a', metalness: 1, roughness: 0.35 });
+const hot = new THREE.MeshStandardMaterial({ color: '#ff6a2a', emissive: '#ff4a10', emissiveIntensity: 3 });
+function gear(teeth, R, mat) {
+  const s = new THREE.Shape(), d = R * 0.12;
+  for (let i = 0; i <= teeth * 4; i++) {
+    const a = (i / (teeth * 4)) * Math.PI * 2, rr = (i % 4 < 2) ? R + d : R - d;
+    i ? s.lineTo(Math.cos(a) * rr, Math.sin(a) * rr) : s.moveTo(Math.cos(a) * rr, Math.sin(a) * rr);
+  }
+  const h = new THREE.Path(); h.absarc(0, 0, R * 0.25, 0, Math.PI * 2, true); s.holes.push(h);
+  const g = new THREE.Mesh(new THREE.ExtrudeGeometry(s, { depth: 0.25, bevelEnabled: true, bevelSize: 0.02, bevelThickness: 0.02, bevelSegments: 2 }), mat);
+  g.castShadow = g.receiveShadow = true; g.geometry.center(); return g;
+}
+const gA = gear(24, 1.0, steel), gB = gear(12, 0.5, brass);
+gA.position.set(-0.55, 1.2, 0); gB.position.set(1.0, 1.2, 0.0);
+const rig = new THREE.Group(); rig.add(gA, gB); rig.rotation.y = -0.35; scene.add(rig);
+const axle = new THREE.Mesh(new THREE.CylinderGeometry(0.06, 0.06, 0.6, 24), hot); axle.rotation.x = Math.PI / 2;
+axle.position.copy(gB.position); rig.add(axle);
+const floor = new THREE.Mesh(new THREE.PlaneGeometry(40, 40), new THREE.MeshStandardMaterial({ color: '#141a2c', roughness: 0.55, metalness: 0.2 }));
+floor.rotation.x = -Math.PI / 2; floor.receiveShadow = true; scene.add(floor);
+const dust = new THREE.Points(new THREE.BufferGeometry().setAttribute('position', new THREE.Float32BufferAttribute(
+  Array.from({ length: 900 }, () => (rng() - 0.5) * 8), 3)), new THREE.PointsMaterial({ color: '#ffe2b8', size: 0.012, transparent: true, opacity: 0.5 }));
+scene.add(dust);
+
+// ---- post: bloom on hot spots, depth of field, grain + vignette ----
+const comp = new EffectComposer(r);
+comp.addPass(new RenderPass(scene, cam));
+const bokeh = new BokehPass(scene, cam, { focus: 5, aperture: 0.004, maxblur: 0.008 });
+comp.addPass(bokeh);
+comp.addPass(new UnrealBloomPass(new THREE.Vector2(W, H), 0.45, 0.4, 0.85));
+const grain = new ShaderPass({
+  uniforms: { tDiffuse: { value: null }, t: { value: 0 }, amt: { value: 0.045 }, vig: { value: 0.9 } },
+  vertexShader: 'varying vec2 v;void main(){v=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',
+  fragmentShader: `uniform sampler2D tDiffuse;uniform float t,amt,vig;varying vec2 v;
+    float h(vec2 p){return fract(sin(dot(p,vec2(12.9898,78.233))+t*61.3)*43758.5453);}
+    void main(){vec4 c=texture2D(tDiffuse,v);vec2 d=v-.5;c.rgb*=1.-vig*dot(d,d)*1.2;c.rgb+=(h(v*vec2(${W}.,${H}.))-.5)*amt;gl_FragColor=c;}` });
+comp.addPass(grain);
+comp.addPass(new OutputPass());
+
+// ---- timeline: every value is a function of t (beats in seconds) ----
+const ease = x => 1 - Math.pow(1 - Math.min(Math.max(x, 0), 1), 3);
+const lerp = (a, b, k) => a + (b - a) * k;
+function seek(t) {
+  const spin = t * 1.4 + 0.6 * ease(t / 1.2);                 // gears turn; small push-in kick at the start
+  gA.rotation.z = spin; gB.rotation.z = -spin * 2 + Math.PI / 12; // 24:12 teeth -> 2x speed, meshed
+  const k = ease(t / DUR);                                     // slow dolly + orbit (Fincher-steady, no shake)
+  const ang = lerp(-0.7, 0.25, k), dist = lerp(11.5, 8.5, k);
+  cam.position.set(Math.sin(ang) * dist, lerp(3.4, 2.4, k), Math.cos(ang) * dist);
+  cam.lookAt(0.2, 1.15, 0);
+  bokeh.uniforms.focus.value = cam.position.distanceTo(gB.getWorldPosition(new THREE.Vector3()));
+  dust.rotation.y = t * 0.05; dust.position.y = Math.sin(t * 0.7) * 0.05;
+  grain.uniforms.t.value = Math.floor(t * 24) / 24;            // grain changes on 24 fps steps, like film
+  comp.render();
+}
+window.DUR = DUR; window.seek = seek; window.READY = Promise.resolve(); seek(0);
+</script></body></html>

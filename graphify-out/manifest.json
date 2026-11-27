@@ -6480,9 +6480,9 @@
     "semantic_hash": ""
   },
   "vega/THIRD_PARTY_NOTICES.md": {
-    "mtime": 1795433804.4139652,
-    "seen": 1795458116.8145304,
-    "ast_hash": "2ea7b3e21f8eaef3a70d8ff943b0854c",
+    "mtime": 1795818231.8854535,
+    "seen": 1795818519.961641,
+    "ast_hash": "444c50b7625c8f0e795c193587485183",
     "semantic_hash": ""
   },
   "vega/login.html": {
@@ -6750,21 +6750,21 @@
     "semantic_hash": ""
   },
   "vega/studio/audit.py": {
-    "mtime": 1795788837.0385072,
-    "seen": 1795790790.364858,
-    "ast_hash": "7a22b478535fc11d056ea8b04cb38ca6",
+    "mtime": 1795795110.362109,
+    "seen": 1795818519.9589984,
+    "ast_hash": "f5b163f62e9d97dc3382f1ee641a31a5",
     "semantic_hash": ""
   },
   "vega/studio/channel.py": {
-    "mtime": 1795791405.817062,
-    "seen": 1795791579.6692424,
-    "ast_hash": "919391f4ff2e98d48b2d7696211895f3",
+    "mtime": 1795795110.361109,
+    "seen": 1795818519.959007,
+    "ast_hash": "66524f85159b81325c73181de95e5dce",
     "semantic_hash": ""
   },
   "vega/studio/gate.py": {
-    "mtime": 1795788851.1434634,
-    "seen": 1795790790.3648698,
-    "ast_hash": "2d1fc24b31b66847defaeeb8d3b4aace",
+    "mtime": 1795795131.456048,
+    "seen": 1795818519.9590116,
+    "ast_hash": "403d4968ae0afae04a11734eed660830",
     "semantic_hash": ""
   },
   "vega/studio/instagram.py": {
@@ -6774,15 +6774,15 @@
     "semantic_hash": ""
   },
   "vega/studio/install.py": {
-    "mtime": 1795457247.9308553,
-    "seen": 1795458116.8118944,
-    "ast_hash": "c83bfa5b2ff011cd845f43ca8fbbb571",
+    "mtime": 1795795110.362109,
+    "seen": 1795818519.959016,
+    "ast_hash": "9003c2dacb069849124a1f50ed96060a",
     "semantic_hash": ""
   },
   "vega/studio/manifest.json": {
-    "mtime": 1795791412.4120393,
-    "seen": 1795791579.6692555,
-    "ast_hash": "e7ae17d2f269c1320a4b47b86b26149d",
+    "mtime": 1795795110.362109,
+    "seen": 1795818519.9590182,
+    "ast_hash": "47e3c786cf851959cfb8b216f5bff758",
     "semantic_hash": ""
   },
   "vega/studio/pipeline.py": {
@@ -6846,15 +6846,15 @@
     "semantic_hash": ""
   },
   "vega/studio/roles/producer.md": {
-    "mtime": 1795788793.633642,
-    "seen": 1795790790.3741727,
-    "ast_hash": "7789add07afcb36d0cb71f71edda5423",
+    "mtime": 1795795193.1838694,
+    "seen": 1795818519.9616745,
+    "ast_hash": "21627bcfccda8ba10141e116398900bb",
     "semantic_hash": ""
   },
   "vega/studio/roles/supervisor.md": {
-    "mtime": 1795788793.632642,
-    "seen": 1795790790.3741744,
-    "ast_hash": "b10cc330896c1e1f0a799c3f2782bc38",
+    "mtime": 1795795193.1838694,
+    "seen": 1795818519.9616766,
+    "ast_hash": "e49069ab8096fe686f3ebe2cb22645a3",
     "semantic_hash": ""
   },
   "vega/studio/skills/neesmo-viral-rules/SKILL.md": {
@@ -19692,9 +19692,9 @@
     "semantic_hash": ""
   },
   "vega/studio/roles/director.md": {
-    "mtime": 1795788781.0586812,
-    "seen": 1795790790.374168,
-    "ast_hash": "6dd9c7ebde86b360775bfe88f21c5356",
+    "mtime": 1795795193.1838694,
+    "seen": 1795818519.9616702,
+    "ast_hash": "3bdf1f9473facee0a83d40c3794489f7",
     "semantic_hash": ""
   },
   "vega/studio/skills/neesmo-director/SKILL.md": {
@@ -19737,6 +19737,84 @@
     "mtime": 1795791405.780062,
     "seen": 1795791579.6735828,
     "ast_hash": "bcac8b2609b79fdcfc3e8d66a61a7644",
+    "semantic_hash": ""
+  },
+  "vega/studio/skills/neesmo-3d/engine/package.json": {
+    "mtime": 1795795045.010298,
+    "seen": 1795818519.9590275,
+    "ast_hash": "d9b82ba134b789e52ebb4f96d1cda5a8",
+    "semantic_hash": ""
+  },
+  "vega/studio/skills/neesmo-3d/engine/render.js": {
+    "mtime": 1795795044.9192982,
+    "seen": 1795818519.959031,
+    "ast_hash": "d029506b2d3019ce1ffb842bfbf36878",
+    "semantic_hash": ""
+  },
+  "vega/studio/skills/video-director/scripts/check_timeline.py": {
+    "mtime": 1795795045.0522978,
+    "seen": 1795818519.959035,
+    "ast_hash": "0dbf38ec552eebe176239c6a35e1b89a",
+    "semantic_hash": ""
+  },
+  "vega/studio/skills/video-director/scripts/qa_video.py": {
+    "mtime": 1795795045.054298,
+    "seen": 1795818519.9590368,
+    "ast_hash": "0edbdfe0653453ff1febb83d82efba88",
+    "semantic_hash": ""
+  },
+  "vega/studio/skills/neesmo-3d/SKILL.md": {
+    "mtime": 1795795092.8021598,
+    "seen": 1795818519.9616802,
+    "ast_hash": "56b504d386b4d3d99387225b0becc0d6",
+    "semantic_hash": ""
+  },
+  "vega/studio/skills/neesmo-3d/engine/scene.html": {
+    "mtime": 1795795045.009298,
+    "seen": 1795818519.961683,
+    "ast_hash": "631990190c299055e9e89968845308c1",
+    "semantic_hash": ""
+  },
+  "vega/studio/skills/video-director/SKILL.md": {
+    "mtime": 1795795045.033298,
+    "seen": 1795818519.961709,
+    "ast_hash": "22ff4e4b9d01e0fa3d81dd6b78ffd440",
+    "semantic_hash": ""
+  },
+  "vega/studio/skills/video-director/references/briefs.md": {
+    "mtime": 1795795045.0392978,
+    "seen": 1795818519.9617116,
+    "ast_hash": "448dd5a5953fdb9b1f05fc1ec6cb23d4",
+    "semantic_hash": ""
+  },
+  "vega/studio/skills/video-director/references/craft.md": {
+    "mtime": 1795795045.0432978,
+    "seen": 1795818519.9617133,
+    "ast_hash": "3aa9ab8063560fb174c76b517891983d",
+    "semantic_hash": ""
+  },
+  "vega/studio/skills/video-director/references/quality.md": {
+    "mtime": 1795795045.0432978,
+    "seen": 1795818519.961716,
+    "ast_hash": "10d77f32a179bbfeeb790b0d38dcf312",
+    "semantic_hash": ""
+  },
+  "vega/studio/skills/video-director/references/sound.md": {
+    "mtime": 1795795045.051298,
+    "seen": 1795818519.9617183,
+    "ast_hash": "946d380dcd9bfa5df8b5821e4fb11ae4",
+    "semantic_hash": ""
+  },
+  "vega/studio/skills/video-director/references/sources.md": {
+    "mtime": 1795795045.0522978,
+    "seen": 1795818519.9617205,
+    "ast_hash": "23d7a7e286c1807ada36fcd9a39e19a2",
+    "semantic_hash": ""
+  },
+  "vega/studio/skills/neesmo-3d/engine/package-lock.json": {
+    "mtime": 1795818242.282429,
+    "seen": 1795818519.965089,
+    "ast_hash": "ab366d934087e6fc49190acd9f7da8d0",
     "semantic_hash": ""
   }
 }

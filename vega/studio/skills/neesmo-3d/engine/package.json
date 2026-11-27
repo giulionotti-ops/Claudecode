@@ -1,0 +1,6 @@
+{
+  "name": "neesmo-3d-engine",
+  "private": true,
+  "description": "Neesmo 3D engine: seekable Three.js scenes rendered frame by frame",
+  "dependencies": { "three": "0.170.0" }
+}

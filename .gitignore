@@ -1,3 +1,5 @@
 __pycache__/
 graphify-out/cache/
 dist/
+vega/studio/skills/neesmo-3d/engine/node_modules/
+vega/studio/skills/neesmo-3d/engine/package-lock.json

@@ -141,6 +141,10 @@ def do(i: dict, r: Runner) -> str:
             if dest.is_symlink() or dest.exists():
                 shutil.rmtree(dest, ignore_errors=True) if not dest.is_symlink() else dest.unlink()
             shutil.copytree(src, dest)
+        if (src / "engine" / "package.json").exists():   # a skill with a JS engine (neesmo-3d): its packages
+            if not have("npm"):
+                return "needs Node.js 20+ (nodejs.org)"
+            r.sh("npm install --no-audit --no-fund -q", cwd=dest / "engine", timeout=1200)
     elif k == "connect":
         return "login"
     return ""

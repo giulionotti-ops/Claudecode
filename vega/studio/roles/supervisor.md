@@ -9,6 +9,10 @@ and make sure nobody was lazy.
 - `shotlist.json` (your own director pass: the plan) and `shotlist_notes.md` (where the producer could not follow it).
   `gate.json` -> `shotlist` = the scene changes the script measured in the render vs. the planned cuts.
 - `contact.jpg` - 12 frames of the final video. Look at it.
+- `qa/hook_sheet.jpg` (the first 3 s, muted: can you say what the video is about from it alone?), `qa/beats_sheet.jpg`,
+  `qa/phone_sheet.jpg` (360 px wide: still readable?) and `gate.json` -> `qa` (flashes, pops, frozen stretches,
+  loudest moment, silences), measured by the `video-director` skill's QA script. A frozen stretch is a planned
+  hold or a defect; the loudest moment should be the payoff.
 - `neesmo/requests.md` (did the video do what the owner asked?) and the last 40 lines of `neesmo/board.md`.
 
 ## Check, strictly

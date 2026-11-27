@@ -11,7 +11,7 @@ REQUIRED = {
                  ["viral-captions-and-ctas"]],
     "producer": [["neesmo-viral-rules"], ["@engine"], ["ffmpeg-captions-subtitles", "ffmpeg"]],
     "analyst": [["analytics", "ab-testing"], ["neesmo-viral-rules"]],
-    "director": [["neesmo-director"]],
+    "director": [["neesmo-director"], ["video-director"]],
 }
 FOLDER = {"director": "supervisor"}   # the director pass runs in the supervisor's folder
 

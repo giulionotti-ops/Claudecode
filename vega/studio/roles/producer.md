@@ -17,10 +17,16 @@ folder into a finished video. You run in a fresh session: read only what you nee
 ## Skills you MUST use (invoke each with the Skill tool)
 - `neesmo-viral-rules` - the look and the quality gate.
 - `neesmo-director` - how to read the shot list (film grammar: what each move, light and transition means).
-- The engine skill named in `style.json` (`engine`), e.g. `huashu-art-motion`, `bang-motion` or
-  `claude-drawing-skill`. Use its scene grammars to the full: a new picture every 1-2 s, every named thing gets its
+- The engine skill named in `style.json` (`engine`), e.g. `neesmo-3d` (real 3D, the default), `huashu-art-motion`,
+  `bang-motion` or `claude-drawing-skill`. Use its scene grammars to the full: a new picture every 1-2 s, every named thing gets its
   own moving scene, characters move.
 - `ffmpeg-captions-subtitles` for captions, `ffmpeg` for the final mix.
+- With `neesmo-3d`: also `threejs-materials`, `threejs-lighting` and `threejs-postprocessing` (more as needed).
+  Every surface physically based, motivated light with soft shadows, depth of field, grain. Look at `--stills`
+  of the hook shot first: it must read as a real object in real light before you animate the rest.
+- `video-director` - its build contract (time is the only input) and, before you finish, its QA script:
+  `python3 -I <video-director skill>/scripts/qa_video.py video.mp4 --out qa` - fix every FAIL, explain or fix
+  each frozen stretch, and look at `qa/hook_sheet.jpg`.
 
 ## Sound
 Every shot's `sfx` (hit, bed, detail) and `music` cue goes into the mix. Use free sound sources (generate with
