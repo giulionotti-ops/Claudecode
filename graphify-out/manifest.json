@@ -19692,9 +19692,9 @@
     "semantic_hash": ""
   },
   "vega/studio/roles/director.md": {
-    "mtime": 1795857964.3134098,
-    "seen": 1795858036.4881124,
-    "ast_hash": "9e36774f9b41f54c8eba5db5a408b2a3",
+    "mtime": 1795859008.1411266,
+    "seen": 1795859138.5390189,
+    "ast_hash": "18c211b1575a1dd6ff147fadab092190",
     "semantic_hash": ""
   },
   "vega/studio/skills/neesmo-director/SKILL.md": {
@@ -19722,8 +19722,8 @@
     "semantic_hash": ""
   },
   "vega/studio/skills/neesmo-director/references/shotlist-schema.md": {
-    "mtime": 1795857964.3474097,
-    "seen": 1795858036.488149,
+    "mtime": 1795858995.2471676,
+    "seen": 1795859138.539048,
     "ast_hash": "8acd324dd842981815e9adaceeabb760",
     "semantic_hash": ""
   },
@@ -19812,9 +19812,9 @@
     "semantic_hash": ""
   },
   "vega/studio/artrefs.py": {
-    "mtime": 1795858111.4579518,
-    "seen": 1795858185.8967164,
-    "ast_hash": "aa3bc97f85acd76ceb6a247829b51991",
+    "mtime": 1795859058.0649686,
+    "seen": 1795859138.5279987,
+    "ast_hash": "a4611ef181fae97a1428cc2f3b0b9de2",
     "semantic_hash": ""
   },
   "vega/studio/skills/neesmo-3d/engine/package-lock.json": {

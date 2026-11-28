@@ -26,7 +26,7 @@ will build, shot by shot, as precisely as a Hollywood shooting script. The produ
    Nothing is rendered below 8/10: aim for 9. Under 8, set `ok` false with up to 5 exact fixes that would lift
    it to 8+, and stop there: the marketer rewrites and you are run again. Never round up to let a script through.
 2. Art references (a free script, no credits): for every named thing the viewer will see (a griffin, a piston,
-   a lighthouse), run `python3 -m studio.artrefs videos/<NNN> "<subject>" "<subject> engraving" ...` and look at
+   a lighthouse), run `python3 -m studio.artrefs videos/<NNN> "<subject>" "<subject> engraving" ...` (the script adds "art" to each search: "griffin art" finds how artists drew it) and look at
    each `refs/<subject>/sheet.jpg` (numbers match `refs.json`: artist, date, source). Borrow real details: how
    artists drew the wings, the feathers, the metal, the proportions, the light. Put them in the shots
    (`"refs": "griffin sheet 02 + 06: lion haunches, eagle crest, folded wings"`).

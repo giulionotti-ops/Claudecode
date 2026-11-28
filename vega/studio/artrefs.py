@@ -38,20 +38,45 @@ def _strip(html: str) -> str:
     return re.sub(r"<[^>]+>", "", html or "").strip()[:160]
 
 
-def commons(q: str, n: int) -> list[dict]:
+# keep only files that Commons files under art (free text search alone returns people named Griffin)
+ART = re.compile(r"art\b|artwork|drawing|painting|engraving|etching|woodcut|illustrat|print|sculpt|statue|relief|"
+                 r"heraldr|coat of arms|manuscript|mosaic|fresco|museum|mytholog|fantasy|concept|diagram|cutaway|"
+                 r"bestiar|medieval|ancient|carving|tapestry|fine art", re.I)
+NOT_ART = re.compile(r"\bpeople\b|actress|actors|convention|portrait photographs|selfies", re.I)
+
+
+def _commons(q: str, n: int, art: bool) -> list[dict]:
+    # "<subject> art" finds how artists drew it (paintings, engravings, illustrations), not snapshots
+    if art:
+        q = q if re.search(r"\bart$", q.strip(), re.I) else f"{q.strip()} art"
     p = {"action": "query", "format": "json", "generator": "search", "gsrsearch": f"{q} filetype:bitmap",
-         "gsrnamespace": 6, "gsrlimit": n, "prop": "imageinfo", "iiprop": "url|extmetadata", "iiurlwidth": THUMB}
+         "gsrnamespace": 6, "gsrlimit": min(50, n * 5), "prop": "imageinfo|categories", "clshow": "!hidden",
+         "cllimit": "max", "iiprop": "url|extmetadata", "iiurlwidth": THUMB}
     pages = _json("https://commons.wikimedia.org/w/api.php?" + urllib.parse.urlencode(p)).get("query", {}).get("pages", {})
     out = []
     for pg in sorted(pages.values(), key=lambda x: x.get("index", 0)):
         ii = (pg.get("imageinfo") or [{}])[0]
         m = ii.get("extmetadata", {})
-        if ii.get("thumburl"):
+        cats = " ".join(c.get("title", "") for c in pg.get("categories", []))
+        if ii.get("thumburl") and (not art or (ART.search(cats + " " + pg.get("title", ""))
+                                         and not NOT_ART.search(cats))):
             out.append({"src": "Wikimedia Commons", "title": pg.get("title", "").removeprefix("File:"),
                         "artist": _strip(m.get("Artist", {}).get("value", "")),
                         "date": _strip(m.get("DateTimeOriginal", {}).get("value", "")),
                         "license": _strip(m.get("LicenseShortName", {}).get("value", "")),
                         "page": ii.get("descriptionurl", ""), "img": ii["thumburl"]})
+        if len(out) >= n:
+            break
+    return out
+
+
+def commons(q: str, n: int) -> list[dict]:
+    """Art first ("<subject> art", art categories only); a technical subject with little art falls back to a
+    plain search (photos, diagrams, cutaways)."""
+    out = _commons(q, n, art=True)
+    if len(out) < 3:
+        seen = {x["page"] for x in out}
+        out += [x for x in _commons(q, n, art=False) if x["page"] not in seen][:n - len(out)]
     return out
 
 
