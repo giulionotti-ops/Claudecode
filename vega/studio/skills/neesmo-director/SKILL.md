@@ -18,15 +18,15 @@ Read in this order:
 5. `references/shotlist-schema.md` - the file you write and the rules the script checks.
 
 ## Step 1 - Review the script (before anyone renders anything)
-Judge `script.json` as a director, not a copywriter. Send it back (`script_review.json`, `ok: false`)
-only for problems that would sink the video:
+Judge `script.json` as a director, not a copywriter. Give it an honest `score` 1-10 in `script_review.json`.
+Nothing is filmed under 8/10 (aim for 9): below that, `ok: false` with exact fixes. The usual reasons:
 - **The hook can't be shown.** The first 1.5 s needs a picture that is itself the hook (an impossible
   image, a countdown, a body falling, a machine about to break). If line 1 is only talk, rewrite it.
 - **A beat has no picture.** Every line must be filmable. "It's very important" is not a shot.
 - **No escalation.** Stakes must rise every 8-10 s; flag the flat stretch.
 - **No payoff or no loop.** The last shot must answer the hook and cut cleanly into the first frame.
 - **Too long for the pictures.** Over ~2.2 words per second of narration leaves no room to breathe.
-At most 3 fixes, each one exact and doable ("Line 4: replace 'it's complicated' with the number: 1,200 °C").
+At most 5 fixes, each one exact and doable ("Line 4: replace 'it's complicated' with the number: 1,200 °C").
 
 ## Step 2 - Break it down like a shooting script
 For each beat, design 1-3 shots. For every shot decide, in this order:

@@ -6,11 +6,15 @@ problem, and writes `shotlist.md` when they pass. Run it until it prints `ok`.
 ## script_review.json
 ```json
 {"ok": true,
+ "score": 9,                          // 1-10, honest; ok needs 8+ (nothing is rendered under 8)
  "hook_picture": "what the viewer SEES in the first 1.5 s",
  "fixes": [{"line": 4, "fix": "replace 'it's complicated' with the number: 1,200 °C"}],
  "notes": "one sentence on the story shape"}
 ```
-`ok: false` sends the script back to the marketer with `fixes` (max 3). Then you are run again.
+`ok: false` sends the script back to the marketer with `fixes` (max 5). Then you are run again, up to 3 rounds;
+a script still under 8 stops the video before anything is rendered.
+Before the shot list, run `python3 -m studio.artrefs videos/<NNN> "<subject>" ...` for every named thing on
+screen (the check fails without `refs/`), and note the borrowed details in each shot's `refs`.
 
 ## shotlist.json
 ```json

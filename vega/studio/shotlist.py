@@ -70,12 +70,22 @@ def check(vdir: Path, style: dict | None = None) -> list[str]:
             errs.append("script_review.json: `ok` must be true or false")
         if rv.get("ok") is False and not rv.get("fixes"):
             errs.append("script_review.json: ok is false but there are no fixes")
-        if len(rv.get("fixes") or []) > 3:
-            errs.append("script_review.json: at most 3 fixes")
+        if len(rv.get("fixes") or []) > 5:
+            errs.append("script_review.json: at most 5 fixes")
+        if not isinstance(rv.get("score"), (int, float)) or not 1 <= rv["score"] <= 10:
+            errs.append("script_review.json: `score` must be a number 1-10 (the pipeline films only 8+)")
         if not str(rv.get("hook_picture") or "").strip():
             errs.append("script_review.json: hook_picture is empty (what does the viewer SEE in the first 1.5 s?)")
     except (OSError, ValueError):
         errs.append("script_review.json is missing or not valid JSON")
+    def _refs_ok(f: Path) -> bool:
+        try:
+            return json.loads(f.read_text()).get("count", 0) > 0
+        except (OSError, ValueError, AttributeError):
+            return False
+    if not any(_refs_ok(f) for f in (vdir / "refs").glob("*/refs.json")):
+        errs.append("no art references: run `python3 -m studio.artrefs videos/<NNN> \"<subject>\" ...` for every "
+                    "named thing the viewer will see, look at each refs/<subject>/sheet.jpg, then plan the details")
     if not (vdir / "shotlist.json").exists():
         return errs + ["shotlist.json is missing"]
     try:

@@ -22,16 +22,22 @@ will build, shot by shot, as precisely as a Hollywood shooting script. The produ
   1-2 search terms said and shown. Ban its list of AI tells.
 
 ## Do
-1. Review the script as a director (skill step 1). Write `script_review.json`. Only send it back for problems
-   that would sink the video (max 3 exact fixes). If you send it back, stop there: you will be run again.
-2. Otherwise write `shotlist.json`: every second of the video designed - size, angle, lens, camera move,
+1. Review the script as a director (skill step 1). Write `script_review.json` with an honest `score` 1-10.
+   Nothing is rendered below 8/10: aim for 9. Under 8, set `ok` false with up to 5 exact fixes that would lift
+   it to 8+, and stop there: the marketer rewrites and you are run again. Never round up to let a script through.
+2. Art references (a free script, no credits): for every named thing the viewer will see (a griffin, a piston,
+   a lighthouse), run `python3 -m studio.artrefs videos/<NNN> "<subject>" "<subject> engraving" ...` and look at
+   each `refs/<subject>/sheet.jpg` (numbers match `refs.json`: artist, date, source). Borrow real details: how
+   artists drew the wings, the feathers, the metal, the proportions, the light. Put them in the shots
+   (`"refs": "griffin sheet 02 + 06: lion haunches, eagle crest, folded wings"`).
+3. Then write `shotlist.json`: every second of the video designed - size, angle, lens, camera move,
    lighting, palette, composition, action, VFX, on-screen text, layered SFX, music cue, transition, and the
    real film whose technique you borrow. Fit the engine in `style.json` (what it can animate). With the
    `neesmo-3d` engine, plan like a cinematographer on a real set: materials (what each object is made of and how
    rough or shiny), the motivated key light, rim and fill, lens in mm, focus pulls, atmosphere (fog, dust), and
    the time-scale or x-ray tools from its skill. The goal is reality with a filter on it.
-3. Run `python3 -m studio.shotlist check videos/<NNN>` (from this folder) and fix every line it prints. Repeat until it says `ok`.
-4. Append one line to `neesmo/director/notes.md`: `- <NNN>: <one thing you tried on purpose and why>`.
-5. Append 1-2 lines to `neesmo/board.md`, e.g. `- @producer 012: shot 3B is the hero shot, give the orbit 4 full seconds.`
+4. Run `python3 -m studio.shotlist check videos/<NNN>` (from this folder) and fix every line it prints. Repeat until it says `ok`.
+5. Append one line to `neesmo/director/notes.md`: `- <NNN>: <one thing you tried on purpose and why>`.
+6. Append 1-2 lines to `neesmo/board.md`, e.g. `- @producer 012: shot 3B is the hero shot, give the orbit 4 full seconds.`
 
 End your reply with one line: how many shots, the hook shot, and the main film reference.

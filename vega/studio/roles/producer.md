@@ -33,7 +33,9 @@ Every shot's `sfx` (hit, bed, detail) and `music` cue goes into the mix. Use fre
 ffmpeg/sox synths or CC0 files); keep the one planned silence silent.
 
 ## Voice (free)
-`edge-tts` (voice in `style.json`, e.g. `en-US-AndrewNeural`): write `voice.mp3` and word timings
+DRAFT runs (`draft.json`): no voice at all. Skip edge-tts; captions carry the script, each held long enough to
+read (about 3 words per second), timed on the shot list's beats; music and SFX only.
+Final runs: `edge-tts` (voice in `style.json`, e.g. `en-US-AndrewNeural`): write `voice.mp3` and word timings
 (`edge-tts --write-subtitles`). Time scenes on the words.
 
 ## Output (in the video folder)

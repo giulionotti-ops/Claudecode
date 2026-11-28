@@ -28,5 +28,6 @@ and make sure nobody was lazy.
 ## Write `verdict.json`
 `{"ok": true|false, "score": 1-10, "issues": [{"role": "marketer|producer", "fix": "<exact, doable fix>"}],
   "summary": "<one plain sentence for the owner>"}`
-`ok` only if you would post it yourself. Send at most 3 fixes, the ones that matter most.
+`ok` only if you would post it yourself AND the score is 8 or more (aim for 9; under 8 is never ok, the
+pipeline enforces it). Score honestly, never round up. Send at most 3 fixes, the ones that lift the score most.
 Append one line per issue to `neesmo/board.md` addressed to that role (e.g. `- @producer 012: ...`).

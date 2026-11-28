@@ -6786,9 +6786,9 @@
     "semantic_hash": ""
   },
   "vega/studio/pipeline.py": {
-    "mtime": 1795791382.106143,
-    "seen": 1795791579.6692576,
-    "ast_hash": "412ecad14fe2fe0cf80dd542b3e3be51",
+    "mtime": 1795858111.431952,
+    "seen": 1795858185.896744,
+    "ast_hash": "4b23dea4d8a37272e79365449ad958c1",
     "semantic_hash": ""
   },
   "vega/studio/routes.py": {
@@ -6846,15 +6846,15 @@
     "semantic_hash": ""
   },
   "vega/studio/roles/producer.md": {
-    "mtime": 1795795193.1838694,
-    "seen": 1795818519.9616745,
-    "ast_hash": "21627bcfccda8ba10141e116398900bb",
+    "mtime": 1795857964.3254097,
+    "seen": 1795858036.4881203,
+    "ast_hash": "7e917d21acf3dfc98a4eb89df1697194",
     "semantic_hash": ""
   },
   "vega/studio/roles/supervisor.md": {
-    "mtime": 1795795193.1838694,
-    "seen": 1795818519.9616766,
-    "ast_hash": "e49069ab8096fe686f3ebe2cb22645a3",
+    "mtime": 1795857964.3254097,
+    "seen": 1795858036.4881225,
+    "ast_hash": "70b7bea953acbe46758b28260e3a9739",
     "semantic_hash": ""
   },
   "vega/studio/skills/neesmo-viral-rules/SKILL.md": {
@@ -19686,21 +19686,21 @@
     "semantic_hash": ""
   },
   "vega/studio/shotlist.py": {
-    "mtime": 1795789093.9297106,
-    "seen": 1795790790.3648825,
-    "ast_hash": "0803ecfd5ff1848e7ee800e21e6ef873",
+    "mtime": 1795858111.435952,
+    "seen": 1795858185.8967497,
+    "ast_hash": "f83eaaeae64f53e4e541411c650dc6ea",
     "semantic_hash": ""
   },
   "vega/studio/roles/director.md": {
-    "mtime": 1795795193.1838694,
-    "seen": 1795818519.9616702,
-    "ast_hash": "3bdf1f9473facee0a83d40c3794489f7",
+    "mtime": 1795857964.3134098,
+    "seen": 1795858036.4881124,
+    "ast_hash": "9e36774f9b41f54c8eba5db5a408b2a3",
     "semantic_hash": ""
   },
   "vega/studio/skills/neesmo-director/SKILL.md": {
-    "mtime": 1795791522.2506666,
-    "seen": 1795791579.6735866,
-    "ast_hash": "a2992a2a7674781b5fe41863341b9786",
+    "mtime": 1795857964.3374097,
+    "seen": 1795858036.488134,
+    "ast_hash": "4312a245a426ab99162e3e47cf117545",
     "semantic_hash": ""
   },
   "vega/studio/skills/neesmo-director/references/faceless-viral.md": {
@@ -19722,9 +19722,9 @@
     "semantic_hash": ""
   },
   "vega/studio/skills/neesmo-director/references/shotlist-schema.md": {
-    "mtime": 1795788701.02493,
-    "seen": 1795790790.3741872,
-    "ast_hash": "d16255cff1b43883b91ecbd74d91f878",
+    "mtime": 1795857964.3474097,
+    "seen": 1795858036.488149,
+    "ast_hash": "8acd324dd842981815e9adaceeabb760",
     "semantic_hash": ""
   },
   "vega/studio/automations.py": {
@@ -19809,6 +19809,12 @@
     "mtime": 1795795045.0522978,
     "seen": 1795818519.9617205,
     "ast_hash": "23d7a7e286c1807ada36fcd9a39e19a2",
+    "semantic_hash": ""
+  },
+  "vega/studio/artrefs.py": {
+    "mtime": 1795858111.4579518,
+    "seen": 1795858185.8967164,
+    "ast_hash": "aa3bc97f85acd76ceb6a247829b51991",
     "semantic_hash": ""
   },
   "vega/studio/skills/neesmo-3d/engine/package-lock.json": {

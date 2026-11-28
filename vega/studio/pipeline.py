@@ -43,7 +43,9 @@ def run_role(aid: str, role: str, vdir: Path | None, extra: str = "", brief: str
     brief = brief or role
     where = f"The video folder is `{vdir.relative_to(d)}`." if vdir else ""
     if vdir and channel.read_json(vdir / "draft.json", {}).get("draft"):
-        where += f" DRAFT run: a cheap test render at {DRAFT_SIZE}, 15 fps, fast preset; keep it short and lean."
+        where += (f" DRAFT run: a cheap test render at {DRAFT_SIZE}, 15 fps, fast preset; keep it short and lean."
+                  " NO VOICE in drafts: no voiceover, no edge-tts; captions carry the script, timed at reading speed;"
+                  " music and SFX only.")
     prompt = (f"You are the {role} of this channel. Read `neesmo/prompts/{brief}.md` and follow it exactly. {where}\n"
               f"{extra}".strip())
     channel.write_json(channel.paths(aid)["n"] / "running.json",
@@ -119,22 +121,59 @@ def _role(aid: str, vid: str, vdir: Path, role: str, extra: str = "", brief: str
     return r["ok"]
 
 
-def _direct(aid: str, vid: str, vdir: Path) -> bool:
-    """Supervisor's director pass: script review (one marketer fix loop), then a checked shot list.
-    Returns True when a valid shotlist.json exists. A failed pass never stops the video: the producer then
-    works from the script as before."""
+def min_score(aid: str) -> int:
+    """The score a script and a finished video must reach (channel setting `min_score`, default 8 of 10)."""
+    try:
+        return int(state.channel(aid).get("min_score", 8))
+    except (TypeError, ValueError):
+        return 8
+
+
+def _num(x) -> float:
+    """A score as a number: 8, 8.5, "8", "8/10" all work; anything else is 0."""
+    try:
+        return float(str(x).split("/")[0].strip()) if x is not None else 0.0
+    except ValueError:
+        return 0.0
+
+
+def _script_score(vdir: Path) -> float:
+    return _num(channel.read_json(vdir / "script_review.json", {}).get("score"))
+
+
+def _direct(aid: str, vid: str, vdir: Path) -> bool | None:
+    """Supervisor's director pass: script review, then a checked shot list.
+    The script must score at least min_score (default 8/10) before anything is rendered: up to `script_rounds`
+    (default 3) marketer fix rounds. Returns None when the script never got there (nothing is rendered),
+    else True when a valid shotlist.json exists. A broken shot list never stops the video."""
+    need = min_score(aid)
+    try:
+        rounds = int(state.channel(aid).get("script_rounds", 3))
+    except (TypeError, ValueError):
+        rounds = 3
     for f in ("script_review.json", "shotlist.json"):
         (vdir / f).unlink(missing_ok=True)
     _role(aid, vid, vdir, "supervisor", brief="director")
-    review = channel.read_json(vdir / "script_review.json", {})
-    if review.get("ok") is False and review.get("fixes"):
-        fixes = [f"line {x.get('line', '?')}: {x.get('fix', '')}" if isinstance(x, dict) else str(x) for x in review["fixes"]][:3]
-        channel.event(aid, "direct", f"The director sent the script of {vid} back: " + "; ".join(fixes)[:300], video=vid)
-        _role(aid, vid, vdir, "marketer", "FIX ROUND from the director (before production). Change only this, keep the rest:\n- "
-              + "\n- ".join(fixes))
+    for r in range(1, rounds + 1):
+        review = channel.read_json(vdir / "script_review.json", {})
+        score = _script_score(vdir)
+        if review.get("ok") is not False and score >= need:
+            break
+        fixes = [f"line {x.get('line', '?')}: {x.get('fix', '')}" if isinstance(x, dict) else str(x)
+                 for x in review.get("fixes") or []][:5] or [f"raise the script from {score}/10 to {need}/10"]
+        channel.event(aid, "direct", f"The director scored the script of {vid} {score}/10 (needs {need}), round {r}: "
+                      + "; ".join(fixes)[:300], video=vid)
+        _role(aid, vid, vdir, "marketer", f"FIX ROUND {r} from the director (before production). The script scored "
+              f"{score}/10 and must reach {need}/10. Fix these, keep what works:\n- " + "\n- ".join(fixes))
         (vdir / "script_review.json").unlink(missing_ok=True)
-        _role(aid, vid, vdir, "supervisor", "The marketer fixed the script. Do not send it back again: set ok true in "
-              "script_review.json and write the shot list.", brief="director")
+        (vdir / "shotlist.json").unlink(missing_ok=True)
+        _role(aid, vid, vdir, "supervisor", f"The marketer rewrote the script (round {r}). Score it again honestly; "
+              f"write the shot list only if it reaches {need}/10.", brief="director")
+    if _script_score(vdir) < need or channel.read_json(vdir / "script_review.json", {}).get("ok") is False:
+        return None
+    if _script_ok(vdir):   # a rewrite must still pass the script rules
+        channel.event(aid, "direct", f"The rewritten script of {vid} breaks the script rules: {_script_ok(vdir)}", video=vid)
+        return None
     errs = shotlist.check(vdir, channel.read_json(channel.paths(aid)["style"], {}))
     if errs and (vdir / "shotlist.json").exists():
         _role(aid, vid, vdir, "supervisor", "Your shot list did not pass the check. Fix exactly these, keep the rest:\n- "
@@ -169,6 +208,9 @@ def _check(aid: str, vid: str, vdir: Path) -> dict:
     verdict = channel.read_json(vdir / "verdict.json", {})
     if not verdict:
         verdict = {"ok": g["ok"] and a["ok"], "score": None, "issues": [], "summary": "The check did not finish."}
+    # below min_score is never ok, whatever the session said
+    if _num(verdict.get("score")) < min_score(aid):
+        verdict["ok"] = False
     # a failed script gate is never ok, whatever the session said
     if not g["ok"]:
         verdict["ok"] = False
@@ -243,9 +285,18 @@ def make(aid: str, draft: bool = False) -> dict:
             channel.event(aid, "failed", f"Video {vid} stopped: {_script_ok(vdir)}", video=vid, important=True)
             return channel.update_video(aid, vid)
     try:
-        _direct(aid, vid, vdir)
+        directed = _direct(aid, vid, vdir)
     except Exception as e:   # a broken director pass never stops the video: the producer works from the script
         channel.event(aid, "error", f"Director pass failed: {str(e)[:160]}", video=vid)
+        # the score gate still holds: render only a script that reached min_score and passes the rules
+        directed = None if _script_score(vdir) < min_score(aid) or _script_ok(vdir) else True
+    if directed is None:   # the script never reached min_score: nothing is rendered, no credits spent on a video
+        score, need = _script_score(vdir), min_score(aid)
+        summary = f"The script stopped at {score:g}/10 (needs {need}/10); nothing was rendered."
+        channel.update_video(aid, vid, status="needs_owner", score=score, summary=summary,
+                             title=channel.read_json(vdir / "script.json", {}).get("title"))
+        channel.event(aid, "video", f"Video {vid}: {summary}", video=vid, status="needs_owner", important=True)
+        return channel.update_video(aid, vid)
     _role(aid, vid, vdir, "producer")
     verdict = _check(aid, vid, vdir)
     verdict = _fix_rounds(aid, vid, vdir, verdict)
