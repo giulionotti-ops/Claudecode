@@ -62,7 +62,8 @@ def run_role(aid: str, role: str, vdir: Path | None, extra: str = "", brief: str
     res = {"ok": False, "session": sid, "cost": 0.0, "text": ""}
     try:
         r = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True, timeout=TIMEOUT[brief],
-                           env={**os.environ, "NEESMO_ROLE": role, "NEESMO_CHANNEL": aid})
+                           env={**os.environ, "NEESMO_ROLE": role, "NEESMO_CHANNEL": aid,
+                                "PYTHONPATH": os.pathsep.join(filter(None, [str(Path(__file__).resolve().parent.parent), os.environ.get("PYTHONPATH")]))})
         out = json.loads(r.stdout or "{}")
         res.update(ok=r.returncode == 0 and not out.get("is_error"), cost=float(out.get("total_cost_usd") or 0),
                    text=str(out.get("result") or r.stderr[-400:]).strip())
