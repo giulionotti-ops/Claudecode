@@ -221,11 +221,16 @@ def measure(vdir: Path) -> dict:
     seen = sum(1 for p in planned if any(abs(p - c) <= 0.5 for c in cuts))
     res = {"planned_shots": len(shots), "scene_changes": len(cuts), "planned_cuts_seen": seen,
            "longest_still_s": round(longest, 1), "duration": round(dur, 1)}
+    # a planned long hold is allowed; anything longer than the longest planned shot (and over 4.5 s) is not
+    hold = max([float(s.get("end") or 0) - float(s.get("start") or 0) for s in shots] + [0.0])
+    res["allowed_still_s"] = round(max(4.5, hold + 0.5), 1)
     probs = []
-    if planned and seen < 0.5 * len(planned):
-        probs.append(f"only {seen} of {len(planned)} planned cuts show in the video; shots may be merged or skipped")
-    if longest > 4.5:
-        probs.append(f"the picture barely changes for {longest:.1f} s")
+    if planned and seen < 0.7 * len(planned):
+        probs.append(f"only {seen} of {len(planned)} planned cuts show in the video; shots were merged or skipped "
+                     f"(render each shot on its own: python3 -m studio.shotrender)")
+    if longest > res["allowed_still_s"]:
+        probs.append(f"the picture barely changes for {longest:.1f} s (longest planned shot allows "
+                     f"{res['allowed_still_s']} s)")
     res["problems"] = probs
     return res
 

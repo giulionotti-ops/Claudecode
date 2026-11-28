@@ -11,6 +11,7 @@
 // ACES tone mapping, bloom only on emissive/hot spots, depth of field on the subject, film grain + vignette.
 import * as THREE from 'three';
 import { RoomEnvironment } from 'three/addons/environments/RoomEnvironment.js';
+import { RGBELoader } from 'three/addons/loaders/RGBELoader.js';
 import { EffectComposer } from 'three/addons/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/addons/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/addons/postprocessing/UnrealBloomPass.js';
@@ -32,8 +33,28 @@ const scene = new THREE.Scene();
 scene.background = new THREE.Color('#0b1020');
 scene.fog = new THREE.FogExp2('#0b1020', 0.06);
 const pmrem = new THREE.PMREMGenerator(r);
-scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+scene.environment = pmrem.fromScene(new RoomEnvironment(), 0.04).texture;   // fallback until the HDRI loads
 scene.environmentIntensity = 0.35;
+// REAL light from a real place: a Poly Haven HDRI photographed on location (python3 -m studio.assets <video> hdri "workshop").
+// Reflections then show a real room, not a CG void. Set to '' only if the video has no assets folder.
+const HDRI = 'assets/env.hdr';
+// REAL wear: a scanned roughness + normal map (python3 -m studio.assets <video> texture "scratched metal").
+// Smudges, scratches and fingerprints break up the reflections: the difference between CG and footage.
+const WEAR = 'assets/wear';
+const tex = new THREE.TextureLoader();
+const loads = [];
+const wear = (name, rep) => {
+  if (!WEAR) return null;
+  const t = tex.load(`${WEAR}_${name}.jpg`, undefined, undefined, () => console.error(`texture missing: ${WEAR}_${name}.jpg`)); t.wrapS = t.wrapT = THREE.RepeatWrapping; t.repeat.set(rep, rep);
+  loads.push(new Promise(ok => { const i = setInterval(() => { if (t.image) { clearInterval(i); ok(); } }, 20); setTimeout(ok, 8000); }));
+  return t;
+};
+if (HDRI) loads.push(new RGBELoader().loadAsync(HDRI).then(h => {
+  const env = pmrem.fromEquirectangular(h).texture; h.dispose();
+  scene.environment = env; scene.environmentIntensity = 0.9;
+  // the real room behind the subject, thrown out of focus like a long lens: depth instead of a CG void
+  scene.background = env; scene.backgroundBlurriness = 0.35; scene.backgroundIntensity = 0.25;
+}).catch(() => console.error('HDRI missing: ' + HDRI)));
 const cam = new THREE.PerspectiveCamera(32, W / H, 0.1, 100);   // 32 deg vertical ~ a 50-70 mm look on 9:16
 
 const key = new THREE.SpotLight('#ffd9a8', 60, 30, 0.5, 0.6, 2);   // warm key, soft edge
@@ -42,8 +63,10 @@ scene.add(key);
 const rim = new THREE.DirectionalLight('#7fb4ff', 2.2); rim.position.set(-4, 3, -5); scene.add(rim);   // cool rim
 
 // ---- subject: a machined gear pair on a dark stage (REPLACE with the video's subject) ----
-const steel = new THREE.MeshStandardMaterial({ color: '#aab1bb', metalness: 1, roughness: 0.22 });
-const brass = new THREE.MeshStandardMaterial({ color: '#d6a24a', metalness: 1, roughness: 0.35 });
+// every hero surface: base values + scanned roughness/normal (three scales of detail: shape, bevels/seams, micro wear)
+const rough = wear('rough', 2), nrm = wear('nor_gl', 2);
+const steel = new THREE.MeshStandardMaterial({ color: '#aab1bb', metalness: 1, roughness: 0.22, roughnessMap: rough, normalMap: nrm, normalScale: new THREE.Vector2(0.6, 0.6) });
+const brass = new THREE.MeshStandardMaterial({ color: '#d6a24a', metalness: 1, roughness: 0.35, roughnessMap: rough, normalMap: nrm, normalScale: new THREE.Vector2(0.6, 0.6) });
 const hot = new THREE.MeshStandardMaterial({ color: '#ff6a2a', emissive: '#ff4a10', emissiveIntensity: 3 });
 function gear(teeth, R, mat) {
   const s = new THREE.Shape(), d = R * 0.12;
@@ -96,5 +119,5 @@ function seek(t) {
   grain.uniforms.t.value = Math.floor(t * 24) / 24;            // grain changes on 24 fps steps, like film
   comp.render();
 }
-window.DUR = DUR; window.seek = seek; window.READY = Promise.resolve(); seek(0);
+window.DUR = DUR; window.seek = seek; window.READY = Promise.all(loads).then(() => seek(0)); seek(0);
 </script></body></html>

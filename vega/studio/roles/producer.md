@@ -24,6 +24,11 @@ folder into a finished video. You run in a fresh session: read only what you nee
 - With `neesmo-3d`: also `threejs-materials`, `threejs-lighting` and `threejs-postprocessing` (more as needed).
   Every surface physically based, motivated light with soft shadows, depth of field, grain. Look at `--stills`
   of the hook shot first: it must read as a real object in real light before you animate the rest.
+  Meet the skill's **Hollywood detail bar**: a real HDRI and scanned wear maps (`python3 -m studio.assets`), three
+  scales of detail on every hero object, three planes of depth, visible atmosphere. Put your hook still next to
+  the film frame the shot list names; if it would not cut into that film, it is not done.
+  **Render with `python3 -m studio.shotrender <video> scene.html`** (look check, each shot on its own, hard cuts).
+  Never one continuous move through the whole film: merged or skipped shots fail the gate.
 - `video-director` - its build contract (time is the only input) and, before you finish, its QA script:
   `python3 -I <video-director skill>/scripts/qa_video.py video.mp4 --out qa` - fix every FAIL, explain or fix
   each frozen stretch, and look at `qa/hook_sheet.jpg`.

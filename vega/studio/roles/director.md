@@ -36,6 +36,10 @@ will build, shot by shot, as precisely as a Hollywood shooting script. The produ
    `neesmo-3d` engine, plan like a cinematographer on a real set: materials (what each object is made of and how
    rough or shiny), the motivated key light, rim and fill, lens in mm, focus pulls, atmosphere (fog, dust), and
    the time-scale or x-ray tools from its skill. The goal is reality with a filter on it.
+   **Hollywood detail:** for every hero shot name one real film frame to match (e.g. "Iron Man (2008) suit-up
+   macro", "Blade Runner 2049 haze", "Fight Club title-sequence macro") and list in `vfx` the details that make it
+   dense: the HDRI place, the worn surfaces, bevels, screws and seams, the foreground element, the haze or dust.
+   A shot with nothing but the subject on a dark background is not a plan.
 4. Run `python3 -m studio.shotlist check videos/<NNN>` (from this folder) and fix every line it prints. Repeat until it says `ok`.
 5. Append one line to `neesmo/director/notes.md`: `- <NNN>: <one thing you tried on purpose and why>`.
 6. Append 1-2 lines to `neesmo/board.md`, e.g. `- @producer 012: shot 3B is the hero shot, give the orbit 4 full seconds.`

@@ -24,6 +24,38 @@ not this engine.
 - One timeline object in the page with the shot list's beats in seconds. Every animated value is a function of
   `t` and a beat. No bare frame numbers.
 
+## Free film-grade building blocks (CC0, no credits)
+- `python3 -m studio.assets <video> hdri "workshop"`: a Poly Haven HDRI photographed in a real place. Load it with
+  `RGBELoader` (saved as `assets/env.hdr`, which the starter loads) as `scene.environment` and, blurred, as `scene.background` (the starter does this). Pick the place
+  the shot is set in: workshop, studio, street at night, forest.
+- `python3 -m studio.assets <video> texture "scratched metal"`: scanned diffuse, normal (GL), roughness and AO maps (also saved as `assets/wear_<map>.jpg` for the starter).
+- `python3 -m studio.assets <video> model "pipe wrench"`: scanned real objects as glTF (`GLTFLoader`).
+- `python3 -m studio.assets <video> search texture "rust"` lists options; fetch one by its id.
+- `python3 -m studio.looklint <scene.html>` refuses a scene without these basics; `studio.shotrender` runs it first.
+
+## The Hollywood detail bar (why our renders looked plain)
+Plain CG has perfect light, perfect surfaces and an empty void. Film frames are dense. Before rendering, every hero
+shot must have all of this. Look at your `--stills` next to the film frame the shot list names and ask "would this
+cut into that film?"
+1. **Three scales of detail on every hero object** (how ILM builds the Transformers and the Iron Man suits):
+   - shape: a readable silhouette;
+   - medium: bevelled edges (no razor CG edges: `bevelEnabled` or `RoundedBoxGeometry`), seams, screws, panel lines,
+     engraving, machining rings;
+   - micro: scanned roughness and normal maps for scratches, smudges, fingerprints and dust. Fewer, bigger, better
+     parts beat many plain ones.
+2. **Light from a real place.** An HDRI of a real room plus a motivated key (window, lamp, sun). Highlights should
+   roll across bevels as the camera moves (the hero-product look of the Iron Man suit-up and of Apple films).
+3. **Three planes of depth.** A soft out-of-focus foreground element, a sharp subject, a blurred real background.
+   Never a subject floating in a black void (Blade Runner 2049 and Dune layer haze between the planes).
+4. **Atmosphere you can see.** Haze or dust caught in the key light, volumetric-looking beams (a cone mesh with an
+   additive, fogged gradient), steam or sparks where the physics makes them.
+5. **Macro and scale.** Shoot small things like Fincher's macro title sequences (Fight Club, The Girl with the
+   Dragon Tattoo): long lens, very shallow focus, the camera gliding millimetres over metal.
+6. **Imperfection.** Nothing perfectly centred, clean or symmetrical: slight wear on the edges people touch, dirt in
+   the crevices, a tiny lag on parts that move.
+7. **Lens and grade.** Light bloom on hot spots, slight chromatic aberration at the edges, grain, a vignette and a
+   colour grade that commits (teal and orange, or one strong motivated colour).
+
 ## The look stack (each item is there for a reason)
 1. **Physically based materials.** `MeshStandardMaterial`/`MeshPhysicalMaterial` with real `metalness` and
    `roughness`. Real things vary: add roughness or normal detail (procedural noise textures) so surfaces are
@@ -56,8 +88,10 @@ not this engine.
 ## Workflow (with the shot list)
 1. Build the scene for the hook shot first. `--stills` at 2-4 key times. Look at them: does it read as a real
    object in real light? Fix materials and light before animating more.
-2. Build shot by shot. One page can hold the whole film (switch subjects and cameras by beat) or one page per
-   shot (render each, then join with ffmpeg). Keep shared materials and lights in one place.
+2. Build shot by shot in one page (switch subjects and cameras by beat; keep shared materials and lights in one
+   place). **Render with `python3 -m studio.shotrender <video> scene.html --w 540 --h 960 --fps 15`**: it checks the
+   look, renders each shot on its own and joins them with hard cuts, so every planned cut really is a cut. One long
+   continuous camera move through the film fails the gate. Re-render single shots with `--only 4B,7A`.
 3. Draft: `--w 540 --h 960 --fps 15` (about 1.5 s per frame on a CPU-only server, so a 30 s draft is about
    10 minutes). Final: the size in `style.json` at 30 fps. Render in the foreground with a long timeout.
 4. Voice, SFX, music and captions are mixed with ffmpeg afterwards, timed on the same beats.

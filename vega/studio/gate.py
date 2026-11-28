@@ -70,8 +70,13 @@ def check(vdir: Path, style: dict) -> dict:
             from shotlist import measure
         try:
             res["shotlist"] = measure(vdir)
-        except Exception as e:   # measuring must never break the gate
+            # the plan is the contract: merged or skipped shots fail the gate, they are not just advice
+            if not res["shotlist"]:
+                problems.append("could not compare the video with shotlist.json (video or plan unreadable)")
+            problems.extend(res["shotlist"].get("problems") or [])
+        except Exception as e:   # measuring must never crash the gate, but an unchecked plan never passes
             res["shotlist"] = {"error": str(e)[:200]}
+            problems.append(f"could not compare the video with shotlist.json: {str(e)[:120]}")
     res["qa"] = qa(vdir, video)
     if (res["qa"].get("flashes") or []):
         problems.append(f"single-frame flashes at {res['qa']['flashes']} s (a glitch or a broken transition)")

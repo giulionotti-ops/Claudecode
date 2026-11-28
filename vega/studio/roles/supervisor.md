@@ -23,7 +23,10 @@ and make sure nobody was lazy.
 4. Owner requests were honoured.
 5. Shot list: use the `neesmo-director` skill. Did the render follow `shotlist.json` - the shots, camera moves,
    lighting idea, on-screen text and SFX? Name the missing shot ids in the fix (e.g. "2B lost its orbit and the metal groan").
-6. Effort: the roles used their skills fully (audit.json), and the video is not a lazy copy of the last one.
+6. Film detail: put the stills next to the film frames the shot list names. Plain CG (perfect surfaces, an empty
+   dark void, no foreground, no atmosphere, razor edges) scores 6 at most, however clean it is. Name what is
+   missing per shot ("3A: no wear on the brass, no foreground, void background").
+7. Effort: the roles used their skills fully (audit.json), and the video is not a lazy copy of the last one.
 
 ## Write `verdict.json`
 `{"ok": true|false, "score": 1-10, "issues": [{"role": "marketer|producer", "fix": "<exact, doable fix>"}],
